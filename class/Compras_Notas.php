@@ -163,18 +163,39 @@ class Compras_Notas {
         $sql->execute();
     }
 
-    public function totalCategoria($id_empresa, $id_categoria, $mes)
+    public function totalCategoria($id_empresa, $id_categoria, $mes, $ano)
     {
         $sql = $this->pdo->prepare('SELECT SUM(valor) AS total FROM compras_notas 
                                     INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
                                     INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                     WHERE id_empresa = :id_empresa 
                                     AND id_categoria = :id_categoria 
-                                    AND month(data) = :mes');
+                                    AND month(data) = :mes
+                                    AND year(data) = :ano');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_categoria', $id_categoria);
         $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
+
+    public function totalCategoriaAnual($id_empresa, $id_categoria, $ano)
+    {
+        $sql = $this->pdo->prepare('SELECT SUM(valor) AS total FROM compras_notas 
+                                    INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
+                                    INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
+                                    WHERE id_empresa = :id_empresa 
+                                    AND id_categoria = :id_categoria 
+                                    AND year(data) = :ano');
+
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':ano', $ano);
         $sql->execute();
 
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);
