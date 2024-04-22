@@ -43,6 +43,97 @@ INSERT INTO `cargos` VALUES (1,'Auxiliar de Analista de Suporte Junior','0000-00
 UNLOCK TABLES;
 
 --
+-- Table structure for table `compras_categorias`
+--
+
+DROP TABLE IF EXISTS `compras_categorias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `compras_categorias` (
+  `id_compra_categoria` int NOT NULL AUTO_INCREMENT,
+  `categoria` varchar(150) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_compra_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `compras_categorias`
+--
+
+LOCK TABLES `compras_categorias` WRITE;
+/*!40000 ALTER TABLE `compras_categorias` DISABLE KEYS */;
+INSERT INTO `compras_categorias` VALUES (1,'Material Hospitalar','2024-04-20 08:18:49','2024-04-20 08:47:38',NULL),(2,'Lente Intraocular','2024-04-20 11:21:48','2024-04-20 11:21:48',NULL);
+/*!40000 ALTER TABLE `compras_categorias` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `compras_fornecedores`
+--
+
+DROP TABLE IF EXISTS `compras_fornecedores`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `compras_fornecedores` (
+  `id_compra_fornecedor` int NOT NULL AUTO_INCREMENT,
+  `id_categoria` int NOT NULL,
+  `fornecedor` varchar(150) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_compra_fornecedor`),
+  KEY `fk_compras_fornecedores_compras_categorias_idx` (`id_categoria`),
+  CONSTRAINT `fk_compras_fornecedores_compras_categorias` FOREIGN KEY (`id_categoria`) REFERENCES `compras_categorias` (`id_compra_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `compras_fornecedores`
+--
+
+LOCK TABLES `compras_fornecedores` WRITE;
+/*!40000 ALTER TABLE `compras_fornecedores` DISABLE KEYS */;
+INSERT INTO `compras_fornecedores` VALUES (5,1,'Mafra Hospitalar','2024-04-20 09:38:15','2024-04-20 09:52:10',NULL),(6,2,'Carl Zeiss Do Brasil Ltda','2024-04-20 11:22:19','2024-04-20 11:22:19',NULL);
+/*!40000 ALTER TABLE `compras_fornecedores` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `compras_notas`
+--
+
+DROP TABLE IF EXISTS `compras_notas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `compras_notas` (
+  `id_compra_nota` int NOT NULL AUTO_INCREMENT,
+  `id_fornecedor` int NOT NULL,
+  `n_nota` char(20) NOT NULL,
+  `valor` double(10,2) NOT NULL,
+  `data` date NOT NULL,
+  `id_empresa` int NOT NULL,
+  `descricao` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_compra_nota`),
+  KEY `fk_compras_notas_compras_fornecedores_idx` (`id_fornecedor`),
+  CONSTRAINT `fk_compras_notas_compras_fornecedores` FOREIGN KEY (`id_fornecedor`) REFERENCES `compras_fornecedores` (`id_compra_fornecedor`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `compras_notas`
+--
+
+LOCK TABLES `compras_notas` WRITE;
+/*!40000 ALTER TABLE `compras_notas` DISABLE KEYS */;
+INSERT INTO `compras_notas` VALUES (1,5,'0555',55.00,'2024-04-20',1,'aa','2024-04-20 10:31:45','2024-04-20 11:03:48',NULL),(3,6,'94965',1273.00,'2024-04-04',1,'diopitria 14.5 com cartucho','2024-04-20 11:23:28','2024-04-20 11:23:28',NULL),(4,6,'600',500.00,'2024-04-22',1,'','2024-04-22 10:44:07','2024-04-22 10:44:07',NULL),(5,6,'5161',1000.00,'2024-03-03',1,'aaaa','2024-04-22 11:07:39','2024-04-22 11:07:39',NULL),(6,5,'6166',5000.00,'2024-01-22',3,'','2024-04-22 12:41:12','2024-04-22 12:41:12',NULL),(7,5,'5151',7.50,'2024-03-04',1,'','2024-04-22 13:01:13','2024-04-22 13:01:13',NULL);
+/*!40000 ALTER TABLE `compras_notas` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `logs`
 --
 
@@ -58,7 +149,7 @@ CREATE TABLE `logs` (
   PRIMARY KEY (`id_log`),
   KEY `fk_logs_idx` (`id_usuario`),
   CONSTRAINT `fk_logs` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +158,7 @@ CREATE TABLE `logs` (
 
 LOCK TABLES `logs` WRITE;
 /*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-INSERT INTO `logs` VALUES (1,1,'Cadastrar','Cadastrou o cargo: Vendedor Senior (15)','2024-04-18 12:34:01'),(2,1,'Cadastrar','Cadastrou o cargo: Auxiliar de Serviços Gerais Senor (16)','2024-04-18 12:43:50'),(3,1,'Editar','Editou o cargo: Auxiliar de Analista de Suporte Senior (8)','2024-04-18 12:45:33'),(4,1,'Cadastrar','Cadastrou o cargo: teste (17)','2024-04-18 12:55:34'),(5,1,'Desativar','Desativou o cargo: teste(17)','2024-04-18 12:57:50'),(16,1,'Editar','Editou o setor: Recursos Humanos (2)','2024-04-19 08:49:16'),(17,1,'Cadastrar','Cadastrou o usuário: Diego Diniz Flieber Ferreira (3)','2024-04-19 09:05:10'),(18,3,'Editar','Editou o usuário: André dos Santo (3)','2024-04-19 10:40:22'),(19,3,'Editar','Editou o usuário: André dos Santos (3)','2024-04-19 10:40:25'),(20,1,'Desativar','Desativou o usuário André dos Santos (3)','2024-04-19 11:31:14'),(21,3,'Editar','Editou o usuário: André dos Santo (3)','2024-04-19 11:31:58'),(22,1,'Editar','Editou o usuário: André dos Santos (3)','2024-04-19 11:34:34'),(23,1,'Cadastrar','Cadastrou o usuário: Elaine Regina da Silva (5)','2024-04-19 11:53:04'),(24,1,'Cadastrar','Cadastrou o cargo: RECURSOS HUMANOS (18)','2024-04-19 11:53:46'),(25,1,'Editar','Editou o usuário: Elaine Regina da Silva (5)','2024-04-19 11:54:01'),(26,1,'Editar','Editou o cargo: Recursos Humanos (18)','2024-04-19 11:54:40'),(27,1,'Editar','Editou o usuário: Elaine Regina da Silva (5)','2024-04-19 11:58:04'),(28,1,'Editar','Editou o usuário: Elaine Regina Da Silva (5)','2024-04-19 12:01:24'),(29,1,'Editar','Editou o usuário: Elaine Regina Da Silva (5)','2024-04-19 12:01:44'),(30,1,'Editar','Editou o usuário: Elaine Regina Da Silva (5)','2024-04-19 12:02:06');
+INSERT INTO `logs` VALUES (1,1,'Editar','Editou a nota de compra: 0555 (1)','2024-04-20 10:55:31'),(2,1,'Desativar','Desativou a nota de compra (1)','2024-04-20 10:57:49'),(3,1,'Editar','Editou a nota de compra: 0555 (1)','2024-04-20 11:03:48'),(4,1,'Cadastrar','Cadastrou a categoria de compra: Lente Intraocular (2)','2024-04-20 11:21:48'),(5,1,'Cadastrar','Cadastrou o fornecedor de compra: Carl Zeiss Do Brasil Ltda (6)','2024-04-20 11:22:19'),(6,1,'Cadastrar','Cadastrou a nota de compra: 94965 (3)','2024-04-20 11:23:28'),(7,1,'Cadastrar','Cadastrou a nota de compra: 600 (4)','2024-04-22 10:44:07'),(8,1,'Cadastrar','Cadastrou a nota de compra: 5161 (5)','2024-04-22 11:07:39'),(9,1,'Cadastrar','Cadastrou a nota de compra: 6166 (6)','2024-04-22 12:41:12'),(10,1,'Cadastrar','Cadastrou a nota de compra: 5151 (7)','2024-04-22 13:01:13');
 /*!40000 ALTER TABLE `logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,4 +241,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-19 13:09:26
+-- Dump completed on 2024-04-22 13:04:00
