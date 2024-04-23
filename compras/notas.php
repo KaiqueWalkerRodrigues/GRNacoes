@@ -18,7 +18,7 @@
     }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
 
@@ -164,7 +164,8 @@
                                             <td><?php echo $Compras_Categorias->nomeCategoria($Compras_Fornecedores->mostrar($cn->id_fornecedor)->id_categoria) ?></td>
                                             <td><?php echo $Compras_Fornecedores->nomeFornecedor($cn->id_fornecedor)?></td>
                                             <td class="text-center"><button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
-                                                data-descricao_nota="<?php echo $cn->descricao ?>">
+                                                data-descricao_nota="<?php echo $cn->descricao ?>"
+                                                data-valor="<?php echo $cn->valor ?>">
                                                 <i class="fa-solid fa-eye"></i>
                                                 </button>
                                             </td>
@@ -234,6 +235,7 @@
                     <div><p id="descricao_nota"></p></div>
                 </div>
                 <div class="modal-footer">
+                    <p>R$ <span id="ver_valor"></span></p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
@@ -261,7 +263,7 @@
                             </div>
                             <div class="col-4">
                                 <label for="valor" class="form-label">Valor da Nota *</label>
-                                <input type="number" step="0.01" id="cadastrar_valor" name="valor" class="form-control" required>
+                                <input type="number" step="0.01" id="cadastrar_valor" lang="pt-br" name="valor" class="form-control" required>
                             </div>
                             <div class="col-4">
                                 <label for="data" class="form-label">Data da Nota *</label>
@@ -451,10 +453,15 @@
             $('#modalVerDescricao').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
                 let descricao_nota = button.data('descricao_nota');
-                
-                $('#descricao_nota').text(descricao_nota);
+                let valor = button.data('valor');
 
-                console.log(descricao_nota)
+                // Formatar o valor com o padrão brasileiro
+                let valorFormatado = parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                $('#descricao_nota').text(descricao_nota);
+                $('#ver_valor').text(valorFormatado);
+
+                console.log(descricao_nota);
             });
 
             $('#modalEditarNota').on('show.bs.modal', function (event) {

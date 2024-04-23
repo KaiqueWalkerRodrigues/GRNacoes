@@ -1,64 +1,128 @@
-<?php
+<?php 
+    include_once('../const.php'); 
+?>
+<!DOCTYPE html>
+<html lang="en">
 
-require '../vendor/autoload.php';
-require '../const.php';
+<head>
 
-use PhpOffice\PhpSpreadsheet\Calculation\LookupRef\Formula;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-$Compras_notas = new Compras_Notas();
-$Compras_Fornecedor = new Compras_Fornecedores();
-$Compras_Categoria = new Compras_Categorias();
+    <title>GRNacoes - Gerenciar Setores</title>
 
-$ano_atual = date('Y');
+    <!-- Custom fonts for this template -->
+    <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-$meses = [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
-];
+    <!-- Custom styles for this template -->
+    <link href="<?php echo URL ?>/css/sb-admin-2.min.css" rel="stylesheet">
 
-$spreadsheet = new Spreadsheet();
-$activeWorksheet = $spreadsheet->getActiveSheet();
-$activeWorksheet->setCellValue('A1', 'RELATORIO RESUMO GERAL CLINICAS - '.$ano_atual.' - MATRIZ');
-$activeWorksheet->setCellValue('A2','DESCRIÇÃO');
+    <!-- Custom styles for this page -->
+    <link href="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-$col = 'B';
-foreach ($meses as $mes) {
-    $activeWorksheet->setCellValue($col.'2', $mes);
-    $col++;
-}
+</head>
 
-$activeWorksheet->setCellValue('N2','Total');
+<body id="page-top">
 
-$row_categoria = 3;
-foreach($Compras_Categoria->listar() as $cc){
-    $cca = strtoupper($cc->categoria);
-    $activeWorksheet->setCellValue('A'.$row_categoria,$cca);
+    <!-- Page Wrapper -->
+    <div id="wrapper">
 
-    
-    $col = 'B';
-    for($i = 1; $i <= 12;$i++){
-        $valor_total = $Compras_notas->totalCategoria(1, $cc->id_compra_categoria,$i,$ano_atual);
-        $activeWorksheet->setCellValue($col.$row_categoria, $valor_total);
-        $col = chr(ord($col) + 1);
-    }
-    
-    $activeWorksheet->setCellValue('N'.$row_categoria,$Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria,$ano_atual));
+        <!-- Sidebar -->
+        <?php include_once('../sidebar.php'); ?>
+        <!-- End of Sidebar -->
 
-    $row_categoria++;
-}
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
+            <!-- Main Content -->
+            <div id="content">
 
-$writer = new Xlsx($spreadsheet);
-$writer->save('Relatorio_compras_.xlsx');
+                <!-- Topbar -->
+                <?php include_once('../topbar.php'); ?>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <br><br><br><br>
+
+                    <!-- <a href="relatorio_compras_2024.xlsx" class="btn btn-primary" download>Baixar Relatório</a> -->
+                    <a href="gerar_relatorio.php" class="btn btn-primary">Gerar Relatório</a>
+
+                    <?php 
+                        if (isset($_GET['s'])) {
+                            // Se estiver presente, exibe o botão para baixar o relatório
+                            echo '<a id="downloadButton" href="relatorio_compras_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
+                        }
+                    ?>
+
+                    <br><br>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Grupo Nações 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="<?php echo URL ?>/vendor/jquery/jquery.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="<?php echo URL ?>/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="<?php echo URL ?>/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTablesCategorias.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="<?php echo URL ?>/js/demo/datatables-demo.js"></script>
+
+    <script>
+       $(document).ready(function() {
+            $('#comp').addClass('active');
+            $('#compras_relatorios').addClass('active');
+
+            function autoDownload() {
+                // Simulando o clique no botão de download
+                document.getElementById('downloadButton').click();
+            }
+
+            // Chamando a função autoDownload assim que a página for carregada
+            window.onload = autoDownload;
+    });
+    </script>
+
+</body>
+</html>
