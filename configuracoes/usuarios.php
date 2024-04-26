@@ -93,7 +93,16 @@
                                             <td><?php echo Helper::mostrar_empresa($usuario->empresa); ?></td>
                                             <td class="text-center">
                                                 <button class="btn btn-primary"><i class="fa-solid fa-comment"></i></button>
-                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"><i class="fa-regular fa-address-book"></i></button>
+                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
+                                                    data-nome="<?php echo $usuario->nome ?>"
+                                                    data-contrato="<?php echo $usuario->contrato_nube ?>"
+                                                    data-rg="<?php echo $usuario->rg ?>"
+                                                    data-foto3x4="<?php echo $usuario->foto3x4 ?>"
+                                                    data-residencia="<?php echo $usuario->residencia ?>"
+                                                    data-id_usuario="<?php echo $usuario->id_usuario ?>"
+                                                    >
+                                                    <i class="fa-regular fa-address-book"></i>
+                                                </button>
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarUsuario" class="collapse-item" 
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-idusuario="<?php echo $usuario->id_usuario ?>"
@@ -153,37 +162,53 @@
     </a>
 
     <!-- Modal Documentos -->
-    <div class="modal fade" id="modalDocumentos" tabindex="-1" role="dialog" aria-labelledby="abrirchamadoLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDocumentos" tabindex="-1" role="dialog" aria-labelledby="modalDocumentosLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalDocumentosLabel">Documentos de Kaique Rodrigues de Souza</h5>
+                    <h5 class="modal-title">Documentos de <span class="modalDocumentosLabel"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-3 text-center">
-                            <h5>RG</h5>
-                            <img style="width: 200px;height:100px" src="<?php echo URL ?>/img/usuarios/teste/rg.jpg" alt="">
-                            <br><br>
-                            <button class="btn btn-success"><i class="fa-solid fa-download"></i></button>
+                    <form action="?" method="post">
+                        <div class="row">
+                            <div class="col-3 text-center d-none" id="colrg">
+                                <h5>RG</h5>
+                                <img id="verrg" style="width: 200px;height:100px" alt="">
+                                <br><br>
+                                <button id="RGdownloadButton" type="button" class="btn btn-success"><i class="fa-solid fa-download"></i></button>
+                            </div>
+                            <div class="col-3 text-center d-none" id="formrg">
+                                <label for="input_rg" class="form-label">RG</label>
+                                <input type="file" name="rg" id="input_rg" class="form-control" accept="image/png, image/jpeg, image/webp, image/jpg">
+                            </div>
+                            <div class="col-3 text-center d-none" id="colcontrato">
+                                <h5>Contrato</h5>
+                                <img id="vercontrato" style="width: 100px;height:100px" alt="">
+                                <br><br>
+                                <button class="btn btn-success"><i class="fa-solid fa-download"></i></button>
+                            </div>
+                            <div class="col-3 text-center d-none" id="formcontrato">
+                                <label for="input_contrato" class="form-label">Contrato</label>
+                                <input type="file" name="contrato" id="input_contrato" class="form-control" accept="image/png, image/jpeg, image/webp, image/jpg">
+                            </div>
+                            <div class="col-3 text-center d-none" id="colfoto">
+                                <h5>Foto 3x4</h5>
+                                <img id="verfoto" style="width: 100px;height:100px" alt="">
+                                <br><br>
+                                <button class="btn btn-success"><i class="fa-solid fa-download"></i></button>
+                            </div>
+                            <div class="col-3 text-center d-none" id="formfoto">
+                                <label for="input_foto" class="form-label">Foto 3x4</label>
+                                <input type="file" name="foto" id="input_foto" class="form-control" accept="image/png, image/jpeg, image/webp, image/jpg">
+                            </div>
                         </div>
-                        <div class="col-3 text-center">
-                            <h5>Contrato</h5>
-                            <img style="width: 100px;height:100px" src="<?php echo URL ?>/img/usuarios/teste/contrato.jpg" alt="">
-                            <br><br>
-                            <button class="btn btn-success"><i class="fa-solid fa-download"></i></button>
-                        </div>
-                        <div class="col-3 text-center">
-                            <h5>Contrato Nube</h5>
-                            <span>Não possui/Se Aplica</span>
-                            <br><br>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" name="btnSalvar" data-dismiss="modal">Salvar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
             </div>
@@ -670,6 +695,64 @@
             $('.modalDesativarUsuarioLabel').empty()
             $('.modalDesativarUsuarioLabel').append(nome)
         })
+        $('#modalDocumentos').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            $('#verrg').attr('src', '');
+            $('#vercontrato').attr('src', '');
+            $('#verfoto').attr('src', '');
+
+            let id_usuario = button.data('id_usuario');
+            let nome = button.data('nome');
+            let rg = button.data('rg');
+            let contrato = button.data('contrato');
+            let foto3x4 = button.data('foto3x4');
+            let residencia = button.data('residencia');
+
+            $('.modalDocumentosLabel').text(nome);
+
+            // Construa o caminho para a imagem do RG
+            if(rg != ''){
+                let caminho_rg = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+rg;
+                $('#verrg').attr('src', caminho_rg);
+                $('#colrg').removeClass('d-none')
+                $('#formfoto').addClass('d-none')
+            }else{
+                $('#colrg').addClass('d-none')
+                $('#formrg').removeClass('d-none')
+            }
+
+            $('#RGdownloadButton').click(function(){
+                // Defina o diretório do arquivo
+                console.log(id_usuario)
+
+                var directory = '/GRNacoes/configuracoes/usuario/' + id_usuario + '/'+rg;
+                
+                // Simule o download do arquivo
+                var link = document.createElement('a');
+                link.href = directory;
+                link.download = rg;
+                link.click();
+            });
+        
+            if(contrato != ''){
+                let caminho_contrato = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+contrato;
+                $('#vercontrato').attr('src', caminho_contrato);
+                $('#colcontrato').removeClass('d-none')
+                $('#formfoto').addClass('d-none')
+            }else{
+                $('#colcontrato').addClass('d-none')
+                $('#formcontrato').removeClass('d-none')
+            }
+            if(foto3x4 != ''){
+                let caminho_foto = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+foto;
+                $('#verfoto').attr('src', caminho_foto);
+                $('#colfoto').removeClass('d-none')
+                $('#formfoto').addClass('d-none')
+            }else{
+                $('#colfoto').addClass('d-none')
+                $('#formfoto').removeClass('d-none')
+            }
+        });
     </script>
 
 </body>

@@ -202,18 +202,28 @@ class Compras_Fornecedores {
     public function nomeCategoria(int $id_fornecedor)
     {
         $sql = $this->pdo->prepare('SELECT id_categoria FROM compras_fornecedores WHERE id_compra_fornecedor = :id_fornecedor');
-        $sql->bindParam(':id_fornecedor',$id_fornecedor);
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
         $sql->execute();
 
         $fornecedor = $sql->fetch(PDO::FETCH_OBJ);
-    
-        $sql = $this->pdo->prepare('SELECT categoria FROM compras_categorias WHERE id_compra_categoria = :id_categoria');
-        $sql->bindParam(':id_categoria',$fornecedor->id_categoria);
-        $sql->execute();
 
-        $categoria = $sql->fetch(PDO::FETCH_OBJ);
+        // Verificando se o fornecedor foi encontrado
+        if ($fornecedor) {
+            $sql = $this->pdo->prepare('SELECT categoria FROM compras_categorias WHERE id_compra_categoria = :id_categoria');
+            $sql->bindParam(':id_categoria', $fornecedor->id_categoria);
+            $sql->execute();
 
-        return $categoria->categoria;
+            $categoria = $sql->fetch(PDO::FETCH_OBJ);
+
+            // Verificando se a categoria foi encontrada
+            if ($categoria) {
+                return $categoria->categoria;
+            } else {
+                return "Categoria não encontrada";
+            }
+        } else {
+            return "Fornecedor não encontrado";
+        }
     }
 
 }

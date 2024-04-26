@@ -288,7 +288,7 @@
                                 <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
                                         <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
-                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?></option>
+                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compras_Categorias->mostrar($cf->id_categoria)->categoria ?>)</option>
                                         <?php } ?>
                                     </select>
                                 </div>
