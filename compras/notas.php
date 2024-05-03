@@ -127,7 +127,7 @@
                             <select id="filtroFornecedor" class="form-control">
                                 <option value="">Todos</option>
                                     <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
-                                        <option value="<?php echo $cf->fornecedor ?>"><?php echo $cf->fornecedor ?></option>
+                                        <option value="<?php echo $cf->fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compras_Categorias->mostrar($cf->id_categoria)->categoria ?>)</option>
                                     <?php } ?>
                             </select>
                         </div>
@@ -299,7 +299,7 @@
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <label for="id_fornecedor" class="form-label">Fornecedor *</label>
                                 <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -368,12 +368,12 @@
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <label for="editar_id_fornecedor" class="form-label">Fornecedor *</label>
                                 <select name="id_fornecedor" id="editar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
-                                        <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?></option>
+                                        <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
+                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compras_Categorias->mostrar($cf->id_categoria)->categoria ?>)</option>
                                         <?php } ?>
                                 </select>
                             </div>

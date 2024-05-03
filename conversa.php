@@ -1,5 +1,23 @@
+<?php
+    include_once('const.php');
+
+    if($_GET['id'] > 0){
+    }else{
+        header('location:/GRNacoes/conversas');
+    }
+    
+    $id = $_GET['id'];
+            
+    $Mensagem = new Mensagem();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enviarMensagem'])) {
+        $Mensagem->cadastrar($_POST);
+    }
+?>
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
 
@@ -93,23 +111,6 @@
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel molestie mauris. Aenean in pretium mauris. In tempus ullamcorper gravida. Sed mi lectus, facilisis id euismod vel, suscipit vel lacus. Praesent sit amet dolor ultrices ante luctus elementum vel id dolor. Morbi in nulla nulla. Sed condimentum odio eu dolor porttitor ultrices. Fusce quis pellentesque sem, non porta ligula. Maecenas vehicula tempus lorem et elementum. Nulla tincidunt, ligula vel pulvinar pretium, mauris sapien luctus mi, non egestas orci eros non lacus. Quisque volutpat quis felis volutpat finibus. Sed tellus augue, fringilla nec aliquam ac, tincidunt et ipsum. Donec ut lectus eget lectus malesuada maximus congue non mauris. Suspendisse nec vestibulum justo. Pellentesque ut posuere nunc. Integer eu justo faucibus, ornare arcu a, sodales odio.
                             </p>
                         </div>
-
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
-                        <div class="card p-2 mb-2">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel molestie mauris. Aenean in pretium mauris. In tempus ullamcorper gravida. Sed mi lectus, facilisis id euismod vel, suscipit vel lacus. Praesent sit amet dolor ultrices ante luctus elementum vel id dolor. Morbi in nulla nulla. Sed condimentum odio eu dolor porttitor ultrices. Fusce quis pellentesque sem, non porta ligula. Maecenas vehicula tempus lorem et elementum. Nulla tincidunt, ligula vel pulvinar pretium, mauris sapien luctus mi, non egestas orci eros non lacus. Quisque volutpat quis felis volutpat finibus. Sed tellus augue, fringilla nec aliquam ac, tincidunt et ipsum. Donec ut lectus eget lectus malesuada maximus congue non mauris. Suspendisse nec vestibulum justo. Pellentesque ut posuere nunc. Integer eu justo faucibus, ornare arcu a, sodales odio.
-                            </p>
-                        </div>
-                        <div class="card p-2 mb-2 eu">
-                            <p>
-                                E o pix?
-                            </p>
-                        </div>
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
                         <div class="card p-2 mb-2 eu">
                             <p>
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat quasi nulla qui est iste quisquam impedit repellendus ea nemo voluptate distinctio ab iure vero cupiditate, ipsa asperiores aperiam sit? Blanditiis!
@@ -118,31 +119,6 @@
                         <div class="icon-container">
                             <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
                         </div>
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
-                        <div class="card p-2 mb-2">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel molestie mauris. Aenean in pretium mauris. In tempus ullamcorper gravida. Sed mi lectus, facilisis id euismod vel, suscipit vel lacus. Praesent sit amet dolor ultrices ante luctus elementum vel id dolor. Morbi in nulla nulla. Sed condimentum odio eu dolor porttitor ultrices. Fusce quis pellentesque sem, non porta ligula. Maecenas vehicula tempus lorem et elementum. Nulla tincidunt, ligula vel pulvinar pretium, mauris sapien luctus mi, non egestas orci eros non lacus. Quisque volutpat quis felis volutpat finibus. Sed tellus augue, fringilla nec aliquam ac, tincidunt et ipsum. Donec ut lectus eget lectus malesuada maximus congue non mauris. Suspendisse nec vestibulum justo. Pellentesque ut posuere nunc. Integer eu justo faucibus, ornare arcu a, sodales odio.
-                            </p>
-                        </div>
-                        <div class="card p-2 mb-2 eu">
-                            <p>
-                                E o pix?
-                            </p>
-                        </div>
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
-                        <div class="card p-2 mb-2">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel molestie mauris. Aenean in pretium mauris. In tempus ullamcorper gravida. Sed mi lectus, facilisis id euismod vel, suscipit vel lacus. Praesent sit amet dolor ultrices ante luctus elementum vel id dolor. Morbi in nulla nulla. Sed condimentum odio eu dolor porttitor ultrices. Fusce quis pellentesque sem, non porta ligula. Maecenas vehicula tempus lorem et elementum. Nulla tincidunt, ligula vel pulvinar pretium, mauris sapien luctus mi, non egestas orci eros non lacus. Quisque volutpat quis felis volutpat finibus. Sed tellus augue, fringilla nec aliquam ac, tincidunt et ipsum. Donec ut lectus eget lectus malesuada maximus congue non mauris. Suspendisse nec vestibulum justo. Pellentesque ut posuere nunc. Integer eu justo faucibus, ornare arcu a, sodales odio.
-                            </p>
-                        </div>
-
                     </div>
 
                 </div>
@@ -152,20 +128,20 @@
             <!-- End of Main Content -->
 
             <div id="msg">
-                <div class="mb-3" style="margin-left: 6%;">
-                    <div class="row">
-                        <div class="col-9">
-                            <textarea class="form-control" name="" id="" cols="30" rows="3"></textarea>
-                        </div>
-                        <!-- <div class="col-1">
-                            <label for="file-upload" class="btn btn-lg btn-primary"><i class="fa-solid fa-paperclip"></i></label>
-                            <input id="file-upload" type="file" accept="image/jpeg, image/jpg, image/png, image/webp, image/gif" style="display: none;">
-                        </div> -->
-                        <div class="col-1">
-                            <button class="btn btn-lg btn-success"><i class="fa-solid fa-paper-plane"></i></button>
+                <form action="?" method="post">
+                    <div class="mb-3" style="margin-left: 6%;">
+                        <div class="row">
+                            <div class="col-9">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <input type="hidden" name="id_chat" value="<?php echo $_GET['id'] ?>">
+                                <textarea class="form-control" id="mensagem" name="mensagem" cols="30" rows="3"></textarea>
+                            </div>
+                            <div class="col-1">
+                                <button type="submit" class="btn btn-lg btn-success" name="enviarMensagem"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
 
         </div>
