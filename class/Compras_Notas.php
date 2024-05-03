@@ -266,5 +266,23 @@ class Compras_Notas {
         return $resultado['total_notas'];
     }
 
+    public function totalClinicas(){
+        $sql = $this->pdo->prepare('SELECT sum(valor) as total_clinica FROM compras_notas WHERE id_empresa = 1 OR id_empresa = 3 OR id_empresa = 5');
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total_clinica'];
+    }
+
+    public function totalOticas(){
+        $sql = $this->pdo->prepare('SELECT sum(valor) as total_otica FROM compras_notas WHERE id_empresa = 2 OR id_empresa = 4 OR id_empresa = 6');
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total_otica'];
+    }
+
 }
 ?>
