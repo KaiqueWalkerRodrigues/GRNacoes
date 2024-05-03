@@ -10,7 +10,7 @@ class Usuario {
     }
 
     public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL ORDER BY nome DESC');        
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL ORDER BY nome ASC');        
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }

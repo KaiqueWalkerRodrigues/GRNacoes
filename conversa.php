@@ -154,13 +154,13 @@
             <div id="msg">
                 <div class="mb-3" style="margin-left: 6%;">
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-9">
                             <textarea class="form-control" name="" id="" cols="30" rows="3"></textarea>
                         </div>
-                        <div class="col-1">
+                        <!-- <div class="col-1">
                             <label for="file-upload" class="btn btn-lg btn-primary"><i class="fa-solid fa-paperclip"></i></label>
                             <input id="file-upload" type="file" accept="image/jpeg, image/jpg, image/png, image/webp, image/gif" style="display: none;">
-                        </div>
+                        </div> -->
                         <div class="col-1">
                             <button class="btn btn-lg btn-success"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>

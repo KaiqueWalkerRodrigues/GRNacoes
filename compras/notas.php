@@ -144,19 +144,20 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>N° Nota</th>
                                             <th>Mês</th>
                                             <th>Data</th>
                                             <th>Empresa</th>
                                             <th>Categoria</th>
                                             <th>Fornecedor</th>
-                                            <th>Descricao</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach($Compras_Notas->listar() as $cn){ ?>
                                         <tr>
+                                            <td><?php echo $cn->id_compra_nota ?></td>
                                             <td><?php echo $cn->n_nota ?></td>
                                             <td><?php $dt = new DateTime($cn->data); $mesAbreviado = Helper::traduzirMes($dt->format('M')); $anoAbreviado = $dt->format('y'); $dataFormatada = $mesAbreviado . '/' . $anoAbreviado; echo $dataFormatada?></td>
                                             <td><?php $dt = new DateTime($cn->data); echo $dt->format('d/m/Y') ?></td>
@@ -165,11 +166,10 @@
                                             <td><?php echo $Compras_Fornecedores->nomeFornecedor($cn->id_fornecedor)?></td>
                                             <td class="text-center"><button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
                                                 data-descricao_nota="<?php echo $cn->descricao ?>"
-                                                data-valor="<?php echo $cn->valor ?>">
+                                                data-valor="<?php echo $cn->valor ?>"
+                                                data-quantidade="<?php echo $cn->quantidade ?>">
                                                 <i class="fa-solid fa-eye"></i>
                                                 </button>
-                                            </td>
-                                            <td class="text-center">
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarNota" class="collapse-item"
                                                     data-id_compra_nota="<?php echo $cn->id_compra_nota ?>"
                                                     data-id_fornecedor="<?php echo $cn->id_fornecedor ?>"
@@ -177,6 +177,7 @@
                                                     data-valor="<?php echo $cn->valor ?>"
                                                     data-data="<?php echo $cn->data ?>"
                                                     data-id_empresa="<?php echo $cn->id_empresa ?>"
+                                                    data-quantidade="<?php echo $cn->quantidade ?>"
                                                     data-descricao="<?php echo $cn->descricao ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
@@ -235,7 +236,7 @@
                     <div><p id="descricao_nota"></p></div>
                 </div>
                 <div class="modal-footer">
-                    <p>R$ <span id="ver_valor"></span></p>
+                    <p>Qntd: <span id="ver_quantidade"></span> | R$ <span id="ver_valor"></span></p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
@@ -290,12 +291,16 @@
                                         <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
                                             <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compras_Categorias->mostrar($cf->id_categoria)->categoria ?>)</option>
                                         <?php } ?>
-                                    </select>
-                                </div>
-                                <div class="col-8 offset-2">
-                                    <label for="cadastrar_descricao" class="form-label">Descricao</label>
-                                    <textarea name="descricao" id="cadastrar_descricao" class="form-control" cols="30" rows="5"></textarea>
-                                </div>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" step="0.01" lang="pt-br" id="cadastrar_quantidade" name="quantidade" class="form-control" value="1">
+                            </div>
+                            <div class="col-8 offset-2">
+                                <label for="cadastrar_descricao" class="form-label">Descricao</label>
+                                <textarea name="descricao" id="cadastrar_descricao" class="form-control" cols="30" rows="5"></textarea>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -355,12 +360,16 @@
                                     <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
                                         <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?></option>
                                         <?php } ?>
-                                    </select>
-                                </div>
-                                <div class="col-8 offset-2">
-                                    <label for="editar_descricao" class="form-label">Descricao</label>
-                                    <textarea name="descricao" id="editar_descricao" class="form-control" cols="30" rows="5"></textarea>
-                                </div>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" step="0.01" lang="pt-br" id="editar_quantidade" name="quantidade" class="form-control">
+                            </div>
+                            <div class="col-8 offset-2">
+                                <label for="editar_descricao" class="form-label">Descricao</label>
+                                <textarea name="descricao" id="editar_descricao" class="form-control" cols="30" rows="5"></textarea>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -433,10 +442,10 @@
                 
                 // Iterar sobre as linhas da tabela para aplicar os filtros
                 $('#dataTable tbody tr').each(function() {
-                    var mes = $(this).find('td:eq(1)').text();
-                    var Empresa = $(this).find('td:eq(3)').text();
-                    var categoria = $(this).find('td:eq(4)').text();
-                    var fornecedor = $(this).find('td:eq(5)').text();
+                    var mes = $(this).find('td:eq(2)').text();
+                    var Empresa = $(this).find('td:eq(4)').text();
+                    var categoria = $(this).find('td:eq(5)').text();
+                    var fornecedor = $(this).find('td:eq(6)').text();
 
                     console.log(categoria,filtroCategoria)
                     
@@ -454,12 +463,14 @@
                 let button = $(event.relatedTarget);
                 let descricao_nota = button.data('descricao_nota');
                 let valor = button.data('valor');
+                let quantidade = button.data('quantidade')
 
                 // Formatar o valor com o padrão brasileiro
                 let valorFormatado = parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
                 $('#descricao_nota').text(descricao_nota);
                 $('#ver_valor').text(valorFormatado);
+                $('#ver_quantidade').text(quantidade)
 
                 console.log(descricao_nota);
             });
@@ -467,6 +478,7 @@
             $('#modalEditarNota').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
                 let id_compra_nota = button.data('id_compra_nota');
+                let quantidade =  button.data('quantidade')
                 let id_fornecedor = button.data('id_fornecedor');
                 let n_nota = button.data('n_nota');
                 let valor = button.data('valor');
@@ -476,6 +488,7 @@
 
                 $('#editar_id_compra_nota').val(id_compra_nota);
                 $('#editar_id_fornecedor').val(id_fornecedor);
+                $('#editar_quantidade').val(quantidade)
                 $('#editar_n_nota').val(n_nota);
                 $('#editar_valor').val(valor);
                 $('#editar_data').val(data);

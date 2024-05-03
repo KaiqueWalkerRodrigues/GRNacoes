@@ -31,15 +31,16 @@ class Compras_Notas {
         $n_nota = $dados['n_nota'];
         $data = $dados['data'];
         $valor = $dados['valor'];
+        $quantidade = $dados['quantidade'];
         $id_empresa = $dados['id_empresa'];
         $descricao = $dados['descricao'];
         $agora = date("Y-m-d H:i:s");
         $usuario_logado = $dados['usuario_logado'];
 
         $sql = $this->pdo->prepare('INSERT INTO compras_notas 
-                                    (id_fornecedor,valor, descricao, n_nota, data, id_empresa, created_at, updated_at)
+                                    (id_fornecedor,valor, quantidade, descricao, n_nota, data, id_empresa, created_at, updated_at)
                                     VALUES
-                                    (:id_fornecedor,:valor, :descricao, :n_nota, :data, :id_empresa, :created_at, :updated_at)
+                                    (:id_fornecedor,:valor, :quantidade, :descricao, :n_nota, :data, :id_empresa, :created_at, :updated_at)
                                 ');
 
         $created_at = $agora;
@@ -50,9 +51,13 @@ class Compras_Notas {
         $sql->bindParam(':data', $data);
         $sql->bindParam(':valor', $valor);
         $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':quantidade', $quantidade);
         $sql->bindParam(':descricao', $descricao);
         $sql->bindParam(':created_at', $created_at);
         $sql->bindParam(':updated_at', $updated_at);
+
+        print_r($dados);
+        die();
 
         if ($sql->execute()) {
             // Registra o log
@@ -96,6 +101,7 @@ class Compras_Notas {
         $id_empresa = $dados['id_empresa'];
         $descricao = $dados['descricao'];
         $updated_at = date("Y-m-d H:i:s");
+        $quantidade = $dados['quantidade'];
         $usuario_logado = $dados['usuario_logado'];
 
         $sql = $this->pdo->prepare("UPDATE compras_notas SET
@@ -103,6 +109,7 @@ class Compras_Notas {
             n_nota = :n_nota,
             valor = :valor,
             descricao = :descricao,
+            quantidade = :quantidade,
             data = :data,
             id_empresa = :id_empresa,
             updated_at = :updated_at 
@@ -114,6 +121,7 @@ class Compras_Notas {
         $sql->bindParam(':id_fornecedor', $id_fornecedor);
         $sql->bindParam(':n_nota', $n_nota);
         $sql->bindParam(':data', $data);
+        $sql->bindParam(':quantidade', $quantidade);
         $sql->bindParam(':valor', $valor);
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':descricao', $descricao);

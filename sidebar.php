@@ -94,7 +94,7 @@
 
 <!-- Nav Item - Tables -->
 <li class="nav-item" id="chat">
-    <a class="nav-link" href="<?php echo URL ?>/chat">
+    <a class="nav-link" href="<?php echo URL ?>/conversas">
         <i class="fa-solid fa-comment"></i>
         <span>Chat</span></a>
 </li>
