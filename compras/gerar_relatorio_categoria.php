@@ -518,17 +518,33 @@ $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
 $row_categoria++;
 $row_categoria++;
-
 /*
     FIM EMPRESAS
 */
+
+$row_categoria++;
+
+/*
+    Total Anual:
+*/
+
+$activeWorksheet->setCellValue('A'.$row_categoria,'Total Clínicas:');
+$activeWorksheet->setCellValue('B'.$row_categoria,$Compras_notas->totalClinicas());
+$activeWorksheet->getCell('B'.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+
+$row_categoria++;
+
+$activeWorksheet->setCellValue('A'.$row_categoria,'Total Óticas:');
+$activeWorksheet->setCellValue('B'.$row_categoria,$Compras_notas->totalOticas());
+$activeWorksheet->getCell('B'.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+
 $row_alinhamento = 'A';
 for ($i = 1; $i <= 16; $i++) {
     $spreadsheet->getActiveSheet()->getColumnDimension($row_alinhamento)->setAutoSize(true);
     $row_alinhamento = chr(ord($row_alinhamento) + 1);
 }
 
-$filename = 'relatorio_compras_' . date('Y') . '.xlsx';
+$filename = 'gerar_relatorio_categorias_' . date('Y') . '.xlsx';
 
 // Verifica se o arquivo já existe
 if (file_exists($filename)) {

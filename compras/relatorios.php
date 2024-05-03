@@ -1,5 +1,8 @@
 <?php 
     include_once('../const.php'); 
+
+    $Compras_Categorias = new Compras_Categorias();
+    $Compras_Fornecedores = new Compras_Fornecedores();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,17 +54,100 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+
                     <br><br><br><br>
 
-                    <!-- <a href="relatorio_compras_2024.xlsx" class="btn btn-primary" download>Baixar Relatório</a> -->
-                    <a href="gerar_relatorio.php" class="btn btn-primary">Gerar Relatório</a>
+                        <!-- <form action="?" method="get">
+                            <div class="row mb-4">
+                                <div class="col-3">
+                                    <label for="filtroEmpresa" class="form-label">Filtrar por Empresa:</label>
+                                    <select id="filtroEmpresa" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="Clínica Parque">Clínica Parque</option>
+                                        <option value="Clínica Mauá">Clínica Mauá</option>
+                                        <option value="Clínica Jardim">Clínica Jardim</option>
+                                        <option value="Ótica Matriz">Ótica Matriz</option>
+                                        <option value="Ótica Prestigio">Ótica Prestigio</option>
+                                        <option value="Ótica Daily">Ótica Daily</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label for="filtroMes" class="form-label">Filtrar por Mês:</label>
+                                    <select id="filtroMes" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="Jan/24">Jan/24</option>
+                                        <option value="Fev/24">Fev/24</option>
+                                        <option value="Mar/24">Mar/24</option>
+                                        <option value="Abr/24">Abr/24</option>
+                                        <option value="Mai/24">Mai/24</option>
+                                        <option value="Jun/24">Jun/24</option>
+                                        <option value="Jul/24">Jul/24</option>
+                                        <option value="Ago/24">Ago/24</option>
+                                        <option value="Set/24">Set/24</option>
+                                        <option value="Out/24">Out/24</option>
+                                        <option value="Nov/24">Nov/24</option>
+                                        <option value="Dez/24">Dez/24</option>
+                                        <option value="Jan/25">Jan/25</option>
+                                        <option value="Fev/25">Fev/25</option>
+                                        <option value="Mar/25">Mar/25</option>
+                                        <option value="Abr/25">Abr/25</option>
+                                        <option value="Mai/25">Mai/25</option>
+                                        <option value="Jun/25">Jun/25</option>
+                                        <option value="Jul/25">Jul/25</option>
+                                        <option value="Ago/25">Ago/25</option>
+                                        <option value="Set/25">Set/25</option>
+                                        <option value="Out/25">Out/25</option>
+                                        <option value="Nov/25">Nov/25</option>
+                                        <option value="Dez/25">Dez/25</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label for="filtroCategoria" class="form-label">Filtrar por Categoria:</label>
+                                    <select id="filtroCategoria" class="form-control">
+                                        <option value="">Todos</option>
+                                        <?php foreach($Compras_Categorias->listar() as $cc){ ?>
+                                            <option value="<?php echo $cc->id_compra_categoria ?>"><?php echo $cc->categoria ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label for="filtroFornecedor" class="form-label">Filtrar por Fornecedor:</label>
+                                    <select id="filtroFornecedor" class="form-control">
+                                        <option value="">Todos</option>
+                                        <?php foreach($Compras_Fornecedores->listar() as $cf){ ?>
+                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
 
-                    <?php 
-                        if (isset($_GET['s'])) {
-                            // Se estiver presente, exibe o botão para baixar o relatório
-                            echo '<a id="downloadButton" href="relatorio_compras_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
-                        }
-                    ?>
+                        <hr> -->
+
+                        <div class="row">
+
+                            <!-- <div class="text-center col-4 offset-4">
+                                <a href="gerar_relatorio_fornecedor.php" class="btn btn-secondary">Gerar Relatório Anual por Fornecedor</a>
+                            </div> -->
+
+                            <div class="text-center col-4">
+                                <a href="gerar_relatorio_categoria.php" class="btn btn-primary">Gerar Relatório Anual por Categoria</a>
+                            </div>
+
+                        </div>
+
+                        <?php 
+                            if (isset($_GET['s'])) {
+                                // Se estiver presente, exibe o botão para baixar o relatório
+                                echo '<a id="downloadButton" href="gerar_relatorio_categorias_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
+                            }
+                        ?>
+                        <?php 
+                            if (isset($_GET['f'])) {
+                                // Se estiver presente, exibe o botão para baixar o relatório
+                                echo '<a id="downloadButton" href="gerar_relatorio_fornecedores_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
+                            }
+                        ?>
 
                     <br><br>
 

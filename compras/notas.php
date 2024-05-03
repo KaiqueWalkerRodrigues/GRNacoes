@@ -151,9 +151,23 @@
                                             <th>Empresa</th>
                                             <th>Categoria</th>
                                             <th>Fornecedor</th>
+                                            <th class="d-none">Valor</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Total:</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="d-none"></th>
+                                            <th>R$ <span id="totalValor"></span></th>
+                                        </tr>
+                                    </tfoot>
                                     <tbody>
                                         <?php foreach($Compras_Notas->listar() as $cn){ ?>
                                         <tr>
@@ -164,6 +178,7 @@
                                             <td><?php echo Helper::mostrar_empresa($cn->id_empresa) ?></td>
                                             <td><?php echo $Compras_Categorias->nomeCategoria($Compras_Fornecedores->mostrar($cn->id_fornecedor)->id_categoria) ?></td>
                                             <td><?php echo $Compras_Fornecedores->nomeFornecedor($cn->id_fornecedor)?></td>
+                                            <td class="d-none"><?php echo $cn->valor ?></td>
                                             <td class="text-center"><button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
                                                 data-descricao_nota="<?php echo $cn->descricao ?>"
                                                 data-valor="<?php echo $cn->valor ?>"
@@ -429,6 +444,21 @@
         $(document).ready(function() {
             $('#comp').addClass('active');
             $('#compras_notas').addClass('active');
+
+            {
+                // Função para calcular e exibir a soma total dos valores
+                function calcularSomaTotal() {
+                    var somaTotal = 0;
+                    $('#dataTable tbody tr:visible').each(function() {
+                        var valor = parseFloat($(this).find('td:eq(7)').text()); // Assuming the value is in the 7th column, adjust if necessary
+                        somaTotal += valor;
+                    });
+                    $('#totalValor').text(somaTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
+                }
+
+                // Chamada inicial para calcular a soma total
+                calcularSomaTotal();
+            }
             
             // Evento de alteração nos filtros
             $('#filtroMes, #filtroFornecedor, #filtroEmpresa, #filtroCategoria').change(function() {
@@ -457,6 +487,8 @@
                         $(this).hide(); // Ocultar a linha se não atender aos critérios
                     }
                 });
+
+                calcularSomaTotal();
             });
             
             $('#modalVerDescricao').on('show.bs.modal', function (event) {
