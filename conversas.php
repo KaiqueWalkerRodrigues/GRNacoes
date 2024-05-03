@@ -27,7 +27,6 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -56,20 +55,20 @@
                     <div class="row">
 
                     <div class="col-12">
-                        <a href="<?php echo URL ?>/chat?id=5" class="text-decoration-none">
-                            <div class="card my-3 border-0 shadow-sm">
+                        <a href="<?php echo URL ?>/conversa?id=5" class="text-decoration-none grow-on-hover">
+                            <div class="card my-3 border-1">
                                 <div class="row align-items-center">
                                     <div class="col-1">
-                                        <img class="img-profile rounded-circle p-2 ml-3" width="80%" src="<?php echo URL ?>/img/undraw_profile.svg">
+                                        <img class="img-profile rounded-circle p-2 ml-3" width="75%" src="<?php echo URL ?>/img/undraw_profile.svg">
                                     </div>
                                     <div class="col-4 text-start">
-                                        <h4 class="text-dark">Nome do Funcionario</h4> 
+                                        <p class="text-dark mt-3">Kaique Rodrigues de Souza</p> 
                                     </div>
                                     <div class="col-4 text-start">
-                                        <h4 class="text-dark">Departamento</h4> 
+                                        <p class="text-dark mt-3">Tecnologia da Informação</p> 
                                     </div>
                                     <div class="col-2 text-start">
-                                        <h4 class="text-dark">Unidade</h4> 
+                                        <p class="text-dark mt-3">Santo André</p> 
                                     </div>
                                     <div class="col-1 text-start">
                                         <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;">
