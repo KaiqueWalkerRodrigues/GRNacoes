@@ -93,11 +93,11 @@
 </li> 
 
 <!-- Nav Item - Tables -->
-<li class="nav-item" id="chat">
-    <a class="nav-link" href="<?php echo URL ?>/conversas">
+<!-- <li class="nav-item" id="chat">
+    <a class="nav-link" href="<?php // echo URL ?>/conversas">
         <i class="fa-solid fa-comment"></i>
         <span>Chat</span></a>
-</li>
+</li> -->
 
 <li class="nav-item" id="comp">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras"
