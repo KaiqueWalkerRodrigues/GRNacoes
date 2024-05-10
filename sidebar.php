@@ -94,7 +94,7 @@
 
 <!-- Nav Item - Tables -->
 <!-- <li class="nav-item" id="chat">
-    <a class="nav-link" href="<?php // echo URL ?>/conversas">
+    <a class="nav-link" href="<?php echo URL ?>/conversas">
         <i class="fa-solid fa-comment"></i>
         <span>Chat</span></a>
 </li> -->
@@ -138,6 +138,19 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="financeiro_campanhas" href="<?php echo URL ?>/financeiro/campanhas">Campanhas</a>
             <a class="collapse-item" id="financeiro_relatorios" href="<?php echo URL ?>/financeiro/relatorios">Relatórios</a>
+        </div>
+    </div>
+</li> 
+
+<li class="nav-item" id="proj">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#projeto"
+        aria-expanded="true" aria-controls="finan">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Projetos</span>
+    </a> 
+    <div id="projeto" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" id="projetos_index" href="<?php echo URL ?>/projetos">Todos Projetos</a>
         </div>
     </div>
 </li> 

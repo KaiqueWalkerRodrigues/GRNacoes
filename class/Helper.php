@@ -144,7 +144,26 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       );
 
       return $months[$ingles];
-  }
+    } 
+    public static function statusProjeto($status){
+      switch($status){
+          case 1:
+            return "Em Análise";
+          break;
+          case 2:
+            return "Em Andamento";
+          break;
+          case 3:
+            return "Concluido";
+          break;
+          case 4:
+            return "Cancelado";
+          break;
+          case 5:
+            return "Recusado";
+          break;
+      }
+    }
 
 }
 

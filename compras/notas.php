@@ -9,6 +9,7 @@
 
     if (isset($_POST['btnCadastrar'])) {
         $Compras_Notas->cadastrar($_POST);
+        header('location:/GRNacoes/compras/notas');
     }
     if (isset($_POST['btnEditar'])) {
         $Compras_Notas->editar($_POST);
@@ -441,104 +442,112 @@
     <script src="<?php echo URL ?>/js/demo/datatables-demo.js"></script>
 
     <script>
-        $(document).ready(function() {
-            $('#comp').addClass('active');
-            $('#compras_notas').addClass('active');
+$(document).ready(function() {
+    $('#comp').addClass('active');
+    $('#compras_notas').addClass('active');
 
-            {
-                // Função para calcular e exibir a soma total dos valores
-                function calcularSomaTotal() {
-                    var somaTotal = 0;
-                    $('#dataTable tbody tr:visible').each(function() {
-                        var valor = parseFloat($(this).find('td:eq(7)').text()); // Assuming the value is in the 7th column, adjust if necessary
-                        somaTotal += valor;
-                    });
-                    $('#totalValor').text(somaTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
-                }
+    // Função para calcular e exibir a soma total dos valores
+    function calcularSomaTotal() {
+        var table = $('#dataTable').DataTable();
+        var somaTotal = table
+            .column(7, { search: 'applied' }) // Ajuste o índice da coluna conforme necessário
+            .data()
+            .reduce(function(a, b) {
+                var x = parseFloat(a) || 0;
+                var y = parseFloat(b) || 0;
+                return x + y;
+            }, 0);
 
-                // Chamada inicial para calcular a soma total
+        $('#totalValor').text(somaTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
+    }
+
+    // Verificar se o DataTable já está inicializado e inicializá-lo se não estiver
+    if (!$.fn.DataTable.isDataTable('#dataTable')) {
+        var table = $('#dataTable').DataTable({
+            "drawCallback": function() {
                 calcularSomaTotal();
             }
-            
-            // Evento de alteração nos filtros
-            $('#filtroMes, #filtroFornecedor, #filtroEmpresa, #filtroCategoria').change(function() {
-                var filtroMes = $('#filtroMes').val();
-                var filtroFornecedor = $('#filtroFornecedor').val();
-                var filtroEmpresa = $('#filtroEmpresa').val();
-                var filtroCategoria = $('#filtroCategoria').val();
-                
-                // Mostrar todas as linhas inicialmente
-                $('#dataTable tbody tr').show();
-                
-                // Iterar sobre as linhas da tabela para aplicar os filtros
-                $('#dataTable tbody tr').each(function() {
-                    var mes = $(this).find('td:eq(2)').text();
-                    var Empresa = $(this).find('td:eq(4)').text();
-                    var categoria = $(this).find('td:eq(5)').text();
-                    var fornecedor = $(this).find('td:eq(6)').text();
-
-                    console.log(categoria,filtroCategoria)
-                    
-                    // Verificar se a linha atende aos critérios de filtragem
-                    if ((filtroMes && mes !== filtroMes) ||
-                        (filtroFornecedor && fornecedor !== filtroFornecedor) ||
-                        (filtroEmpresa && Empresa !== filtroEmpresa) ||
-                        (filtroCategoria && categoria !== filtroCategoria)) {
-                        $(this).hide(); // Ocultar a linha se não atender aos critérios
-                    }
-                });
-
-                calcularSomaTotal();
-            });
-            
-            $('#modalVerDescricao').on('show.bs.modal', function (event) {
-                let button = $(event.relatedTarget);
-                let descricao_nota = button.data('descricao_nota');
-                let valor = button.data('valor');
-                let quantidade = button.data('quantidade')
-
-                // Formatar o valor com o padrão brasileiro
-                let valorFormatado = parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-
-                $('#descricao_nota').text(descricao_nota);
-                $('#ver_valor').text(valorFormatado);
-                $('#ver_quantidade').text(quantidade)
-
-                console.log(descricao_nota);
-            });
-
-            $('#modalEditarNota').on('show.bs.modal', function (event) {
-                let button = $(event.relatedTarget);
-                let id_compra_nota = button.data('id_compra_nota');
-                let quantidade =  button.data('quantidade')
-                let id_fornecedor = button.data('id_fornecedor');
-                let n_nota = button.data('n_nota');
-                let valor = button.data('valor');
-                let data = button.data('data');
-                let id_empresa = button.data('id_empresa');
-                let descricao = button.data('descricao');
-
-                $('#editar_id_compra_nota').val(id_compra_nota);
-                $('#editar_id_fornecedor').val(id_fornecedor);
-                $('#editar_quantidade').val(quantidade)
-                $('#editar_n_nota').val(n_nota);
-                $('#editar_valor').val(valor);
-                $('#editar_data').val(data);
-                $('#editar_id_empresa').val(id_empresa);
-                $('#editar_descricao').val(descricao);
-            });
-
-            $('#modalDesativarNota').on('show.bs.modal', function (event) {
-                let button = $(event.relatedTarget)
-                let id_nota = button.data('id_nota')
-                let n_nota = button.data('n_nota')
-                $('.modalDesativarNotaLabel').empty()
-                $('.modalDesativarNotaLabel').append(n_nota)
-                $('#desativar_id_compra_nota').empty()
-                $('#desativar_id_compra_nota').val(id_nota)
-            })
         });
+    } else {
+        var table = $('#dataTable').DataTable();
+    }
+
+    $('#dataTable_filter').keyup(function (e) { 
+        calcularSomaTotal()
+    });
+
+    // Evento de alteração nos filtros
+    $('#filtroMes, #filtroFornecedor, #filtroEmpresa, #filtroCategoria').change(function() {
+        var filtroMes = $('#filtroMes').val();
+        var filtroFornecedor = $('#filtroFornecedor').val();
+        var filtroEmpresa = $('#filtroEmpresa').val();
+        var filtroCategoria = $('#filtroCategoria').val();
+
+        // Aplicar filtros no DataTable usando a API search
+        table.column(2).search(filtroMes);
+        table.column(6).search(filtroFornecedor);
+        table.column(4).search(filtroEmpresa);
+        table.column(5).search(filtroCategoria);
+
+        // Redesenhar a tabela e calcular a soma total
+        table.draw();
+        calcularSomaTotal();
+    });
+
+    // Inicializar modais e outras funcionalidades
+    $('#modalVerDescricao').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget);
+        let descricao_nota = button.data('descricao_nota');
+        let valor = button.data('valor');
+        let quantidade = button.data('quantidade');
+
+        // Formatar o valor com o padrão brasileiro
+        let valorFormatado = parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+        $('#descricao_nota').text(descricao_nota);
+        $('#ver_valor').text(valorFormatado);
+        $('#ver_quantidade').text(quantidade);
+
+        console.log(descricao_nota);
+    });
+
+    $('#modalEditarNota').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget);
+        let id_compra_nota = button.data('id_compra_nota');
+        let quantidade = button.data('quantidade');
+        let id_fornecedor = button.data('id_fornecedor');
+        let n_nota = button.data('n_nota');
+        let valor = button.data('valor');
+        let data = button.data('data');
+        let id_empresa = button.data('id_empresa');
+        let descricao = button.data('descricao');
+
+        $('#editar_id_compra_nota').val(id_compra_nota);
+        $('#editar_id_fornecedor').val(id_fornecedor);
+        $('#editar_quantidade').val(quantidade);
+        $('#editar_n_nota').val(n_nota);
+        $('#editar_valor').val(valor);
+        $('#editar_data').val(data);
+        $('#editar_id_empresa').val(id_empresa);
+        $('#editar_descricao').val(descricao);
+    });
+
+    $('#modalDesativarNota').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget);
+        let id_nota = button.data('id_nota');
+        let n_nota = button.data('n_nota');
+        $('.modalDesativarNotaLabel').empty();
+        $('.modalDesativarNotaLabel').append(n_nota);
+        $('#desativar_id_compra_nota').empty();
+        $('#desativar_id_compra_nota').val(id_nota);
+    });
+
+    // Calcular a soma total ao carregar a página
+    calcularSomaTotal();
+});
+
     </script>
+
 
 
 </body>

@@ -56,9 +56,6 @@ class Compras_Notas {
         $sql->bindParam(':created_at', $created_at);
         $sql->bindParam(':updated_at', $updated_at);
 
-        print_r($dados);
-        die();
-
         if ($sql->execute()) {
             // Registra o log
             $id_nota = $this->pdo->lastInsertId();

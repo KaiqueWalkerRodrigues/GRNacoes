@@ -24,7 +24,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Gerenciar Setores</title>
+    <title>GRNacoes - Gerenciar Categorias</title>
 
     <!-- Custom fonts for this template -->
     <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
