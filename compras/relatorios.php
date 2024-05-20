@@ -15,7 +15,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Gerenciar Setores</title>
+    <title>GRNacoes - Gerar Relatórios</title>
 
     <!-- Custom fonts for this template -->
     <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -126,9 +126,9 @@
 
                         <div class="row">
 
-                            <!-- <div class="text-center col-4 offset-4">
+                            <div class="text-center col-4 offset-4">
                                 <a href="gerar_relatorio_fornecedor.php" class="btn btn-secondary">Gerar Relatório Anual por Fornecedor</a>
-                            </div> -->
+                            </div>
 
                             <div class="text-center col-4">
                                 <a href="gerar_relatorio_categoria.php" class="btn btn-primary">Gerar Relatório Anual por Categoria</a>
@@ -207,7 +207,22 @@
 
             // Chamando a função autoDownload assim que a página for carregada
             window.onload = autoDownload;
-    });
+
+            // Função para remover variáveis GET da URL
+            function removeGetParams() {
+                var url = window.location.href;
+                var index = url.indexOf('?');
+                if (index > -1) {
+                    url = url.substring(0, index);
+                    window.history.replaceState(null, null, url);
+                }
+            }
+
+            // Remove variáveis GET após o download
+            window.addEventListener('load', function() {
+                setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
+            });
+        });
     </script>
 
 </body>

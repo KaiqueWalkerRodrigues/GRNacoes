@@ -46,6 +46,18 @@ $titulo = [
     ],
 ];
 
+$grey = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => 'd3d3d3',
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+    ],
+];
+
 $titulo_otica = [
     'fill' => [
         'fillType' => Fill::FILL_SOLID,
@@ -113,10 +125,24 @@ $activeWorksheet->setCellValue('N2','TOTAL:');
 //Lista todas as categorias com notas cadastradas para a empresa e ano específicos
 foreach ($Compras_Categoria->listar() as $cc) {
     $cca = strtoupper($cc->categoria);
-
+    
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(1, $cc->id_compra_categoria, date('Y')) > 0) {
-        $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        foreach($Compras_Fornecedor->listarPorCategoria(1,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(1,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
+        $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês
@@ -189,7 +215,21 @@ foreach ($Compras_Categoria->listar() as $cc) {
 
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(3, $cc->id_compra_categoria, date('Y')) > 0) {
+        foreach($Compras_Fornecedor->listarPorCategoria(3,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(3,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
         $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês
@@ -261,7 +301,21 @@ foreach ($Compras_Categoria->listar() as $cc) {
 
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(5, $cc->id_compra_categoria, date('Y')) > 0) {
+        foreach($Compras_Fornecedor->listarPorCategoria(5,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(5,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
         $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês
@@ -333,7 +387,21 @@ foreach ($Compras_Categoria->listar() as $cc) {
 
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(2, $cc->id_compra_categoria, date('Y')) > 0) {
+        foreach($Compras_Fornecedor->listarPorCategoria(2,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(2,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
         $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês
@@ -405,7 +473,21 @@ foreach ($Compras_Categoria->listar() as $cc) {
 
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(4, $cc->id_compra_categoria, date('Y')) > 0) {
+        foreach($Compras_Fornecedor->listarPorCategoria(4,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(4,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
         $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês
@@ -477,7 +559,21 @@ foreach ($Compras_Categoria->listar() as $cc) {
 
     // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
     if ($Compras_notas->totalNotasCategoria(6, $cc->id_compra_categoria, date('Y')) > 0) {
+        foreach($Compras_Fornecedor->listarPorCategoria(6,$cc->id_compra_categoria,date('Y')) as $f){
+            $activeWorksheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+            $col = 'B';
+            for($i = 1; $i <=12; $i++){
+                $total_f_mes = $Compras_notas->totalFornecedorMes(6,$f->id_compra_fornecedor,$i);
+                if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
+                $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $col = chr(ord($col) + 1);
+            }
+            $row_categoria++;
+        }
+
         $activeWorksheet->setCellValue('A' . $row_categoria, $cca);
+        $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
 
         $col = 'B';
         //Lista todos valores de categorias por mês

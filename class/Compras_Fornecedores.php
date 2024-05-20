@@ -226,6 +226,27 @@ class Compras_Fornecedores {
         }
     }
 
+    public function listarPorCategoria($id_empresa, $id_categoria, $ano){
+        $sql = $this->pdo->prepare('
+            SELECT DISTINCT cf.* 
+            FROM compras_fornecedores cf
+            INNER JOIN compras_notas cn ON cf.id_compra_fornecedor = cn.id_fornecedor
+            WHERE cf.id_categoria = :id_categoria 
+            AND cn.id_empresa = :id_empresa 
+            AND YEAR(cn.data) = :ano 
+            AND cf.deleted_at IS NULL
+            ORDER BY cf.fornecedor
+        ');        
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }
+
 }
 
 ?>

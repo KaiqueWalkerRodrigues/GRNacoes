@@ -281,5 +281,83 @@ class Compras_Notas {
         return $resultado['total_otica'];
     }
 
+    /**
+     * Totaliza o valor das notas de um fornecedor em uma categoria específica por mês
+     * @param int $empresa_id
+     * @param int $id_fornecedor
+     * @param int $id_categoria
+     * @param int $mes
+     * @param int $ano
+     * @return float
+     */
+    public function totalFornecedorCategoria($empresa_id, $id_fornecedor, $id_categoria, $mes, $ano){
+        $sql = $this->pdo->prepare('
+            SELECT SUM(cn.valor) AS total 
+            FROM compras_notas cn 
+            WHERE cn.id_fornecedor = :id_fornecedor 
+            AND cn.id_categoria = :id_categoria 
+            AND cn.empresa_id = :empresa_id 
+            AND MONTH(cn.data) = :mes 
+            AND YEAR(cn.data) = :ano
+        ');
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':empresa_id', $empresa_id);
+        $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total : 0;
+    }
+
+    /**
+     * Totaliza o valor das notas de um fornecedor em uma categoria específica no ano
+     * @param int $empresa_id
+     * @param int $id_fornecedor
+     * @param int $id_categoria
+     * @param int $ano
+     * @return float
+     */
+    public function totalFornecedorAnual($empresa_id, $id_fornecedor, $id_categoria, $ano){
+        $sql = $this->pdo->prepare('
+            SELECT SUM(cn.valor) AS total 
+            FROM compras_notas cn 
+            WHERE cn.id_fornecedor = :id_fornecedor 
+            AND cn.id_categoria = :id_categoria 
+            AND cn.empresa_id = :empresa_id 
+            AND YEAR(cn.data) = :ano
+        ');
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':empresa_id', $empresa_id);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total : 0;
+    }
+
+    public function totalFornecedorMes($id_empresa,$id_fornecedor,$mes){
+        $sql = $this->pdo->prepare('SELECT sum(valor) AS total
+        FROM compras_notas 
+        WHERE id_fornecedor = :id_fornecedor
+        AND id_empresa = :id_empresa
+        AND MONTH(data) = :mes
+        ');
+
+        $sql->bindParam(':id_fornecedor',$id_fornecedor);
+        $sql->bindParam(':id_empresa',$id_empresa);
+        $sql->bindParam(':mes',$mes);
+
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total : 0;
+    }
+
 }
 ?>
