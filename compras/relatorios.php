@@ -126,8 +126,8 @@
 
                         <div class="row">
 
-                            <div class="text-center col-4 offset-4">
-                                <a href="gerar_relatorio_fornecedor.php" class="btn btn-secondary">Gerar Relatório Anual por Fornecedor</a>
+                            <div class="text-center col-4 offset-2">
+                                <a href="gerar_relatorio_fornecedor.php" class="btn btn-success">Gerar Relatório Anual por Fornecedor</a>
                             </div>
 
                             <div class="text-center col-4">
