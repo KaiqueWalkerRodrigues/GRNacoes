@@ -81,7 +81,8 @@ $activeWorksheet->getStyle('A1')->applyFromArray($titulo);
 $activeWorksheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 $activeWorksheet->setCellValue('A1', 'RELATORIO RESUMO GERAL CLINICA PARQUE - ' . date('Y'));
-$activeWorksheet->setCellValue('A2','DESCRIÇÃO');
+$activeWorksheet->setCellValue('A2','FORNECEDOR');
+$activeWorksheet->getStyle('A2')->applyFromArray($mes_style);
 
 $col = 'B';
 $row_categoria = 3;
@@ -168,7 +169,8 @@ $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo);
 $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL CLINICA MAUÁ - ' . date('Y'));
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'DESCRIÇÃO');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
 //Lista todos os meses
@@ -240,7 +242,8 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL CLI
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'DESCRIÇÃO');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
 //Lista todos os meses
@@ -312,7 +315,8 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'DESCRIÇÃO');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
 //Lista todos os meses
@@ -384,7 +388,8 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'DESCRIÇÃO');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
 //Lista todos os meses
@@ -456,7 +461,8 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'DESCRIÇÃO');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
 //Lista todos os meses

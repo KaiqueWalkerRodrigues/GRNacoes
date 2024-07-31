@@ -276,7 +276,7 @@
                         <div class="row">
                             <div class="col-4">
                                 <label for="n_nota" class="form-label">Numero da Nota *</label>
-                                <input type="text" id="cadastrar_n_nota" name="n_nota" class="form-control" required>
+                                <input type="number" id="cadastrar_n_nota" name="n_nota" class="form-control" required>
                             </div>
                             <div class="col-4">
                                 <label for="valor" class="form-label">Valor da Nota *</label>
@@ -328,7 +328,7 @@
         </form>
     </div>
 
-    <!-- Modal Editar Cargo -->
+    <!-- Modal Editar Nota -->
     <div class="modal fade" id="modalEditarNota" tabindex="1" role="dialog" aria-labelledby="modalEditarNotaLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-xl" role="document">
@@ -345,7 +345,7 @@
                         <div class="row">
                             <div class="col-4">
                                 <label for="n_nota" class="form-label">Numero da Nota *</label>
-                                <input type="text" id="editar_n_nota" name="n_nota" class="form-control" required>
+                                <input type="number" id="editar_n_nota" name="n_nota" class="form-control" required>
                             </div>
                             <div class="col-4">
                                 <label for="valor" class="form-label">Valor da Nota *</label>

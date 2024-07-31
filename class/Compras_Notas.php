@@ -359,5 +359,83 @@ class Compras_Notas {
         return $resultado ? $resultado->total : 0;
     }
 
+    public function totalQntdCategoria($id_empresa, $id_categoria, $mes, $ano)
+    {
+        $sql = $this->pdo->prepare('SELECT SUM(quantidade) AS total FROM compras_notas 
+                                    INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
+                                    INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
+                                    WHERE id_empresa = :id_empresa 
+                                    AND id_categoria = :id_categoria 
+                                    AND month(data) = :mes
+                                    AND year(data) = :ano');
+
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
+
+    public function totalQntdCategoriaAnual($id_empresa, $id_categoria, $ano)
+    {
+        $sql = $this->pdo->prepare('SELECT SUM(quantidade) AS total FROM compras_notas 
+                                    INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
+                                    INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
+                                    WHERE id_empresa = :id_empresa 
+                                    AND id_categoria = :id_categoria 
+                                    AND year(data) = :ano');
+
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
+
+    public function totalQntdFornecedorMes($id_empresa,$id_fornecedor,$mes){
+        $sql = $this->pdo->prepare('SELECT sum(quantidade) AS total
+        FROM compras_notas 
+        WHERE id_fornecedor = :id_fornecedor
+        AND id_empresa = :id_empresa
+        AND MONTH(data) = :mes
+        ');
+
+        $sql->bindParam(':id_fornecedor',$id_fornecedor);
+        $sql->bindParam(':id_empresa',$id_empresa);
+        $sql->bindParam(':mes',$mes);
+
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total : 0;
+    }
+
+    public function totalQntdMes($id_empresa, $mes, $ano)
+    {
+        $sql = $this->pdo->prepare('SELECT SUM(quantidade) AS total FROM compras_notas 
+                                        INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
+                                        INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
+                                        WHERE id_empresa = :id_empresa
+                                        AND month(data) = :mes
+                                        AND year(data) = :ano');
+
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
+
 }
 ?>
