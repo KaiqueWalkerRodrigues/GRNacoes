@@ -1,7 +1,3 @@
-<?php 
-    include_once('const.php');
-    Helper::logado();
-?>
 <style>
     #accordionSidebar {
         position: fixed;

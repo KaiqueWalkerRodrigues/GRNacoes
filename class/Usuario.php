@@ -260,6 +260,7 @@ class Usuario {
             $_SESSION['logado'] = true;
             $_SESSION['nome'] = $user->nome;
             $_SESSION['id_usuario'] = $user->id_usuario;
+            $_SESSION['id_setor'] = $user->id_setor;
 
             header('Location: ' . URL . '/');
             exit();

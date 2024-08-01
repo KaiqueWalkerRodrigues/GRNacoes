@@ -165,6 +165,23 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       }
     }
 
+    public static function Urgencia($urgencia){
+      switch($urgencia){
+        case 1:
+          return "Baixa";
+        break;
+        case 2:
+          return "Moderada";
+        break;
+        case 3:
+          return "Alta";
+        break;
+        case 4:
+          return "Urgente";
+        break;
+      }
+    }
+
 }
 
 ?>
