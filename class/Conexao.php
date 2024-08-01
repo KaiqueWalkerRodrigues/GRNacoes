@@ -12,10 +12,10 @@ class Conexao
     private function __construct()
     {
         # Informações sobre o banco de dados:
-        $db_host    = "192.168.0.60";      // servidor
+        $db_host    = "127.0.0.1";      // servidor
         $db_nome    = "GRNacoes";               //nome do banco
-        $db_usuario = "sistema";           //usuario do banco
-        $db_senha   = "@ADgrn1987";
+        $db_usuario = "root";           //usuario do banco
+        $db_senha   = "";
         $db_driver  = "mysql";
         $db_porta   = "3306";
 

@@ -34,6 +34,14 @@
         $Compras_Pedidos->negarCompra($_POST['id_compra_pedido'], $_POST['usuario_logado']);
         header('location:/GRNacoes/compras/pedidos');
     }
+    if (isset($_POST['btnCancelarCompra'])) {
+        $Compras_Pedidos->cancelarCompra($_POST['id_compra_pedido'], $_POST['usuario_logado']);
+        header('location:/GRNacoes/compras/pedidos');
+    }
+    if (isset($_POST['btnCancelarNegacao'])) {
+        $Compras_Pedidos->cancelarNegacao($_POST['id_compra_pedido'], $_POST['usuario_logado']);
+        header('location:/GRNacoes/compras/pedidos');
+    }
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -237,7 +245,7 @@
     </a>
 
     <!-- Modal Ver Descrição -->
-    <div class="modal fade" id="modalVerDescricao" tabindex="-1" role="dialog" aria-labelledby="modalVerDescricaoLabel" aria-hidden="true">
+    <div class="modal fade" id="modalVerDescricao" tabindex="-1" role="dialog" aria-labelledby="modalCancelarCompraLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -651,7 +659,7 @@
     <script src="<?php echo URL ?>/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTablesPedidos.min.js"></script>
     <script src="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
@@ -682,14 +690,17 @@
         });
 
         // Inicializar modais e outras funcionalidades
-        $('#modalVerDescricao').on('show.bs.modal', function (event) {
+        $('#modalVerDescricao').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let descricao = button.data('descricao');
 
             $('#descricao').text(descricao);
+
+            // Ajuste de z-index para permitir empilhamento de modais
+            $(this).css('z-index', parseInt($('.modal-backdrop').css('z-index')) + 1);
         });
 
-        $('#modalEditarPedido').on('show.bs.modal', function (event) {
+        $('#modalEditarPedido').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let id_compra_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
@@ -708,7 +719,7 @@
             $('#editar_descricao').val(descricao);
         });
 
-        $('#modalConfirmarCompra').on('show.bs.modal', function (event) {
+        $('#modalConfirmarCompra').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let id_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
@@ -716,7 +727,7 @@
             $('#confirmar_id_compra_pedido').val(id_pedido);
         });
 
-        $('#modalNegarCompra').on('show.bs.modal', function (event) {
+        $('#modalNegarCompra').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let id_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
@@ -724,7 +735,7 @@
             $('#negar_id_compra_pedido').val(id_pedido);
         });
 
-        $('#modalCancelarCompra').on('show.bs.modal', function (event) {
+        $('#modalCancelarCompra').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let id_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
@@ -732,14 +743,21 @@
             $('#cancelar_id_compra_pedido').val(id_pedido);
         });
 
-        $('#modalCancelarNegacao').on('show.bs.modal', function (event) {
+        $('#modalCancelarNegacao').on('show.bs.modal', function(event) {
             let button = $(event.relatedTarget);
             let id_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
             $('.modalCancelarNegacaoLabel').empty().append(titulo);
             $('#cancelar_id_negacao').val(id_pedido);
         });
+
+        // Quando o modal principal for fechado, esconda todos os modais abertos
+        $('.modal').on('hidden.bs.modal', function() {
+            if ($('.modal:visible').length > 0) {
+                $('body').addClass('modal-open');
+            }
         });
+    });
     </script>
 
 </body>
