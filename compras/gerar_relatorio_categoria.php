@@ -1,5 +1,17 @@
 <?php
 
+function getNextColumn($col) {
+    $length = strlen($col);
+    for ($i = $length - 1; $i >= 0; $i--) {
+        if ($col[$i] !== 'Z') {
+            $col[$i] = chr(ord($col[$i]) + 1);
+            return $col;
+        }
+        $col[$i] = 'A';
+    }
+    return 'A' . $col;
+}
+
 require '../vendor/autoload.php';
 require '../const.php';
 
@@ -28,6 +40,18 @@ $red = [
         'color' => [
             'rgb' => 'FF0000', // Vermelho
         ],
+    ],
+];
+
+$grey = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => 'd3d3d3',
+        ],
+    ],
+    'font' => [
+        'bold' => true,
     ],
 ];
 
@@ -75,13 +99,14 @@ $total_verde = [
 
 $spreadsheet = new Spreadsheet();
 $activeWorksheet = $spreadsheet->getActiveSheet();
+$spreadsheet->getActiveSheet()->setTitle('Valor');
 
 $activeWorksheet->mergeCells('A1:N1');
 $activeWorksheet->getStyle('A1')->applyFromArray($titulo);
 $activeWorksheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 $activeWorksheet->setCellValue('A1', 'RELATORIO RESUMO GERAL CLINICA PARQUE - ' . date('Y'));
-$activeWorksheet->setCellValue('A2','FORNECEDOR');
+$activeWorksheet->setCellValue('A2','CATEGORIA');
 $activeWorksheet->getStyle('A2')->applyFromArray($mes_style);
 
 $col = 'B';
@@ -169,7 +194,7 @@ $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo);
 $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL CLINICA MAUÁ - ' . date('Y'));
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
@@ -242,7 +267,7 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL CLI
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
@@ -315,7 +340,7 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
@@ -388,7 +413,7 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
@@ -461,7 +486,7 @@ $activeWorksheet->setCellValue('A' . $row_categoria, 'RELATORIO RESUMO GERAL ÓT
 $activeWorksheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
 $row_categoria++;
-$activeWorksheet->setCellValue('A' . $row_categoria, 'FORNECEDOR');
+$activeWorksheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
 $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
 
 $col = 'B';
@@ -548,6 +573,285 @@ $row_alinhamento = 'A';
 for ($i = 1; $i <= 16; $i++) {
     $spreadsheet->getActiveSheet()->getColumnDimension($row_alinhamento)->setAutoSize(true);
     $row_alinhamento = chr(ord($row_alinhamento) + 1);
+}
+
+// Planilha Quantidade
+{
+    $newSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Quantidade');
+    $spreadsheet->addSheet($newSheet);
+
+    $row_categoria = 1;
+
+    /*
+        ÓTICA MATRIZ
+    */
+    $newSheet->mergeCells('A' . $row_categoria . ':AK' . $row_categoria);
+    $newSheet->setCellValue('A' . $row_categoria, 'RELATORIO QUANTIDADE ÓTICA MATRIZ - ' . date('Y'));
+    $newSheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
+    $row_categoria++;
+    $newSheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
+
+    $col = 'B';
+    //Lista todos os meses
+    foreach ($meses as $mes) {
+        $col_inicio = $col;
+        $newSheet->setCellValue($col . $row_categoria, $mes);
+        $newSheet->getStyle($col . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle($col . $row_categoria)->applyFromArray($mes_style);
+        $col++;
+        $col++;
+        $newSheet->mergeCells($col_inicio . $row_categoria . ':'. $col . $row_categoria);
+        $col++;
+    }
+
+    $row_categoria++;
+    
+    $coluna = 'B';
+    
+    for ($i = 0; $i < 12; $i++) {
+        $newSheet->setCellValue($coluna . $row_categoria, "COM");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "EST");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+    }
+    
+
+    $row_categoria++;
+
+    //Lista todas as categorias
+    foreach ($Compras_Categoria->listar() as $cc) {
+        $cca = strtoupper($cc->categoria);
+
+        // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
+        if ($Compras_notas->totalNotasCategoria(2, $cc->id_compra_categoria, date('Y')) > 0) {
+            
+            $newSheet->setCellValue('A' . $row_categoria,$cca);
+
+            $col = 'B';
+            //Lista todos valores de categorias por mês
+            for ($i = 1; $i <= 12; $i++) {
+                $valor_total = $Compras_notas->totalQntdCategoria(2, $cc->id_compra_categoria, $i, date('Y'));
+                $newSheet->setCellValue($col . $row_categoria, $valor_total);
+                $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+            }
+            
+            $row_categoria++;
+        }
+    }
+
+    $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_verde);
+    $mes = 1;
+    $col_mes = 'B';
+
+    for ($i = 1; $i <= 12; $i++) {
+        $total = $Compras_notas->totalQntdMes(2, $mes, date('Y'));
+        $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $mes++;
+    }
+
+    $row_categoria++;
+    $row_categoria++;
+
+    /*
+        ÓTICA PRESTIGIO
+    */
+    $newSheet->mergeCells('A' . $row_categoria . ':AK' . $row_categoria);
+    $newSheet->setCellValue('A' . $row_categoria, 'RELATORIO QUANTIDADE ÓTICA PRESTIGIO - ' . date('Y'));
+    $newSheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
+    $row_categoria++;
+    $newSheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
+
+    $col = 'B';
+    //Lista todos os meses
+    foreach ($meses as $mes) {
+        $col_inicio = $col;
+        $newSheet->setCellValue($col . $row_categoria, $mes);
+        $newSheet->getStyle($col . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle($col . $row_categoria)->applyFromArray($mes_style);
+        $col++;
+        $col++;
+        $newSheet->mergeCells($col_inicio . $row_categoria . ':'. $col . $row_categoria);
+        $col++;
+    }
+
+    $row_categoria++;
+    
+    $coluna = 'B';
+    
+    for ($i = 0; $i < 12; $i++) {
+        $newSheet->setCellValue($coluna . $row_categoria, "COM");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "EST");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+    }
+    
+
+    $row_categoria++;
+
+    //Lista todas as categorias
+    foreach ($Compras_Categoria->listar() as $cc) {
+        $cca = strtoupper($cc->categoria);
+
+        // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
+        if ($Compras_notas->totalNotasCategoria(2, $cc->id_compra_categoria, date('Y')) > 0) {
+
+            $newSheet->setCellValue('A' . $row_categoria,$cca);
+
+            $col = 'B';
+            //Lista todos valores de categorias por mês
+            for ($i = 1; $i <= 12; $i++) {
+                $valor_total = $Compras_notas->totalQntdCategoria(4, $cc->id_compra_categoria, $i, date('Y'));
+                $newSheet->setCellValue($col . $row_categoria, $valor_total);
+                $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+            }
+            
+            $row_categoria++;
+        }
+    }
+
+    $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_verde);
+    $mes = 1;
+    $col_mes = 'B';
+
+    for ($i = 1; $i <= 12; $i++) {
+        $total = $Compras_notas->totalQntdMes(4, $mes, date('Y'));
+        $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $mes++;
+    }
+
+    $row_categoria++;
+    $row_categoria++;
+
+    /*
+        ÓTICA DAILY
+    */
+    $newSheet->mergeCells('A' . $row_categoria . ':AK' . $row_categoria);
+    $newSheet->setCellValue('A' . $row_categoria, 'RELATORIO QUANTIDADE ÓTICA DAILY - ' . date('Y'));
+    $newSheet->getStyle('A' . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($titulo_otica);
+    $row_categoria++;
+    $newSheet->setCellValue('A' . $row_categoria, 'CATEGORIA');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($mes_style);
+
+    $col = 'B';
+    //Lista todos os meses
+    foreach ($meses as $mes) {
+        $col_inicio = $col;
+        $newSheet->setCellValue($col . $row_categoria, $mes);
+        $newSheet->getStyle($col . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle($col . $row_categoria)->applyFromArray($mes_style);
+        $col++;
+        $col++;
+        $newSheet->mergeCells($col_inicio . $row_categoria . ':'. $col . $row_categoria);
+        $col++;
+    }
+
+    $row_categoria++;
+    
+    $coluna = 'B';
+    
+    for ($i = 0; $i < 12; $i++) {
+        $newSheet->setCellValue($coluna . $row_categoria, "COM");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+        
+        $newSheet->setCellValue($coluna . $row_categoria, "EST");
+        $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $coluna = getNextColumn($coluna);
+    }
+    
+
+    $row_categoria++;
+
+    //Lista todas as categorias
+    foreach ($Compras_Categoria->listar() as $cc) {
+        $cca = strtoupper($cc->categoria);
+
+        // Verifica se há notas associadas a esta categoria para a empresa e ano específicos
+        if ($Compras_notas->totalNotasCategoria(2, $cc->id_compra_categoria, date('Y')) > 0) {
+
+            $newSheet->setCellValue('A' . $row_categoria,$cca);
+            $col = 'B';
+            //Lista todos valores de categorias por mês
+            for ($i = 1; $i <= 12; $i++) {
+                $valor_total = $Compras_notas->totalQntdCategoria(6, $cc->id_compra_categoria, $i, date('Y'));
+                $newSheet->setCellValue($col . $row_categoria, $valor_total);
+                $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+                $col = getNextColumn($col);
+            }
+            
+            $row_categoria++;
+        }
+    }
+
+    $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
+    $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_verde);
+    $mes = 1;
+    $col_mes = 'B';
+
+    for ($i = 1; $i <= 12; $i++) {
+        $total = $Compras_notas->totalQntdMes(6, $mes, date('Y'));
+        $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_verde);
+        $col_mes = getNextColumn($col_mes);
+        $mes++;
+    }
+
+    $row_categoria++;
+    $row_categoria++;
+
+    $newSheet->getColumnDimension('A')->setAutoSize(true);
 }
 
 $filename = 'gerar_relatorio_categorias_' . date('Y') . '.xlsx';
