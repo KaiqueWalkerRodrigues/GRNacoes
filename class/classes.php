@@ -12,4 +12,6 @@
     include_once('Chat.php');
     include_once('Mensagens.php');
     include_once('Projetos.php');
+    include_once('Financeiro_Campanhas.php');
+    include_once('Financeiro_Boletos.php');
 ?>

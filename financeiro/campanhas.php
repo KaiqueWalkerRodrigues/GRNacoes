@@ -1,5 +1,11 @@
 <?php 
     include_once('../const.php'); 
+
+    $Financeiro_Campanha = new Financeiro_Campanhas();
+
+    if (isset($_POST['btnCadastrar'])) {
+        $Financeiro_Campanha->cadastrar($_POST);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +18,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Início</title>
+    <title>GRNacoes - Campanhas</title>
 
     <!-- Custom fonts for this template-->
     <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -48,34 +54,19 @@
 
                     <div class="row">
                         <div class="col-2 mb-5">
-                            <button class="btn btn-outline-dark">Nova Campanha</button>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#modalCadastrarCampanha" class="collapse-item">Nova Campanha</button>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=57" class="btn btn-primary">Campanha 57</a>
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=56" class="btn btn-primary">Campanha 56</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=55" class="btn btn-primary">Campanha 55</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=54" class="btn btn-primary">Campanha 54</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=53" class="btn btn-primary">Campanha 53</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=52" class="btn btn-primary">Campanha 52</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=51" class="btn btn-primary">Campanha 51</a href="">
-                        </div>
-                        <div class="col-3 offset-1 mb-4">
-                            <a href="campanha?c=50" class="btn btn-primary">Campanha 50</a href="">
+                        <div class="offset-1">
+                            <?php 
+                                foreach($Financeiro_Campanha->listar() as $campanha){
+                            ?>
+                                <a href="campanha?c=<?php echo $campanha->id_financeiro_campanha ?>" class="btn btn-primary"><?php echo $campanha->nome ?></a>
+                            <?php 
+                                }
+                            ?>
                         </div>
                     </div>
 
@@ -108,6 +99,8 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+
+
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -126,6 +119,47 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Cadastrar Campanha -->
+    <div class="modal fade" id="modalCadastrarCampanha" tabindex="1" role="dialog" aria-labelledby="modalCadastrarCampanhaLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cadastrar Nova Campanha</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4 offset-1">
+                                <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <label for="nome" class="form-label">Nome da Campanha *</label>
+                                <input type="text" name="nome" class="form-control" value="Campanha " required>
+                            </div>
+                            <div class="col-3">
+                                <label for="periodo_inicio" class="form-label">Do dia</label>
+                                <input type="date" class="form-control" name="periodo_inicio" id="cadastrar_periodo_inicio">
+                            </div>
+                            <div class="col-3">
+                                <label for="periodo_fim" class="form-label">Até o dia</label>
+                                <input type="date" class="form-control" name="periodo_fim" id="cadastrar_periodo_fim">
+                            </div>
+                            <div class="col-3 offset-1">
+                                <label for="data_pagamento" class="form-label">Data do Pagamento</label>
+                                <input type="date" name="data_pagamento" id="cadastrar_data_pagamento" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="btnCadastrar" class="btn btn-success">Cadastrar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

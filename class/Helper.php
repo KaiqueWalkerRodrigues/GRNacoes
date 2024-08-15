@@ -182,6 +182,16 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       }
     }
 
+    public static function converterData(string $data_sql): string
+    {
+        $data = DateTime::createFromFormat('Y-m-d', $data_sql);
+        if ($data) {
+            return $data->format('d/m/Y');
+        } else {
+            return $data_sql;
+        }
+    }
+
 }
 
 ?>

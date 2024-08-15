@@ -288,4 +288,10 @@ class Usuario {
         return ($resultado !== false) ? $resultado['total'] : 0;
     }
 
+    public function listarVendedores(){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
  }

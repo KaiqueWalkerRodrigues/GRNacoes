@@ -1,6 +1,27 @@
 <?php 
     include_once('../const.php'); 
+
+    $Financeiro_Campanha = new Financeiro_Campanhas();
+    $Financeiro_Boleto = new Financeiro_Boletos();
+    $Usuario = new Usuario();
+
+    if (isset($_POST['btnCadastrar'])) {
+        $Financeiro_Boleto->cadastrar($_POST);
+    }
+    if (isset($_POST['btnEditar'])) {
+        $Financeiro_Boleto->editar($_POST);
+    }
+    if (isset($_POST['btnExcluir'])) {
+        $Financeiro_Boleto->desativar($_POST['id_financeiro_boleto'],$_POST['usuario_logado'],$_POST['id_campanha']);
+    }
+    if (isset($_POST['btnCadastrarValorPago'])) {
+        $Financeiro_Boleto->CadastrarValorPago($_POST);
+    }
+
     $c = $_GET['c'];
+
+    $campanha = $Financeiro_Campanha->mostrar($c);
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +34,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Campanha <?php echo $c ?></title>
+    <title>GRNacoes - <?php echo $campanha->nome ?></title>
 
     <!-- Custom fonts for this template -->
     <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -53,39 +74,34 @@
                     <!-- Page Heading -->
                     <br><br><br><br>
 
-                    <h3>Campanha <?php echo $c ?></h3>
-                    <p>
-                        Fechamento: <span style="color:red;font-style:italic;">15/04/2024 - 15/05/2024</span>
-                        <br>
-                        Pós: <span style="color:red;font-style:italic;">15/06/2024 - 15/07/2024</span>
-                    </p>
+                    <h6 class="text-primary">
+                        Periodo: <span style="color:black;font-style:italic;"><?php echo Helper::converterData($campanha->periodo_inicio) ?> - <?php echo Helper::converterData($campanha->periodo_fim) ?></span>  
+                    </h6>
+                    <h6 class="text-primary">
+                        Pagamento: <span style="color:black;font-style:italic;"><?php echo Helper::converterData($campanha->data_pagamento) ?></span>
+                    </h6>
+
+                    <br>
 
                     <div class="row mb-4">
-                        <div class="col-3">
-                            <label for="filtroVendedor" class="form-label">Filtrar por Vendedor:</label>
-                            <select id="filtroVendedor" class="form-control">
-                                <option value="">Todos</option>
-                                <option value="Ana">Ana</option>
-                                <option value="Alan">Alan</option>
-                                <option value="Suzana">Suzana</option>
-                                <!-- Adicione opções para os meses -->
-                            </select>
+                        <div class="col-2">
+                            <label for="filtroMes" class="form-label">Filtrar por Mês:</label>
+                            <input type="date" name="filtroMes" id="filtroMes" class="form-control">
                         </div>
                         <div class="col-3">
                             <label for="filtroEmpresa" class="form-label">Filtrar por Empresa:</label>
                             <select id="filtroEmpresa" class="form-control">
                                 <option value="">Todos</option>
-                                <option value="Clínica Parque">Clínica Parque</option>
-                                <option value="Clínica Mauá">Clínica Mauá</option>
-                                <option value="Clínica Jardim">Clínica Jardim</option>
-                                <option value="Ótica Matriz">Ótica Matriz</option>
-                                <option value="Ótica Prestigio">Ótica Prestigio</option>
-                                <option value="Ótica Daily">Ótica Daily</option>
-                                <!-- Adicione opções para os meses -->
+                                <option value="2">Ótica Matriz</option>
+                                <option value="4">Ótica Prestigio</option>
+                                <option value="6">Ótica Daily</option>
                             </select>
                         </div>
-                        <div class="col-2 offset-4" style="margin-top: 15px;">
-                            <button class="btn btn-primary mt-4">Gerar Relatório</button>
+                        <div class="col-3">
+                            <label for="filtroVendedor" class="form-label">Filtrar por Vendedor:</label>
+                            <select id="filtroVendedor" class="form-control">
+                                <option value="">Todos</option>
+                            </select>
                         </div>
                     </div>
 
@@ -93,7 +109,11 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Campanha <?php echo $c ?> | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarBoleto" class="collapse-item">Cadastrar Novo Boleto</button></h6>
+                            <div class="col-6">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <?php echo $campanha->nome ?> | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarBoleto" class="collapse-item">Cadastrar Novo Boleto</button>
+                                </h6>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -101,45 +121,96 @@
                                     <thead>
                                         <tr>
                                             <th>N° Boleto</th>
-                                            <th>Vendedor</th>
                                             <th>Empresa</th>
-                                            <th>Data do Boleto</th>
+                                            <th>Vendedor</th>
+                                            <th>Cliente</th>
+                                            <th>Data Venda</th>
                                             <th>Valor</th>
+                                            <th>Status</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <th>Total: </th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th>R$ 800,00</th>
-                                        <th></th>
-                                    </tfoot>
                                     <tbody>
+                                        <?php $total = 0; foreach($Financeiro_Boleto->listar($campanha->id_financeiro_campanha) as $boleto){ $total+= $boleto->valor?>
                                         <tr>
-                                            <td>000615412</td>
-                                            <td>Suzana</td>
-                                            <td>Clínica Parque</td>
-                                            <td class="text-danger">20/05/2024</td>
-                                            <td>R$ 500,00</td>
+                                            <td><?php echo $boleto->n_boleto ?></td>
+                                            <td><?php echo Helper::mostrar_empresa($boleto->id_empresa) ?></td>
+                                            <td><?php echo $Usuario->mostrar($boleto->id_usuario)->nome ?></td>
+                                            <td><?php echo $boleto->cliente ?></td>
+                                            <td><?php echo Helper::converterData($boleto->data_venda) ?></td>
+                                            <td>R$ <?php echo $boleto->valor?></td>
                                             <td class="text-center">
-                                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarBoleto" class="collapse-item"><i class="fa-solid fa-gear"></i></button>
-                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluirBoleto" class="collapse-item"><i class="fa-solid fa-trash"></i></button>
+                                                <?php 
+                                                    $hoje = date("Y-m-d");
+
+                                                    if($boleto->valor_pago === $boleto->valor AND $boleto->data_pago<=$campanha->periodo_fim){
+                                                        echo '<b class="text-success">Convertido</b>';
+                                                    }elseif($boleto->valor_pago == 0 AND $hoje<=$campanha->periodo_fim){
+                                                        echo '<b>Pendente</b>';
+                                                    }elseif($boleto->valor_pago == 0 AND $hoje>=$campanha->periodo_fim){
+                                                        echo '<b class="text-danger">Atrasado</b>';
+                                                    }elseif($boleto->valor_pago === $boleto->valor AND $boleto->data_pago>$campanha->periodo_fim){
+                                                        echo '<b class="text-primary">PÓS</b>';
+                                                    }else{
+                                                        echo '<b class="text-danger">ERRO</b>';
+                                                    }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalCadastrarValorPago" class="collapse-item"
+                                                    data-id_financeiro_boleto="<?php echo $boleto->id_financeiro_boleto ?>"
+                                                    data-n_boleto="<?php echo $boleto->n_boleto ?>"
+                                                    data-valor_pago="<?php echo $boleto->valor_pago ?>"
+                                                    data-data_pago="<?php echo $boleto->data_pago ?>"
+                                                >
+                                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                                </button>
+                                                <button class="btn btn-dark" data-toggle="modal" data-target="#modalVisualizarBoleto" class="collapse-item"
+                                                data-n_boleto="<?php echo $boleto->n_boleto ?>"
+                                                data-empresa="<?php echo Helper::mostrar_empresa($boleto->id_empresa) ?>"
+                                                data-usuario="<?php echo $Usuario->mostrar($boleto->id_usuario)->nome ?>"
+                                                data-data_venda="<?php echo Helper::converterData($boleto->data_venda) ?>"
+                                                data-periodo_fim="<?php echo Helper::converterData($campanha->periodo_fim) ?>"
+                                                data-valor="<?php echo $boleto->valor ?>"
+                                                data-cliente="<?php echo $boleto->cliente ?>"
+                                                data-valor_pago="<?php echo $boleto->valor_pago ?>"
+                                                data-data_pago="<?php if($boleto->data_pago){echo Helper::converterData($boleto->data_pago);} ?>"
+                                                >
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarBoleto" class="collapse-item"
+                                                data-id_financeiro_boleto="<?php echo $boleto->id_financeiro_boleto ?>"
+                                                data-n_boleto="<?php echo $boleto->n_boleto ?>"
+                                                data-empresa="<?php echo $boleto->id_empresa ?>"
+                                                data-usuario="<?php echo $boleto->id_usuario ?>"
+                                                data-cliente="<?php echo $boleto->cliente ?>"
+                                                data-data_venda="<?php echo $boleto->data_venda ?>"
+                                                data-valor="<?php echo $boleto->valor ?>"
+                                                >
+                                                    <i class="fa-solid fa-gear"></i>
+                                                </button>
+
+                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluirBoleto" class="collapse-item"
+                                                data-id_financeiro_boleto="<?php echo $boleto->id_financeiro_boleto ?>"
+                                                data-n_boleto="<?php echo $boleto->n_boleto ?>">
+                                                    <i class="fa-solid fa-power-off"></i>
+                                                </button>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>000615664</td>
-                                            <td>Alan</td>
-                                            <td>Ótica Prestigio</td>
-                                            <td class="text-success">16/04/2024</td>
-                                            <td>R$ 300,00</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarBoleto" class="collapse-item"><i class="fa-solid fa-gear"></i></button>
-                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluirBoleto" class="collapse-item"><i class="fa-solid fa-trash"></i></button>
-                                            </td>
-                                        </tr>
+                                        <?php } ?>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Total:</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>R$ <?php echo $total ?></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -172,141 +243,237 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+     <!-- Modal Visualizar Boleto -->
+     <div class="modal fade" id="modalVisualizarBoleto" tabindex="1" role="dialog" aria-labelledby="modalVisualizarBoletosLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-lg
+            ." role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Visualizar Boleto: <span id="visualizar_titulo"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-10 offset-1">
+                                Numero Boleto: <b class="text-info" id="visualizar_n_boleto"></b>
+                                <br>
+                                Empresa: <b class="text-info" id="visualizar_id_empresa"></b>
+                                <br>
+                                Vendedor: <b class="text-info" id="visualizar_id_usuario"></b>
+                                <br>
+                                Cliente: <b class="text-info" id="visualizar_cliente"></b>
+                                <br>
+                                Data de Venda: <b class="text-info" id="visualizar_data_venda"></b>
+                                <br>
+                                Data Limite: <b class="text-info" id="visualizar_periodo_fim"></b>
+                                <br>
+                                Valor: <b class="text-info" id="visualizar_valor"></b>
+                                <br>
+                                Valor Pago: <b class="text-info" id="visualizar_valor_pago"></b>
+                                <br>
+                                Data do Pagamento: <b class="text-info" id="visualizar_data_pago"></b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal Cadastrar Valor Pago -->
+    <div class="modal fade" id="modalCadastrarValorPago" tabindex="1" role="dialog" aria-labelledby="modalCadastrarValorPagoLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Pagamento: <span id="pagar_titulo"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_financeiro_boleto" id="pagar_id_financeiro_boleto">
+                        <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha ?>">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="row">
+                            <input type="hidden" name="id_campanha" value="<?php echo $c ?>">
+                            <div class="col-4 offset-1">
+                                <label for="pagar_valor_pago" class="form-label">Valor Pago *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" name="valor_pago" id="pagar_valor_pago" required>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label for="pagar_data_pago" class="form-label">Data do Pagamento *</label>
+                                <input type="date" name="data_pago" id="pagar_data_pago" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" name="btnCadastrarValorPago">Pagar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Modal Cadastrar Boleto -->
     <div class="modal fade" id="modalCadastrarBoleto" tabindex="1" role="dialog" aria-labelledby="modalCadastrarBoletoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Cadastrar Novo Boleto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="numero" class="form-label">Numero da Boleto *</label>
-                            <input type="text" name="numero" id="cadastrar_numero" class="form-control">
-                        </div>
-                        <div class="col-4">
-                            <label for="Empresa" class="form-label">Empresa *</label>
-                            <select name="Empresa" id="cadastrar_Empresa" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="Clínica Parque">Clínica Parque</option>
-                                <option value="Clínica Mauá">Clínica Mauá</option>
-                                <option value="Clínica Jardim">Clínica Jardim</option>
-                                <option value="Ótica Matriz">Ótica Matriz</option>
-                                <option value="Ótica Prestigio">Ótica Prestigio</option>
-                                <option value="Ótica Daily">Ótica Daily</option>
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="Vendedor" class="form-label">Vendedor *</label>
-                            <select name="Vendedor" id="cadastrar_Vendedor" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="Ana">Ana</option>
-                                <option value="Alan">Alan</option>
-                                <option value="Suzana">Suzana</option>
-                            </select>
-                        </div>
-                        <div class="col-3">
-                            <label for="valor" class="form-label">Valor *</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R$</span>
-                                <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cadastrar Novo Boleto</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha ?>">
+                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                            <div class="col-3 offset-1">
+                                <label for="n_boleto" class="form-label">Numero da Boleto *</label>
+                                <input type="text" name="n_boleto" id="cadastrar_n_boleto" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <label for="cadastrar_Empresa" class="form-label">Empresa *</label>
+                                <select name="id_empresa" id="cadastrar_Empresa" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="2">Ótica Matriz</option>
+                                    <option value="4">Ótica Prestigio</option>
+                                    <option value="6">Ótica Daily</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="Vendedor" class="form-label">Vendedor *</label>
+                                <select name="id_usuario" id="cadastrar_Vendedor" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="data_venda" class="form-label">Data do Boleto *</label>
+                                <input type="date" name="data_venda" id="data_venda" class="form-control" value="<?php $today = date("Y-m-d"); echo $today ?>" required>
+                            </div>
+                            <div class="col-4 offset-1">
+                                <label for="valor" class="form-label">Cliente</label>
+                                <input type="text" class="form-control" name="cliente" id="cadastrar_cliente">
+                            </div>
+                            <div class="col-3">
+                                <label for="valor" class="form-label">Valor *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <label for="data_boleto" class="form-label">Data do Boleto *</label>
-                            <input type="date" name="data_boleto" id="data_boleto" class="form-control" value="<?php $today = date("Y-m-d"); echo $today ?>" required>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="btnCadastrar">Cadastrar</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Cadastrar</button>
-                </div>
             </div>
-        </div>
+        </form>
     </div>
 
-    <!-- Modal Editar Cargo -->
+    <!-- Modal Editar Boleto -->
     <div class="modal fade" id="modalEditarBoleto" tabindex="1" role="dialog" aria-labelledby="modalEditarBoletoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Boleto: 000615664</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="numero" class="form-label">Numero da Boleto *</label>
-                            <select name="vendedor" id="cadastrar_vendedor" class="form-control">
-                                <option value="">Selecione...</option>
-                                <option value="Ana">Ana</option>
-                                <option value="Alan">Alan</option>
-                                <option value="Suzana">Suzana</option>
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="Empresa" class="form-label">Empresa *</label>
-                            <select name="Empresa" id="cadastrar_Empresa" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="Clínica Parque">Clínica Parque</option>
-                                <option value="Clínica Mauá">Clínica Mauá</option>
-                                <option value="Clínica Jardim">Clínica Jardim</option>
-                                <option value="Ótica Matriz">Ótica Matriz</option>
-                                <option value="Ótica Prestigio">Ótica Prestigio</option>
-                                <option value="Ótica Daily">Ótica Daily</option>
-                            </select>
-                        </div>
-                        <div class="col-3">
-                            <label for="valor" class="form-label">Valor *</label>
-                            <div class="input-group">
-                                <span class="input-group-text">R$</span>
-                                <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Boleto: <span id="editar_titulo"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_financeiro_boleto" id="editar_id_financeiro_boleto">
+                        <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha ?>">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="row">
+                            <div class="col-3 offset-1">
+                                <label for="editar_n_boleto" class="form-label">Numero da Boleto *</label>
+                                <input type="text" name="n_boleto" id="editar_n_boleto" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <label for="editar_Empresa" class="form-label">Empresa *</label>
+                                <select name="id_empresa" id="editar_Empresa" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="2">Ótica Matriz</option>
+                                    <option value="4">Ótica Prestigio</option>
+                                    <option value="6">Ótica Daily</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="editar_Vendedor" class="form-label">Vendedor *</label>
+                                <select name="id_usuario" id="editar_Vendedor" class="form-control" required>
+                                    <?php foreach($Usuario->listarVendedores() as $vendedores){ ?>
+                                        <option value="<?php echo $vendedores->id_usuario ?>"><?php echo $vendedores->nome ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="editar_data_venda" class="form-label">Data do Boleto *</label>
+                                <input type="date" name="data_venda" id="editar_data_venda" class="form-control" required>
+                            </div>
+                            <div class="col-4 offset-1">
+                                <label for="editar_cliente" class="form-label">Cliente</label>
+                                <input type="text" class="form-control" name="cliente" id="editar_cliente">
+                            </div>
+                            <div class="col-3">
+                                <label for="editar_valor" class="form-label">Valor *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" name="valor" id="editar_valor">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <label for="data_boleto" class="form-label">Data do Boleto *</label>
-                            <input type="date" name="data_boleto" id="data_boleto" class="form-control" value="<?php $today = date("Y-m-d"); echo $today ?>" required>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="btnEditar">Editar</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Editar</button>
-                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Modal Excluir Boleto-->
     <div class="modal fade" id="modalExcluirBoleto" tabindex="-1" role="dialog" aria-labelledby="modalExcluirBoletoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalExcluirBoletoLabel">Excluir a Boleto: 000615664</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <p>Deseja Excluir a Boleto: 000615664</p>
+        <form action="?" method="post">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalExcluirBoletoLabel">Excluir Boleto</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Deseja excluir o boleto: <b id="excluir_titulo"></b>?</p>
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_financeiro_boleto" id="excluir_id_financeiro_boleto">
+                        <input type="hidden" name="id_campanha" value="<?php echo $c ?>">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger" name="btnExcluir">Excluir</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">Excluir</button>
-                </div>
             </div>
-        </div>
+        </form>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
@@ -314,80 +481,188 @@
             $('#finan').addClass('active');
             $('#financeiro_campanhas').addClass('active');
             
-            // Evento de alteração nos filtros
-            $('#filtroVendedor, #filtroEmpresa').change(function() {
+            // Função para atualizar vendedores no filtro e no modal
+            function atualizarVendedores(empresa, vendedorSelect, incluirTodos = true) {
+                vendedorSelect.empty();
+                if (incluirTodos) {
+                    vendedorSelect.append('<option value="">Todos</option>');
+                } else {
+                    vendedorSelect.append('<option value="">Selecione...</option>');
+                }
+                
+                if (empresa === 'Ótica Matriz') {
+                    vendedorSelect.append('<option value="7">Josefina</option>');
+                } else if (empresa === 'Ótica Prestigio') {
+                    vendedorSelect.append('<option value="8">João do Pão</option>');
+                } else if (empresa === 'Ótica Daily') {
+                    vendedorSelect.append('<option value=""></option>');
+                }
+            }
+
+            // Atualiza a lista de vendedores no filtro
+            $('#filtroEmpresa').change(function() {
+                let empresa = $(this).val();
+                let vendedorSelect = $('#filtroVendedor');
+                atualizarVendedores(empresa, vendedorSelect, true);
+            });
+            
+            // Atualiza a lista de vendedores no modal de cadastro
+            $('#cadastrar_Empresa').change(function() {
+                let empresa = $(this).val();
+                let vendedorSelect = $('#cadastrar_Vendedor');
+                atualizarVendedores(empresa, vendedorSelect, false);
+            });
+
+            // Filtro de vendedores, empresas e datas na tabela
+            $('#filtroVendedor, #filtroEmpresa, #filtroMes').change(function() {
                 var filtroVendedor = $('#filtroVendedor').val();
                 var filtroEmpresa = $('#filtroEmpresa').val();
-                
+
+                if(filtroEmpresa == 2){
+                        filtroEmpresa = "Ótica Matriz";
+                    }else if(filtroEmpresa == 4){
+                        filtroEmpresa = "Ótica Prestigio";
+                    }else if(filtroEmpresa == 6){
+                        filtroEmpresa = "Ótica Daily";
+                    }else{
+                        filtroEmpresa = "Erro;"
+                    }
+
+                var filtroDataInicio = $('#filtroMes').data('inicio');
+                var filtroDataFim = $('#filtroMes').data('fim');
+
                 // Mostrar todas as linhas inicialmente
                 $('#dataTable tbody tr').show();
                 
                 // Iterar sobre as linhas da tabela para aplicar os filtros
                 $('#dataTable tbody tr').each(function() {
-                    var Vendedor = $(this).find('td:eq(1)').text();
-                    var Empresa = $(this).find('td:eq(2)').text();
+                    var vendedor = $(this).find('td:eq(2)').text();
+                    var empresa = $(this).find('td:eq(1)').text();
+                    var dataVenda = $(this).find('td:eq(4)').text();
                     
+                    // Converte a data de venda para o formato Date
+                    var partesData = dataVenda.split('/');
+                    var dataVendaFormatada = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+
                     // Verificar se a linha atende aos critérios de filtragem
-                    if ((filtroVendedor && Vendedor !== filtroVendedor) || 
-                    (filtroEmpresa && Empresa !== filtroEmpresa)) {
+                    if ((filtroVendedor && vendedor !== filtroVendedor) || 
+                        (filtroEmpresa && empresa !== filtroEmpresa) ||
+                        (filtroDataInicio && filtroDataFim && 
+                        (dataVendaFormatada < filtroDataInicio || dataVendaFormatada > filtroDataFim))) {
                         $(this).hide(); // Ocultar a linha se não atender aos critérios
                     }
                 });
             });
-        });
 
-        $('#cadastrar_Empresa').change(function (e) { 
-            let Empresa = $(this).val();
-            
-            // Limpar as opções atuais do select
-            $('#cadastrar_categoria').empty();
-            
-            // Adicionar novas opções baseadas no valor do input
-            if (Empresa === 'parque') {
-                $('#cadastrar_categoria').append('<option value="">Selecione...</option>');
-                $('#cadastrar_categoria').append('<option value="a">Opção A</option>');
-                $('#cadastrar_categoria').append('<option value="b">Opção B</option>');
-                $('#cadastrar_categoria').append('<option value="c">Opção C</option>');
-            }else if (Empresa === 'maua') {
-                $('#cadastrar_categoria').append('<option value="">Selecione...</option>');
-                $('#cadastrar_categoria').append('<option value="a">Opção E</option>');
-                $('#cadastrar_categoria').append('<option value="b">Opção F</option>');
-                $('#cadastrar_categoria').append('<option value="c">Opção G</option>');
-            } else if (Empresa === 'jardim') {
-                $('#cadastrar_categoria').append('<option value="">Selecione...</option>');
-                $('#cadastrar_categoria').append('<option value="a">Opção H</option>');
-                $('#cadastrar_categoria').append('<option value="b">Opção I</option>');
-                $('#cadastrar_categoria').append('<option value="c">Opção J</option>');
-            } else {
-                $('#cadastrar_categoria').append('<option value="">ERRO!!</option>');
-            }
-        });
-        $('#cadastrar_categoria').change(function (e) { 
-            let Empresa = $('#cadastrar_Empresa').val();
-            let categoria = $(this).val();
-            
-            // Limpar as opções atuais do select
-            $('#cadastrar_fornecedor').empty();
-            
-            // Adicionar novas opções baseadas no valor do input
-            if (categoria === 'a' && Empresa === 'parque') {
-                $('#cadastrar_fornecedor').append('<option value="">Selecione...</option>');
-                $('#cadastrar_fornecedor').append('<option value="a">Opção A</option>');
-                $('#cadastrar_fornecedor').append('<option value="b">Opção B</option>');
-                $('#cadastrar_fornecedor').append('<option value="c">Opção C</option>');
-            }else if (categoria === 'b') {
-                $('#cadastrar_fornecedor').append('<option value="">Selecione...</option>');
-                $('#cadastrar_fornecedor').append('<option value="a">Opção E</option>');
-                $('#cadastrar_fornecedor').append('<option value="b">Opção F</option>');
-                $('#cadastrar_fornecedor').append('<option value="c">Opção G</option>');
-            } else if (categoria === 'c') {
-                $('#cadastrar_fornecedor').append('<option value="">Selecione...</option>');
-                $('#cadastrar_fornecedor').append('<option value="a">Opção H</option>');
-                $('#cadastrar_fornecedor').append('<option value="b">Opção I</option>');
-                $('#cadastrar_fornecedor').append('<option value="c">Opção J</option>');
-            } else {
-                $('#cadastrar_fornecedor').append('<option value="">ERRO!!</option>');
-            }
+            // Configurações para selecionar uma faixa de datas com Shift
+            var dataInicio = null;
+            var dataFim = null;
+            $('#filtroMes').on('change', function(e) {
+                if (e.shiftKey && dataInicio) {
+                    // Se o Shift for pressionado, define dataFim
+                    dataFim = new Date($(this).val());
+                } else {
+                    // Define dataInicio e limpa dataFim
+                    dataInicio = new Date($(this).val());
+                    dataFim = null;
+                }
+
+                // Se dataFim estiver definida, faz a filtragem
+                if (dataFim) {
+                    // Garante que dataInicio é anterior a dataFim
+                    if (dataInicio > dataFim) {
+                        var temp = dataInicio;
+                        dataInicio = dataFim;
+                        dataFim = temp;
+                    }
+                    $('#filtroMes').data('inicio', dataInicio).data('fim', dataFim);
+                } else {
+                    $('#filtroMes').data('inicio', dataInicio).data('fim', dataInicio);
+                }
+
+                // Aciona o evento de alteração para aplicar o filtro
+                $('#filtroMes').trigger('change');
+            });
+
+            $('#modalVisualizarBoleto').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let n_boleto = button.data('n_boleto');
+                let empresa = button.data('empresa');
+                let usuario = button.data('usuario');
+                let cliente = button.data('cliente');
+                let data_venda = button.data('data_venda');
+                let periodo_fim = button.data('periodo_fim');
+                let valor = button.data('valor');
+                let valor_pago = button.data('valor_pago');
+                let data_pago = button.data('data_pago');
+
+                // Caso data_pago esteja vazia, definir como "--"
+                if (!data_pago) {
+                    data_pago = "--";
+                }
+
+                $('#visualizar_n_boleto').text(n_boleto);
+                $('#visualizar_titulo').text(n_boleto);
+                $('#visualizar_id_empresa').text(empresa);
+                $('#visualizar_id_usuario').text(usuario);
+                $('#visualizar_cliente').text(cliente);
+                $('#visualizar_data_venda').text(data_venda);
+                $('#visualizar_periodo_fim').text(periodo_fim);
+                $('#visualizar_valor').text("R$ " + valor);
+                $('#visualizar_valor_pago').text("R$ " + valor_pago);
+                $('#visualizar_data_pago').text(data_pago);
+            });
+
+            $('#modalEditarBoleto').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let id_financeiro_boleto = button.data('id_financeiro_boleto');
+                let n_boleto = button.data('n_boleto');
+                let empresa = button.data('empresa');
+                let usuario = button.data('usuario');
+                let cliente = button.data('cliente');
+                let data_venda = button.data('data_venda');
+                let valor = button.data('valor');
+                let valor_pago = button.data('valor_pago');
+                let data_pago = button.data('data_pago');
+
+                $('#editar_id_financeiro_boleto').val(id_financeiro_boleto);
+                $('#editar_n_boleto').val(n_boleto);
+                console.log(empresa)
+                $('#editar_Empresa').val(empresa);
+                $('#editar_Vendedor').val(usuario);
+                $('#editar_cliente').val(cliente);
+                $('#editar_data_venda').val(data_venda);
+                $('#editar_valor').val(valor);
+                $('#editar_valor_pago').val(valor_pago);
+                $('#editar_data_pago').val(data_pago);
+                $('#editar_titulo').text(n_boleto);
+            });
+
+            $('#modalExcluirBoleto').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let id_financeiro_boleto = button.data('id_financeiro_boleto');
+                let n_boleto = button.data('n_boleto');
+
+                $('#excluir_id_financeiro_boleto').val(id_financeiro_boleto);
+                $('#excluir_titulo').text(n_boleto);
+            });
+
+            $('#modalCadastrarValorPago').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let id_financeiro_boleto = button.data('id_financeiro_boleto');
+                let n_boleto = button.data('n_boleto');
+                let valor_pago = button.data('valor_pago');
+                let data_pago = button.data('data_pago');
+
+                console.log(valor_pago)
+
+                $('#pagar_id_financeiro_boleto').val(id_financeiro_boleto);
+                $('#pagar_valor_pago').val(valor_pago)
+                $('#pagar_data_pago').val(data_pago)
+                $('#pagar_titulo').text(n_boleto);
+            });
+
+
         });
     </script>
 
@@ -403,7 +678,7 @@
     <script src="<?php echo URL ?>/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTablesBoletos.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTablesCampanhas.min.js"></script>
     <script src="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->

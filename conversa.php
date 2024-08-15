@@ -1,7 +1,16 @@
 <?php
     include_once('const.php');
-?>
+    include_once('class/Chat.php');
+    include_once('class/Mensagens.php');
 
+    $Mensagem = new Mensagem();
+    $id_chat = $_GET['id'];
+    $lista_mensagens = $Mensagem->listar($id_chat);
+
+    if (isset($_POST['enviarMensagem'])) {
+        $Mensagem->cadastrar($_POST);
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -49,7 +58,7 @@
         .eu{
             background-color: #98ace9;
         }
-            #msg {
+        #msg {
             position: fixed;
             bottom: 0;
             width: 100%; /* Para ocupar toda a largura */
@@ -89,23 +98,14 @@
                 <div class="container-fluid chat">
 
                     <div class="row">
-
-                        <div class="icon-container mb-2">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
-                        <div class="card p-2 mb-2">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel molestie mauris. Aenean in pretium mauris. In tempus ullamcorper gravida. Sed mi lectus, facilisis id euismod vel, suscipit vel lacus. Praesent sit amet dolor ultrices ante luctus elementum vel id dolor. Morbi in nulla nulla. Sed condimentum odio eu dolor porttitor ultrices. Fusce quis pellentesque sem, non porta ligula. Maecenas vehicula tempus lorem et elementum. Nulla tincidunt, ligula vel pulvinar pretium, mauris sapien luctus mi, non egestas orci eros non lacus. Quisque volutpat quis felis volutpat finibus. Sed tellus augue, fringilla nec aliquam ac, tincidunt et ipsum. Donec ut lectus eget lectus malesuada maximus congue non mauris. Suspendisse nec vestibulum justo. Pellentesque ut posuere nunc. Integer eu justo faucibus, ornare arcu a, sodales odio.
-                            </p>
-                        </div>
-                        <div class="card p-2 mb-2 eu">
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat quasi nulla qui est iste quisquam impedit repellendus ea nemo voluptate distinctio ab iure vero cupiditate, ipsa asperiores aperiam sit? Blanditiis!
-                            </p>
-                        </div>
-                        <div class="icon-container">
-                            <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
-                        </div>
+                        <?php foreach ($lista_mensagens as $msg): ?>
+                            <div class="icon-container mb-2">
+                                <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
+                            </div>
+                            <div class="card p-2 mb-2 <?php echo ($msg->id_usuario == $_SESSION['id_usuario']) ? 'eu' : ''; ?>">
+                                <p><?php echo htmlspecialchars($msg->mensagem); ?></p>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
 
                 </div>

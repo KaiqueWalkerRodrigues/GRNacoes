@@ -42,6 +42,10 @@
         $Compras_Pedidos->cancelarNegacao($_POST['id_compra_pedido'], $_POST['usuario_logado']);
         header('location:/GRNacoes/compras/pedidos');
     }
+    if (isset($_POST['btnDesativarPedido'])) {
+        $Compras_Pedidos->desativar($_POST['id_compra_pedido'], $_POST['usuario_logado']);
+        header('location:/GRNacoes/compras/pedidos');
+    }
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -198,16 +202,27 @@
                                                     data-descricao="<?php echo $cp->descricao ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
-                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalConfirmarCompra" class="collapse-item"
+                                                <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
+                                                    <button class="btn btn-success" data-toggle="modal" data-target="#modalConfirmarCompra" class="collapse-item"
+                                                        data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
+                                                        data-titulo="<?php echo $cp->titulo ?>">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
+                                                <?php } ?>
+                                                <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
+                                                    <button class="btn btn-danger" data-toggle="modal" data-target="#modalNegarCompra" class="collapse-item"
+                                                        data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
+                                                        data-titulo="<?php echo $cp->titulo ?>">
+                                                        <i class="fa-solid fa-times"></i>
+                                                    </button>
+                                                <?php } ?>
+                                                <?php if($cp->id_usuario == $_SESSION['id_usuario'] or $_SESSION['id_setor'] == 1){ ?>
+                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalDesativarPedido" class="collapse-item"
                                                     data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                     data-titulo="<?php echo $cp->titulo ?>">
-                                                    <i class="fa-solid fa-check"></i>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
-                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalNegarCompra" class="collapse-item"
-                                                    data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
-                                                    data-titulo="<?php echo $cp->titulo ?>">
-                                                    <i class="fa-solid fa-times"></i>
-                                                </button>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                         <?php } } ?>
@@ -514,11 +529,13 @@
                                             data-descricao="<?php echo $cp->descricao ?>">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
+                                        <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
                                         <button class="btn btn-warning" data-toggle="modal" data-target="#modalCancelarCompra" class="collapse-item"
                                             data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                             data-titulo="<?php echo $cp->titulo ?>">
                                             <i class="fa-solid fa-ban"></i>
                                         </button>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php } ?>
@@ -573,11 +590,13 @@
                                             data-descricao="<?php echo $cp->descricao ?>">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
+                                        <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
                                         <button class="btn btn-warning" data-toggle="modal" data-target="#modalCancelarNegacao" class="collapse-item"
                                             data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                             data-titulo="<?php echo $cp->titulo ?>">
                                             <i class="fa-solid fa-ban"></i>
                                         </button>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php } ?>
@@ -646,7 +665,32 @@
         </form>
     </div>
 
-
+    <!-- Modal Desatiar Pedido -->
+    <div class="modal fade" id="modalDesativarPedido" tabindex="-1" role="dialog" aria-labelledby="modalDesativarPedidoLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Excluir o Pedido: <span class="modalDesativarPedidoLabel"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_compra_pedido" id="desativar_id_compra_pedido">
+                        <div class="row">
+                            <p>Deseja Excluir o pedido: <span class="modalDesativarPedidoLabel"></span>?</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="btnDesativarPedido" class="btn btn-danger">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Bootstrap core JavaScript-->
     <script src="<?php echo URL ?>/vendor/jquery/jquery.min.js"></script>
@@ -749,6 +793,14 @@
             let titulo = button.data('titulo');
             $('.modalCancelarNegacaoLabel').empty().append(titulo);
             $('#cancelar_id_negacao').val(id_pedido);
+        });
+
+        $('#modalDesativarPedido').on('show.bs.modal', function(event) {
+            let button = $(event.relatedTarget);
+            let id_pedido = button.data('id_compra_pedido');
+            let titulo = button.data('titulo');
+            $('.modalDesativarPedidoLabel').empty().append(titulo);
+            $('#desativar_id_compra_pedido').val(id_pedido);
         });
 
         // Quando o modal principal for fechado, esconda todos os modais abertos

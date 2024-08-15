@@ -3,53 +3,40 @@
 class Mensagem {
 
     public $pdo;
-    
+
     public function __construct()
     {
-        $this->pdo = Conexao::conexao();               
+        $this->pdo = Conexao::conexao();
     }
 
-    public function listar(int $id_mensagem){
-        $sql = $this->pdo->prepare('SELECT * FROM mensagens WHERE id_mensagem = :id_mensagem AND deleted_at IS NULL');        
-        $sql->bindParam(':id_mensagem', $id_mensagem);
+    public function listar(int $id_chat){
+        $sql = $this->pdo->prepare('SELECT * FROM mensagens WHERE id_chat = :id_chat AND deleted_at IS NULL ORDER BY created_at DESC');
+        $sql->bindParam(':id_chat', $id_chat);
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         return $dados;
-    }      
+    }
 
     public function cadastrar(array $dados)
     {
-        $id_usuario = $dados['id_usuario'];
-        $mensagem = $dados['mensagem'];
-        $id_chat = $dados['id_chat'];
-
-        print_r($mensagem.' - '.$id_chat.' - '.$id_usuario);
-        die();
-        
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO mensagens 
-                                    (id_mensagem, id_chat, id_usuario, mensagem, created_at, updated_at)
+                                    (id_chat, id_usuario, mensagem, created_at, updated_at)
                                     VALUES
-                                    (:id_mensagem, :id_chat, :id_usuario, :mensagem, :created_at, :updated_at)
+                                    (:id_chat, :id_usuario, :mensagem, :created_at, :updated_at)
                                 ');
-        $created_at = $agora;
-        $updated_at = $agora;
 
-        $sql->bindParam(':id_mensagem', $id_mensagem);
-        $sql->bindParam(':id_usuario', $id_usuario);
-        $sql->bindParam(':id_chat', $id_chat);
-        $sql->bindParam(':mensagem', $mensagem);
-        $sql->bindParam(':created_at', $created_at);
-        $sql->bindParam(':updated_at', $updated_at);
-
-        $sql->execute();
-        //Fim envia a mensagem
+        $sql->bindParam(':id_chat', $dados['id_chat']);
+        $sql->bindParam(':id_usuario', $dados['id_usuario']);
+        $sql->bindParam(':mensagem', $dados['mensagem']);
+        $sql->bindParam(':created_at', $agora);
+        $sql->bindParam(':updated_at', $agora);
 
         if ($sql->execute()) {
-            $descricao = "Enviou uma mensagem no chat de ID: $id_mensagem";
+            $descricao = "Enviou uma mensagem no chat de ID: {$dados['id_chat']}";
 
             $sql = $this->pdo->prepare('INSERT INTO logs 
                                         (acao, descricao, data)
@@ -59,12 +46,10 @@ class Mensagem {
 
             $acao = 'Enviar Mensagem';
 
-            $sql->bindParam(':acao', $acao); 
-            $sql->bindParam(':descricao', $descricao); 
-            $sql->bindParam(':data', $agora); 
+            $sql->bindParam(':acao', $acao);
+            $sql->bindParam(':descricao', $descricao);
+            $sql->bindParam(':data', $agora);
             $sql->execute();
-        } else {
-            // Tratar falha na execução da query, se necessário
         }
     }
 
@@ -78,16 +63,12 @@ class Mensagem {
 
         $agora = date("Y-m-d H:i:s");
 
-        $id_mensagem = $dados['id_mensagem'];
-        $mensagem = $dados['mensagem'];
-        $updated_at = $agora; 
-
-        $sql->bindParam(':id_mensagem', $id_mensagem);
-        $sql->bindParam(':mensagem', $mensagem);
-        $sql->bindParam(':updated_at', $updated_at);       
+        $sql->bindParam(':id_mensagem', $dados['id_mensagem']);
+        $sql->bindParam(':mensagem', $dados['mensagem']);
+        $sql->bindParam(':updated_at', $agora);
 
         if ($sql->execute()) {
-            $descricao = "Editou uma mensagem no chat de ID: {$dados['id_mensagem']}";
+            $descricao = "Editou uma mensagem no chat de ID: {$dados['id_chat']}";
 
             $sql = $this->pdo->prepare('INSERT INTO logs 
                                         (acao, descricao, data)
@@ -96,12 +77,10 @@ class Mensagem {
                                     ');
 
             $acao = 'Editar Mensagem';
-            $sql->bindParam(':acao', $acao); 
-            $sql->bindParam(':descricao', $descricao); 
-            $sql->bindParam(':data', $agora); 
+            $sql->bindParam(':acao', $acao);
+            $sql->bindParam(':descricao', $descricao);
+            $sql->bindParam(':data', $agora);
             $sql->execute();
-        } else {
-            // Tratar falha na execução da query, se necessário
         }
     }
 
@@ -128,12 +107,10 @@ class Mensagem {
                                     ');
 
             $acao = 'Excluir Mensagem';
-            $sql->bindParam(':acao', $acao); 
-            $sql->bindParam(':descricao', $descricao); 
-            $sql->bindParam(':data', $deleted_at); 
+            $sql->bindParam(':acao', $acao);
+            $sql->bindParam(':descricao', $descricao);
+            $sql->bindParam(':data', $deleted_at);
             $sql->execute();
-        } else {
-            // Tratar falha na execução da query, se necessário
         }
     }
 }
