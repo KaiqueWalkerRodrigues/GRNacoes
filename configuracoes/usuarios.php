@@ -267,7 +267,7 @@
                                 <label for="cadastrar_celular" class="form-label">Celular *</label>
                                 <input type="text" name="celular" id="cadastrar_celular" class="form-control">
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="cadastrar_cpf" class="form-label">CPF *</label>
                                 <input type="text" name="cpf" id="cadastrar_cpf" class="form-control">
                             </div>
@@ -275,7 +275,7 @@
                                 <label for="cadastrar_data_nascimento" class="form-label">Data de Nascimento *</label>
                                 <input type="date" name="data_nascimento" class="form-control" required>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="cadastrar_email" class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control">
                             </div>
@@ -378,7 +378,7 @@
                                 <label for="editar_celular" class="form-label">Celular *</label>
                                 <input type="text" name="celular" id="editar_celular" class="form-control">
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="editar_cpf" class="form-label">CPF *</label>
                                 <input type="text" name="cpf" id="editar_cpf" class="form-control">
                             </div>
@@ -386,7 +386,7 @@
                                 <label for="editar_data_nascimento" class="form-label">Data de Nascimento *</label>
                                 <input type="date" name="data_nascimento" id="editar_data_nascimento" class="form-control" required>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="editar_email" class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control">
                             </div>
@@ -484,60 +484,108 @@
     <script src="<?php echo URL ?>/js/demo/datatables-demo.js"></script>
 
     <script>
-        $('#gerar_usuario').click(function (e) { 
-            // Obter o valor do campo "cadastrar_nome"
-            let nomeCompleto = $('#cadastrar_nome').val();
+        $(document).ready(function() {
+            $('#config').addClass('active');
+            $('#gerenciar_usuarios').addClass('active');
 
-            // Dividir o nome completo em partes usando o espaço como delimitador
-            let partesNome = nomeCompleto.split(' ');
+            function validarCPF(cpf) {
+                cpf = cpf.replace(/[^\d]+/g,''); // Remove caracteres não numéricos
+                if (cpf == '') return false;
+                // Elimina CPFs conhecidos que são inválidos
+                if (cpf.length != 11 || 
+                    cpf == "00000000000" || 
+                    cpf == "11111111111" || 
+                    cpf == "22222222222" || 
+                    cpf == "33333333333" || 
+                    cpf == "44444444444" || 
+                    cpf == "55555555555" || 
+                    cpf == "66666666666" || 
+                    cpf == "77777777777" || 
+                    cpf == "88888888888" || 
+                    cpf == "99999999999")
+                    return false;
+                // Validação do primeiro dígito
+                let add = 0;
+                for (let i=0; i < 9; i ++)
+                    add += parseInt(cpf.charAt(i)) * (10 - i);
+                let rev = 11 - (add % 11);
+                if (rev == 10 || rev == 11) 
+                    rev = 0;
+                if (rev != parseInt(cpf.charAt(9))) 
+                    return false;
+                // Validação do segundo dígito
+                add = 0;
+                for (let i = 0; i < 10; i ++)
+                    add += parseInt(cpf.charAt(i)) * (11 - i);
+                rev = 11 - (add % 11);
+                if (rev == 10 || rev == 11) 
+                    rev = 0;
+                if (rev != parseInt(cpf.charAt(10)))
+                    return false;
+                return true;
+            }
 
-            // Extrair o primeiro nome e o último nome
-            let primeiroNome = partesNome[0];
-            let ultimoNome = partesNome[partesNome.length - 1];
+            function formatarCPF(campo) {
+                let cpf = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
 
-            // Concatenar o primeiro nome e o último nome com um ponto entre eles
-            let nomeUsuario = primeiroNome + '.' + ultimoNome;
+                if (cpf.length === 11) {
+                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+                    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    campo.val(cpf);
+                }
 
-            // Definir o valor do campo "cadastrar_usuario" como o nome de usuário gerado
-            $('#cadastrar_usuario').val(nomeUsuario);
-        });
-        $('#cadastrar_celular').blur(function() {
-            let telefone = $(this).val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-            let telefoneFormatado = '';
-
-            // Verifica se o telefone possui 9 caracteres
-            if (telefone.length === 9) {
-                telefoneFormatado = '(11) ' + telefone.substr(0, 5) + '-' + telefone.substr(5);
-            } else {
-                // Verifica se o telefone possui 11 caracteres
-                if (telefone.length === 11) {
-                    telefoneFormatado = '(' + telefone.substr(0, 2) + ') ' + telefone.substr(2, 5) + '-' + telefone.substr(7);
+                if (!validarCPF(cpf)) {
+                    campo.addClass('is-invalid');
+                    if (campo.next('.invalid-feedback').length === 0) {
+                        $('<div class="invalid-feedback">CPF inválido. Verifique e tente novamente.</div>').insertAfter(campo);
+                    }
+                } else {
+                    campo.removeClass('is-invalid').addClass('is-valid');
+                    campo.next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
                 }
             }
 
-            // Define o valor do campo como o telefone formatado
-            $(this).val(telefoneFormatado);
-        });
-        $('#cadastrar_cpf').blur(function() {
-            let cpf = $(this).val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-            let cpfFormatado = '';
+            function formatarCelular(campo) {
+                let telefone = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
 
-            // Verifica se o CPF possui 11 caracteres
-            if (cpf.length === 11) {
-                cpfFormatado = cpf.substr(0, 3) + '.' + cpf.substr(3, 3) + '.' + cpf.substr(6, 3) + '-' + cpf.substr(9);
+                if (telefone.length === 11) {
+                    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+                    telefone = telefone.replace(/(\d{5})(\d{4})$/, '$1-$2');
+                    campo.val(telefone);
+                }
             }
 
-            // Define o valor do campo como o CPF formatado
-            $(this).val(cpfFormatado);
-        });
-        //Senhas
-        {
-            //Cadastrar Senha
-            {
-                $(document).ready(function(){
-                    $('#config').addClass('active');
-                    $('#gerenciar_usuarios').addClass('active');
+            $('#gerar_usuario').click(function () { 
+                // Obter o valor do campo "cadastrar_nome"
+                let nomeCompleto = $('#cadastrar_nome').val();
 
+                // Dividir o nome completo em partes usando o espaço como delimitador
+                let partesNome = nomeCompleto.split(' ');
+
+                // Extrair o primeiro nome e o último nome
+                let primeiroNome = partesNome[0];
+                let ultimoNome = partesNome[partesNome.length - 1];
+
+                // Concatenar o primeiro nome e o último nome com um ponto entre eles
+                let nomeUsuario = primeiroNome + '.' + ultimoNome;
+
+                // Definir o valor do campo "cadastrar_usuario" como o nome de usuário gerado
+                $('#cadastrar_usuario').val(nomeUsuario);
+            });
+
+            $('#cadastrar_celular, #editar_celular').on('input', function() {
+                formatarCelular($(this));
+            });
+
+            $('#cadastrar_cpf, #editar_cpf').on('input', function() {
+                formatarCPF($(this));
+            });
+
+            //Senhas
+            {
+                //Cadastrar Senha
+                {
                     // Função para alternar o ícone de visibilidade
                     function alternarIconeVisibilidade(tipoInput) {
                         if (tipoInput === 'password') {
@@ -564,18 +612,16 @@
                     
                     // Inicializar o ícone de visibilidade com base no tipo de input inicial
                     alternarIconeVisibilidade($('#cadastrar_senha').attr('type'));
-                });
-                $(document).ready(function(){
-                    // Função para alternar o ícone de visibilidade
-                    function alternarIconeVisibilidade(tipoInput) {
+
+                    // Função para alternar o ícone de visibilidade para confirmar senha
+                    function alternarIconeVisibilidadeConfirmar(tipoInput) {
                         if (tipoInput === 'password') {
                             $('#confirmar_icone_visibilidade').removeClass('fa-eye-slash').addClass('fa-eye');
                         } else {
                             $('#confirmar_icone_visibilidade').removeClass('fa-eye').addClass('fa-eye-slash');
                         }
                     }
-                    
-                    // Ao clicar no botão, alternar a visibilidade do input
+
                     $('#confirmar_ver_senha').click(function(){
                         var tipoInput = $('#cadastrar_confirmar_senha').attr('type');
                         
@@ -587,16 +633,14 @@
                         }
                         
                         // Alternar o ícone de visibilidade com base no novo tipo de input
-                        alternarIconeVisibilidade($('#cadastrar_confirmar_senha').attr('type'));
+                        alternarIconeVisibilidadeConfirmar($('#cadastrar_confirmar_senha').attr('type'));
                     });
                     
                     // Inicializar o ícone de visibilidade com base no tipo de input inicial
-                    alternarIconeVisibilidade($('#cadastrar_confirmar_senha').attr('type'));
-                });
-            }
-            //Editar Senha
-            {
-                $(document).ready(function(){
+                    alternarIconeVisibilidadeConfirmar($('#cadastrar_confirmar_senha').attr('type'));
+                }
+                //Editar Senha
+                {
                     // Função para alternar o ícone de visibilidade
                     function alternarIconeVisibilidade(tipoInput) {
                         if (tipoInput === 'password') {
@@ -623,18 +667,16 @@
                     
                     // Inicializar o ícone de visibilidade com base no tipo de input inicial
                     alternarIconeVisibilidade($('#editar_senha').attr('type'));
-                });
-                $(document).ready(function(){
-                    // Função para alternar o ícone de visibilidade
-                    function alternarIconeVisibilidade(tipoInput) {
+
+                    // Função para alternar o ícone de visibilidade para confirmar senha
+                    function alternarIconeVisibilidadeConfirmar(tipoInput) {
                         if (tipoInput === 'password') {
                             $('#editar_confirmar_icone_visibilidade').removeClass('fa-eye-slash').addClass('fa-eye');
                         } else {
                             $('#editar_confirmar_icone_visibilidade').removeClass('fa-eye').addClass('fa-eye-slash');
                         }
                     }
-                    
-                    // Ao clicar no botão, alternar a visibilidade do input
+
                     $('#editar_confirmar_ver_senha').click(function(){
                         var tipoInput = $('#editar_confirmar_senha').attr('type');
                         
@@ -646,114 +688,120 @@
                         }
                         
                         // Alternar o ícone de visibilidade com base no novo tipo de input
-                        alternarIconeVisibilidade($('#editar_confirmar_senha').attr('type'));
+                        alternarIconeVisibilidadeConfirmar($('#editar_confirmar_senha').attr('type'));
                     });
                     
                     // Inicializar o ícone de visibilidade com base no tipo de input inicial
-                    alternarIconeVisibilidade($('#editar_confirmar_senha').attr('type'));
-                });
-            }
-        }
-        $('#modalEditarUsuario').on('show.bs.modal', function (event) {
-            let button = $(event.relatedTarget)
-            let idusuario = button.data('idusuario')
-            let nome = button.data('nome')
-            let usuario = button.data('usuario')
-            let contrato = button.data('contrato')
-            let celular = button.data('celular')
-            let cpf = button.data('cpf')
-            let data_nascimento = button.data('data_nascimento')
-            let email = button.data('email')
-            let empresa = button.data('empresa')
-            let idsetor = button.data('idsetor')
-            let idcargo = button.data('idcargo')
-            let data_admissao = button.data('data_admissao')
-
-            $('#modalEditarUsuarioLabel').empty()
-            $('#modalEditarUsuarioLabel').append(usuario)
-            $('#editar_nome').val(nome)
-            $('#editar_id_usuario').val(idusuario)
-            $('#editar_usuario').val(usuario)
-            $('#editar_contrato').val(contrato)
-            $('#editar_celular').val(celular)
-            $('#editar_cpf').val(cpf)
-            $('#editar_data_nascimento').val(data_nascimento)
-            $('#editar_email').val(email)
-            $('#editar_empresa').val(empresa)
-            $('#editar_id_setor').val(idsetor)
-            $('#editar_id_cargo').val(idcargo)
-            $('#editar_id_usuario').val(idusuario)
-            $('#editar_data_admissao').val(data_admissao)
-        })
-        $('#modalDesativarUsuario').on('show.bs.modal', function (event) {
-            let button = $(event.relatedTarget)
-            let idusuario = button.data('idusuario')
-            let nome = button.data('nome')
-
-            $('#desativar_id_usuario').val(idusuario)
-
-            $('.modalDesativarUsuarioLabel').empty()
-            $('.modalDesativarUsuarioLabel').append(nome)
-        })
-        $('#modalDocumentos').on('show.bs.modal', function (event) {
-            let button = $(event.relatedTarget);
-            $('#verrg').attr('src', '');
-            $('#vercontrato').attr('src', '');
-            $('#verfoto').attr('src', '');
-
-            let id_usuario = button.data('id_usuario');
-            let nome = button.data('nome');
-            let rg = button.data('rg');
-            let contrato = button.data('contrato');
-            let foto3x4 = button.data('foto3x4');
-            let residencia = button.data('residencia');
-
-            $('.modalDocumentosLabel').text(nome);
-
-            // Construa o caminho para a imagem do RG
-            if(rg != ''){
-                let caminho_rg = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+rg;
-                $('#verrg').attr('src', caminho_rg);
-                $('#colrg').removeClass('d-none')
-                $('#formfoto').addClass('d-none')
-            }else{
-                $('#colrg').addClass('d-none')
-                $('#formrg').removeClass('d-none')
+                    alternarIconeVisibilidadeConfirmar($('#editar_confirmar_senha').attr('type'));
+                }
             }
 
-            $('#RGdownloadButton').click(function(){
-                // Defina o diretório do arquivo
-                console.log(id_usuario)
+            $('#modalEditarUsuario').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let modal = $(this);
 
-                var directory = '/GRNacoes/configuracoes/usuario/' + id_usuario + '/'+rg;
-                
-                // Simule o download do arquivo
-                var link = document.createElement('a');
-                link.href = directory;
-                link.download = rg;
-                link.click();
+                // Obtendo dados do usuário para o modal de edição
+                let idusuario = button.data('idusuario');
+                let nome = button.data('nome');
+                let usuario = button.data('usuario');
+                let contrato = button.data('contrato');
+                let celular = button.data('celular');
+                let cpf = button.data('cpf');
+                let data_nascimento = button.data('data_nascimento');
+                let email = button.data('email');
+                let empresa = button.data('empresa');
+                let idsetor = button.data('idsetor');
+                let idcargo = button.data('idcargo');
+                let data_admissao = button.data('data_admissao');
+
+                modal.find('#editar_nome').val(nome);
+                modal.find('#editar_id_usuario').val(idusuario);
+                modal.find('#editar_usuario').val(usuario);
+                modal.find('#editar_contrato').val(contrato);
+                modal.find('#editar_celular').val(celular);
+                modal.find('#editar_cpf').val(cpf);
+                modal.find('#editar_data_nascimento').val(data_nascimento);
+                modal.find('#editar_email').val(email);
+                modal.find('#editar_empresa').val(empresa);
+                modal.find('#editar_id_setor').val(idsetor);
+                modal.find('#editar_id_cargo').val(idcargo);
+                modal.find('#editar_data_admissao').val(data_admissao);
+
+                // Validar e formatar CPF e Celular assim que o modal de edição for aberto
+                formatarCPF(modal.find('#editar_cpf'));
+                formatarCelular(modal.find('#editar_celular'));
             });
-        
-            if(contrato != ''){
-                let caminho_contrato = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+contrato;
-                $('#vercontrato').attr('src', caminho_contrato);
-                $('#colcontrato').removeClass('d-none')
-                $('#formfoto').addClass('d-none')
-            }else{
-                $('#colcontrato').addClass('d-none')
-                $('#formcontrato').removeClass('d-none')
-            }
-            if(foto3x4 != ''){
-                let caminho_foto = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+foto;
-                $('#verfoto').attr('src', caminho_foto);
-                $('#colfoto').removeClass('d-none')
-                $('#formfoto').addClass('d-none')
-            }else{
-                $('#colfoto').addClass('d-none')
-                $('#formfoto').removeClass('d-none')
-            }
+
+            $('#modalDesativarUsuario').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let idusuario = button.data('idusuario');
+                let nome = button.data('nome');
+
+                $('#desativar_id_usuario').val(idusuario);
+
+                $('.modalDesativarUsuarioLabel').empty();
+                $('.modalDesativarUsuarioLabel').append(nome);
+            });
+
+            $('#modalDocumentos').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                $('#verrg').attr('src', '');
+                $('#vercontrato').attr('src', '');
+                $('#verfoto').attr('src', '');
+
+                let id_usuario = button.data('id_usuario');
+                let nome = button.data('nome');
+                let rg = button.data('rg');
+                let contrato = button.data('contrato');
+                let foto3x4 = button.data('foto3x4');
+                let residencia = button.data('residencia');
+
+                $('.modalDocumentosLabel').text(nome);
+
+                // Construa o caminho para a imagem do RG
+                if(rg != ''){
+                    let caminho_rg = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+rg;
+                    $('#verrg').attr('src', caminho_rg);
+                    $('#colrg').removeClass('d-none');
+                    $('#formrg').addClass('d-none');
+                }else{
+                    $('#colrg').addClass('d-none');
+                    $('#formrg').removeClass('d-none');
+                }
+
+                $('#RGdownloadButton').click(function(){
+                    var directory = '/GRNacoes/configuracoes/usuario/' + id_usuario + '/'+rg;
+                    
+                    var link = document.createElement('a');
+                    link.href = directory;
+                    link.download = rg;
+                    link.click();
+                });
+
+                if(contrato != ''){
+                    let caminho_contrato = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+contrato;
+                    $('#vercontrato').attr('src', caminho_contrato);
+                    $('#colcontrato').removeClass('d-none');
+                    $('#formcontrato').addClass('d-none');
+                }else{
+                    $('#colcontrato').addClass('d-none');
+                    $('#formcontrato').removeClass('d-none');
+                }
+
+                if(foto3x4 != ''){
+                    let caminho_foto = '/GRNacoes/configuracoes/usuario/'+id_usuario+'/'+foto3x4;
+                    $('#verfoto').attr('src', caminho_foto);
+                    $('#colfoto').removeClass('d-none');
+                    $('#formfoto').addClass('d-none');
+                }else{
+                    $('#colfoto').addClass('d-none');
+                    $('#formfoto').removeClass('d-none');
+                }
+            });
         });
     </script>
+
+
 
 </body>
 

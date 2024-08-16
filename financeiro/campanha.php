@@ -84,10 +84,6 @@
                     <br>
 
                     <div class="row mb-4">
-                        <div class="col-2">
-                            <label for="filtroMes" class="form-label">Filtrar por Mês:</label>
-                            <input type="date" name="filtroMes" id="filtroMes" class="form-control">
-                        </div>
                         <div class="col-3">
                             <label for="filtroEmpresa" class="form-label">Filtrar por Empresa:</label>
                             <select id="filtroEmpresa" class="form-control">
@@ -109,10 +105,24 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <div class="col-6">
-                                <h6 class="m-0 font-weight-bold text-primary">
-                                    <?php echo $campanha->nome ?> | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarBoleto" class="collapse-item">Cadastrar Novo Boleto</button>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary text-center">
+                                    <?php 
+                                        echo $campanha->nome;
+                                        $n_campanha = preg_replace('/\D/', '', $campanha->nome);
+                                    ?>
                                 </h6>
+                                <div class="align-items-start">
+                                    <button class="btn btn-primary ml-2" data-toggle="modal" data-target="#modalCadastrarBoleto" class="collapse-item">Cadastrar Novo Boleto</button>
+                                </div>
+                                <div class="align-items-end ml-auto">
+                                    <button class="btn btn-success ml-2" onclick="document.getElementById('relatorioForm').submit();">Gerar Relatório</button>
+                                    <form id="relatorioForm" action="gerar_relatorio_campanha?id=<?php echo $campanha->id_financeiro_campanha ?>" method="post" style="display:none;">
+                                    </form>
+                                    <?php if (isset($_GET['s'])) { ?>
+                                        <a id="downloadButton" href="resumo_campanha_<?php echo $n_campanha ?>.xlsx" class="btn btn-success d-none" download>Baixar Relatório</a>
+                                    <?php } ?>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -123,6 +133,7 @@
                                             <th>N° Boleto</th>
                                             <th>Empresa</th>
                                             <th>Vendedor</th>
+                                            <th class="d-none">ID Vendedor</th>
                                             <th>Cliente</th>
                                             <th>Data Venda</th>
                                             <th>Valor</th>
@@ -136,6 +147,7 @@
                                             <td><?php echo $boleto->n_boleto ?></td>
                                             <td><?php echo Helper::mostrar_empresa($boleto->id_empresa) ?></td>
                                             <td><?php echo $Usuario->mostrar($boleto->id_usuario)->nome ?></td>
+                                            <td class="d-none"><?php echo $boleto->id_usuario ?></td>
                                             <td><?php echo $boleto->cliente ?></td>
                                             <td><?php echo Helper::converterData($boleto->data_venda) ?></td>
                                             <td>R$ <?php echo $boleto->valor?></td>
@@ -162,6 +174,7 @@
                                                     data-n_boleto="<?php echo $boleto->n_boleto ?>"
                                                     data-valor_pago="<?php echo $boleto->valor_pago ?>"
                                                     data-data_pago="<?php echo $boleto->data_pago ?>"
+                                                    data-valor="<?php echo $boleto->valor ?>"
                                                 >
                                                     <i class="fa-solid fa-file-invoice-dollar"></i>
                                                 </button>
@@ -289,7 +302,7 @@
     <!-- Modal Cadastrar Valor Pago -->
     <div class="modal fade" id="modalCadastrarValorPago" tabindex="1" role="dialog" aria-labelledby="modalCadastrarValorPagoLabel" aria-hidden="true">
         <form action="?" method="post">
-            <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Pagamento: <span id="pagar_titulo"></span></h5>
@@ -298,12 +311,14 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <h5 class="text-dark">Valor a Ser Pago:<b class="text-info" id="pagar_valor"></b></h5>
+                        <br>
                         <input type="hidden" name="id_financeiro_boleto" id="pagar_id_financeiro_boleto">
                         <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha ?>">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <div class="row">
                             <input type="hidden" name="id_campanha" value="<?php echo $c ?>">
-                            <div class="col-4 offset-1">
+                            <div class="col-4 offset-2">
                                 <label for="pagar_valor_pago" class="form-label">Valor Pago *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
@@ -476,112 +491,81 @@
 
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
             $('#finan').addClass('active');
             $('#financeiro_campanhas').addClass('active');
             
-            // Função para atualizar vendedores no filtro e no modal
-            function atualizarVendedores(empresa, vendedorSelect, incluirTodos = true) {
-                vendedorSelect.empty();
-                if (incluirTodos) {
-                    vendedorSelect.append('<option value="">Todos</option>');
-                } else {
-                    vendedorSelect.append('<option value="">Selecione...</option>');
-                }
-                
-                if (empresa === 'Ótica Matriz') {
-                    vendedorSelect.append('<option value="7">Josefina</option>');
-                } else if (empresa === 'Ótica Prestigio') {
-                    vendedorSelect.append('<option value="8">João do Pão</option>');
-                } else if (empresa === 'Ótica Daily') {
-                    vendedorSelect.append('<option value=""></option>');
-                }
+            // Função para carregar vendedores via AJAX
+            function carregarVendedores(idEmpresa, vendedorSelect, incluirTodos = true) {
+                $.ajax({
+                    url: 'listar_vendedores.php', // Arquivo PHP que vai retornar os vendedores
+                    type: 'GET',
+                    data: { id_empresa: idEmpresa },
+                    success: function(response) {
+                        vendedorSelect.empty();
+                        if (incluirTodos) {
+                            vendedorSelect.append('<option value="">Todos</option>');
+                        } else {
+                            vendedorSelect.append('<option value="">Selecione...</option>');
+                        }
+                        vendedorSelect.append(response);
+                    }
+                });
             }
 
             // Atualiza a lista de vendedores no filtro
             $('#filtroEmpresa').change(function() {
-                let empresa = $(this).val();
+                let idEmpresa = $(this).val();
                 let vendedorSelect = $('#filtroVendedor');
-                atualizarVendedores(empresa, vendedorSelect, true);
+                carregarVendedores(idEmpresa, vendedorSelect, true);
             });
             
             // Atualiza a lista de vendedores no modal de cadastro
             $('#cadastrar_Empresa').change(function() {
-                let empresa = $(this).val();
+                let idEmpresa = $(this).val();
                 let vendedorSelect = $('#cadastrar_Vendedor');
-                atualizarVendedores(empresa, vendedorSelect, false);
+                carregarVendedores(idEmpresa, vendedorSelect, false);
+            });
+
+            // Atualiza a lista de vendedores no modal de edição
+            $('#editar_Empresa').change(function() {
+                let idEmpresa = $(this).val();
+                let vendedorSelect = $('#editar_Vendedor');
+                carregarVendedores(idEmpresa, vendedorSelect, false);
             });
 
             // Filtro de vendedores, empresas e datas na tabela
-            $('#filtroVendedor, #filtroEmpresa, #filtroMes').change(function() {
+            $('#filtroVendedor, #filtroEmpresa').change(function() {
                 var filtroVendedor = $('#filtroVendedor').val();
                 var filtroEmpresa = $('#filtroEmpresa').val();
 
+                // Verifica a empresa selecionada
                 if(filtroEmpresa == 2){
-                        filtroEmpresa = "Ótica Matriz";
-                    }else if(filtroEmpresa == 4){
-                        filtroEmpresa = "Ótica Prestigio";
-                    }else if(filtroEmpresa == 6){
-                        filtroEmpresa = "Ótica Daily";
-                    }else{
-                        filtroEmpresa = "Erro;"
-                    }
-
-                var filtroDataInicio = $('#filtroMes').data('inicio');
-                var filtroDataFim = $('#filtroMes').data('fim');
+                    filtroEmpresa = "Ótica Matriz";
+                }else if(filtroEmpresa == 4){
+                    filtroEmpresa = "Ótica Prestigio";
+                }else if(filtroEmpresa == 6){
+                    filtroEmpresa = "Ótica Daily";
+                }else{
+                    filtroEmpresa = "Erro;";
+                }
 
                 // Mostrar todas as linhas inicialmente
                 $('#dataTable tbody tr').show();
                 
                 // Iterar sobre as linhas da tabela para aplicar os filtros
                 $('#dataTable tbody tr').each(function() {
-                    var vendedor = $(this).find('td:eq(2)').text();
+                    var vendedor = $(this).find('td:eq(3)').text(); // ID do vendedor
                     var empresa = $(this).find('td:eq(1)').text();
-                    var dataVenda = $(this).find('td:eq(4)').text();
-                    
-                    // Converte a data de venda para o formato Date
-                    var partesData = dataVenda.split('/');
-                    var dataVendaFormatada = new Date(partesData[2], partesData[1] - 1, partesData[0]);
 
                     // Verificar se a linha atende aos critérios de filtragem
                     if ((filtroVendedor && vendedor !== filtroVendedor) || 
-                        (filtroEmpresa && empresa !== filtroEmpresa) ||
-                        (filtroDataInicio && filtroDataFim && 
-                        (dataVendaFormatada < filtroDataInicio || dataVendaFormatada > filtroDataFim))) {
+                        (filtroEmpresa && empresa !== filtroEmpresa)) {
                         $(this).hide(); // Ocultar a linha se não atender aos critérios
                     }
                 });
-            });
-
-            // Configurações para selecionar uma faixa de datas com Shift
-            var dataInicio = null;
-            var dataFim = null;
-            $('#filtroMes').on('change', function(e) {
-                if (e.shiftKey && dataInicio) {
-                    // Se o Shift for pressionado, define dataFim
-                    dataFim = new Date($(this).val());
-                } else {
-                    // Define dataInicio e limpa dataFim
-                    dataInicio = new Date($(this).val());
-                    dataFim = null;
-                }
-
-                // Se dataFim estiver definida, faz a filtragem
-                if (dataFim) {
-                    // Garante que dataInicio é anterior a dataFim
-                    if (dataInicio > dataFim) {
-                        var temp = dataInicio;
-                        dataInicio = dataFim;
-                        dataFim = temp;
-                    }
-                    $('#filtroMes').data('inicio', dataInicio).data('fim', dataFim);
-                } else {
-                    $('#filtroMes').data('inicio', dataInicio).data('fim', dataInicio);
-                }
-
-                // Aciona o evento de alteração para aplicar o filtro
-                $('#filtroMes').trigger('change');
             });
 
             $('#modalVisualizarBoleto').on('show.bs.modal', function (event) {
@@ -627,7 +611,6 @@
 
                 $('#editar_id_financeiro_boleto').val(id_financeiro_boleto);
                 $('#editar_n_boleto').val(n_boleto);
-                console.log(empresa)
                 $('#editar_Empresa').val(empresa);
                 $('#editar_Vendedor').val(usuario);
                 $('#editar_cliente').val(cliente);
@@ -653,19 +636,41 @@
                 let n_boleto = button.data('n_boleto');
                 let valor_pago = button.data('valor_pago');
                 let data_pago = button.data('data_pago');
-
-                console.log(valor_pago)
+                let valor = button.data('valor')
 
                 $('#pagar_id_financeiro_boleto').val(id_financeiro_boleto);
                 $('#pagar_valor_pago').val(valor_pago)
                 $('#pagar_data_pago').val(data_pago)
                 $('#pagar_titulo').text(n_boleto);
+                $('#pagar_valor').text(' R$ '+valor);
             });
 
+            
+            function autoDownload() {
+                // Simulando o clique no botão de download
+                document.getElementById('downloadButton').click();
+            }
 
+            // Chamando a função autoDownload assim que a página for carregada
+            window.onload = autoDownload;
+
+            // Função para remover variáveis GET da URL
+            function removeGetParams() {
+                var url = new URL(window.location.href);
+                url.searchParams.delete('s');
+                window.history.replaceState({}, document.title, url);
+            }
+
+            function removeBaixarRelatorio(){
+                $('#downloadButton').addClass('d-none');
+            }
+
+            // Remove variáveis GET após o download
+            window.addEventListener('load', function() {
+                setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
+            });
         });
     </script>
-
 
     <!-- Bootstrap core JavaScript-->
     <script src="<?php echo URL ?>/vendor/jquery/jquery.min.js"></script>

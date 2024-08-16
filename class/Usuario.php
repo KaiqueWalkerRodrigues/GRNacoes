@@ -32,7 +32,7 @@ class Usuario {
         $senha  = $dados['senha'];
         $contrato  = $dados['contrato'];
         $celular  = preg_replace('/[^0-9]/', '', $dados['celular']); 
-        $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']); 
+        $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']);
         $data_nascimento  = $dados['data_nascimento'];
         $email  = $dados['email'];
         $empresa  = ucwords(strtolower(trim($dados['empresa'])));
@@ -132,8 +132,8 @@ class Usuario {
         $nome = ucwords(strtolower(trim($dados['nome'])));
         $usuario = trim($dados['usuario']);
         $contrato = $dados['contrato'];        
-        $celular = $dados['celular'];
-        $cpf = $dados['cpf'];
+        $celular  = preg_replace('/[^0-9]/', '', $dados['celular']); 
+        $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']);
         $data_nascimento = $dados['data_nascimento'];
         $email = ucwords(strtolower(trim($dados['email'])));
         $empresa = $dados['empresa'];
@@ -288,8 +288,9 @@ class Usuario {
         return ($resultado !== false) ? $resultado['total'] : 0;
     }
 
-    public function listarVendedores(){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
+    public function listarVendedores($empresa = '%'){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
+        $sql->bindParam(':empresa',$empresa);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }

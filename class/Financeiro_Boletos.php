@@ -268,6 +268,17 @@ class Financeiro_Boletos {
         }
     }
 
+    public function totalPorVendedor($id_campanha,$id_vendedor){
+        $sql = $this->pdo->prepare("SELECT SUM(valor) as total FROM financeiro_boletos WHERE id_campanha = :id_campanha AND id_usuario = :id_vendedor AND deleted_at IS NULL");
+        $sql->bindParam(':id_vendedor',$id_vendedor);
+        $sql->bindParam(':id_campanha',$id_campanha);
+        $sql->execute();
+
+        $dados = $sql->fetchAll(PDO::FETCH_NUM);
+        
+        return $dados['total'];
+    }
+
 }
 
 ?>
