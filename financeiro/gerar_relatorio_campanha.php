@@ -38,16 +38,27 @@ $titulo_campanha = 'RESUMO CAMPANHA '.$n_campanha;
             'color' => [
                 'argb' => \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED,
             ],
+            'size' => 10,
         ],
     ],
     $titulo = [
         'font' => [
             'bold' => true,
         ],
+        'size' => 10,
     ],
     $sub_titulo = [
         'font' => [
             'bold' => true,
+        ],
+        'size' => 10,
+    ],
+    $titulo_final = [
+        'font' => [
+            'bold' => true,
+            'color' => [
+                'argb' => \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED,
+            ],
         ],
         'size' => 10,
     ],
@@ -84,6 +95,9 @@ $sheet->setTitle($titulo_campanha);
 
 // Aplicar a fonte "Aptos Narrow" para toda a planilha
 $spreadsheet->getDefaultStyle()->getFont()->setName('Aptos Narrow');
+// Cria um estilo de fonte com tamanho 10
+$spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
 
 // Remover as margens
 $sheet->getPageMargins()->setTop(0);
@@ -142,30 +156,69 @@ $sheet->getStyle('F4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENT
     $sheet->setCellValue('I7', "COMISSÃO (2%)-PÓS-FECH");
     $sheet->getStyle('B7:I7')->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+    $total_vendas_matriz = 0;
+    $total_convertidas_matriz = 0;
+    $total_nao_convertidas_matriz = 0;
+    $total_porcentagem_nao_convertidas_matriz = 0;
+    $total_comissao_matriz = 0;
+    $total_conversao_pos_matriz = 0;
+    $total_comissao_pos_matriz = 0;
+
     $row = 8;
     foreach($Usuarios->listarVendedores(2) as $vendedor){
-        $row_two = $row;
-        $nome_completo = explode(" ", $vendedor->nome);
-        $primeiro_nome = $nome_completo[0];
-        $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
-        $sheet->setCellValue('B'.$row, $primeiro_nome);
-        $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+        // Calcula o total de vendas do vendedor
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
 
-        //Total por Vendedor
-        $sheet->setCellValue('C'.$row, $Boletos->totalPorVendedor($id_campanha,$vendedor->id_usuario));
-        $row++;
+        $row_two = $row;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('B'.$row, $primeiro_nome);
+            $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('C'.$row, $total_vendedor);
+            $sheet->setCellValue('D'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->setCellValue('G'.$row, $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('H'.$row, $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('I'.$row, $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+
+            // Atualiza os totais da matriz
+            $total_vendas_matriz += $total_vendedor;
+            $total_convertidas_matriz += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_nao_convertidas_matriz += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_matriz += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_matriz += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_conversao_pos_matriz += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_pos_matriz += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+
+            $row++;
+        }
     }
 
     $sheet->getStyle('C'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode($formatoReal);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle('F'.$row_two.':F'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
     $sheet->getStyle('H'.$row_two.':I'.$row-1)->applyFromArray($pos);
     $sheet->setCellValue('B'.$row, "TOTAL");
 
+    $sheet->setCellValue('C'.$row, $total_vendas_matriz);
+    $sheet->setCellValue('D'.$row, $total_convertidas_matriz);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_matriz);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_matriz);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_matriz);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_matriz);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_matriz);
+
     $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho);
     $sheet->getStyle('B7:I'.$row)->applyFromArray($bordas);
+
+    $row++;
 }
 
 $row++;
@@ -189,25 +242,65 @@ $row++;
     $sheet->setCellValue('I'.$row, "COMISSÃO (2%)-PÓS-FECH");
     $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+    $total_vendas_prestigio = 0;
+    $total_convertidas_prestigio = 0;
+    $total_nao_convertidas_prestigio = 0;
+    $total_porcentagem_nao_convertidas_prestigio = 0;
+    $total_comissao_prestigio = 0;
+    $total_conversao_pos_prestigio = 0;
+    $total_comissao_pos_prestigio = 0;
+
     $row++;
 
     foreach($Usuarios->listarVendedores(4) as $vendedor){
+        // Calcula o total de vendas do vendedor
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+
         $row_two = $row;
-        $nome_completo = explode(" ", $vendedor->nome);
-        $primeiro_nome = $nome_completo[0];
-        $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
-        $sheet->setCellValue('B'.$row, $primeiro_nome);
-        $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
-        $row++;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('B'.$row, $primeiro_nome);
+            $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('C'.$row, $total_vendedor);
+            $sheet->setCellValue('D'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->setCellValue('G'.$row, $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('H'.$row, $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('I'.$row, $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+
+            // Atualiza os totais da prestigio
+            $total_vendas_prestigio += $total_vendedor;
+            $total_convertidas_prestigio += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_nao_convertidas_prestigio += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_prestigio += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_prestigio += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_conversao_pos_prestigio += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_pos_prestigio += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+
+            $row++;
+        }
     }
 
     $sheet->getStyle('C'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode($formatoReal);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle('F'.$row_two.':F'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
     $sheet->getStyle('H'.$row_two.':I'.$row-1)->applyFromArray($pos);
     $sheet->setCellValue('B'.$row, "TOTAL");
+
+    $sheet->setCellValue('C'.$row, $total_vendas_prestigio);
+    $sheet->setCellValue('D'.$row, $total_convertidas_prestigio);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_prestigio);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_prestigio);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_prestigio);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_prestigio);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_prestigio);
 
     $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho);
     $sheet->getStyle('B'.$row_one.':I'.$row)->applyFromArray($bordas);
@@ -234,28 +327,281 @@ $row++;
     $sheet->setCellValue('I'.$row, "COMISSÃO (2%)-PÓS-FECH");
     $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+    $total_vendas_daily = 0;
+    $total_convertidas_daily = 0;
+    $total_nao_convertidas_daily = 0;
+    $total_porcentagem_nao_convertidas_daily = 0;
+    $total_comissao_daily = 0;
+    $total_conversao_pos_daily = 0;
+    $total_comissao_pos_daily = 0;
+
     $row++;
 
     foreach($Usuarios->listarVendedores(6) as $vendedor){
+        // Calcula o total de vendas do vendedor
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+
         $row_two = $row;
-        $nome_completo = explode(" ", $vendedor->nome);
-        $primeiro_nome = $nome_completo[0];
-        $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
-        $sheet->setCellValue('B'.$row, $primeiro_nome);
-        $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
-        $row++;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('B'.$row, $primeiro_nome);
+            $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('C'.$row, $total_vendedor);
+            $sheet->setCellValue('D'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->setCellValue('G'.$row, $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('H'.$row, $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('I'.$row, $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+
+            // Atualiza os totais da daily
+            $total_vendas_daily += $total_vendedor;
+            $total_convertidas_daily += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_nao_convertidas_daily += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_daily += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_daily += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_conversao_pos_daily += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_comissao_pos_daily += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+
+            $row++;
+        }
     }
 
     $sheet->getStyle('C'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode($formatoReal);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('D'.$row_two.':G'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
-    $sheet->getStyle('I'.$row_two.':I'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle('F'.$row_two.':F'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
     $sheet->getStyle('H'.$row_two.':I'.$row-1)->applyFromArray($pos);
     $sheet->setCellValue('B'.$row, "TOTAL");
 
+    $sheet->setCellValue('C'.$row, $total_vendas_daily);
+    $sheet->setCellValue('D'.$row, $total_convertidas_daily);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_daily);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_daily);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_daily);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_daily);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_daily);
+
     $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho);
     $sheet->getStyle('B'.$row_one.':I'.$row)->applyFromArray($bordas);
+}
+
+//Resumo Geral
+{
+    $row++;
+
+    $sheet->setCellValue('F'.$row, "RESUMO GERAL VENDAS EM BOLETOS");
+    $sheet->getStyle('F'.$row)->applyFromArray($titulo)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $row++;
+
+    $row_three = $row;
+
+    $sheet->setCellValue('B'.$row, "EMPRESA");
+    $sheet->setCellValue('C'.$row, "VENDAS EM BOLETO");
+    $sheet->setCellValue('D'.$row, "CONVERTIDAS (3%)");
+    $sheet->setCellValue('E'.$row, "NÃO CONVERTIDAS (1%)");
+    $sheet->setCellValue('F'.$row, "NÃO CONVERTIDAS (%)");
+    $sheet->setCellValue('G'.$row, "COMISSÃO (1%)");
+    $sheet->setCellValue('H'.$row, "CONVERSÃO PÓS FECH");
+    $sheet->setCellValue('I'.$row, "COMISSÃO (2%)-PÓS-FECH");
+    $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $row++;
+
+    $row_two = $row;
+
+    $sheet->setCellValue('B'.$row, "MATRIZ");
+    $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+    $sheet->setCellValue('C'.$row, $total_vendas_matriz);
+    $sheet->setCellValue('D'.$row, $total_convertidas_matriz);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_matriz);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_matriz);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_matriz);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_matriz);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_matriz);
+
+    $row++;
+    
+    $sheet->setCellValue('B'.$row, "PRESTIGIO");
+    $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+    $sheet->setCellValue('C'.$row, $total_vendas_prestigio);
+    $sheet->setCellValue('D'.$row, $total_convertidas_prestigio);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_prestigio);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_prestigio);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_prestigio);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_prestigio);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_prestigio);
+    
+    $row++;
+    
+    $sheet->setCellValue('B'.$row, "DAILY");
+    $sheet->getStyle('B'.$row)->applyFromArray($sub_titulo); 
+    $sheet->setCellValue('C'.$row, $total_vendas_daily);
+    $sheet->setCellValue('D'.$row, $total_convertidas_daily);
+    $sheet->setCellValue('E'.$row, $total_nao_convertidas_daily);
+    $sheet->setCellValue('F'.$row, $total_porcentagem_nao_convertidas_daily);
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, $total_comissao_daily);
+    $sheet->setCellValue('H'.$row, $total_conversao_pos_daily);
+    $sheet->setCellValue('I'.$row, $total_comissao_pos_daily);
+
+    $row++;
+
+    $sheet->getStyle('C'.$row_two.':I'.$row)->getNumberFormat()->setFormatCode($formatoReal);
+    $sheet->getStyle('F'.$row_two.':F'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+    $sheet->getStyle('H'.$row_two.':I'.$row-1)->applyFromArray($pos);
+    $sheet->setCellValue('B'.$row, "TOTAL");
+    
+    $sheet->setCellValue('C'.$row, ($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily));
+    $sheet->setCellValue('D'.$row, ($total_convertidas_matriz+$total_convertidas_prestigio+$total_convertidas_daily));
+    $sheet->setCellValue('E'.$row, ($total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily));
+
+    $porcentagem_nao_convertidas_matriz = $total_vendas_matriz > 0 ? $total_nao_convertidas_matriz / $total_vendas_matriz : 0;
+    $porcentagem_nao_convertidas_prestigio = $total_vendas_prestigio > 0 ? $total_nao_convertidas_prestigio / $total_vendas_prestigio : 0;
+    $porcentagem_nao_convertidas_daily = $total_vendas_daily > 0 ? $total_nao_convertidas_daily / $total_vendas_daily : 0;
+
+    $sheet->setCellValue('F'.$row, ($porcentagem_nao_convertidas_matriz+$porcentagem_nao_convertidas_prestigio+$porcentagem_nao_convertidas_daily));
+
+    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('G'.$row, ($total_comissao_matriz+$total_comissao_prestigio+$total_comissao_daily));
+    $sheet->setCellValue('H'.$row, ($total_conversao_pos_matriz+$total_conversao_pos_prestigio+$total_conversao_pos_daily));
+    $sheet->setCellValue('I'.$row, ($total_comissao_pos_matriz+$total_comissao_pos_prestigio+$total_comissao_pos_daily));
+
+    $sheet->getStyle('B'.$row.':I'.$row)->applyFromArray($cabecalho);
+    $sheet->getStyle('B'.$row_three.':I'.$row)->applyFromArray($bordas);
+
+    $row++;
+}
+
+//Resumo de Vendas em Boletos
+{
+    $row++;
+
+    
+    $sheet->setCellValue('B'.$row, "RESUMO DE VENDAS EM BOLETOS PERIODO ".$periodo_inicio." A ".$periodo_fim);
+    $sheet->getStyle('B'.$row)->applyFromArray($titulo)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->mergeCells('B'.$row.':F'.$row);
+
+    $row++;
+
+    $row_three = $row;
+
+    $sheet->setCellValue('B'.$row, "OTICAS");
+    $sheet->setCellValue('C'.$row, "VENDEDOR");
+    $sheet->setCellValue('D'.$row, "VENDAS EM BOLETO");
+    $sheet->setCellValue('E'.$row, "CONVERTIDAS");
+    $sheet->setCellValue('F'.$row, "NÃO CONVERTIDAS");
+    $sheet->getStyle('B'.$row.':F'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    //Matriz
+    foreach($Usuarios->listarVendedores(2) as $vendedor){
+        
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+        
+        $row_two = $row;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $row++;
+
+            $sheet->setCellValue('B'.$row, "MATRIZ");
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('C'.$row, $primeiro_nome); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('D'.$row, $total_vendedor);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+        }
+    }
+
+    $row++;
+
+    //Prestigio
+    foreach($Usuarios->listarVendedores(4) as $vendedor){
+        
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+        
+        $row_two = $row;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $row++;
+
+            $sheet->setCellValue('B'.$row, "PRESTIGIO");
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('C'.$row, $primeiro_nome); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('D'.$row, $total_vendedor);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+        }
+    }
+    
+    $row++;
+
+    //Daily
+    foreach($Usuarios->listarVendedores(6) as $vendedor){
+        
+        $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+        
+        $row_two = $row;
+        // Só continua se o total de vendas for maior que zero
+        if ($total_vendedor > 0) {
+            $row++;
+
+            $sheet->setCellValue('B'.$row, "DAILY");
+            $nome_completo = explode(" ", $vendedor->nome);
+            $primeiro_nome = $nome_completo[0];
+            $primeiro_nome = ucfirst(strtolower(($primeiro_nome)));
+            $sheet->setCellValue('C'.$row, $primeiro_nome); 
+
+            // Total por Vendedor
+            $sheet->setCellValue('D'.$row, $total_vendedor);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+        }
+    }
+
+    $row++;
+
+    $sheet->getStyle('C'.$row_three.':F'.$row)->getNumberFormat()->setFormatCode($formatoReal);
+    $sheet->getStyle('E'.($row_three+1).':E'.($row-1))->applyFromArray($pos);
+    $sheet->setCellValue('C'.$row, "TOTAL");
+    $sheet->setCellValue('D'.$row, $total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily);
+    $sheet->setCellValue('E'.$row, $total_convertidas_matriz+$total_convertidas_prestigio+$total_convertidas_daily);
+    $sheet->setCellValue('F'.$row, $total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily);
+
+    $sheet->getStyle('B'.$row.':F'.$row)->applyFromArray($cabecalho);
+    $sheet->getStyle('B'.$row_three.':F'.$row)->applyFromArray($bordas);
+    $sheet->getStyle('B'.($row_three+1).':F'.($row-1))->applyFromArray($sub_titulo);
+
+    $row++;
+
+    $sheet->setCellValue('D'.$row, "CONVERTIDO:");
+    $sheet->getStyle('D'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('E'.$row, ($total_convertidas_matriz+$total_convertidas_prestigio+$total_convertidas_daily)/($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily) ?? 0);
+    $sheet->getStyle('E'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+    $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+
+    $row++;
+
+    $sheet->setCellValue('D'.$row, "NÃO CONVERTIDO:");
+    $sheet->getStyle('D'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->setCellValue('E'.$row, ($total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily)/($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily) ?? 0);
+    $sheet->getStyle('E'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+    $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 }
 
 //AutoSize
