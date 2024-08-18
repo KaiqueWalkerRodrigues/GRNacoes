@@ -9,9 +9,9 @@
     include_once('Compras_Fornecedores.php');
     include_once('Compras_Notas.php');
     include_once('Compras_Pedidos.php');
-    include_once('Chat.php');
-    include_once('Mensagens.php');
     include_once('Projetos.php');
     include_once('Financeiro_Campanhas.php');
     include_once('Financeiro_Boletos.php');
+    include_once('Conversas.php');
+    include_once('Mensagens.php');
 ?>

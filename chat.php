@@ -1,11 +1,14 @@
 <?php
     include_once('const.php');
-    include_once('class/Chat.php');
+    include_once('class/Conversas.php');
     include_once('class/Mensagens.php');
 
+    $Conversa = new Conversa();
     $Mensagem = new Mensagem();
+
     $id_chat = $_GET['id'];
-    $lista_mensagens = $Mensagem->listar($id_chat);
+
+    $mensagens = $Mensagem->listar($id_chat);
 
     if (isset($_POST['enviarMensagem'])) {
         $Mensagem->cadastrar($_POST);
@@ -98,7 +101,7 @@
                 <div class="container-fluid chat">
 
                     <div class="row">
-                        <?php foreach ($lista_mensagens as $msg): ?>
+                        <?php foreach ($mensagens as $msg): ?>
                             <div class="icon-container mb-2">
                                 <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
                             </div>
