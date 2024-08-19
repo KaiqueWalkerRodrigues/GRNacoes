@@ -9,8 +9,9 @@ class Conversa {
         $this->pdo = Conexao::conexao();
     }
 
-    public function listar() {
-        $sql = $this->pdo->prepare('SELECT * FROM conversas WHERE deleted_at IS NULL ORDER BY created_at DESC');
+    public function listar($id_usuario) {
+        $sql = $this->pdo->prepare('SELECT * FROM participantes WHERE id_usuario = :id_usuario AND deleted_at IS NULL ORDER BY created_at DESC');
+        $sql->bindParam(':id_usuario',$id_usuario);
         $sql->execute();
 
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -191,6 +192,17 @@ class Conversa {
             $sql->bindParam(':data', $deleted_at);
             $sql->execute();
         }
+    }
+
+    public function destinatario($id_conversa,$id_usuario){
+        $sql = $this->pdo->prepare('SELECT * FROM participantes WHERE id_conversa = :id_conversa AND id_usuario != :id_usuario AND deleted_at IS NULL LIMIT 1');
+        $sql->bindParam(':id_usuario',$id_usuario);
+        $sql->bindParam(':id_conversa',$id_conversa);
+        $sql->execute();
+
+        $dados = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $dados;
     }
 }
 

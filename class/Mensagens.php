@@ -15,7 +15,7 @@ class Mensagem {
             FROM mensagens m
             INNER JOIN conversas_mensagens cm ON cm.id_mensagem = m.id_mensagem
             WHERE cm.id_conversa = :conversa_id AND m.deleted_at IS NULL
-            ORDER BY m.created_at DESC
+            ORDER BY m.created_at ASC
         ');
         $sql->bindParam(':conversa_id', $conversa_id);
         $sql->execute();
@@ -68,21 +68,8 @@ class Mensagem {
             $sql->bindParam(':id_mensagem', $id_mensagem);
             $sql->execute();
 
-            // Log da ação
-            $descricao = "Enviou uma mensagem na conversa de ID: {$dados['id_conversa']}";
-
-            $sql = $this->pdo->prepare('INSERT INTO logs 
-                                        (acao, descricao, data)
-                                        VALUES
-                                        (:acao, :descricao, :data)
-                                    ');
-
-            $acao = 'Enviar Mensagem';
-
-            $sql->bindParam(':acao', $acao);
-            $sql->bindParam(':descricao', $descricao);
-            $sql->bindParam(':data', $agora);
-            $sql->execute();
+            $url = 'Location:/GRNacoes/conversa?id='.$dados['id_conversa'];
+            return header($url);
         }
     }
 
@@ -100,21 +87,7 @@ class Mensagem {
         $sql->bindParam(':mensagem', $dados['mensagem']);
         $sql->bindParam(':updated_at', $agora);
 
-        if ($sql->execute()) {
-            $descricao = "Editou uma mensagem de ID: {$dados['id_mensagem']} na conversa de ID: {$dados['id_conversa']}";
-
-            $sql = $this->pdo->prepare('INSERT INTO logs 
-                                        (acao, descricao, data)
-                                        VALUES
-                                        (:acao, :descricao, :data)
-                                    ');
-
-            $acao = 'Editar Mensagem';
-            $sql->bindParam(':acao', $acao);
-            $sql->bindParam(':descricao', $descricao);
-            $sql->bindParam(':data', $agora);
-            $sql->execute();
-        }
+        $sql->execute();
     }
 
     public function desativar(int $id_mensagem)
@@ -130,21 +103,7 @@ class Mensagem {
         $sql->bindParam(':id_mensagem', $id_mensagem);
         $sql->bindParam(':deleted_at', $deleted_at);
 
-        if ($sql->execute()) {
-            $descricao = "Excluiu uma mensagem de ID: $id_mensagem";
-
-            $sql = $this->pdo->prepare('INSERT INTO logs 
-                                        (acao, descricao, data)
-                                        VALUES
-                                        (:acao, :descricao, :data)
-                                    ');
-
-            $acao = 'Excluir Mensagem';
-            $sql->bindParam(':acao', $acao);
-            $sql->bindParam(':descricao', $descricao);
-            $sql->bindParam(':data', $deleted_at);
-            $sql->execute();
-        }
+        $sql->execute();
     }
 }
 

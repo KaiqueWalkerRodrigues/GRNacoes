@@ -17,7 +17,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Conversas</title>
+    <title>GRNacoes - Chats</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -55,20 +55,22 @@
                     <div class="row">
 
                     <div class="col-12">
-                        <a href="<?php echo URL ?>/chat?id=1" class="text-decoration-none grow-on-hover">
+                        <?php foreach($Chats->listar($_SESSION['id_usuario']) as $chat){ ?>
+                        <a href="<?php echo URL ?>/conversa?id=<?php echo $chat->id_conversa ?>" class="text-decoration-none grow-on-hover">
                             <div class="card my-3 border-1">
                                 <div class="row align-items-center">
                                     <div class="col-1">
                                         <img class="img-profile rounded-circle p-2 ml-3" width="75%" src="<?php echo URL ?>/img/undraw_profile.svg">
                                     </div>
                                     <div class="col-4 text-start">
-                                        <p class="text-dark mt-3">Kaique Rodrigues de Souza</p> 
+                                        <?php $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario); ?>
+                                        <p class="text-dark mt-3"><?php echo ($Chats->mostrar($chat->id_conversa)->nome ?? $destinatario->nome); ?></p> 
                                     </div>
                                     <div class="col-4 text-start">
-                                        <p class="text-dark mt-3">Tecnologia da Informação</p> 
+                                        <p class="text-dark mt-3"><?php echo $Setores->mostrar($destinatario->id_setor)->setor ?></p> 
                                     </div>
                                     <div class="col-2 text-start">
-                                        <p class="text-dark mt-3">Santo André</p> 
+                                        <p class="text-dark mt-3"><?php echo Helper::mostrar_empresa($destinatario->empresa) ?></p>
                                     </div>
                                     <div class="col-1 text-start">
                                         <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;">
@@ -78,6 +80,7 @@
                                 </div>
                             </div>
                         </a>
+                        <?php } ?>
                     </div>
 
                     </div>
