@@ -4,7 +4,6 @@
     $Usuarios = new Usuario();
     $Setores = new Setor();
     $Chats = new Conversa();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,14 +55,14 @@
 
                     <div class="col-12">
                         <?php foreach($Chats->listar($_SESSION['id_usuario']) as $chat){ ?>
-                        <a href="<?php echo URL ?>/conversa?id=<?php echo $chat->id_conversa ?>" class="text-decoration-none grow-on-hover">
+                        <?php $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario); ?>
+                        <a href="<?php echo URL ?>/chat?id=<?php echo $chat->id_conversa ?>&id_remetente=<?php echo $destinatario->id_usuario ?>" class="text-decoration-none grow-on-hover">
                             <div class="card my-3 border-1">
                                 <div class="row align-items-center">
                                     <div class="col-1">
-                                        <img class="img-profile rounded-circle p-2 ml-3" width="75%" src="<?php echo URL ?>/img/undraw_profile.svg">
+                                        <img class="img-profile rounded-circle p-2 ml-3" width="75%" src="<?php echo URL ?>/img/avatar/<?php echo $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario)->id_avatar ?>.png">
                                     </div>
                                     <div class="col-4 text-start">
-                                        <?php $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario); ?>
                                         <p class="text-dark mt-3"><?php echo ($Chats->mostrar($chat->id_conversa)->nome ?? $destinatario->nome); ?></p> 
                                     </div>
                                     <div class="col-4 text-start">

@@ -10,6 +10,7 @@
     }
 
     $id_chat = $_GET['id'];
+    $id_remetente = $_GET['id_remetente'];
 ?>
 
 <!DOCTYPE html>
@@ -175,6 +176,8 @@
                     <div class="align-items-center">
                         <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_conversa" id="id_conversa" value="<?php echo $_GET['id'] ?>">
+                        <input type="hidden" name="id_avatar" id="id_avatar" value="<?php echo $Usuario->mostrar($_SESSION['id_usuario'])->id_avatar; ?>">
+                        <input type="hidden" name="id_avatar_remetente" id="id_avatar_remetente" value="<?php echo $Usuario->mostrar($id_remetente)->id_avatar; ?>">
                         <textarea class="form-control input-mensagem mr-4" id="mensagem" name="mensagem" rows="2" style="max-width: calc(100% - 60px);"></textarea>
                         <button type="submit" class="btn-enviar-mensagem ms-3" name="enviarMensagem">
                             <i class="fa-solid fa-paper-plane"></i>
@@ -200,12 +203,14 @@
         $(document).ready(function () {
             var id = $('#id_conversa').val();
             var id_usuario = $('#id_usuario').val();
+            var id_avatar = $('#id_avatar').val();
+            var id_avatar_remetente = $('#id_avatar_remetente').val();
 
             function mostrarMensagens() {
                 $.ajax({
                     type: "get",
                     url: "get_messages.php",
-                    data: { id_conversa: id, id_usuario: id_usuario },
+                    data: { id_conversa: id, id_usuario: id_usuario, id_avatar: id_avatar, id_avatar_remetente: id_avatar_remetente },
                     success: function (result) {
                         $('#mensagensContainer').html(result);
                     },

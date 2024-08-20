@@ -1,3 +1,4 @@
+<?php $Usuario = new Usuario; ?>
 <style>
     .topbar {
         position: fixed;
@@ -9,6 +10,10 @@
 
     .navbar-collapse {
         max-height: none; /* Garante que o conteúdo da topbar seja exibido corretamente */
+    }
+
+    .avatar{
+        width: 30px;
     }
 </style>
 <!-- Topbar -->
@@ -185,7 +190,7 @@
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nome']; ?></span>
         <img class="img-profile rounded-circle"
-            src="<?php echo URL ?>/img/undraw_profile.svg">
+            src="<?php echo URL ?>/img/avatar/<?php echo $Usuario->mostrar($_SESSION['id_usuario'])->id_avatar; ?>.png">
     </a>
     <!-- Dropdown - User Information -->
     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

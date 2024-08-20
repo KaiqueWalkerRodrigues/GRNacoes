@@ -1,7 +1,7 @@
 <?php 
 
 try{
-    $pdo = new PDO("mysql:dbname=GRNacoes;host=192.168.0.60","sistema","@ADgrn1987");
+    $pdo = new PDO("mysql:dbname=GRNacoes;host=127.0.0.1","root","");
 }catch(PDOException $e){
     echo "Error: ".$e->getMessage();
 }

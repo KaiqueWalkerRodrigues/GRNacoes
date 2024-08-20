@@ -173,7 +173,7 @@
                                         <?php foreach($Compras_Notas->listar() as $cn){ ?>
                                         <tr>
                                             <td><?php echo $cn->id_compra_nota ?></td>
-                                            <td><?php echo $cn->n_nota ?></td>
+                                            <td class="text-center"><?php echo $cn->n_nota ?></td>
                                             <td><?php $dt = new DateTime($cn->data); $mesAbreviado = Helper::traduzirMes($dt->format('M')); $anoAbreviado = $dt->format('y'); $dataFormatada = $mesAbreviado . '/' . $anoAbreviado; echo $dataFormatada?></td>
                                             <td><?php $dt = new DateTime($cn->data); echo $dt->format('d/m/Y') ?></td>
                                             <td><?php echo Helper::mostrar_empresa($cn->id_empresa) ?></td>

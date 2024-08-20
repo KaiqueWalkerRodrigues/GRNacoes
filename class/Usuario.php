@@ -295,4 +295,36 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function editarAvatar($id_usuario,$id_avatar){
+        $sql = $this->pdo->prepare("UPDATE usuarios SET id_avatar = :id_avatar WHERE id_usuario = :id_usuario");
+        $sql->bindParam(':id_avatar',$id_avatar);
+        $sql->bindParam(':id_usuario',$id_usuario);
+        
+        $agora = date('Y-m-d H:i:s');
+
+        if ($sql->execute()) {
+            $sql = $this->pdo->prepare("SELECT nome FROM usuarios WHERE id_usuario = :id_usuario");
+            $sql->bindParam(':id_usuario',$id_usuario);
+            $sql->execute();
+            $nome = $sql->fetch(PDO::FETCH_OBJ)->nome;
+
+            $descricao = "$nome Alterou seu própio avatar para ($id_avatar)";
+            $sql = $this->pdo->prepare('INSERT INTO logs 
+                                        (acao, id_usuario, descricao, data)
+                                        VALUES
+                                        (:acao, :id_usuario, :descricao, :data)
+                                    ');
+            $acao = 'Alterou Avatar';
+            $sql->bindParam(':acao', $acao);
+            $sql->bindParam(':id_usuario', $id_usuario);
+            $sql->bindParam(':descricao', $descricao);
+            $sql->bindParam(':data', $agora);
+            $sql->execute();
+
+            return header('location:/GRNacoes/perfil');
+        } else {
+            // Tratar falha na execução da query, se necessário
+        }
+    }
+
  }

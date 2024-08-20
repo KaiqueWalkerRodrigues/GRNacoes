@@ -144,13 +144,13 @@
                                     <tbody>
                                         <?php $total = 0; foreach($Financeiro_Boleto->listar($campanha->id_financeiro_campanha) as $boleto){ $total+= $boleto->valor?>
                                         <tr>
-                                            <td><?php echo $boleto->n_boleto ?></td>
+                                            <td class="text-center"><?php echo $boleto->n_boleto ?></td>
                                             <td><?php echo Helper::mostrar_empresa($boleto->id_empresa) ?></td>
                                             <td><?php echo $Usuario->mostrar($boleto->id_usuario)->nome ?></td>
                                             <td class="d-none"><?php echo $boleto->id_usuario ?></td>
                                             <td><?php echo $boleto->cliente ?></td>
                                             <td><?php echo Helper::converterData($boleto->data_venda) ?></td>
-                                            <td>R$ <?php echo $boleto->valor?></td>
+                                            <td class="text-center">R$ <?php echo number_format($boleto->valor, 2, ',', '.'); ?></td>
                                             <td class="text-center">
                                                 <?php 
                                                     $hoje = date("Y-m-d");
@@ -219,7 +219,7 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
-                                            <th>R$ <?php echo $total ?></th>
+                                            <td><b>R$ <?php echo number_format($total, 2, ',', '.'); ?></b></td>
                                             <th></th>
                                             <th></th>
                                         </tr>
