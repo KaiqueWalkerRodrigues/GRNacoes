@@ -118,7 +118,7 @@
     </div>
 </li> 
 
-<li class="nav-item" id="fat">
+<!-- <li class="nav-item" id="fat">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#faturamento"
         aria-expanded="true" aria-controls="fat">
         <i class="fa-solid fa-dollar-sign"></i>
@@ -126,10 +126,10 @@
     </a> 
     <div id="faturamento" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">    
-            <a class="collapse-item" id="" href="<?php echo URL ?>/faturamento/"></a>
+            <a class="collapse-item" id="" href="<?php //echo URL ?>/faturamento/"></a>
         </div>
     </div>
-</li> 
+</li>  -->
 
 <li class="nav-item" id="finan">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#financeiro"
@@ -140,12 +140,12 @@
     <div id="financeiro" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="financeiro_campanhas" href="<?php echo URL ?>/financeiro/campanhas">Campanhas</a>
-            <a class="collapse-item" id="financeiro_relatorios" href="<?php echo URL ?>/financeiro/relatorios">Relatórios</a>
+            <!-- <a class="collapse-item" id="financeiro_relatorios" href="<?php //echo URL ?>/financeiro/relatorios">Relatórios</a> -->
         </div>
     </div>
 </li> 
 
-<li class="nav-item" id="proj">
+<!-- <li class="nav-item" id="proj">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#projeto"
         aria-expanded="true" aria-controls="finan">
         <i class="fa-solid fa-diagram-project"></i>
@@ -156,7 +156,7 @@
             <a class="collapse-item" id="projetos_index" href="<?php echo URL ?>/projetos">Todos Projetos</a>
         </div>
     </div>
-</li> 
+</li>  -->
 
 <!-- Divider -->
 <hr class="sidebar-divider">

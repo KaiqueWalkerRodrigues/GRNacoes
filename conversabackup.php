@@ -10,6 +10,7 @@
     }
 
     $id_chat = $_GET['id'];
+
 ?>
 
 <!DOCTYPE html>
@@ -148,83 +149,75 @@
 
         <?php include_once('sidebar.php'); ?>
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
-        <div id="content">
+            <!-- Main Content -->
+            <div id="content">
 
-            <?php include_once('topbar.php'); ?>
+                <?php include_once('topbar.php'); ?>
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid chat">
+                <!-- Begin Page Content -->
+                <div class="container-fluid chat">
 
                 <div id="mensagensContainer">
-                    
+                    <?php foreach ($Mensagem->listar($id_chat) as $msg): ?>
+                        <div class="icon-container <?php echo ($msg->id_usuario == $_SESSION['id_usuario']) ? 'eu' : 'outro'; ?>">
+                            <?php if ($msg->id_usuario == $_SESSION['id_usuario']): ?>
+                                <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
+                                <div class="card p-2 mb-2">
+                                    <p><?php echo htmlspecialchars($msg->mensagem); ?></p>
+                                </div>
+                            <?php else: ?>
+                                <div class="card p-2 mb-2">
+                                    <p><?php echo htmlspecialchars($msg->mensagem); ?></p>
+                                </div>
+                                <img class="perfil-icon mb-2" src="img/logo.jpg" alt="">
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
+
+
+                </div>
+                <!-- /.container-fluid -->
 
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
 
-        </div>
-        <!-- End of Main Content -->
-
-        <div id="msg">
-            <form action="?" method="post" id="chatForm">
-                <div class="mb">
-                    <div class="align-items-center">
-                        <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_conversa" id="id_conversa" value="<?php echo $_GET['id'] ?>">
-                        <textarea class="form-control input-mensagem mr-4" id="mensagem" name="mensagem" rows="2" style="max-width: calc(100% - 60px);"></textarea>
-                        <button type="submit" class="btn-enviar-mensagem ms-3" name="enviarMensagem">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
+            <div id="msg">
+                <form action="?" method="post" id="chatForm">
+                    <div class="mb">
+                        <div class="align-items-center">
+                            <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                            <input type="hidden" name="id_conversa" value="<?php echo $_GET['id'] ?>">
+                            <textarea class="form-control input-mensagem mr-4" id="mensagem" name="mensagem" rows="2" style="max-width: calc(100% - 60px);"></textarea>
+                            <button type="submit" class="btn-enviar-mensagem ms-3" name="enviarMensagem">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
 
-    </div>
-    <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
+        <i class="fas fa-angle-up"></i>
     </a>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function () {
-            var id = $('#id_conversa').val();
-            var id_usuario = $('#id_usuario').val();
-
-            function mostrarMensagens() {
-                $.ajax({
-                    type: "get",
-                    url: "get_messages.php",
-                    data: { id_conversa: id, id_usuario: id_usuario },
-                    success: function (result) {
-                        $('#mensagensContainer').html(result);
-                    },
-                    error: function(){
-                        $('#mensagensContainer').html("Error");
-                    }
-                });
-            }
-
-            function rolarParaBaixo() {
-                var mensagensContainer = document.body;
-                mensagensContainer.scrollTop = mensagensContainer.scrollHeight;
-            }
-
-            setInterval(mostrarMensagens, 100);
+        $(document).ready(function() {
+            var mensagensContainer = document.body;
+            mensagensContainer.scrollTop = mensagensContainer.scrollHeight;
 
             $('#chat').addClass('active');
-
-            rolarParaBaixo(); // Rola para baixo quando a página é carregada
         });
     </script>
 

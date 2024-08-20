@@ -165,11 +165,12 @@ $sheet->getStyle('F4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENT
     $total_comissao_pos_matriz = 0;
 
     $row = 8;
+
+    $row_two = $row;
     foreach($Usuarios->listarVendedores(2) as $vendedor){
         // Calcula o total de vendas do vendedor
         $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
 
-        $row_two = $row;
         // Só continua se o total de vendas for maior que zero
         if ($total_vendedor > 0) {
             $nome_completo = explode(" ", $vendedor->nome);
@@ -192,7 +193,7 @@ $sheet->getStyle('F4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENT
             $total_vendas_matriz += $total_vendedor;
             $total_convertidas_matriz += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
             $total_nao_convertidas_matriz += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
-            $total_porcentagem_nao_convertidas_matriz += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_matriz = ($total_nao_convertidas_matriz/$total_vendas_matriz);
             $total_comissao_matriz += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
             $total_conversao_pos_matriz += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
             $total_comissao_pos_matriz += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0;
@@ -252,11 +253,11 @@ $row++;
 
     $row++;
 
+    $row_two = $row;
     foreach($Usuarios->listarVendedores(4) as $vendedor){
         // Calcula o total de vendas do vendedor
         $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
-
-        $row_two = $row;
+        
         // Só continua se o total de vendas for maior que zero
         if ($total_vendedor > 0) {
             $nome_completo = explode(" ", $vendedor->nome);
@@ -279,7 +280,7 @@ $row++;
             $total_vendas_prestigio += $total_vendedor;
             $total_convertidas_prestigio += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
             $total_nao_convertidas_prestigio += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
-            $total_porcentagem_nao_convertidas_prestigio += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_prestigio = ($total_nao_convertidas_prestigio/$total_vendas_prestigio);
             $total_comissao_prestigio += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
             $total_conversao_pos_prestigio += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
             $total_comissao_pos_prestigio += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0;
@@ -337,11 +338,11 @@ $row++;
 
     $row++;
 
+    $row_two = $row;
     foreach($Usuarios->listarVendedores(6) as $vendedor){
         // Calcula o total de vendas do vendedor
         $total_vendedor = $Boletos->totalPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
-
-        $row_two = $row;
+        
         // Só continua se o total de vendas for maior que zero
         if ($total_vendedor > 0) {
             $nome_completo = explode(" ", $vendedor->nome);
@@ -364,7 +365,7 @@ $row++;
             $total_vendas_daily += $total_vendedor;
             $total_convertidas_daily += $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
             $total_nao_convertidas_daily += $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
-            $total_porcentagem_nao_convertidas_daily += $Boletos->totalPorcentagemNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
+            $total_porcentagem_nao_convertidas_daily = ($total_nao_convertidas_daily/$total_vendas_daily);
             $total_comissao_daily += $Boletos->totalComissaoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
             $total_conversao_pos_daily += $Boletos->totalConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
             $total_comissao_pos_daily += $Boletos->totalComissaoConvertidoPosFechPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0;
@@ -468,7 +469,7 @@ $row++;
     $porcentagem_nao_convertidas_prestigio = $total_vendas_prestigio > 0 ? $total_nao_convertidas_prestigio / $total_vendas_prestigio : 0;
     $porcentagem_nao_convertidas_daily = $total_vendas_daily > 0 ? $total_nao_convertidas_daily / $total_vendas_daily : 0;
 
-    $sheet->setCellValue('F'.$row, ($porcentagem_nao_convertidas_matriz+$porcentagem_nao_convertidas_prestigio+$porcentagem_nao_convertidas_daily));
+    $sheet->setCellValue('F'.$row, ($total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily)/($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily));
 
     $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     $sheet->setCellValue('G'.$row, ($total_comissao_matriz+$total_comissao_prestigio+$total_comissao_daily));

@@ -114,6 +114,7 @@
                                                     data-data_nascimento="<?php echo $usuario->data_nascimento ?>"
                                                     data-email="<?php echo $usuario->email ?>"
                                                     data-empresa="<?php echo $usuario->empresa ?>"
+                                                    data-n_folha="<?php echo $usuario->n_folha ?>"
                                                     data-idsetor="<?php echo $usuario->id_setor ?>"
                                                     data-idcargo="<?php echo $usuario->id_cargo ?>"
                                                     data-data_admissao="<?php echo $usuario->data_admissao ?>">
@@ -422,7 +423,7 @@
                             </div>
                             <div class="col-3">
                                 <label for="editar_n_folha" class="form-label">N° Folha</label>
-                                <input type="text" name="n_folha" class="form-control">
+                                <input type="text" name="n_folha" id="editar_n_folha" class="form-control">
                             </div>
                             <div class="col-2">
                                 <label for="editar_data_admissao" class="form-label">Data de Admissão *</label>
@@ -710,6 +711,7 @@
                 let data_nascimento = button.data('data_nascimento');
                 let email = button.data('email');
                 let empresa = button.data('empresa');
+                let n_folha = button.data('n_folha');
                 let idsetor = button.data('idsetor');
                 let idcargo = button.data('idcargo');
                 let data_admissao = button.data('data_admissao');
@@ -723,6 +725,7 @@
                 modal.find('#editar_data_nascimento').val(data_nascimento);
                 modal.find('#editar_email').val(email);
                 modal.find('#editar_empresa').val(empresa);
+                modal.find('#editar_n_folha').val(n_folha);
                 modal.find('#editar_id_setor').val(idsetor);
                 modal.find('#editar_id_cargo').val(idcargo);
                 modal.find('#editar_data_admissao').val(data_admissao);

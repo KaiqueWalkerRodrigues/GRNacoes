@@ -289,7 +289,7 @@ class Usuario {
     }
 
     public function listarVendedores($empresa = '%'){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
         $sql->bindParam(':empresa',$empresa);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);

@@ -305,7 +305,7 @@ class Financeiro_Boletos {
         $valor_total = $this->totalPorVendedor($id_campanha,$id_vendedor,$id_empresa);
         $total_nao_convertido = $this->totalNaoConvertidoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite);
         
-        $resultado = $total_nao_convertido/$valor_total;
+        $resultado = ($total_nao_convertido/$valor_total);
 
        return $resultado;
     }
