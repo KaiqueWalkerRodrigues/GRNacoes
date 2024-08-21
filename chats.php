@@ -4,6 +4,10 @@
     $Usuarios = new Usuario();
     $Setores = new Setor();
     $Chats = new Conversa();
+
+    if(isset($_POST['btnAbrir'])){
+        $Chats->cadastrarPrivado($_POST);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,7 +60,7 @@
                     <div class="col-12">
                         <?php foreach($Chats->listar($_SESSION['id_usuario']) as $chat){ ?>
                         <?php $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario); ?>
-                        <a href="<?php echo URL ?>/chat?id=<?php echo $chat->id_conversa ?>&id_remetente=<?php echo $destinatario->id_usuario ?>" class="text-decoration-none grow-on-hover">
+                        <a href="<?php echo URL ?>/chat?id=<?php echo $chat->id_conversa ?>&id_destinatario=<?php echo $destinatario->id_usuario ?>" class="text-decoration-none grow-on-hover">
                             <div class="card my-3 border-1">
                                 <div class="row align-items-center">
                                     <div class="col-1">
@@ -127,9 +131,9 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-10 offset-1">
-                                <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                                 <label for="categoria" class="form-label">Usuário *</label>
-                                <select class="form-control" name="id_usuario" id="id_usuario" required>
+                                <select class="form-control" name="id_destinatario" id="id_destinatario" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Usuarios->listar() as $u){ ?>
                                         <option value="<?php echo $u->id_usuario ?>"><?php echo $u->nome ?> | <?php echo $Setores->mostrar($u->id_setor)->setor ?></option>

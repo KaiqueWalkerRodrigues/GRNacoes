@@ -105,6 +105,15 @@ class Mensagem {
 
         $sql->execute();
     }
+
 }
 
+    include_once('Conexao.php');
+    $Mensagem = new Mensagem();
+
+    if (isset($_POST['id_avatar_destinatario'])) {
+        $Mensagem->cadastrar($_POST);
+        header('Location: /GRNacoes/chat?id=' . $_POST['id_conversa'] . '&id_destinatario=' . $_POST['id_destinatario']);
+        exit();
+    }    
 ?>

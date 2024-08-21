@@ -2,10 +2,18 @@
     include_once('const.php');
 
     $Usuario = new Usuario();
+    $Setor = new Setor();
+    $Cargo = new Cargo();
 
     if(isset($_POST['btnAvatar'])){
         $Usuario->editarAvatar($_POST['id_usuario'],$_POST['id_avatar']);
     }
+
+    $id = $_GET['id'];
+
+    $usuario = $Usuario->mostrar($id);
+    $setor = $Setor->mostrar($usuario->id_setor);
+    $cargo = $Cargo->mostrar($usuario->id_cargo);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +36,12 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <style>
+        .profile{
+            width: 250px;
+        }
+    </style>
 
 </head>
 
@@ -55,42 +69,46 @@
                     <div class="row">
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">Nome Completo</label>
-                            <input type="text" disabled class="form-control" value="Kaique Rodrigues de Souza">
+                            <input type="text" disabled class="form-control" value="<?php echo $usuario->nome ?>">
                         </div>
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">N° Folha</label>
-                            <input type="text" disabled class="form-control" value="0200000000000000000017">
+                            <input type="text" disabled class="form-control" value="<?php echo $usuario->n_folha ?>">
                         </div>
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">Email cadastrado</label>
-                            <input type="text" disabled class="form-control" value="ykaiqz17@gmail.com">
+                            <input type="text" disabled class="form-control" value="<?php echo $usuario->email ?>">
                         </div>
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">Cargo</label>
-                            <input type="text" disabled class="form-control" value="Auxiliar de Analista de Suporte Junior">
+                            <input type="text" disabled class="form-control" value="<?php echo $cargo->cargo ?>">
                         </div>
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">Data de Admissão</label>
-                            <input type="text" disabled class="form-control" value="01/11/2024">
+                            <input type="text" disabled class="form-control" value="<?php echo Helper::converterData($usuario->data_admissao) ?>">
                         </div>
                         <div class="col-4 mb-2">
+                            <?php $celular_formatado = preg_replace('/(\d{2})(\d{1})(\d{4})(\d{4})/', '($1) $2 $3-$4', $usuario->celular); ?>
                             <label for="" class="form-label">Celular</label>
-                            <input type="text" disabled class="form-control" value="(11) 9 8346-9084">
+                            <input type="text" disabled class="form-control" value="<?php echo $celular_formatado; ?>">
                         </div>
                         <div class="col-4 mb-2">
                             <label for="" class="form-label">Setor</label>
-                            <input type="text" disabled class="form-control" value="Tecnologia da Informação">
+                            <input type="text" disabled class="form-control" value="<?php echo $setor->setor ?>">
                         </div>
                     </div>
 
                     <hr>
 
-                        <div class="col-4 mb-2">
-                            <label for="" class="form-label">Usuário</label>
-                            <input type="text" disabled class="form-control" value="Kaique.Souza">
-                            <br>
-                            <button class="btn btn-primary">Alterar Senha</button>
-                            <button class="btn btn-dark" data-toggle="modal" data-target="#modalAvatar" class="collapse-item">Alterar Foto</button>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="" class="form-label">Usuário</label>
+                                <input type="text" disabled class="form-control" value="<?php echo $usuario->usuario ?>">
+                                <img class="profile" src="img/avatar/<?php echo $usuario->id_avatar ?>.png" alt="">
+                            </div>
+                            <div class="col-4 mt-4">
+                                <button class="btn btn-dark" data-toggle="modal" data-target="#modalAvatar" class="collapse-item">Alterar Foto</button>
+                            </div>
                         </div>
 
                 <br><br>
@@ -113,121 +131,14 @@
                                 </button>
                             </div>
                             <div class="modal-body text-center">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio0" value="0">
-                                    <label class="form-check-label" for="inlineRadio0">
-                                        <img src="img/avatar/0.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio1" value="1">
-                                    <label class="form-check-label" for="inlineRadio1">
-                                        <img src="img/avatar/1.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio2" value="2">
-                                    <label class="form-check-label" for="inlineRadio2">
-                                        <img src="img/avatar/2.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio3" value="3">
-                                    <label class="form-check-label" for="inlineRadio3">
-                                        <img src="img/avatar/3.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio4" value="4">
-                                    <label class="form-check-label" for="inlineRadio4">
-                                        <img src="img/avatar/4.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio5" value="5">
-                                    <label class="form-check-label" for="inlineRadio5">
-                                        <img src="img/avatar/5.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio6" value="6">
-                                    <label class="form-check-label" for="inlineRadio6">
-                                        <img src="img/avatar/6.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio7" value="7">
-                                    <label class="form-check-label" for="inlineRadio7">
-                                        <img src="img/avatar/7.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio8" value="8">
-                                    <label class="form-check-label" for="inlineRadio8">
-                                        <img src="img/avatar/8.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio9" value="9">
-                                    <label class="form-check-label" for="inlineRadio9">
-                                        <img src="img/avatar/9.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio10" value="10">
-                                    <label class="form-check-label" for="inlineRadio10">
-                                        <img src="img/avatar/10.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio11" value="11">
-                                    <label class="form-check-label" for="inlineRadio11">
-                                        <img src="img/avatar/11.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio12" value="12">
-                                    <label class="form-check-label" for="inlineRadio12">
-                                        <img src="img/avatar/12.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio13" value="13">
-                                    <label class="form-check-label" for="inlineRadio13">
-                                        <img src="img/avatar/13.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio14" value="14">
-                                    <label class="form-check-label" for="inlineRadio14">
-                                        <img src="img/avatar/14.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio15" value="15">
-                                    <label class="form-check-label" for="inlineRadio15">
-                                        <img src="img/avatar/15.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio16" value="16">
-                                    <label class="form-check-label" for="inlineRadio16">
-                                        <img src="img/avatar/16.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio17" value="17">
-                                    <label class="form-check-label" for="inlineRadio17">
-                                        <img src="img/avatar/17.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio18" value="18">
-                                    <label class="form-check-label" for="inlineRadio18">
-                                        <img src="img/avatar/18.png" style="width: 100px" alt="">
-                                    </label>
-                                </div>
-                            </div>
+                                <?php for($x = 0;$x < 19;$x++){ ?>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio<?php echo $x ?>" value="<?php echo $x ?>">
+                                        <label class="form-check-label" for="inlineRadio<?php echo $x ?>">
+                                            <img src="img/avatar/<?php echo $x ?>.png" style="width: 100px" alt="">
+                                        </label>
+                                    </div>
+                            <?php } ?>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                                 <button type="submit" class="btn btn-primary" name="btnAvatar">Alterar</button>
@@ -236,6 +147,8 @@
                     </div>
                 </form>
             </div>
+
+        </div>
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">

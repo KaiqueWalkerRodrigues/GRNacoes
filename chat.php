@@ -5,12 +5,8 @@
     $Mensagem = new Mensagem();
     $Usuario = new Usuario();
 
-    if (isset($_POST['enviarMensagem'])) {
-        $Mensagem->cadastrar($_POST);
-    }
-
     $id_chat = $_GET['id'];
-    $id_remetente = $_GET['id_remetente'];
+    $id_destinatario = $_GET['id_destinatario'];
 ?>
 
 <!DOCTYPE html>
@@ -93,7 +89,7 @@
 
         .chat {
             margin-top: 8%; /* Altura da topbar */
-            margin-bottom: 12%;
+            margin-bottom: 10%;
             margin-left: 5px; /* Largura da sidebar */
             z-index: 100; /* Garante que a seção de chat esteja abaixo das barras laterais */
             position: relative;
@@ -125,7 +121,7 @@
             border-radius: 25px; /* Deixa o input com bordas arredondadas */
             border: 1px solid #ced4da; /* Cor da borda */
             padding: 10px 20px; /* Espaçamento interno do input */
-            width: 1100px;
+            width: 80%;
             resize: none; /* Evita que o textarea seja redimensionado */
         }
 
@@ -157,8 +153,22 @@
 
             <?php include_once('topbar.php'); ?>
 
+            <?php $destinatario = $Usuario->mostrar($id_destinatario); ?>
+
             <!-- Begin Page Content -->
             <div class="container-fluid chat">
+
+            <div class="card p-2 d-flex align-items-center" style="margin-top: -15px; position: fixed; z-index: 1000;width: 80%;">
+                <div class="d-flex align-items-center">
+                    <img class="perfil img-profile rounded-circle" style="width: 50px; margin-right: 10px;" src="<?php echo URL ?>/img/avatar/<?php echo $Usuario->mostrar($id_destinatario)->id_avatar; ?>.png">
+                    <div>
+                        <b><?php echo $destinatario->nome; ?></b>
+                        <span style="font-size: 11px; display: block;">Última vez online há 10 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <br><br><br>
 
                 <div id="mensagensContainer">
                     
@@ -170,14 +180,15 @@
         </div>
         <!-- End of Main Content -->
 
-        <div id="msg">
-            <form action="?" method="post" id="chatForm">
+        <div id="msg" style="width: 98%">
+            <form action="class/Mensagens.php" method="post" id="chatForm">
                 <div class="mb">
                     <div class="align-items-center">
                         <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_destinatario" id="id_usuario" value="<?php echo $id_destinatario ?>">
                         <input type="hidden" name="id_conversa" id="id_conversa" value="<?php echo $_GET['id'] ?>">
                         <input type="hidden" name="id_avatar" id="id_avatar" value="<?php echo $Usuario->mostrar($_SESSION['id_usuario'])->id_avatar; ?>">
-                        <input type="hidden" name="id_avatar_remetente" id="id_avatar_remetente" value="<?php echo $Usuario->mostrar($id_remetente)->id_avatar; ?>">
+                        <input type="hidden" name="id_avatar_destinatario" id="id_avatar_destinatario" value="<?php echo $Usuario->mostrar($id_destinatario)->id_avatar; ?>">
                         <textarea class="form-control input-mensagem mr-4" id="mensagem" name="mensagem" rows="2" style="max-width: calc(100% - 60px);"></textarea>
                         <button type="submit" class="btn-enviar-mensagem ms-3" name="enviarMensagem">
                             <i class="fa-solid fa-paper-plane"></i>
@@ -204,13 +215,13 @@
             var id = $('#id_conversa').val();
             var id_usuario = $('#id_usuario').val();
             var id_avatar = $('#id_avatar').val();
-            var id_avatar_remetente = $('#id_avatar_remetente').val();
+            var id_avatar_destinatario = $('#id_avatar_destinatario').val();
 
             function mostrarMensagens() {
                 $.ajax({
                     type: "get",
                     url: "get_messages.php",
-                    data: { id_conversa: id, id_usuario: id_usuario, id_avatar: id_avatar, id_avatar_remetente: id_avatar_remetente },
+                    data: { id_conversa: id, id_usuario: id_usuario, id_avatar: id_avatar, id_avatar_destinatario: id_avatar_destinatario },
                     success: function (result) {
                         $('#mensagensContainer').html(result);
                     },
@@ -220,16 +231,21 @@
                 });
             }
 
-            function rolarParaBaixo() {
-                var mensagensContainer = document.body;
-                mensagensContainer.scrollTop = mensagensContainer.scrollHeight;
-            }
-
             setInterval(mostrarMensagens, 100);
+
+            setTimeout(function() {
+                var container = document.body;
+                container.scrollTop = container.scrollHeight;
+            }, 175); 
 
             $('#chat').addClass('active');
 
-            rolarParaBaixo(); // Rola para baixo quando a página é carregada
+            $('#mensagem').keydown(function (e) {
+                if (e.keyCode == 13 && !e.shiftKey) { 
+                    e.preventDefault(); 
+                    $('#chatForm').submit(); 
+                }
+            });
         });
     </script>
 

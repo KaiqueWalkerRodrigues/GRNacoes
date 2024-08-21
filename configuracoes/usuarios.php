@@ -4,7 +4,11 @@
     $Usuario = new Usuario();
     $Setor = new Setor();
     $Cargo = new Cargo();
+    $Chat = new Conversa();
 
+    if (isset($_POST['btnChat'])) {
+        $Chat->cadastrarPrivado($_POST);
+    }
     if (isset($_POST['btnCadastrar'])) {
         $Usuario->cadastrar($_POST);
     }
@@ -92,40 +96,44 @@
                                             <td><?php echo $Setor->nomeSetor($usuario->id_setor); ?></td>
                                             <td><?php echo Helper::mostrar_empresa($usuario->empresa); ?></td>
                                             <td class="text-center">
-                                                <button class="btn btn-primary"><i class="fa-solid fa-comment"></i></button>
-                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
-                                                    data-nome="<?php echo $usuario->nome ?>"
-                                                    data-contrato="<?php echo $usuario->contrato_nube ?>"
-                                                    data-rg="<?php echo $usuario->rg ?>"
-                                                    data-foto3x4="<?php echo $usuario->foto3x4 ?>"
-                                                    data-residencia="<?php echo $usuario->residencia ?>"
-                                                    data-id_usuario="<?php echo $usuario->id_usuario ?>"
-                                                    >
-                                                    <i class="fa-regular fa-address-book"></i>
-                                                </button>
-                                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarUsuario" class="collapse-item" 
-                                                    data-nome="<?php echo $usuario->nome ?>"
-                                                    data-idusuario="<?php echo $usuario->id_usuario ?>"
-                                                    data-usuario="<?php echo $usuario->usuario ?>"
-                                                    data-senha="<?php echo $usuario->senha ?>"
-                                                    data-contrato="<?php echo $usuario->contrato ?>"
-                                                    data-celular="<?php echo $usuario->celular ?>"
-                                                    data-cpf="<?php echo $usuario->cpf ?>"
-                                                    data-data_nascimento="<?php echo $usuario->data_nascimento ?>"
-                                                    data-email="<?php echo $usuario->email ?>"
-                                                    data-empresa="<?php echo $usuario->empresa ?>"
-                                                    data-n_folha="<?php echo $usuario->n_folha ?>"
-                                                    data-idsetor="<?php echo $usuario->id_setor ?>"
-                                                    data-idcargo="<?php echo $usuario->id_cargo ?>"
-                                                    data-data_admissao="<?php echo $usuario->data_admissao ?>">
-                                                    <i class="fa-solid fa-gear"></i>
-                                                </button>
-                                                <button class="btn btn-danger"  data-toggle="modal" data-target="#modalDesativarUsuario" class="collapse-item"
-                                                    data-idusuario="<?php echo $usuario->id_usuario ?>"
-                                                    data-nome="<?php echo $usuario->nome ?>"
-                                                    >
-                                                    <i class="fa-solid fa-power-off"></i>
-                                                </button>
+                                                <form action="?" method="post">
+                                                    <button class="btn btn-primary" type="submit" name="btnChat"><i class="fa-solid fa-comment"></i></button>
+                                                    <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                                    <input type="hidden" name="id_destinatario" value="<?php echo $usuario->id_usuario ?>">
+                                                </form>
+                                                    <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
+                                                        data-nome="<?php echo $usuario->nome ?>"
+                                                        data-contrato="<?php echo $usuario->contrato_nube ?>"
+                                                        data-rg="<?php echo $usuario->rg ?>"
+                                                        data-foto3x4="<?php echo $usuario->foto3x4 ?>"
+                                                        data-residencia="<?php echo $usuario->residencia ?>"
+                                                        data-id_usuario="<?php echo $usuario->id_usuario ?>"
+                                                        >
+                                                        <i class="fa-regular fa-address-book"></i>
+                                                    </button>
+                                                    <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarUsuario" class="collapse-item" 
+                                                        data-nome="<?php echo $usuario->nome ?>"
+                                                        data-idusuario="<?php echo $usuario->id_usuario ?>"
+                                                        data-usuario="<?php echo $usuario->usuario ?>"
+                                                        data-senha="<?php echo $usuario->senha ?>"
+                                                        data-contrato="<?php echo $usuario->contrato ?>"
+                                                        data-celular="<?php echo $usuario->celular ?>"
+                                                        data-cpf="<?php echo $usuario->cpf ?>"
+                                                        data-data_nascimento="<?php echo $usuario->data_nascimento ?>"
+                                                        data-email="<?php echo $usuario->email ?>"
+                                                        data-empresa="<?php echo $usuario->empresa ?>"
+                                                        data-n_folha="<?php echo $usuario->n_folha ?>"
+                                                        data-idsetor="<?php echo $usuario->id_setor ?>"
+                                                        data-idcargo="<?php echo $usuario->id_cargo ?>"
+                                                        data-data_admissao="<?php echo $usuario->data_admissao ?>">
+                                                        <i class="fa-solid fa-gear"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger"  data-toggle="modal" data-target="#modalDesativarUsuario" class="collapse-item"
+                                                        data-idusuario="<?php echo $usuario->id_usuario ?>"
+                                                        data-nome="<?php echo $usuario->nome ?>"
+                                                        >
+                                                        <i class="fa-solid fa-power-off"></i>
+                                                    </button>
                                             </td>
                                         </tr>
                                         <?php } ?>

@@ -321,7 +321,8 @@ class Usuario {
             $sql->bindParam(':data', $agora);
             $sql->execute();
 
-            return header('location:/GRNacoes/perfil');
+            $url = 'location:/GRNacoes/perfil?id='.$id_usuario;
+            return header($url);
         } else {
             // Tratar falha na execução da query, se necessário
         }
