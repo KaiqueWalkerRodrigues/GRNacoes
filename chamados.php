@@ -237,6 +237,18 @@
         $(document).ready(function() {
             $('#cham').addClass('active');
 
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
+            }
+
             $('#filtroUrgencia, #filtroEmpresa').change(function() {
                 var filtroUrgencia = $('#filtroUrgencia').val();
                 var filtroEmpresa = $('#filtroEmpresa').val();

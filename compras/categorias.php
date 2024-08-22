@@ -259,6 +259,17 @@
                 $('#desativar_id_compra_categoria').empty()
                 $('#desativar_id_compra_categoria').val(id_categoria)
             })
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
+            }
         });
     </script>
 

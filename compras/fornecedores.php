@@ -285,6 +285,17 @@
                 $('#desativar_id_compra_fornecedor').empty()
                 $('#desativar_id_compra_fornecedor').val(id_fornecedor)
             })
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
+            }
         });
     </script>
 

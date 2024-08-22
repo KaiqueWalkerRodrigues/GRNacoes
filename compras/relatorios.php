@@ -155,6 +155,17 @@
             window.addEventListener('load', function() {
                 setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
             });
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
+            }
         });
     </script>
 

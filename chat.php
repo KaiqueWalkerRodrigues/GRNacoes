@@ -163,7 +163,7 @@
                     <img class="perfil img-profile rounded-circle" style="width: 50px; margin-right: 10px;" src="<?php echo URL ?>/img/avatar/<?php echo $Usuario->mostrar($id_destinatario)->id_avatar; ?>.png">
                     <div>
                         <b><?php echo $destinatario->nome; ?></b>
-                        <span style="font-size: 11px; display: block;">Última vez online há 10 min</span>
+                        <span style="font-size: 11px; display: block;" id="online"></span>
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@
                 <div class="mb">
                     <div class="align-items-center">
                         <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_destinatario" id="id_usuario" value="<?php echo $id_destinatario ?>">
+                        <input type="hidden" name="id_destinatario" id="id_destinatario" value="<?php echo $id_destinatario ?>">
                         <input type="hidden" name="id_conversa" id="id_conversa" value="<?php echo $_GET['id'] ?>">
                         <input type="hidden" name="id_avatar" id="id_avatar" value="<?php echo $Usuario->mostrar($_SESSION['id_usuario'])->id_avatar; ?>">
                         <input type="hidden" name="id_avatar_destinatario" id="id_avatar_destinatario" value="<?php echo $Usuario->mostrar($id_destinatario)->id_avatar; ?>">
@@ -206,7 +206,7 @@
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
+        <i class="fas fa-angle-up"></i>
     </a>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -214,6 +214,7 @@
         $(document).ready(function () {
             var id = $('#id_conversa').val();
             var id_usuario = $('#id_usuario').val();
+            var id_destinatario = $('#id_destinatario').val();
             var id_avatar = $('#id_avatar').val();
             var id_avatar_destinatario = $('#id_avatar_destinatario').val();
 
@@ -231,8 +232,36 @@
                 });
             }
 
-            setInterval(mostrarMensagens, 100);
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
 
+                function verificarOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "verificar_online.php",
+                        data: { id_destinatario: id_destinatario },
+                        success: function(resultado) {
+                            $('#online').html(resultado)
+                        },
+                        error: function(){
+                            console.log('Erro!')
+                        }
+                    });
+                }
+                setInterval(verificarOnline, 1000);
+                verificarOnline()
+            }
+
+            setInterval(mostrarMensagens, 100);
+            
             setTimeout(function() {
                 var container = document.body;
                 container.scrollTop = container.scrollHeight;

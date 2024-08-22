@@ -191,6 +191,18 @@
         $(document).ready(function() {
             $('#logs').addClass('active');
 
+            //Sistema Online
+            {
+                function manterOnline() {
+                    $.ajax({
+                        type: "get",
+                        url: "manter_online.php",
+                        data: { id_usuario: id_usuario },
+                    });
+                }
+                setInterval(manterOnline, 1000);
+            }
+
             // Evento de alteração nos filtros
             $('#filtroData, #filtroTipo, #filtroUsuario').change(function() {
                 var filtroData = $('#filtroData').val();
