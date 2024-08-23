@@ -235,17 +235,6 @@
             $('#config').addClass('active');
             $('#gerenciar_cargos').addClass('active');
 
-            //Sistema Online
-            {
-                function manterOnline() {
-                    $.ajax({
-                        type: "get",
-                        url: "manter_online.php",
-                        data: { id_usuario: id_usuario },
-                    });
-                }
-                setInterval(manterOnline, 1000);
-            }
         });
         $('#modalCadastrarCargo').on('show.bs.modal', function (event) {
             let button = $(event.relatedTarget)

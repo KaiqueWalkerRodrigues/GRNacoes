@@ -497,18 +497,6 @@
             $('#config').addClass('active');
             $('#gerenciar_usuarios').addClass('active');
 
-            //Sistema Online
-            {
-                function manterOnline() {
-                    $.ajax({
-                        type: "get",
-                        url: "manter_online.php",
-                        data: { id_usuario: id_usuario },
-                    });
-                }
-                setInterval(manterOnline, 1000);
-            }
-
             function validarCPF(cpf) {
                 cpf = cpf.replace(/[^\d]+/g,''); // Remove caracteres não numéricos
                 if (cpf == '') return false;

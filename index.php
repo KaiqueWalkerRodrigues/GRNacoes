@@ -26,3 +26,4 @@ if (array_key_exists($url, $rotas) && file_exists($rotas[$url])) {
     // Se a rota não existe ou o arquivo correspondente não existe, inclui a página de erro
     include 'erro.php';
 }
+?>

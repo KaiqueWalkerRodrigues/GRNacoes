@@ -496,18 +496,6 @@
         $(document).ready(function() {
             $('#finan').addClass('active');
             $('#financeiro_campanhas').addClass('active');
-
-            //Sistema Online
-            {
-                function manterOnline() {
-                    $.ajax({
-                        type: "get",
-                        url: "manter_online.php",
-                        data: { id_usuario: id_usuario },
-                    });
-                }
-                setInterval(manterOnline, 1000);
-            }
             
             // Função para carregar vendedores via AJAX
             function carregarVendedores(idEmpresa, vendedorSelect, incluirTodos = true) {

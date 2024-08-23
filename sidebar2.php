@@ -320,5 +320,14 @@
     </div>
 </div>
 
-
-
+<script>
+    //Sistema Online
+    {
+        function manterOnline() {
+            $.ajax({
+                url: "/GRNacoes/manter_online.php",
+            });
+        }
+        setInterval(manterOnline, 1000);
+    }
+</script>

@@ -292,7 +292,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="usuario_logado" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <div class="row">
                             <div class="col-6">
                                 <label for="titulo" class="form-label">Título *</label>
@@ -809,17 +809,6 @@
                 $('body').addClass('modal-open');
             }
         });
-        //Sistema Online
-        {
-            function manterOnline() {
-                $.ajax({
-                    type: "get",
-                    url: "manter_online.php",
-                    data: { id_usuario: id_usuario },
-                });
-            }
-            setInterval(manterOnline, 1000);
-        }
     });
     </script>
 

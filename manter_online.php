@@ -4,7 +4,9 @@ date_default_timezone_set('America/Sao_Paulo');
 
 require 'class/Connection.php';
 
-    $id_usuario = $_GET['id_usuario'];
+    session_start();
+
+    $id_usuario = $_SESSION['id_usuario'];
 
     $agora = date("Y-m-d H:i:s");
 
