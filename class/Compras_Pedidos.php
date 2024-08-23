@@ -28,8 +28,8 @@ class Compras_Pedidos {
         return $dados;
     }
 
-    public function listarComprados($id_usuario = null, $id_setor = null) {
-        if ($id_setor !== null && $id_setor !== 1 && $id_setor !== 3) {
+    public function listarComprados($id_usuario = null, $id_id_setor = null) {
+        if ($id_id_setor !== null && $id_id_setor !== 1 && $id_id_setor !== 3) {
             $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE id_usuario = :id_usuario AND status = :status');
             $sql->bindParam(':id_usuario', $id_usuario);
         } else {
@@ -45,8 +45,8 @@ class Compras_Pedidos {
         return $dados;
     }
 
-    public function listarNegados($id_usuario = null, $id_setor = null) {
-        if ($id_setor !== null && $id_setor !== 1 && $id_setor !== 3) {
+    public function listarNegados($id_usuario = null, $id_id_setor = null) {
+        if ($id_id_setor !== null && $id_id_setor !== 1 && $id_id_setor !== 3) {
             $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE id_usuario = :id_usuario AND status = :status');
             $sql->bindParam(':id_usuario', $id_usuario);
         } else {
@@ -68,15 +68,15 @@ class Compras_Pedidos {
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO compras_pedidos 
-                                    (titulo, id_usuario, empresa, setor, link, urgencia, descricao, created_at, updated_at)
+                                    (titulo, id_usuario, empresa, id_setor, link, urgencia, descricao, created_at, updated_at)
                                     VALUES
-                                    (:titulo, :id_usuario, :empresa, :setor, :link, :urgencia, :descricao, :created_at, :updated_at)
+                                    (:titulo, :id_usuario, :empresa, :id_setor, :link, :urgencia, :descricao, :created_at, :updated_at)
                                 ');
 
         $titulo  = $dados['titulo'];
         $id_usuario  = $dados['usuario_logado'];
         $empresa  = $dados['empresa'];
-        $setor  = $dados['setor'];
+        $id_setor  = $dados['id_setor'];
         $link  = $dados['link'];
         $urgencia  = $dados['urgencia'];
         $descricao  = $dados['descricao'];
@@ -86,7 +86,7 @@ class Compras_Pedidos {
         $sql->bindParam(':titulo', $titulo);          
         $sql->bindParam(':id_usuario', $id_usuario);
         $sql->bindParam(':empresa', $empresa);
-        $sql->bindParam(':setor', $setor);
+        $sql->bindParam(':id_setor', $id_setor);
         $sql->bindParam(':link', $link); 
         $sql->bindParam(':urgencia', $urgencia); 
         $sql->bindParam(':descricao', $descricao); 
@@ -132,7 +132,7 @@ class Compras_Pedidos {
             titulo = :titulo,
             id_usuario = :id_usuario,
             empresa = :empresa,
-            setor = :setor,
+            id_setor = :id_setor,
             link = :link, 
             urgencia = :urgencia, 
             descricao = :descricao, 
@@ -146,7 +146,7 @@ class Compras_Pedidos {
         $titulo = $dados['titulo'];
         $id_usuario = $dados['usuario_logado'];
         $empresa = $dados['empresa'];
-        $setor = $dados['setor'];
+        $id_setor = $dados['id_setor'];
         $link = $dados['link']; 
         $urgencia = $dados['urgencia']; 
         $descricao = $dados['descricao']; 
@@ -156,7 +156,7 @@ class Compras_Pedidos {
         $sql->bindParam(':titulo', $titulo);
         $sql->bindParam(':id_usuario', $id_usuario);
         $sql->bindParam(':empresa', $empresa);
-        $sql->bindParam(':setor', $setor);
+        $sql->bindParam(':id_setor', $id_setor);
         $sql->bindParam(':link', $link); 
         $sql->bindParam(':urgencia', $urgencia); 
         $sql->bindParam(':descricao', $descricao); 

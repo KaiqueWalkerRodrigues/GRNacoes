@@ -134,7 +134,7 @@
     <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
         aria-labelledby="messagesDropdown">
         <h6 class="dropdown-header">
-            Message Center
+            Centro de Mensagens
         </h6>
         <a class="dropdown-item d-flex align-items-center" href="#">
             <div class="dropdown-list-image mr-3">
@@ -184,7 +184,7 @@
                 <div class="small text-gray-500">Chicken the Dog · 2w</div>
             </div>
         </a>
-        <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+        <a class="dropdown-item text-center small text-gray-500" href="/GRNacoes/chats">Leia mais Mensagens</a>
     </div>
 </li>
 

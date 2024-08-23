@@ -10,14 +10,24 @@ class Conversa {
     }
 
     public function listar($id_usuario) {
-        $sql = $this->pdo->prepare('SELECT * FROM participantes WHERE id_usuario = :id_usuario AND deleted_at IS NULL ORDER BY created_at DESC');
+        $sql = $this->pdo->prepare('
+            SELECT c.*, MAX(m.created_at) as ultima_mensagem
+            FROM participantes p
+            INNER JOIN conversas c ON p.id_conversa = c.id_conversa
+            LEFT JOIN conversas_mensagens cm ON c.id_conversa = cm.id_conversa
+            LEFT JOIN mensagens m ON cm.id_mensagem = m.id_mensagem
+            WHERE p.id_usuario = :id_usuario AND p.deleted_at IS NULL AND c.deleted_at IS NULL
+            GROUP BY c.id_conversa
+            ORDER BY ultima_mensagem DESC
+        ');
         $sql->bindParam(':id_usuario',$id_usuario);
         $sql->execute();
-
+    
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-
+    
         return $dados;
     }
+    
 
     public function mostrar(int $id_conversa) {
         $sql = $this->pdo->prepare('SELECT * FROM conversas WHERE id_conversa = :id_conversa AND deleted_at IS NULL');

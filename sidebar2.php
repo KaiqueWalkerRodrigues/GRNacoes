@@ -103,7 +103,6 @@
     </a> 
     <div id="compras" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <button id="btnAbrirPedido" data-toggle="modal" data-target="#modalAbrirPedido" class="collapse-item botao">Abrir Pedido</button>
             <a class="collapse-item" id="compras_pedidos" href="<?php echo URL ?>/compras/pedidos">Pedidos de Compras</a>
             <h6 class="collapse-header">Notas:</h6>
             <a class="collapse-item" id="compras_notas" href="<?php echo URL ?>/compras/notas">Notas Fiscias</a>
@@ -247,79 +246,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Abrir Pedido -->
-<div class="modal fade" id="modalAbrirPedido" tabindex="-1" role="dialog" aria-labelledby="abrirchamadoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="formAbrirPedido" method="POST" action="processaPedido.php">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-6 mb-2">
-                            <label for="cadastrar_titulo" class="form-label">Título do Pedido *</label>
-                            <input type="text" name="titulo" id="cadastrar_titulo" class="form-control" required>
-                        </div>
-                        <div class="col-2 mb-2">
-                            <label for="cadastrar_empresa" class="form-label">Empresa *</label>
-                            <select name="empresa" id="cadastrar_empresa" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="1">Clínica Parque</option>
-                                <option value="3">Clínica Mauá</option>
-                                <option value="5">Clínica Jardim</option>
-                                <option value="2">Ótica Matriz</option>
-                                <option value="4">Ótica Prestigio</option>
-                                <option value="6">Ótica Daily</option>
-                            </select>
-                        </div>
-                        <div class="col-2 mb-2">
-                            <label for="cadastrar_setor" class="form-label">Setor *</label>
-                            <select name="setor" id="cadastrar_setor" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="captacao">Captação</option>
-                                <option value="compras">Compras</option>
-                                <option value="exames">Exames</option>
-                                <option value="faturamento">Faturamento</option>
-                                <option value="financeiro">Financeiro</option>
-                                <option value="recepcao">Recepção</option>
-                                <option value="rh">RH</option>
-                                <option value="ti">TI</option>
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="cadastrar_urgencia" class="form-label">Urgência *</label>
-                            <select name="urgencia" id="cadastrar_urgencia" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="0">Sugestão</option>
-                                <option value="1">Baixa</option>
-                                <option value="2">Moderada</option>
-                                <option value="3">Alta</option>
-                                <option value="4">Emergência</option>
-                            </select>
-                        </div>
-                        <div class="col-8">
-                            <label for="cadastrar_link" class="form-label">Link *</label>
-                            <input type="text" name="link" id="cadastrar_link" class="form-control">
-                        </div>
-                        <div class="col-12 mt-1">
-                            <label for="cadastrar_descricao" class="form-label">Motivo da Compra *</label>
-                            <textarea name="descricao" id="cadastrar_descricao" cols="30" rows="10" class="form-control"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Abrir Pedido</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script>
     //Sistema Online
     {

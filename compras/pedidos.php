@@ -11,6 +11,8 @@
 
     $Compras_Categorias = new Compras_Categorias();
 
+    $Setor = new Setor();
+
     $id_setor_usuario = $_SESSION['id_setor']; // Id do setor do usuário logado
     $id_usuario_logado = $_SESSION['id_usuario']; // Id do usuário logado
 
@@ -184,8 +186,12 @@
                                             <td><?php echo Helper::Urgencia($cp->urgencia); ?></td>
                                             <td><?php echo $cp->titulo ?></td>
                                             <td><?php echo Helper::mostrar_empresa($cp->empresa); ?></td>
-                                            <td><?php echo $cp->setor ?></td>
-                                            <td><a href="<?php echo $cp->link ?>" target="_blank">Ver Link</a></td>
+                                            <td><?php echo $Setor->mostrar($cp->id_setor)->setor ?></td>
+                                            <td>
+                                                <?php if (!empty($cp->link)) { ?>
+                                                    <a href="<?php echo $cp->link ?>" target="_blank">Ver Link</a>
+                                                <?php } ?>
+                                            </td>
                                             <td><?php $dt = new DateTime($cp->created_at); echo $dt->format('d/m/Y') ?></td>
                                             <td class="text-center">
                                                 <button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
@@ -196,7 +202,7 @@
                                                     data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                     data-titulo="<?php echo $cp->titulo ?>"
                                                     data-empresa="<?php echo $cp->empresa ?>"
-                                                    data-setor="<?php echo $cp->setor ?>"
+                                                    data-id_setor="<?php echo $cp->id_setor ?>"
                                                     data-link="<?php echo $cp->link ?>"
                                                     data-urgencia="<?php echo $cp->urgencia ?>"
                                                     data-descricao="<?php echo $cp->descricao ?>">
@@ -303,30 +309,29 @@
                                 <select name="empresa" id="cadastrar_empresa" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="1">Clínica Parque</option>
-                                    <option value="2">Clínica Mauá</option>
-                                    <option value="3">Clínica Jardim</option>
-                                    <option value="4">Ótica Matriz</option>
-                                    <option value="5">Ótica Prestigio</option>
+                                    <option value="3">Clínica Mauá</option>
+                                    <option value="5">Clínica Jardim</option>
+                                    <option value="2">Ótica Matriz</option>
+                                    <option value="4">Ótica Prestigio</option>
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-2 mb-2">
-                                <label for="cadastrar_setor" class="form-label">Setor *</label>
-                                <select name="setor" id="cadastrar_setor" class="form-control" required>
+                            <div class="col-3 mb-2">
+                                <label for="cadastrar_id_setor" class="form-label">Setor *</label>
+                                <select name="id_setor" id="cadastrar_setor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <option value="captacao">Captação</option>
-                                    <option value="compras">Compras</option>
-                                    <option value="exames">Exames</option>
-                                    <option value="faturamento">Faturamento</option>
-                                    <option value="financeiro">Financeiro</option>
-                                    <option value="recpcao">Recepção</option>
-                                    <option value="rh">RH</option>
-                                    <option value="ti">TI</option>
+                                    <?php 
+                                        foreach($Setor->listar() as $s){
+                                    ?>
+                                        <option value="<?php echo $s->id_setor ?>"><?php echo $s->setor ?></option>
+                                    <?php 
+                                        }
+                                    ?>
                                 </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <label for="cadastrar_urgencia" class="form-label">Urgência *</label>
                                 <select name="urgencia" id="cadastrar_urgencia" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -381,30 +386,28 @@
                                 <select name="empresa" id="editar_empresa" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="1">Clínica Parque</option>
-                                    <option value="2">Clínica Mauá</option>
-                                    <option value="3">Clínica Jardim</option>
-                                    <option value="4">Ótica Matriz</option>
-                                    <option value="5">Ótica Prestigio</option>
+                                    <option value="3">Clínica Mauá</option>
+                                    <option value="5">Clínica Jardim</option>
+                                    <option value="2">Ótica Matriz</option>
+                                    <option value="4">Ótica Prestigio</option>
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-2 mb-2">
-                                <label for="editar_setor" class="form-label">Setor *</label>
-                                <select name="setor" id="editar_setor" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="captacao">Captação</option>
-                                    <option value="compras">Compras</option>
-                                    <option value="exames">Exames</option>
-                                    <option value="faturamento">Faturamento</option>
-                                    <option value="financeiro">Financeiro</option>
-                                    <option value="recpcao">Recepção</option>
-                                    <option value="rh">RH</option>
-                                    <option value="ti">TI</option>
-                                </select>
+                            <div class="col-3 mb-2">
+                                <label for="editar_id_setor" class="form-label">Setor *</label>
+                                <select name="id_setor" id="editar_id_setor" class="form-control" required>
+                                        <?php 
+                                            foreach($Setor->listar() as $s){
+                                        ?>
+                                            <option value="<?php echo $s->id_setor ?>"><?php echo $s->setor ?></option>
+                                        <?php 
+                                            }
+                                        ?>
+                                    </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
                                 <label for="editar_urgencia" class="form-label">Urgência *</label>
                                 <select name="urgencia" id="editar_urgencia" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -415,8 +418,8 @@
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label for="link" class="form-label">Link *</label>
-                                <input type="url" id="editar_link" name="link" class="form-control" required>
+                                <label for="link" class="form-label">Link</label>
+                                <input type="url" id="editar_link" name="link" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -521,7 +524,7 @@
                                     <td><?php echo Helper::Urgencia($cp->urgencia); ?></td>
                                     <td><?php echo $cp->titulo ?></td>
                                     <td><?php echo Helper::mostrar_empresa($cp->empresa); ?></td>
-                                    <td><?php echo $cp->setor ?></td>
+                                    <td><?php echo $Setor->mostrar($cp->id_setor)->setor ?></td>
                                     <td><a href="<?php echo $cp->link ?>" target="_blank">Ver Link</a></td>
                                     <td><?php $dt = new DateTime($cp->created_at); echo $dt->format('d/m/Y') ?></td>
                                     <td class="text-center">
@@ -582,7 +585,7 @@
                                     <td><?php echo Helper::Urgencia($cp->urgencia); ?></td>
                                     <td><?php echo $cp->titulo ?></td>
                                     <td><?php echo Helper::mostrar_empresa($cp->empresa); ?></td>
-                                    <td><?php echo $cp->setor ?></td>
+                                    <td><?php echo $Setor->mostrar($cp->id_setor)->setor ?></td>
                                     <td><a href="<?php echo $cp->link ?>" target="_blank">Ver Link</a></td>
                                     <td><?php $dt = new DateTime($cp->created_at); echo $dt->format('d/m/Y') ?></td>
                                     <td class="text-center">
@@ -749,7 +752,7 @@
             let id_compra_pedido = button.data('id_compra_pedido');
             let titulo = button.data('titulo');
             let empresa = button.data('empresa');
-            let setor = button.data('setor');
+            let id_setor = button.data('id_setor');
             let link = button.data('link');
             let urgencia = button.data('urgencia');
             let descricao = button.data('descricao');
@@ -757,7 +760,7 @@
             $('#editar_id_compra_pedido').val(id_compra_pedido);
             $('#editar_titulo').val(titulo);
             $('#editar_empresa').val(empresa);
-            $('#editar_setor').val(setor);
+            $('#editar_id_setor').val(id_setor);
             $('#editar_link').val(link);
             $('#editar_urgencia').val(urgencia);
             $('#editar_descricao').val(descricao);
