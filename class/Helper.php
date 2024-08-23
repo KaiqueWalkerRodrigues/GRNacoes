@@ -171,7 +171,7 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
           return "Baixa";
         break;
         case 2:
-          return "Moderada";
+          return "Média";
         break;
         case 3:
           return "Alta";

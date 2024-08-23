@@ -92,7 +92,7 @@
 <li class="nav-item" id="chat">
     <a class="nav-link" href="<?php echo URL ?>/chats">
         <i class="fa-solid fa-comment"></i>
-        <span>Chat</span></a>
+        <span>Chats</span></a>
 </li>
 
 <li class="nav-item" id="comp">
