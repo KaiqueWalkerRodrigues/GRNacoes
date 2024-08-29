@@ -165,19 +165,39 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       }
     }
 
+    public static function statusChamado($status){
+      switch($status){
+          case 1:
+            return "<b class='text-secondary'>Em Análise</b>";
+          break;
+          case 2:
+            return "<b class='text-warning'>Em Andamento</b>";
+          break;
+          case 3:
+            return "<b class='text-success'>Concluido</b>";
+          break;
+          case 4:
+            return "<b class='text-danger'>Cancelado</b>";
+          break;
+          case 5:
+            return "<b class='text-dark'>Recusado</b>";
+          break;
+      }
+    }
+
     public static function Urgencia($urgencia){
       switch($urgencia){
         case 1:
-          return "Baixa";
+          return "<b style='color:#008000;'>Baixa</b>";
         break;
         case 2:
-          return "Média";
+          return "<b style='color:#FFA500;'>Média</b>";
         break;
         case 3:
-          return "Alta";
+          return "<b style='color:#FF4500;'>Alta</b>";
         break;
         case 4:
-          return "Urgente";
+          return "<b style='color:#FF0000;'>Urgente</b>";
         break;
       }
     }

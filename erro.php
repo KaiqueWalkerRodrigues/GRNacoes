@@ -44,7 +44,7 @@
                     <br><br><br>
                     <div class="row">
                         <div class="text-center col-10 mt-5 mb-5 offset-1">
-                        <h1>Página Não Encontrada, ERRO 404</h1>
+                        <h1>ERROR 404, Página Não Encontrada</h1>
                         </div>
                     </div>
                     

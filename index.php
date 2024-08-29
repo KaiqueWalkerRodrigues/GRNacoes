@@ -16,6 +16,7 @@ $rotas = [
     'configuracoes/cargos' => 'configuracoes/cargos',
     'configuracoes/setores' => 'configuracoes/setores',
     'configuracoes/usuarios' => 'configuracoes/usuarios',
+    'chamados/meus_chamados' => 'chamados/meus_chamados',
 ];
 
 // Verifica se a rota existe na lista e se o arquivo associado à rota existe

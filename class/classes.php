@@ -3,6 +3,7 @@
     include_once('Helper.php');
     include_once('Usuario.php');
     include_once('Setor.php');
+    include_once('Chamados.php');
     include_once('Cargo.php');
     include_once('Log.php');
     include_once('Compras_Categorias.php');

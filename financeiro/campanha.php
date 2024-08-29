@@ -11,6 +11,9 @@
     if (isset($_POST['btnEditar'])) {
         $Financeiro_Boleto->editar($_POST);
     }
+    if (isset($_POST['btnEditarCampanha'])) {
+        $Financeiro_Campanha->editar($_POST);
+    }
     if (isset($_POST['btnExcluir'])) {
         $Financeiro_Boleto->desativar($_POST['id_financeiro_boleto'],$_POST['usuario_logado'],$_POST['id_campanha']);
     }
@@ -74,6 +77,14 @@
                     <!-- Page Heading -->
                     <br><br><br><br>
 
+                    <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarCampanha"
+                        data-nome="<?php echo $campanha->nome ?>"
+                        data-periodo_inicio="<?php echo $campanha->periodo_inicio ?>"
+                        data-periodo_fim="<?php echo $campanha->periodo_fim ?>"
+                        data-data_pagamento="<?php echo $campanha->data_pagamento ?>"
+                        >
+                        Editar Campanha</button>
+                    <br><br>
                     <h6 class="text-primary">
                         Periodo: <span style="color:black;font-style:italic;"><?php echo Helper::converterData($campanha->periodo_inicio) ?> - <?php echo Helper::converterData($campanha->periodo_fim) ?></span>  
                     </h6>
@@ -463,6 +474,48 @@
         </form>
     </div>
 
+    <!-- Editar Campanha -->
+    <div class="modal fade" id="modalEditarCampanha" tabindex="1" role="dialog" aria-labelledby="modalEditarCampanhaLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Campanha: <span id="editar_campanha_titulo"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_financeiro_campanha" value="<?php echo $campanha->id_financeiro_campanha ?>">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="row">
+                            <div class="col-3 offset-1">
+                                <label for="editar_nome" class="form-label">Nome Campanha *</label>
+                                <input type="text" name="nome" id="editar_nome" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <label for="editar_periodo_inicio" class="form-label">Do dia *</label>
+                                <input type="date" name="periodo_inicio" id="editar_periodo_inicio" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <label for="editar_periodo_fim" class="form-label">Até *</label>
+                                <input type="date" name="periodo_fim" id="editar_periodo_fim" class="form-control">
+                            </div>
+                            <div class="col-2">
+                                <label for="editar_data_pagamento" class="form-label">Dia Pagamento *</label>
+                                <input type="date" name="data_pagamento" id="editar_data_pagamento" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="btnEditarCampanha">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- Modal Excluir Boleto-->
     <div class="modal fade" id="modalExcluirBoleto" tabindex="-1" role="dialog" aria-labelledby="modalExcluirBoletoLabel" aria-hidden="true">
         <form action="?" method="post">
@@ -619,6 +672,19 @@
                 $('#editar_valor_pago').val(valor_pago);
                 $('#editar_data_pago').val(data_pago);
                 $('#editar_titulo').text(n_boleto);
+            });
+
+            $('#modalEditarCampanha').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let nome = button.data('nome');
+                let periodo_inicio = button.data('periodo_inicio');
+                let periodo_fim = button.data('periodo_fim');
+                let data_pagamento = button.data('data_pagamento');
+
+                $('#editar_nome').val(nome);
+                $('#editar_periodo_inicio').val(periodo_inicio);
+                $('#editar_periodo_fim').val(periodo_fim);
+                $('#editar_data_pagamento').val(data_pagamento);
             });
 
             $('#modalExcluirBoleto').on('show.bs.modal', function (event) {

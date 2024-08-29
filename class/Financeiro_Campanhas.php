@@ -144,6 +144,10 @@ class Financeiro_Campanhas {
             $sql->bindParam(':descricao', $descricao); 
             $sql->bindParam(':data', $agora); 
             $sql->execute();
+
+            
+            $url = "Location:/GRNacoes/financeiro/campanha?c=$id_financeiro_campanha";
+            return header($url);
         } else {
             // Tratar falha na execução da query, se necessário
         }

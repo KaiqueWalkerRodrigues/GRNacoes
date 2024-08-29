@@ -1,10 +1,6 @@
 <?php 
     include_once('../const.php');  
 
-    if(!isset($_SESSION['logado']) ){
-        session_start();
-    }
-
     $Compras_Pedidos = new Compras_Pedidos();
 
     $Compras_Fornecedores = new Compras_Fornecedores();
@@ -12,9 +8,6 @@
     $Compras_Categorias = new Compras_Categorias();
 
     $Setor = new Setor();
-
-    $id_setor_usuario = $_SESSION['id_setor']; // Id do setor do usuário logado
-    $id_usuario_logado = $_SESSION['id_usuario']; // Id do usuário logado
 
     if (isset($_POST['btnCadastrar'])) {
         $Compras_Pedidos->cadastrar($_POST);
@@ -82,7 +75,11 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include_once('../sidebar2.php'); ?>
+        <?php 
+            include_once('../sidebar.php'); 
+            $id_setor_usuario = $_SESSION['id_setor']; // Id do setor do usuário logado
+            $id_usuario_logado = $_SESSION['id_usuario']; // Id do usuário logado
+        ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -183,7 +180,7 @@
                                             if ($cp->status !== 'comprado' && $cp->status !== 'negado') { // Não mostrar pedidos comprados ou negados
                                         ?>
                                         <tr>
-                                            <td><?php echo Helper::Urgencia($cp->urgencia); ?></td>
+                                            <td class="text-center"><?php echo Helper::Urgencia($cp->urgencia); ?></td>
                                             <td><?php echo $cp->titulo ?></td>
                                             <td><?php echo Helper::mostrar_empresa($cp->empresa); ?></td>
                                             <td><?php echo $Setor->mostrar($cp->id_setor)->setor ?></td>
