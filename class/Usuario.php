@@ -265,7 +265,8 @@ class Usuario {
             header('Location: ' . URL . '/');
             exit();
         } else {
-            header('Location: ' . URL . '/login?falha');
+            echo '<script>alert("Usuário ou Senha Incorreta")</script>';
+            return false;
             exit();
         }
     }
@@ -289,7 +290,7 @@ class Usuario {
     }
 
     public function listarVendedores($empresa = '%'){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11');
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11 ORDER BY nome');
         $sql->bindParam(':empresa',$empresa);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
@@ -326,6 +327,53 @@ class Usuario {
         } else {
             // Tratar falha na execução da query, se necessário
         }
+    }
+
+    public function alterarSenha(array $dados)
+    {   
+        // Recupera a senha atual do banco de dados
+        $sqlVerificaSenha = $this->pdo->prepare("SELECT senha FROM usuarios WHERE id_usuario = :id_usuario");
+        $sqlVerificaSenha->bindParam(':id_usuario', $dados['id_usuario']);
+        $sqlVerificaSenha->execute();
+        
+        $usuario = $sqlVerificaSenha->fetch(PDO::FETCH_ASSOC);
+
+        $url = "Location: /GRNacoes/perfil?id=".$dados['id_usuario'];
+        
+        // Verifica se a senha atual está correta
+        $senhaAtualDigitada = crypt($dados['senha_atual'], 'GRN+');
+
+        if ($usuario['senha'] !== $senhaAtualDigitada) {
+            echo "<script>alert('A senha atual está incorreta!');</script>";
+            return false;
+        }
+
+        // Se a nova senha foi preenchida
+        if (isset($dados['senha']) && !empty($dados['senha'])) {
+            // Criptografa a nova senha
+            $novaSenha = crypt($dados['senha'], 'GRN+');
+            
+            // Atualiza a senha no banco de dados
+            $sql = $this->pdo->prepare("UPDATE usuarios SET senha = :senha, updated_at = :updated_at WHERE id_usuario = :id_usuario");
+            $updated_at = date('Y-m-d H:i');
+            
+            $sql->bindParam(':senha', $novaSenha);
+            $sql->bindParam(':updated_at', $updated_at);
+            $sql->bindParam(':id_usuario', $dados['id_usuario']);
+            
+            $sql->execute();
+
+            // Adiciona o log da alteração da senha
+            $descricao = "Alterou a senha do usuário: " . $dados['id_usuario'];
+            $this->addLog('Alterar Senha', $descricao, $dados['id_usuario']);
+            
+            // Redireciona para a página de perfil
+            return header($url);
+            exit; // Certifique-se de encerrar a execução após o redirecionamento.
+        }
+
+        echo "<script>alert('Nova senha não informada!');</script>";
+        return false;
     }
 
  }

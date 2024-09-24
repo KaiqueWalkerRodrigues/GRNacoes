@@ -268,6 +268,39 @@ class Financeiro_Boletos {
         }
     }
 
+    public function listarBoletosPorVendedor($id_campanha, $id_vendedor) {
+        // Prepara a consulta SQL para listar os boletos de um vendedor em uma campanha específica
+        $sql = $this->pdo->prepare('SELECT 
+                                        n_boleto, 
+                                        id_empresa, 
+                                        cliente, 
+                                        data_venda, 
+                                        valor, 
+                                        valor_pago 
+                                    FROM 
+                                        financeiro_boletos 
+                                    WHERE 
+                                        id_campanha = :id_campanha 
+                                        AND id_usuario = :id_vendedor 
+                                        AND deleted_at IS NULL 
+                                    ORDER BY 
+                                        data_venda');
+    
+        // Atribui os parâmetros à consulta
+        $sql->bindParam(':id_campanha', $id_campanha);
+        $sql->bindParam(':id_vendedor', $id_vendedor);
+        
+        // Executa a consulta
+        $sql->execute();
+    
+        // Retorna os resultados como um array de objetos
+        $boletos = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        // Retorna os boletos encontrados
+        return $boletos;
+    }
+    
+
     public function totalPorVendedor($id_campanha,$id_vendedor,$id_empresa){
         $sql = $this->pdo->prepare("SELECT sum(valor) as total FROM financeiro_boletos WHERE id_campanha = :id_campanha AND id_usuario = :id_vendedor AND id_empresa = :id_empresa AND deleted_at IS NULL");
         $sql->bindParam(':id_empresa',$id_empresa);

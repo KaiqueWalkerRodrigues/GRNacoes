@@ -1,5 +1,8 @@
 <?php 
-    include_once('const.php');
+    include_once('class/Conexao.php');
+    include_once('class/Usuario.php');
+
+    const URL = "/GRNacoes";
 
     $Usuario = new Usuario();
 

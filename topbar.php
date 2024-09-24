@@ -1,4 +1,6 @@
-<?php $Usuario = new Usuario; ?>
+<?php 
+    $Usuario = new Usuario; 
+?>
 <style>
     .topbar {
         position: fixed;
@@ -205,6 +207,10 @@
             <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
             Perfil
         </a>
+        <a class="dropdown-item" data-toggle="modal" data-target="#modalAlterarSenha">
+            <i class="fa-solid fa-lock text-gray-400 mr-2"></i> 
+            Alterar Senha
+        </a>
         <!-- <a class="dropdown-item" href="#">
             <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
             Minhas Logs
@@ -221,3 +227,72 @@
 
 </nav>
 <!-- End of Topbar -->
+ <!-- Cadastrar Campanha -->
+ <div class="modal fade" id="modalAlterarSenha" tabindex="1" role="dialog" aria-labelledby="modalAlterarSenhaLabel" aria-hidden="true">
+    <form action="?" method="post">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Senha de Acesso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-8 offset-2 text-center d-none mb-3" id="senhasDifentes">
+                            <span class="alert alert-danger">As Senhas são diferentes!</span>    
+                        </div>
+                        <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="col-8 offset-2">
+                            <label for="senha_atual" class="form-label">Senha Atual *</label>
+                            <input type="password" name="senha_atual" class="form-control" required>
+                        </div>
+                        <div class="col-8 offset-2 mt-3">
+                            <label for="senha" class="form-label">Nova Senha *</label>
+                            <input type="password" id="senha" name="senha" class="form-control" required>
+                        </div>
+                        <div class="col-8 offset-2">
+                            <label for="confirma_senha" class="form-label">Confirmar Nova Senha *</label>
+                            <input type="password" id="confirma_senha" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" name="btnAlterar" id="btnAlterar" class="btn btn-success disabled">Alterar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            $('#senha').keyup(function (e) { 
+                let senha = $('#senha').val()
+                let confirma_senha = $('#confirma_senha').val()
+                
+                if(senha == confirma_senha){
+                    $('#senhasDifentes').addClass('d-none')
+                    $('#btnAlterar').removeClass('disabled')
+                }else{
+                    $('#senhasDifentes').removeClass('d-none')
+                    $('#btnAlterar').addClass('disabled')
+                }
+            });
+            $('#confirma_senha').keyup(function (e) { 
+                let senha = $('#senha').val()
+                let confirma_senha = $('#confirma_senha').val()
+
+                if(senha == confirma_senha){
+                    $('#senhasDifentes').addClass('d-none')
+                    $('#btnAlterar').removeClass('disabled')
+                }else{
+                    $('#senhasDifentes').removeClass('d-none')
+                    $('#btnAlterar').addClass('disabled')
+                }
+            });
+        });
+    </script>
+

@@ -4,13 +4,13 @@
     $Usuario = new Usuario();
     $Setor = new Setor();
     $Cargo = new Cargo();
-
+    
     if(isset($_POST['btnAvatar'])){
         $Usuario->editarAvatar($_POST['id_usuario'],$_POST['id_avatar']);
     }
 
     $id = $_GET['id'];
-
+    
     $usuario = $Usuario->mostrar($id);
     $setor = $Setor->mostrar($usuario->id_setor);
     $cargo = $Cargo->mostrar($usuario->id_cargo);

@@ -1,7 +1,6 @@
 <?php 
-  include_once('const.php');
-    Helper::logado();
-
+    include_once('const.php');
+    
     $Compras_Pedidos = new Compras_Pedidos();
 ?>
 <style>

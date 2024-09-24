@@ -21,6 +21,17 @@
         $Financeiro_Boleto->CadastrarValorPago($_POST);
     }
 
+    if (isset($_GET['btnGerarPorVendedor'])) {
+        $id_campanha = isset($_GET['id_campanha']) ? $_GET['id_campanha'] : 0;
+        $id_vendedor = isset($_GET['id_vendedor']) ? $_GET['id_vendedor'] : 0;
+    
+        $url = "gerar_relatorio_por_vendedor.php?id_campanha=" . $id_campanha . "&id_vendedor=" . $id_vendedor;
+
+        header("Location: $url");
+        exit(); 
+    }
+    
+
     $c = $_GET['c'];
 
     $campanha = $Financeiro_Campanha->mostrar($c);
@@ -127,6 +138,8 @@
                                     <button class="btn btn-primary ml-2" data-toggle="modal" data-target="#modalCadastrarBoleto" class="collapse-item">Cadastrar Novo Boleto</button>
                                 </div>
                                 <div class="align-items-end ml-auto">
+                                    <button class="btn btn-dark" data-toggle="modal" data-target="#modalRelatorioPorVendedor">Relatório por Vendedor</button>
+                                    |
                                     <button class="btn btn-success ml-2" onclick="document.getElementById('relatorioForm').submit();">Gerar Relatório</button>
                                     <form id="relatorioForm" action="gerar_relatorio_campanha?id=<?php echo $campanha->id_financeiro_campanha ?>" method="post" style="display:none;">
                                     </form>
@@ -267,6 +280,42 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+     <!-- Modal Relatório por Vendedor -->
+     <div class="modal fade" id="modalRelatorioPorVendedor" tabindex="1" role="dialog" aria-labelledby="modalRelatorioPorVendedorLabel" aria-hidden="true">
+        <form action="?" method="get">
+            <div class="modal-dialog modal-lg
+            ." role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Imprimir o Relatório do Vendedor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-8 offset-2">
+                                <form action="?">
+                                    <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha  ?>">
+                                    <select name="id_vendedor" id="id_vendedor" class="form-control">
+                                        <option value="0">Todos</option>
+                                        <?php foreach($Usuario->listarVendedores() as $vendedor){ ?>
+                                            <option value="<?php echo $vendedor->id_usuario ?>"><?php echo $vendedor->nome ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" name="btnGerarPorVendedor">Gerar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
      <!-- Modal Visualizar Boleto -->
      <div class="modal fade" id="modalVisualizarBoleto" tabindex="1" role="dialog" aria-labelledby="modalVisualizarBoletosLabel" aria-hidden="true">
         <form action="?" method="post">
