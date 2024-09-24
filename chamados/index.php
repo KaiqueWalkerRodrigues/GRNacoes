@@ -2,13 +2,27 @@
     include_once('../const.php');
 
     $Chamado = new Chamados();
+    $Usuario = new Usuario();
+    $Cargo = new Cargo();
     $Setor = new Setor();
 
-    if(isset($_POST['AbrirChamado'])){
-        $Chamado->cadastrar($_POST);
+    $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
+    $setor = $Setor->mostrar($usuario->id_setor);
+
+    if(isset($_POST['btnEncaminhar'])){
+        $Chamado->encaminhar($_POST['id_chamado'],$_POST['id_setor_novo'],$_POST['id_usuario']);
     }
-    if(isset($_POST['btnExcluir'])){
-        $Chamado->desativar($_POST['id_chamado'],$_POST['id_usuario']);
+    if(isset($_POST['btnConcluir'])){
+        $Chamado->concluir($_POST['id_chamado'],$_POST['id_usuario']);
+    }
+    if(isset($_POST['btnRecusar'])){
+        $Chamado->recusar($_POST['id_chamado'],$_POST['id_usuario']);
+    }
+    if(isset($_POST['btnReabrir'])){
+        $Chamado->reabrir($_POST['id_chamado'],$_POST['id_usuario']);
+    }
+    if(isset($_POST['btnIniciar'])){
+        $Chamado->iniciar($_POST['id_chamado'],$_POST['id_usuario']);
     }
 ?>
 <!DOCTYPE html>
@@ -21,7 +35,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Meus Chamados</title>
+    <title>GRNacoes - Chamados</title>
 
     <!-- Custom fonts for this template -->
     <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -63,15 +77,30 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Meus Chamados</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Chamados para <?php echo $setor->setor; ?></h1>
                     </div>
 
                     <br>
 
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="filtroStatus" class="form-label">Filtrar por Status:</label>
+                            <select id="filtroStatus" class="form-control">
+                                <option value="">Todos</option>
+                                <option value="Em Análise">Em Análise</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Cancelado">Cancelado</option>
+                                <option value="Recusado">Recusado</option>
+                            </select>
+                        </div>
+                    </div>
+
+
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Meus Chamados | <button class="btn btn-primary" data-toggle="modal" data-target="#modalAbrirChamado">Abrir Chamado</button></h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Chamados</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -87,7 +116,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Chamado->listar() as $chamado){
+                                        <?php foreach($Chamado->listarPorSetor($setor->id_setor) as $chamado){
                                             $created_at = new DateTime($chamado->created_at);
                                             $now = new DateTime();
                                             $interval = $created_at->diff($now);
@@ -107,25 +136,48 @@
                                                     echo $interval->d . ' dia' . ($interval->d > 1 ? 's' : '');
                                                 } elseif ($interval->h > 0) {
                                                     echo $interval->h . ' hora' . ($interval->h > 1 ? 's' : '');
-                                                } else {
+                                                } elseif ($interval->i > 0) {
                                                     echo $interval->i . ' minuto' . ($interval->i > 1 ? 's' : '');
+                                                }else{
+                                                    echo "Agora";
                                                 }
                                             ?>
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalVisualizarChamado"
-                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                    data-titulo="<?php echo $chamado->titulo ?>"
-                                                    data-id_setor="<?php echo $chamado->id_setor ?>"
-                                                    data-urgencia="<?php echo $chamado->urgencia ?>"
-                                                    data-descricao="<?php echo $chamado->descricao ?>">
+                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                        data-titulo="<?php echo $chamado->titulo ?>"
+                                                        data-id_setor="<?php echo $chamado->id_setor ?>"
+                                                        data-urgencia="<?php echo $chamado->urgencia ?>"
+                                                        data-descricao="<?php echo $chamado->descricao ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
-                                                <button class="btn btn-primary"><i class="fa-solid fa-comment"></i></button>
-                                                <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluir"
-                                                data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                data-titulo="<?php echo $chamado->titulo ?>"
-                                                ><i class="fa-solid fa-trash"></i></button>
+                                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalIniciar"
+                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                    data-titulo="<?php echo $chamado->titulo ?>"
+                                                >
+                                                    <i class="fa-solid fa-clock"></i>
+                                                </button>
+                                                <?php if($chamado->status <= 2){ ?>
+                                                    <button class="btn btn-info" data-toggle="modal" data-target="#modalEncaminhar"
+                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                    ><i class="fa-solid fa-share"></i></button>
+                                                    <button class="btn btn-success" data-toggle="modal" data-target="#modalConcluir"
+                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                        data-titulo="<?php echo $chamado->titulo ?>"
+                                                    ><i class="fa-solid fa-check"></i></button>
+                                                    <button class="btn btn-dark" data-toggle="modal" data-target="#modalRecusar"
+                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                        data-titulo="<?php echo $chamado->titulo ?>"
+                                                    ><i class="fa-solid fa-times"></i></button>
+                                                <?php }else{ ?>
+                                                    <button class="btn btn-warning" data-toggle="modal" data-target="#modalReabrir"
+                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                        data-titulo="<?php echo $chamado->titulo ?>"
+                                                    >
+                                                        <i class="fa-solid fa-rotate"></i>
+                                                    </button>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -150,6 +202,9 @@
                 </div>
             </footer>
             <!-- End of Footer -->
+
+            <!-- Modal Mostrar Chamado -->
+
 
             <!-- Modal Abrir Chamado -->
             <form action="?" method="post">
@@ -207,33 +262,37 @@
                 </div>
             </form>
 
-            
-
             <!-- Modal encaminhar -->
             <div class="modal fade" id="modalEncaminhar" tabindex="1" role="dialog" aria-labelledby="modalencaminharLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Encaminhar Chamado</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <label for="encaminhar" class="form-label">Encaminhar para:</label>
-                                <select name="encaminhar" id="encaminhar" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="ti">TI</option>
-                                </select>
+                <form action="?" method="post">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Encaminhar Chamado para o Setor...</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                    <input type="hidden" id="encaminhar_id_chamado" name="id_chamado">
+                                    <label for="encaminhar" class="form-label">Encaminhar para:</label>
+                                    <select name="id_setor_novo" id="encaminhar" class="form-control" required>
+                                        <option value="">Selecione...</option>
+                                        <?php foreach($Setor->listar($setor->id_setor) as $setor){ ?>
+                                            <option value="<?php echo $setor->id_setor ?>"><?php echo $setor->setor ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-info" name="btnEncaminhar">Encaminhar</button>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-info">Encaminhar</button>
-                        </div>
                     </div>
-                </div>
+                </form>
             </div>
 
             <!-- Modal Visualizar Chamado -->
@@ -285,25 +344,75 @@
                 </div>
             </div>
 
-            <!-- Modal Excluir Chamado -->
-            <div class="modal fade" id="modalExcluir" tabindex="1" role="dialog" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+            <!-- Modal Recusar -->
+            <div class="modal fade" id="modalRecusar" tabindex="1" role="dialog" aria-labelledby="modalRecusarLabel" aria-hidden="true">
                 <form action="?" method="post">
                     <div class="modal-dialog modal-md" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Excluir o chamado: <span class="excluir_titulo"></span> ?</h5>
+                                <h5 class="modal-title">Recusar o chamado: <span class="recusar_titulo"></span> ?</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <input type="hidden" name="id_chamado" id="excluir_id_chamado">
-                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['usuario_Logado'] ?>">
-                                <p>Deseja excluir o chamado: <span class="excluir_titulo"></span> ?</p>
+                                <input type="hidden" name="id_chamado" id="recusar_id_chamado">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <p>Deseja recusar o chamado: <span class="recusar_titulo"></span> ?</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" name="btnExcluir" class="btn btn-danger">Excluir</button>
+                                <button type="submit" class="btn btn-dark" name="btnRecusar">Recusar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Reabrir -->
+            <div class="modal fade" id="modalReabrir" tabindex="1" role="dialog" aria-labelledby="modalReabrirLabel" aria-hidden="true">
+                <form action="?" method="post">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Reabrir o chamado: <span class="reabrir_titulo"></span> ?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="id_chamado" id="reabrir_id_chamado">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <p>Deseja reabrir o chamado: <span class="reabrir_titulo"></span> ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-warning" name="btnReabrir">Reabrir</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Iniciar -->
+            <div class="modal fade" id="modalIniciar" tabindex="1" role="dialog" aria-labelledby="modalIniciarLabel" aria-hidden="true">
+                <form action="?" method="post">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Iniciar o chamado: <span class="iniciar_titulo"></span> ?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="id_chamado" id="iniciar_id_chamado">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <p>Deseja iniciar o chamado: <span class="iniciar_titulo"></span> ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" name="btnIniciar">Iniciar</button>
                             </div>
                         </div>
                     </div>
@@ -312,23 +421,27 @@
 
             <!-- Modal Concluir -->
             <div class="modal fade" id="modalConcluir" tabindex="1" role="dialog" aria-labelledby="modalConcluirLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Concluir o chamado: ?</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Deseja concluir o chamado: ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-success">Concluir</button>
+                <form action="?" method="post">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Concluir o chamado: <span class="concluir_titulo"></span> ?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="id_chamado" id="concluir_id_chamado">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <p>Deseja concluir o chamado: <span class="concluir_titulo"></span> ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success" name="btnConcluir">Concluir</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
 
 
@@ -367,15 +480,61 @@
     <script>
         $(document).ready(function() {
             $('#cham').addClass('active');
-            $('#meus_chamados').addClass('active');
+            $('#chamados_index').addClass('active');
 
-            $('#modalExcluir').on('show.bs.modal', function (event) {
+            $('#filtroStatus').change(function() {
+                var filtroStatus = $('#filtroStatus').val();
+                
+                // Mostrar todas as linhas inicialmente
+                $('#dataTable tbody tr').show();
+
+                // Iterar sobre as linhas da tabela para aplicar o filtro
+                $('#dataTable tbody tr').each(function() {
+                    var status = $(this).find('td:eq(2)').text(); // Índice da coluna de status (ajuste se necessário)
+
+                    // Verificar se a linha atende ao critério de status
+                    if (filtroStatus && status !== filtroStatus) {
+                        $(this).hide(); // Ocultar a linha se o status não for o selecionado
+                    }
+                });
+            });
+
+            $('#modalEncaminhar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                $('#encaminhar_id_chamado').val(id_chamado)
+            })
+
+            $('#modalConcluir').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let titulo = button.data('titulo')
+                $('#concluir_id_chamado').val(id_chamado)
+                $('.concluir_titulo').text(titulo)
+            })
 
-                $('#excluir_id_chamado').val(id_chamado)
-                $('.excluir_titulo').text(titulo)
+            $('#modalRecusar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                let titulo = button.data('titulo')
+                $('#recusar_id_chamado').val(id_chamado)
+                $('.recusar_titulo').text(titulo)
+            })
+
+            $('#modalReabrir').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                let titulo = button.data('titulo')
+                $('#reabrir_id_chamado').val(id_chamado)
+                $('.reabrir_titulo').text(titulo)
+            })
+
+            $('#modalIniciar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                let titulo = button.data('titulo')
+                $('#iniciar_id_chamado').val(id_chamado)
+                $('.iniciar_titulo').text(titulo)
             })
 
             // Função para abrir o modal de visualizar chamado com dados preenchidos
@@ -394,6 +553,7 @@
                 $('#visualizar_urgencia').val(urgencia);
                 $('#visualizar_descricao').val(descricao);
             });
+
         });
     </script>
 

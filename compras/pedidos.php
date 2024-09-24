@@ -191,7 +191,7 @@
                                             </td>
                                             <td><?php $dt = new DateTime($cp->created_at); echo $dt->format('d/m/Y') ?></td>
                                             <td class="text-center">
-                                                <button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
+                                                <button class="btn btn-info" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
                                                 data-descricao="<?php echo $cp->descricao ?>">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
@@ -213,7 +213,7 @@
                                                     </button>
                                                 <?php } ?>
                                                 <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
-                                                    <button class="btn btn-danger" data-toggle="modal" data-target="#modalNegarCompra" class="collapse-item"
+                                                    <button class="btn btn-dark" data-toggle="modal" data-target="#modalNegarCompra" class="collapse-item"
                                                         data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                         data-titulo="<?php echo $cp->titulo ?>">
                                                         <i class="fa-solid fa-times"></i>
@@ -245,7 +245,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Grupo Nações 2024</span>
+                        <span>Copyright &copy; Grupo Nações <?php echo date("Y"); ?></span>
                     </div>
                 </div>
             </footer>

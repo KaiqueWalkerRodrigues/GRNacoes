@@ -9,8 +9,13 @@ class Setor {
         $this->pdo = Conexao::conexao();               
     }
 
-    public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM setores WHERE deleted_at IS NULL ORDER BY setor ASC');        
+    public function listar($id_setor = 0){
+        if($id_setor > 0){
+            $sql = $this->pdo->prepare('SELECT * FROM setores WHERE id_setor != :id_setor AND deleted_at IS NULL ORDER BY setor ASC');
+            $sql->bindParam(':id_setor',$id_setor);  
+        }else{
+            $sql = $this->pdo->prepare('SELECT * FROM setores WHERE deleted_at IS NULL ORDER BY setor ASC');     
+        }   
         $sql->execute();
     
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);

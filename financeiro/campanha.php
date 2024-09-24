@@ -139,7 +139,6 @@
                                 </div>
                                 <div class="align-items-end ml-auto">
                                     <button class="btn btn-dark" data-toggle="modal" data-target="#modalRelatorioPorVendedor">Relatório por Vendedor</button>
-                                    |
                                     <button class="btn btn-success ml-2" onclick="document.getElementById('relatorioForm').submit();">Gerar Relatório</button>
                                     <form id="relatorioForm" action="gerar_relatorio_campanha?id=<?php echo $campanha->id_financeiro_campanha ?>" method="post" style="display:none;">
                                     </form>
@@ -243,7 +242,7 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
-                                            <td><b>R$ <?php echo number_format($total, 2, ',', '.'); ?></b></td>
+                                            <td><b>R$ <span id="total_valor">0,00</span></b></td>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -622,6 +621,7 @@
                 let idEmpresa = $(this).val();
                 let vendedorSelect = $('#filtroVendedor');
                 carregarVendedores(idEmpresa, vendedorSelect, true);
+    
             });
             
             // Atualiza a lista de vendedores no modal de cadastro
@@ -668,6 +668,7 @@
                         $(this).hide(); // Ocultar a linha se não atender aos critérios
                     }
                 });
+                recalcularTotal();
             });
 
             $('#modalVisualizarBoleto').on('show.bs.modal', function (event) {
@@ -784,6 +785,24 @@
             window.addEventListener('load', function() {
                 setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
             });
+
+            function recalcularTotal() {
+                var total = 0;
+
+                // Iterar sobre todas as linhas visíveis da tabela
+                $('#dataTable tbody tr:visible').each(function() {
+                    var valor = parseFloat($(this).find('td:eq(6)').text().replace('R$', '').replace('.', '').replace(',', '.'));
+                    if (!isNaN(valor)) {
+                        total += valor;
+                    }
+                });
+
+                // Atualizar o valor total no rodapé da tabela
+                $('#total_valor').text(total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            }
+
+
+            recalcularTotal();
         });
     </script>
 

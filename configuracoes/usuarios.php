@@ -101,7 +101,7 @@
                                                     <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                                                     <input type="hidden" name="id_destinatario" value="<?php echo $usuario->id_usuario ?>">
                                                 </form>
-                                                <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
+                                                <!-- <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-contrato="<?php echo $usuario->contrato_nube ?>"
                                                     data-rg="<?php echo $usuario->rg ?>"
@@ -110,7 +110,7 @@
                                                     data-id_usuario="<?php echo $usuario->id_usuario ?>"
                                                     >
                                                     <i class="fa-regular fa-address-book"></i>
-                                                </button>
+                                                </button> -->
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarUsuario" class="collapse-item" 
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-idusuario="<?php echo $usuario->id_usuario ?>"
@@ -153,7 +153,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Grupo Nações 2024</span>
+                        <span>Copyright &copy; Grupo Nações <?php echo date("Y"); ?></span>
                     </div>
                 </div>
             </footer>

@@ -83,6 +83,7 @@
     <div id="chamados" class="collapse" aria-labelledby="headingUtilities"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
+            <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
             <!-- <h6 class="collapse-header">Para:</h6> -->
             <!-- <a class="collapse-item" href="<?php echo URL ?>/chamados">Faturamento</a>

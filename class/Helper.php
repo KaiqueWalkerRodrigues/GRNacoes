@@ -171,10 +171,10 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
             return "<b class='text-secondary'>Em Análise</b>";
           break;
           case 2:
-            return "<b class='text-warning'>Em Andamento</b>";
+            return "<b class='text-primary'>Em Andamento</b>";
           break;
           case 3:
-            return "<b class='text-success'>Concluido</b>";
+            return "<b class='text-success'>Concluído</b>";
           break;
           case 4:
             return "<b class='text-danger'>Cancelado</b>";
