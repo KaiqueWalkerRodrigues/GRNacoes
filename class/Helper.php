@@ -185,6 +185,26 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       }
     }
 
+    public static function TextoStatusChamado($status){
+      switch($status){
+          case 1:
+            return "Em Análise";
+          break;
+          case 2:
+            return "Em Andamento";
+          break;
+          case 3:
+            return "Concluído";
+          break;
+          case 4:
+            return "Cancelado";
+          break;
+          case 5:
+            return "Recusado";
+          break;
+      }
+    }
+
     public static function Urgencia($urgencia){
       switch($urgencia){
         case 1:
@@ -202,6 +222,23 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       }
     }
 
+    public static function TextoUrgencia($urgencia){
+      switch($urgencia){
+        case 1:
+          return "Baixa";
+        break;
+        case 2:
+          return "Média";
+        break;
+        case 3:
+          return "Alta";
+        break;
+        case 4:
+          return "Urgente";
+        break;
+      }
+    }
+
     public static function converterData(string $data_sql): string
     {
         $data = DateTime::createFromFormat('Y-m-d', $data_sql);
@@ -211,6 +248,15 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
             return $data_sql;
         }
     }
+
+    public static function formatarData($data) {
+      // Verifica se a data não é nula ou vazia
+      if (!empty($data)) {
+          $data_formatada = new DateTime($data);
+          return $data_formatada->format('d/m/Y H:i');
+      }
+      return ''; // Retorna string vazia se a data for nula ou vazia
+  }
 
 }
 

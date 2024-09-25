@@ -12,3 +12,13 @@
     }
 ?>
 <link rel="shortcut icon" href="/GRNacoes/img/logo.ico" type="image/x-icon">
+<script>
+    function manterOnline() {
+        $.ajax({
+            type: "get",
+            url: "manter_online.php",
+            data: { id_usuario: id_usuario },
+        });
+    }
+setInterval(manterOnline, 1000);
+</script>

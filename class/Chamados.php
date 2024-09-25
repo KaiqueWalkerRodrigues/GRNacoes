@@ -10,7 +10,17 @@ class Chamados {
     }
 
     public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM chamados WHERE deleted_at IS NULL ORDER BY created_at DESC');        
+        $sql = $this->pdo->prepare('SELECT * FROM chamados ORDER BY created_at DESC');        
+        $sql->execute();
+
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+
+        return $dados;
+    }    
+
+    public function listarPorUsuario($id_usuario){
+        $sql = $this->pdo->prepare('SELECT * FROM chamados WHERE id_usuario = :id_usuario ORDER BY created_at DESC');
+        $sql->bindParam(':id_usuario',$id_usuario);        
         $sql->execute();
 
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -19,7 +29,7 @@ class Chamados {
     }    
     
     public function listarPorSetor($id_setor){
-        $sql = $this->pdo->prepare('SELECT * FROM chamados WHERE id_setor = :id_setor AND deleted_at IS NULL ORDER BY created_at DESC');        
+        $sql = $this->pdo->prepare('SELECT * FROM chamados WHERE id_setor = :id_setor ORDER BY created_at DESC');        
         $sql->bindParam(':id_setor',$id_setor);
         $sql->execute();
 
@@ -59,6 +69,11 @@ class Chamados {
         if ($sql->execute()) {
             $chamado_id = $this->pdo->lastInsertId();
 
+            // Chama a função para criar uma conversa associada ao chamado
+            $chamadoConversa = new ChamadoConversas();
+            $chamadoConversa->criarConversaParaChamado($chamado_id, $id_usuario, $id_setor);
+
+            // Log do chamado criado
             $descricao_log = "Cadastrou o chamado: $titulo ($chamado_id)";
 
             $sql = $this->pdo->prepare('INSERT INTO logs 
@@ -154,7 +169,7 @@ class Chamados {
             $nome_chamado = "Chamado Desconhecido";
         }
 
-        $sql = $this->pdo->prepare('UPDATE chamados SET deleted_at = :deleted_at WHERE id_chamado = :id_chamado');
+        $sql = $this->pdo->prepare('UPDATE chamados SET deleted_at = :deleted_at, status = 4 WHERE id_chamado = :id_chamado');
         $agora = date("Y-m-d H:i:s");
         $sql->bindParam(':deleted_at', $agora);
         $sql->bindParam(':id_chamado', $id_chamado);
@@ -173,7 +188,7 @@ class Chamados {
             $sql->bindParam(':data', $agora);
             $sql->execute();
 
-            return header('location:/GRNacoes/chamados');
+            return header('location:/GRNacoes/chamados/meus_chamados');
         } else {
             // Tratar falha na execução da query, se necessário
         }
@@ -196,7 +211,7 @@ class Chamados {
         }
 
         // Atualizar o setor do chamado
-        $sql = $this->pdo->prepare('UPDATE chamados SET id_setor = :id_setor_novo, updated_at = :updated_at WHERE id_chamado = :id_chamado');
+        $sql = $this->pdo->prepare('UPDATE chamados SET id_setor = :id_setor_novo, updated_at = :updated_at, status = 1 WHERE id_chamado = :id_chamado');
         $agora = date("Y-m-d H:i:s");
         $sql->bindParam(':id_setor_novo', $id_setor_novo);
         $sql->bindParam(':updated_at', $agora);
@@ -286,10 +301,11 @@ class Chamados {
         }
 
         // Atualizar o chamado para recusado e adicionar a data de atualização
-        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at WHERE id_chamado = :id_chamado');
+        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at, finished_at = :finished_at WHERE id_chamado = :id_chamado');
         $agora = date("Y-m-d H:i:s");
         $status = 5; // Status 5 para recusado
         $sql->bindParam(':status', $status);
+        $sql->bindParam(':finished_at', $agora);
         $sql->bindParam(':updated_at', $agora);
         $sql->bindParam(':id_chamado', $id_chamado);
 
@@ -331,7 +347,7 @@ class Chamados {
         }
 
         // Atualizar o chamado para recusado e adicionar a data de atualização
-        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at WHERE id_chamado = :id_chamado');
+        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at, finished_at = NULL, started_at = NULL WHERE id_chamado = :id_chamado');
         $agora = date("Y-m-d H:i:s");
         $status = 1; // Status 1 para em análise
         $sql->bindParam(':status', $status);
@@ -376,10 +392,11 @@ class Chamados {
         }
 
         // Atualizar o chamado para recusado e adicionar a data de atualização
-        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at WHERE id_chamado = :id_chamado');
+        $sql = $this->pdo->prepare('UPDATE chamados SET status = :status, updated_at = :updated_at, started_at = :started_at WHERE id_chamado = :id_chamado');
         $agora = date("Y-m-d H:i:s");
         $status = 2; // Status 2 para em andamento
         $sql->bindParam(':status', $status);
+        $sql->bindParam(':started_at', $agora);
         $sql->bindParam(':updated_at', $agora);
         $sql->bindParam(':id_chamado', $id_chamado);
 

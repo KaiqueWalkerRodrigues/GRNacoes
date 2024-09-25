@@ -100,7 +100,7 @@
                                                     <button class="btn btn-primary" type="submit" name="btnChat"><i class="fa-solid fa-comment"></i></button>
                                                     <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                                                     <input type="hidden" name="id_destinatario" value="<?php echo $usuario->id_usuario ?>">
-                                                </form>
+                                                
                                                 <!-- <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-contrato="<?php echo $usuario->contrato_nube ?>"
@@ -111,7 +111,7 @@
                                                     >
                                                     <i class="fa-regular fa-address-book"></i>
                                                 </button> -->
-                                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarUsuario" class="collapse-item" 
+                                                <button class="btn btn-secondary" data-toggle="modal" type="button" data-target="#modalEditarUsuario" class="collapse-item" 
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-idusuario="<?php echo $usuario->id_usuario ?>"
                                                     data-usuario="<?php echo $usuario->usuario ?>"
@@ -128,12 +128,13 @@
                                                     data-data_admissao="<?php echo $usuario->data_admissao ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
-                                                <button class="btn btn-danger"  data-toggle="modal" data-target="#modalDesativarUsuario" class="collapse-item"
+                                                <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#modalDesativarUsuario" class="collapse-item"
                                                     data-idusuario="<?php echo $usuario->id_usuario ?>"
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     >
                                                     <i class="fa-solid fa-power-off"></i>
                                                 </button>
+                                                </form>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -459,7 +460,7 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">>
+                    <div class="modal-body">
                         <input type="hidden" name="usuario_logado" id="desativar_usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_usuario" id="desativar_id_usuario">
                         <div class="row">

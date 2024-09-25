@@ -3,6 +3,10 @@
 
     $Chamado = new Chamados();
     $Setor = new Setor();
+    $Usuario = new Usuario();
+
+    $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
+    $setor = $Setor->mostrar($usuario->id_setor);
 
     if(isset($_POST['AbrirChamado'])){
         $Chamado->cadastrar($_POST);
@@ -80,14 +84,14 @@
                                         <tr class="text-center">
                                             <th>Urgência</th>
                                             <th>Título</th>
+                                            <th>Usuário</th>
                                             <th>Status</th>
                                             <th>Setor</th>
-                                            <th>Aberto Há</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Chamado->listar() as $chamado){
+                                        <?php foreach($Chamado->listarPorUsuario($_SESSION['id_usuario']) as $chamado){
                                             $created_at = new DateTime($chamado->created_at);
                                             $now = new DateTime();
                                             $interval = $created_at->diff($now);
@@ -95,37 +99,31 @@
                                         <tr class="text-center">
                                             <td><?php echo Helper::Urgencia($chamado->urgencia) ?></td>
                                             <td><?php echo $chamado->titulo ?></td>
+                                            <td><?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?></td>
                                             <td><?php echo Helper::statusChamado($chamado->status) ?></td>
                                             <td><?php echo $Setor->mostrar($chamado->id_setor)->setor ?></td>
-                                            <td>
-                                            <?php
-                                                if ($interval->y > 0) {
-                                                    echo $interval->y . ' ano' . ($interval->y > 1 ? 's' : '');
-                                                } elseif ($interval->m > 0) {
-                                                    echo $interval->m . ' mês' . ($interval->m > 1 ? 'es' : '');
-                                                } elseif ($interval->d > 0) {
-                                                    echo $interval->d . ' dia' . ($interval->d > 1 ? 's' : '');
-                                                } elseif ($interval->h > 0) {
-                                                    echo $interval->h . ' hora' . ($interval->h > 1 ? 's' : '');
-                                                } else {
-                                                    echo $interval->i . ' minuto' . ($interval->i > 1 ? 's' : '');
-                                                }
-                                            ?>
-                                            </td>
                                             <td>
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalVisualizarChamado"
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>"
                                                     data-titulo="<?php echo $chamado->titulo ?>"
-                                                    data-id_setor="<?php echo $chamado->id_setor ?>"
-                                                    data-urgencia="<?php echo $chamado->urgencia ?>"
-                                                    data-descricao="<?php echo $chamado->descricao ?>">
+                                                    data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
+                                                    data-usuario="<?php echo $usuario->nome ?> (<?php echo $Setor->mostrar($usuario->id_setor)->setor ?>)"
+                                                    data-setor="<?php echo $setor->setor ?>"
+                                                    data-urgencia="<?php echo Helper::TextoUrgencia($chamado->urgencia) ?>"
+                                                    data-descricao="<?php echo $chamado->descricao ?>"
+                                                    data-created_at="<?php echo Helper::formatarData($chamado->created_at) ?>"
+                                                    data-deleted_at="<?php echo Helper::formatarData($chamado->deleted_at) ?>"
+                                                    data-started_at="<?php echo Helper::formatarData($chamado->started_at) ?>"
+                                                    data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
                                                 <button class="btn btn-primary"><i class="fa-solid fa-comment"></i></button>
+                                                <?php if($chamado->status == 1){ ?>
                                                 <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluir"
-                                                data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                data-titulo="<?php echo $chamado->titulo ?>"
+                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                    data-titulo="<?php echo $chamado->titulo ?>"
                                                 ><i class="fa-solid fa-trash"></i></button>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -241,7 +239,7 @@
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Visualizar Chamado</h5>
+                            <h5 class="modal-title">Visualizar Chamado: <span id="titulo_modal"></span></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -249,32 +247,45 @@
                         <div class="modal-body">
                             <div class="row">
                                 <input type="hidden" name="id_chamado" id="visualizar_id_chamado">
-                                <div class="col-6 mb-2">
+                                <div class="col-5 mb-2">
                                     <label for="visualizar_titulo" class="form-label">Título do Chamado *</label>
                                     <input type="text" name="titulo" id="visualizar_titulo" class="form-control" disabled>
                                 </div>
-                                <div class="col-3 mb-2">
-                                    <label for="visualizar_id_setor" class="form-label">Destinatário *</label>
-                                    <select name="id_setor" id="visualizar_id_setor" class="form-control" disabled>
-                                        <option value="">Selecione...</option>
-                                        <?php foreach($Setor->listar() as $setor){ 
-                                            echo "<option value='$setor->id_setor'>$setor->setor</option>";
-                                        } ?>
-                                    </select>
+                                <div class="col-2 mb-2">
+                                    <label for="visualizar_status" class="form-label">Status *</label>
+                                    <input type="text" name="status" id="visualizar_status" class="form-control" disabled>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-3 mb-2">
+                                    <label for="visualizar_id_setor" class="form-label">Setor *</label>
+                                    <input type="text" name="setor" id="visualizar_id_setor" class="form-control" disabled>
+                                </div>
+                                <div class="col-2">
                                     <label for="visualizar_urgencia" class="form-label">Urgência *</label>
-                                    <select name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
-                                        <option value="">Selecione...</option>
-                                        <option value="1">Baixa</option>
-                                        <option value="2">Média</option>
-                                        <option value="3">Alta</option>
-                                        <option value="4">Urgente</option>
-                                    </select>
+                                    <input type="text" name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
+                                </div>
+                                <div class="col-6 offset-3 mb-2">
+                                    <label for="visualizar_usuario" class="form-label">Usuário *</label>
+                                    <input type="text" name="usuario" id="visualizar_usuario" class="form-control" disabled>
                                 </div>
                                 <div class="col-12 mt-1">
-                                    <label for="visualizar_descricao" class="form-label">Descreva o Problema *</label>
+                                    <label for="visualizar_descricao" class="form-label">Descrição *</label>
                                     <textarea name="descricao" id="visualizar_descricao" cols="30" rows="10" class="form-control" disabled></textarea>
+                                </div>
+                                <div class="col-3 mt-2">
+                                    <label for="visualizar_created_at" class="form-label">Criado em</label>
+                                    <input type="text" name="created_at" id="visualizar_created_at" class="form-control" disabled>
+                                </div>
+                                <div class="col-3 mt-2">
+                                    <label for="visualizar_deleted_at" class="form-label">Cancelado em</label>
+                                    <input type="text" name="deleted_at" id="visualizar_deleted_at" class="form-control" disabled>
+                                </div>
+                                <div class="col-3 mt-2">
+                                    <label for="visualizar_started_at" class="form-label">Iniciado em</label>
+                                    <input type="text" name="started_at" id="visualizar_started_at" class="form-control" disabled>
+                                </div>
+                                <div class="col-3 mt-2">
+                                    <label for="visualizar_finished_at" class="form-label">Finalizado em</label>
+                                    <input type="text" name="finished_at" id="visualizar_finished_at" class="form-control" disabled>
                                 </div>
                             </div>
                         </div>
@@ -298,7 +309,7 @@
                             </div>
                             <div class="modal-body">
                                 <input type="hidden" name="id_chamado" id="excluir_id_chamado">
-                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['usuario_Logado'] ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                                 <p>Deseja excluir o chamado: <span class="excluir_titulo"></span> ?</p>
                             </div>
                             <div class="modal-footer">
@@ -309,28 +320,6 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Modal Concluir -->
-            <div class="modal fade" id="modalConcluir" tabindex="1" role="dialog" aria-labelledby="modalConcluirLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Concluir o chamado: ?</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Deseja concluir o chamado: ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-success">Concluir</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
         </div>
         <!-- End of Content Wrapper -->
@@ -383,16 +372,29 @@
                 let button = $(event.relatedTarget); // Botão que acionou o modal
                 let id_chamado = button.data('id_chamado');
                 let titulo = button.data('titulo');
-                let id_setor = button.data('id_setor');
+                let status = button.data('status');
+                let usuario = button.data('usuario');
+                let setor = button.data('setor');
                 let urgencia = button.data('urgencia');
                 let descricao = button.data('descricao');
+                let created_at = button.data('created_at');
+                let deleted_at = button.data('deleted_at');
+                let finished_at = button.data('finished_at');
+                let started_at = button.data('started_at');
 
                 // Preencher os campos do modal com os dados do chamado
                 $('#visualizar_id_chamado').val(id_chamado);
                 $('#visualizar_titulo').val(titulo);
-                $('#visualizar_id_setor').val(id_setor);
+                $('#titulo_modal').text(titulo);
+                $('#visualizar_status').val(status);
+                $('#visualizar_usuario').val(usuario);
+                $('#visualizar_id_setor').val(setor);
                 $('#visualizar_urgencia').val(urgencia);
                 $('#visualizar_descricao').val(descricao);
+                $('#visualizar_created_at').val(created_at);
+                $('#visualizar_deleted_at').val(deleted_at);
+                $('#visualizar_started_at').val(started_at);
+                $('#visualizar_finished_at').val(finished_at);
             });
         });
     </script>

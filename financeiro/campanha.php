@@ -801,6 +801,10 @@
                 $('#total_valor').text(total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
             }
 
+            $('#modalRelatorioPorVendedor').on('submit', 'form', function(event) {
+                $('#modalRelatorioPorVendedor').modal('hide'); // Fecha o modal
+            });
+
 
             recalcularTotal();
         });
