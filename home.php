@@ -2,27 +2,109 @@
     include_once("const.php");
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GRNacoes - Início</title>
+    <title>GRNacoes - Painel</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
+    <!-- FullCalendar -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
+    
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <style>
+        .weather-card {
+            background: linear-gradient(to right, #6dd5fa, #2980b9);
+            color: white;
+            padding: 11px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .time-card {
+            background-color: #f8f9fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #weather {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-left: 30%;
+        }
+
+        .user-card {
+            background-color: #f8f9fc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        .user-name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .status {
+            font-size: 0.8rem;
+        }
+
+        .online {
+            color: green;
+        }
+
+        .offline {
+            color: red;
+        }
+
+        /* Estilo para a linha separadora */
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -43,17 +125,35 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <br><br><br><br>
 
-                    <div class="col-3 mb-4">
-                        <div class="card bg-light text-black shadow">
-                            <div class="card-body">
-                                <span class="fw-bolder">Uso de Crachá</span>
-                                <div class="text-black-50 small">Uso Obrigatório de Crachá em todas as Unidades!</div>
-                                <div class="text-danger small" style="font-weight:bolder">Elaine - RH | 01/04/2024 09:36</div>
+                    <div class="row">
+
+                        <!-- Weather Information -->
+                        <div class="col-2">
+                            <div class="card weather-card">
+                                <h5 class="card-title">Clima Atual</h5>
+                                <p id="weather">Carregando...</p>
+                                <small id="weather-desc"></small>
                             </div>
                         </div>
+
+                        <!-- Time and Date -->
+                        <div class="col-3 offset-2">
+                            <div class="card time-card">
+                                <p id="current-time"></p>
+                                <small id="current-date"></small>
+                            </div>
+                        </div>
+
+                        <div class="col-3 offset-2">
+                            <div class="card user-card p-3">
+                                <div class="user-list" id="user-list">
+                                    <!-- A lista de usuários será carregada aqui via AJAX -->
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -83,30 +183,61 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script> <!-- Carregar o locale pt-br -->
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function() {
-            $('#painel').addClass('active');
+        $('#painel').addClass('active');
+
+        function loadOnlineUsers() {
+            $.ajax({
+                url: "usuarios_online.php", // Página PHP que retorna os usuários online
+                success: function (data) {
+                    $('#user-list').html(data); // Atualiza a lista de usuários
+                }
+            });
+        }
+
+        // API para o Clima com WeatherAPI
+        function getWeather() {
+            const apiKey = '424929ce680945aabfa25651242609'; // Substitua com sua chave da WeatherAPI
+            const city = 'São Paulo';
+            const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&lang=pt`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    $('#weather').html(`${data.current.temp_c}°C`);
+                })
+                .catch(error => {
+                    console.log('Erro ao obter dados do clima:', error);
+                    $('#weather').html('Não foi possível carregar o clima.');
+                });
+        }
+
+        // Definir o locale do moment para português
+        moment.locale('pt-br');
+
+        // Capitalizar a primeira letra de cada palavra
+        function capitalizeFirstLetter(string) {
+            return string.replace(/\b\w/g, function (l) { return l.toUpperCase() });
+        }
+
+        function updateTime() {
+            const now = moment();
+            const formattedDate = capitalizeFirstLetter(now.format('dddd, DD MMMM YYYY')); // Capitalizar a data
+            $('#current-time').text(now.format('HH:mm:ss'));
+            $('#current-date').text(formattedDate);
+        }
+
+        $(document).ready(function () {
+            getWeather();
+            updateTime();
+            setInterval(updateTime, 1000);  // Atualiza a cada segundo
+            loadOnlineUsers();
+            setInterval(loadOnlineUsers, 1000); // Atualiza a cada segundo
         });
     </script>
 
@@ -119,13 +250,6 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
 

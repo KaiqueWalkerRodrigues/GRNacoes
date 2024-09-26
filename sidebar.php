@@ -85,6 +85,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
+            <?php if($_SESSION['id_setor'] == 1){ ?><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
             <!-- <h6 class="collapse-header">Para:</h6> -->
             <!-- <a class="collapse-item" href="<?php echo URL ?>/chamados">Faturamento</a>
             <a class="collapse-item" href="<?php echo URL ?>/chamados">Financeiro</a>
@@ -101,6 +102,7 @@
         <span>Chats</span></a>
 </li>
 
+<?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="comp">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras"
         aria-expanded="true" aria-controls="comp">
@@ -118,6 +120,7 @@
         </div>
     </div>
 </li> 
+<?php } ?>
 
 <!-- <li class="nav-item" id="fat">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#faturamento"
@@ -132,6 +135,7 @@
     </div>
 </li>  -->
 
+<?php if($_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="finan">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#financeiro"
         aria-expanded="true" aria-controls="finan">
@@ -145,6 +149,7 @@
         </div>
     </div>
 </li> 
+<?php } ?>
 
 <!-- <li class="nav-item" id="proj">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#projeto"
@@ -167,6 +172,7 @@
    Gerenciamento
 </div>
 
+<?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15) { ?>
 <li class="nav-item" id="config">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#configurações"
         aria-expanded="true" aria-controls="config">
@@ -181,12 +187,15 @@
         </div>
     </div>
 </li> 
+<?php } ?>
 
+<?php if($_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="logs">
     <a class="nav-link" href="<?php echo URL ?>/logs">
         <i class="fa-solid fa-file-lines"></i>
         <span>Logs</span></a>
 </li>
+<?php } ?>
 
 <!-- Divider -->
 <hr class="sidebar-divider d-none d-md-block">
