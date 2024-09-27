@@ -7,6 +7,7 @@
 
     $id_chat = $_GET['id'];
     $id_destinatario = $_GET['id_destinatario'];
+    $id_usuario = $_SESSION['id_usuario'];
 ?>
 
 <!DOCTYPE html>
@@ -140,6 +141,8 @@
 
 <body id="page-top">
 
+    <input type="hidden" id="id_usuario" value="<?php echo $id_usuario ?>">
+
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -184,10 +187,10 @@
             <form action="class/Mensagens.php" method="post" id="chatForm">
                 <div class="mb">
                     <div class="align-items-center">
-                        <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_usuario" value="<?php echo $id_usuario ?>">
                         <input type="hidden" name="id_destinatario" id="id_destinatario" value="<?php echo $id_destinatario ?>">
                         <input type="hidden" name="id_conversa" id="id_conversa" value="<?php echo $_GET['id'] ?>">
-                        <input type="hidden" name="id_avatar" id="id_avatar" value="<?php echo $Usuario->mostrar($_SESSION['id_usuario'])->id_avatar; ?>">
+                        <input type="hidden" name="id_avatar" id="id_avatar" value="<?php echo $Usuario->mostrar($id_usuario)->id_avatar; ?>">
                         <input type="hidden" name="id_avatar_destinatario" id="id_avatar_destinatario" value="<?php echo $Usuario->mostrar($id_destinatario)->id_avatar; ?>">
                         <textarea class="form-control input-mensagem mr-4" id="mensagem" name="mensagem" rows="2" style="max-width: calc(100% - 60px);"></textarea>
                         <button type="submit" class="btn-enviar-mensagem ms-3" name="enviarMensagem">
