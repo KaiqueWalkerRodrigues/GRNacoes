@@ -146,7 +146,7 @@
                             </div>
                         </div>
 
-                        <div class="col-3 offset-2">
+                        <div class="col-4 offset-1">
                             <div class="card user-card p-3">
                                 <div class="user-list" id="user-list">
                                     <!-- A lista de usuários será carregada aqui via AJAX -->

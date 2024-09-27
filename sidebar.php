@@ -95,12 +95,14 @@
     </div>
 </li> 
 
+<?php if($_SESSION['id_usuario'] == 1){ ?>
 <!-- Nav Item - Tables -->
 <li class="nav-item" id="chat">
     <a class="nav-link" href="<?php echo URL ?>/chats">
         <i class="fa-solid fa-comment"></i>
         <span>Chats</span></a>
 </li>
+<?php } ?>
 
 <?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="comp">
@@ -167,12 +169,13 @@
 <!-- Divider -->
 <hr class="sidebar-divider">
 
+<?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15) { ?>
+    
 <!-- Heading -->
 <div class="sidebar-heading">
    Gerenciamento
 </div>
 
-<?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15) { ?>
 <li class="nav-item" id="config">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#configurações"
         aria-expanded="true" aria-controls="config">

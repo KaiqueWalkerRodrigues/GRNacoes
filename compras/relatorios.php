@@ -3,6 +3,15 @@
 
     $Compras_Categorias = new Compras_Categorias();
     $Compras_Fornecedores = new Compras_Fornecedores();
+
+    if (isset($_GET['btnGerarPorFornecedor'])) {
+        $empresa = isset($_GET['empresa']) ? $_GET['empresa'] : 0;
+        
+        $url = "gerar_relatorio_por_fornecedor.php?empresa=".$empresa;
+
+        header("Location: $url");
+        exit(); 
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,36 +60,26 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="container-fluid text-center">
 
                     <!-- Page Heading -->
 
                     <br><br><br><br>
 
+                        <h4>Relatórios Notas Fiscais</h4>
+                        <br>
+
                         <div class="row">
 
-                            <div class="text-center col-4 offset-2">
-                                <a href="gerar_relatorio_fornecedor.php" class="btn btn-success">Gerar Relatório Anual por Fornecedor</a>
+                            <div class="text-center offset-2 col-4">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modalRelatorioPorFornecedor">Despesas por Fornecedor</button>
                             </div>
-
+                            
                             <div class="text-center col-4">
-                                <a href="gerar_relatorio_categoria.php" class="btn btn-primary">Gerar Relatório Anual por Categoria</a>
+                                <button class="btn btn-secondary" data-toggle="modal" data-target="#modalRelatorioPorCategoria">Despesas por Categoria</button>
                             </div>
 
                         </div>
-
-                        <?php 
-                            if (isset($_GET['s'])) {
-                                // Se estiver presente, exibe o botão para baixar o relatório
-                                echo '<a id="downloadButton" href="gerar_relatorio_categorias_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
-                            }
-                        ?>
-                        <?php 
-                            if (isset($_GET['f'])) {
-                                // Se estiver presente, exibe o botão para baixar o relatório
-                                echo '<a id="downloadButton" href="gerar_relatorio_fornecedores_2024.xlsx" class="btn btn-success" download style="display:none;">Baixar Relatório</a>';
-                            }
-                        ?>
 
                     <br><br>
 
@@ -105,6 +104,39 @@
 
     </div>
     <!-- End of Page Wrapper -->
+
+    <!-- Modal Relatório por Fornecedor -->
+    <div class="modal fade" id="modalRelatorioPorFornecedor" tabindex="1" role="dialog" aria-labelledby="modalRelatorioPorFornecedorLabel" aria-hidden="true">
+        <form action="?" method="get">
+            <div class="modal-dialog modal-lg
+            ." role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Imprimir o Relatório do Fornecedor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-8 offset-2">
+                                <label for="empresa" class="form-label">Empresas:</label>
+                                <select name="empresa" class="form-control" id="porfornecedor_empresa">
+                                    <option value="0">Todas</option>
+                                    <option value="1">Clínicas</option>
+                                    <option value="2">Óticas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" name="btnGerarPorFornecedor">Gerar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -133,27 +165,8 @@
             $('#comp').addClass('active');
             $('#compras_relatorios').addClass('active');
 
-            function autoDownload() {
-                // Simulando o clique no botão de download
-                document.getElementById('downloadButton').click();
-            }
-
-            // Chamando a função autoDownload assim que a página for carregada
-            window.onload = autoDownload;
-
-            // Função para remover variáveis GET da URL
-            function removeGetParams() {
-                var url = window.location.href;
-                var index = url.indexOf('?');
-                if (index > -1) {
-                    url = url.substring(0, index);
-                    window.history.replaceState(null, null, url);
-                }
-            }
-
-            // Remove variáveis GET após o download
-            window.addEventListener('load', function() {
-                setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
+            $('#modalRelatorioPorFornecedor').on('submit', 'form', function(event) {
+                $('#modalRelatorioPorFornecedor').modal('hide'); // Fecha o modal
             });
         });
     </script>
