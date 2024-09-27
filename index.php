@@ -16,6 +16,7 @@ $rotas = [
     'configuracoes/cargos' => 'configuracoes/cargos',
     'configuracoes/setores' => 'configuracoes/setores',
     'configuracoes/usuarios' => 'configuracoes/usuarios',
+    'chamados/chat' => 'chamados/chat',
     'chamados/meus_chamados' => 'chamados/meus_chamados',
 ];
 

@@ -69,10 +69,6 @@ class Chamados {
         if ($sql->execute()) {
             $chamado_id = $this->pdo->lastInsertId();
 
-            // Chama a função para criar uma conversa associada ao chamado
-            $chamadoConversa = new ChamadoConversas();
-            $chamadoConversa->criarConversaParaChamado($chamado_id, $id_usuario, $id_setor);
-
             // Log do chamado criado
             $descricao_log = "Cadastrou o chamado: $titulo ($chamado_id)";
 

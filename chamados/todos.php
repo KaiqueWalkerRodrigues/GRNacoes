@@ -145,9 +145,9 @@
                                                     data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
-                                                <button class="btn btn-primary" onclick="window.location.href='../chat_chamado.php?id=<?php echo $chamado->id_chamado ?>'">
+                                                <a href="chat_chamado?id=<?php echo $chamado->id_chamado ?>" class="btn btn-primary">
                                                     <i class="fa-solid fa-comment"></i>
-                                                </button>
+                                                </a>
                                                 <?php if($chamado->status == 1){ ?>
                                                     <button class="btn btn-warning" data-toggle="modal" data-target="#modalIniciar"
                                                         data-id_chamado="<?php echo $chamado->id_chamado ?>"

@@ -117,7 +117,9 @@
                                                     data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
-                                                <button class="btn btn-primary"><i class="fa-solid fa-comment"></i></button>
+                                                <a href="chat_chamado?id=<?php echo $chamado->id_chamado ?>" class="btn btn-primary">
+                                                    <i class="fa-solid fa-comment"></i>
+                                                </a>
                                                 <?php if($chamado->status == 1){ ?>
                                                 <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluir"
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>"

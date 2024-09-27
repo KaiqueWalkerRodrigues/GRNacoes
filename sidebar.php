@@ -83,8 +83,8 @@
     <div id="chamados" class="collapse" aria-labelledby="headingUtilities"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
+            <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
             <?php if($_SESSION['id_setor'] == 1){ ?><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
             <!-- <h6 class="collapse-header">Para:</h6> -->
             <!-- <a class="collapse-item" href="<?php echo URL ?>/chamados">Faturamento</a>
@@ -95,14 +95,12 @@
     </div>
 </li> 
 
-<?php if($_SESSION['id_usuario'] == 1){ ?>
 <!-- Nav Item - Tables -->
 <li class="nav-item" id="chat">
     <a class="nav-link" href="<?php echo URL ?>/chats">
         <i class="fa-solid fa-comment"></i>
         <span>Chats</span></a>
 </li>
-<?php } ?>
 
 <?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="comp">
