@@ -79,7 +79,7 @@
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-bell fa-fw"></i>
         <!-- Counter - Alerts -->
-        <span class="badge badge-danger badge-counter">3+</span>
+        <!-- <span class="badge badge-danger badge-counter">3+</span> -->
     </a>
     <!-- Dropdown - Alerts -->
     <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -130,7 +130,9 @@
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-envelope fa-fw"></i>
         <!-- Counter - Messages -->
-        <span class="badge badge-danger badge-counter">7</span>
+        <span class="badge badge-danger badge-counter" id="n_mensagens">
+
+        </span>
     </a>
     <!-- Dropdown - Messages -->
     <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -138,55 +140,10 @@
         <h6 class="dropdown-header">
             Centro de Mensagens
         </h6>
-        <!-- <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                    alt="...">
-                <div class="status-indicator bg-success"></div>
-            </div>
-            <div class="font-weight-bold">
-                <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                    problem I've been having.</div>
-                <div class="small text-gray-500">Emily Fowler · 58m</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                    alt="...">
-                <div class="status-indicator"></div>
-            </div>
-            <div>
-                <div class="text-truncate">I have the photos that you ordered last month, how
-                    would you like them sent to you?</div>
-                <div class="small text-gray-500">Jae Chun · 1d</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                    alt="...">
-                <div class="status-indicator bg-warning"></div>
-            </div>
-            <div>
-                <div class="text-truncate">Last month's report looks great, I am very happy with
-                    the progress so far, keep up the good work!</div>
-                <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="#">
-            <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                    alt="...">
-                <div class="status-indicator bg-success"></div>
-            </div>
-            <div>
-                <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                    told me that people say this to all dogs, even if they aren't good...</div>
-                <div class="small text-gray-500">Chicken the Dog · 2w</div>
-            </div>
-        </a>
-        <a class="dropdown-item text-center small text-gray-500" href="/GRNacoes/chats">Leia mais Mensagens</a> -->
+        <div id="mensagens_nao_lidas">
+
+        </div>
+        <a class="dropdown-item text-center small text-gray-500" href="/GRNacoes/chats">Leia mais Mensagens</a>
     </div>
 </li>
 
@@ -267,47 +224,66 @@
     </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
-        $(document).ready(function() {
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
 
-            function loadMessages() {
-                $.ajax({
-                    url: '/GRNacoes/listarmensagens.php', // A página que vai listar as mensagens
-                    method: 'GET',
-                    success: function(data) {
-                        $('#message-list').html(data);
+        // Função para carregar as mensagens não lidas
+        function loadMessages() {
+            $.ajax({
+                url: '/GRNacoes/get_messages_nao_lidas.php', // A página que vai listar as mensagens
+                method: 'GET',
+                data: { id_usuario: '<?php echo $_SESSION['id_usuario']; ?>' }, // Passa o id_usuario como parâmetro
+                success: function(data) {
+                    $('#mensagens_nao_lidas').html(data); // Inserir as mensagens no div "mensagens_nao_lidas"
+                }
+            });
+        }
+
+        // Função para contar o número de mensagens não lidas
+        function countUnreadMessages() {
+            $.ajax({
+                url: '/GRNacoes/get_unread_messages_count.php', // Página que retorna o total de mensagens não lidas
+                method: 'GET',
+                data: { id_usuario: '<?php echo $_SESSION['id_usuario']; ?>' }, // Passa o id_usuario como parâmetro
+                success: function(data) {
+                    let unreadCount = parseInt(data); // Converte o valor retornado em número
+
+                    if (unreadCount > 99) {
+                        unreadCount = '99+'; // Se o número for maior que 99, mostra "99+"
                     }
-                });
+
+                    if (unreadCount > 0) {
+                        $('#n_mensagens').text(unreadCount); // Atualiza o contador
+                        $('#n_mensagens').removeClass('d-none'); // Mostra o badge se houver mensagens
+                    } else {
+                        $('#n_mensagens').addClass('d-none'); // Esconde o badge se não houver mensagens
+                    }
+                }
+            });
+        }
+
+        // Carregar mensagens não lidas e contar quantas há
+        setInterval(function() {
+            loadMessages(); // Chama a função para carregar as mensagens não lidas
+            countUnreadMessages(); // Chama a função para contar as mensagens não lidas
+        }, 1000); // Atualiza a cada 1 segundo
+
+        // Verificação das senhas no modal de alteração de senha
+        $('#senha, #confirma_senha').keyup(function() { 
+            let senha = $('#senha').val();
+            let confirma_senha = $('#confirma_senha').val();
+
+            if(senha === confirma_senha){
+                $('#senhasDifentes').addClass('d-none');
+                $('#btnAlterar').removeClass('disabled');
+            } else {
+                $('#senhasDifentes').removeClass('d-none');
+                $('#btnAlterar').addClass('disabled');
             }
-
-            // Chama a função loadMessages a cada 5 segundos para atualizar em tempo real
-            setInterval(loadMessages, 5000);
-            loadMessages();
-
-            $('#senha').keyup(function (e) { 
-                let senha = $('#senha').val()
-                let confirma_senha = $('#confirma_senha').val()
-                
-                if(senha == confirma_senha){
-                    $('#senhasDifentes').addClass('d-none')
-                    $('#btnAlterar').removeClass('disabled')
-                }else{
-                    $('#senhasDifentes').removeClass('d-none')
-                    $('#btnAlterar').addClass('disabled')
-                }
-            });
-            $('#confirma_senha').keyup(function (e) { 
-                let senha = $('#senha').val()
-                let confirma_senha = $('#confirma_senha').val()
-
-                if(senha == confirma_senha){
-                    $('#senhasDifentes').addClass('d-none')
-                    $('#btnAlterar').removeClass('disabled')
-                }else{
-                    $('#senhasDifentes').removeClass('d-none')
-                    $('#btnAlterar').addClass('disabled')
-                }
-            });
         });
-    </script>
 
+        loadMessages();
+        countUnreadMessages();
+    });
+</script>

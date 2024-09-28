@@ -168,6 +168,28 @@ class Mensagem {
         $sql->execute();
     }    
 
+    public function ultimaMensagem($id_conversa, $id_usuario) {
+        $sql = $this->pdo->prepare("
+            SELECT m.*, 
+            CASE 
+                WHEN ml.id_mensagem IS NOT NULL THEN 'lida'
+                ELSE 'nao_lida'
+            END as status_leitura
+            FROM mensagens m
+            INNER JOIN conversas_mensagens cm ON cm.id_mensagem = m.id_mensagem
+            LEFT JOIN mensagens_lidas ml ON ml.id_mensagem = m.id_mensagem AND ml.id_usuario != :id_usuario
+            WHERE cm.id_conversa = :id_conversa
+            ORDER BY m.created_at DESC
+            LIMIT 1
+        ");
+        $sql->bindParam(':id_conversa', $id_conversa, PDO::PARAM_INT);
+        $sql->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $sql->execute();
+    
+        return $sql->fetch(PDO::FETCH_OBJ);
+    }
+        
+
 }
 
     include_once('Conexao.php');

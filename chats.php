@@ -30,6 +30,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -53,37 +54,14 @@
                     <!-- Page Heading -->
                     <br><br><br><br>
 
-                    <button class="btn btn-success btn-circle" data-toggle="modal" data-target="#modalAbrirChat"><i class="fa-solid fa-circle-plus"></i></button>
+                    <button class="btn btn-success btn-circle" style="position: fixed; bottom: 40px; right: 40px; z-index: 1000; width: 60px; height: 60px;" data-toggle="modal" data-target="#modalAbrirChat">
+                        <i class="fa-solid fa-comment fa-2x"></i>
+                    </button>
 
                     <div class="row">
 
                     <div class="col-12">
-                        <?php foreach($Chats->listar($_SESSION['id_usuario']) as $chat){ ?>
-                        <?php $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario); ?>
-                        <a href="<?php echo URL ?>/chat?id=<?php echo $chat->id_conversa ?>&id_destinatario=<?php echo $destinatario->id_usuario ?>" class="text-decoration-none grow-on-hover">
-                            <div class="card my-3 border-1">
-                                <div class="row align-items-center">
-                                    <div class="col-1">
-                                        <img class="img-profile rounded-circle p-2 ml-3" width="75%" src="<?php echo URL ?>/img/avatar/<?php echo $Usuarios->mostrar($Chats->destinatario($chat->id_conversa,$_SESSION['id_usuario'])->id_usuario)->id_avatar ?>.png">
-                                    </div>
-                                    <div class="col-4 text-start">
-                                        <p class="text-dark mt-3"><?php echo ($Chats->mostrar($chat->id_conversa)->nome ?? $destinatario->nome); ?></p> 
-                                    </div>
-                                    <div class="col-4 text-start">
-                                        <p class="text-dark mt-3"><?php echo $Setores->mostrar($destinatario->id_setor)->setor ?></p> 
-                                    </div>
-                                    <div class="col-2 text-start">
-                                        <p class="text-dark mt-3"><?php echo Helper::mostrar_empresa($destinatario->empresa) ?></p>
-                                    </div>
-                                    <div class="col-1 text-start">
-                                        <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;">
-                                            <span>0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <?php } ?>
+                        <div id="chats"></div>
                     </div>
 
                     </div>
@@ -144,7 +122,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" name="btnAbrir" class="btn btn-primary">Abrir Chat</button>
+                        <button type="submit" name="btnAbrir" class="btn btn-success">Abrir Chat</button>
                     </div>
                 </div>
             </div>
@@ -156,6 +134,20 @@
         $(document).ready(function() {
             $('#chat').addClass('active');
         });
+        function loadChats() {
+            $.ajax({
+                url: 'get_chats.php',
+                method: 'GET',
+                success: function(data) {
+                    $('#chats').html(data);
+                }
+            });
+        }
+
+        // Chama a função a cada 1 segundo (1000 ms)
+        setInterval(loadChats, 1000);
+
+        loadChats();
     </script>
 
     <!-- Bootstrap core JavaScript-->
