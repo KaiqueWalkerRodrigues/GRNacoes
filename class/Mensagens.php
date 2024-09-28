@@ -9,21 +9,33 @@ class Mensagem {
         $this->pdo = Conexao::conexao();
     }
 
-    public function listar(int $conversa_id){
+    public function listar(int $conversa_id, int $id_usuario) {
+        // Lista as mensagens da conversa
         $sql = $this->pdo->prepare('
-            SELECT m.* 
+            SELECT m.*, 
+            CASE 
+                WHEN ml.id_mensagem IS NULL THEN 0 
+                ELSE 1 
+            END AS lida
             FROM mensagens m
             INNER JOIN conversas_mensagens cm ON cm.id_mensagem = m.id_mensagem
+            LEFT JOIN mensagens_lidas ml ON ml.id_mensagem = m.id_mensagem AND ml.id_usuario = :id_usuario
             WHERE cm.id_conversa = :conversa_id AND m.deleted_at IS NULL
             ORDER BY m.created_at ASC
         ');
+    
         $sql->bindParam(':conversa_id', $conversa_id);
+        $sql->bindParam(':id_usuario', $id_usuario);
         $sql->execute();
-
+    
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-
+    
+        // Marcar mensagens como lidas
+        $this->marcarComoLida($id_usuario, $conversa_id);
+    
         return $dados;
     }
+    
 
     public function mostrar(int $id_mensagem) {
         $sql = $this->pdo->prepare('
@@ -139,6 +151,22 @@ class Mensagem {
 
         $sql->execute();
     }
+    
+    public function marcarComoLida(int $id_usuario, int $id_conversa) {
+        $sql = $this->pdo->prepare('
+            INSERT INTO mensagens_lidas (id_usuario, id_mensagem, lida_em)
+            SELECT :id_usuario, m.id_mensagem, NOW()
+            FROM mensagens m
+            INNER JOIN conversas_mensagens cm ON cm.id_mensagem = m.id_mensagem
+            LEFT JOIN mensagens_lidas ml ON ml.id_mensagem = m.id_mensagem AND ml.id_usuario = :id_usuario
+            WHERE cm.id_conversa = :id_conversa AND ml.id_mensagem IS NULL
+        ');
+    
+        $sql->bindParam(':id_usuario', $id_usuario);
+        $sql->bindParam(':id_conversa', $id_conversa);
+    
+        $sql->execute();
+    }    
 
 }
 

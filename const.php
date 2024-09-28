@@ -14,6 +14,7 @@
 <link rel="shortcut icon" href="/GRNacoes/img/logo.ico" type="image/x-icon">
 <script>
     function manterOnline() {
+        var id_usuario = <?php echo json_encode($_SESSION['id_usuario']); ?>;
         $.ajax({
             type: "get",
             url: "manter_online.php",

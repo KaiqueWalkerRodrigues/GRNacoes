@@ -87,7 +87,7 @@
         <h6 class="dropdown-header">
             Alerts Center
         </h6>
-        <a class="dropdown-item d-flex align-items-center" href="#">
+        <!-- <a class="dropdown-item d-flex align-items-center" href="#">
             <div class="mr-3">
                 <div class="icon-circle bg-primary">
                     <i class="fas fa-file-alt text-white"></i>
@@ -120,7 +120,7 @@
                 Spending Alert: We've noticed unusually high spending for your account.
             </div>
         </a>
-        <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+        <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a> -->
     </div>
 </li>
 
@@ -138,7 +138,7 @@
         <h6 class="dropdown-header">
             Centro de Mensagens
         </h6>
-        <a class="dropdown-item d-flex align-items-center" href="#">
+        <!-- <a class="dropdown-item d-flex align-items-center" href="#">
             <div class="dropdown-list-image mr-3">
                 <img class="rounded-circle" src="img/undraw_profile_1.svg"
                     alt="...">
@@ -186,7 +186,7 @@
                 <div class="small text-gray-500">Chicken the Dog · 2w</div>
             </div>
         </a>
-        <a class="dropdown-item text-center small text-gray-500" href="/GRNacoes/chats">Leia mais Mensagens</a>
+        <a class="dropdown-item text-center small text-gray-500" href="/GRNacoes/chats">Leia mais Mensagens</a> -->
     </div>
 </li>
 
@@ -269,6 +269,21 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
+
+            function loadMessages() {
+                $.ajax({
+                    url: '/GRNacoes/listarmensagens.php', // A página que vai listar as mensagens
+                    method: 'GET',
+                    success: function(data) {
+                        $('#message-list').html(data);
+                    }
+                });
+            }
+
+            // Chama a função loadMessages a cada 5 segundos para atualizar em tempo real
+            setInterval(loadMessages, 5000);
+            loadMessages();
+
             $('#senha').keyup(function (e) { 
                 let senha = $('#senha').val()
                 let confirma_senha = $('#confirma_senha').val()
