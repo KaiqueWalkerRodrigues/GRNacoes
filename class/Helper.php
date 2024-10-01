@@ -256,8 +256,27 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
           return $data_formatada->format('d/m/Y H:i');
       }
       return ''; // Retorna string vazia se a data for nula ou vazia
-  }
+    }
 
+    public static function captado($tipo) {
+      switch($tipo){
+        case 1:
+          return "Sim";
+        break;
+        case 0:
+          return "Não";
+        break;
+        case 2:
+          return "Lente de Contato - Sim";
+        break;
+        case 3:
+          return "Lente de Contato Não";
+        break;
+        case 4:
+          return "Garantia";
+        break;
+      }
+    }
 }
 
 ?>

@@ -15,19 +15,32 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function listarAtivos(){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 ORDER BY nome ASC');        
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function listarDesativados(){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 0 ORDER BY nome ASC');        
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function cadastrar(Array $dados)
     {
         $sql = $this->pdo->prepare('INSERT INTO usuarios 
-                                    (nome,usuario,senha,contrato,celular,cpf,
+                                    (nome,ativo,usuario,senha,contrato,celular,cpf,
                                     data_nascimento,email,empresa,id_setor,id_cargo,n_folha,
                                     data_admissao,created_at,updated_at)
                                     VALUES
-                                    (:nome,:usuario,:senha,:contrato,:celular,:cpf,
+                                    (:nome,:ativo,:usuario,:senha,:contrato,:celular,:cpf,
                                     :data_nascimento,:email,:empresa,:id_setor,:id_cargo,:n_folha,
                                     :data_admissao,:created_at,:updated_at)
                                 ');
 
         $nome  = ucwords(strtolower(trim($dados['nome'])));
+        $ativo  = 1;
         $usuario  = trim($dados['usuario']);
         $senha  = $dados['senha'];
         $contrato  = $dados['contrato'];
@@ -51,6 +64,7 @@ class Usuario {
         $senha = crypt($dados['senha'], $salt);
         
         $sql->bindParam(':nome',$nome);
+        $sql->bindParam(':ativo',$ativo);              
         $sql->bindParam(':usuario',$usuario);              
         $sql->bindParam(':senha',$senha);              
         $sql->bindParam(':contrato',$contrato);              
@@ -94,6 +108,7 @@ class Usuario {
             $senha = crypt($dados['senha'], $salt);
             $sql = $this->pdo->prepare("UPDATE usuarios SET
                                         nome = :nome,
+                                        ativo = :ativo,
                                         usuario = :usuario,
                                         senha = :senha,
                                         contrato = :contrato,
@@ -113,6 +128,7 @@ class Usuario {
             // Caso a senha não tenha sido preenchida, não a atualiza
             $sql = $this->pdo->prepare("UPDATE usuarios SET
                                         nome = :nome,
+                                        ativo = :ativo,
                                         usuario = :usuario,
                                         contrato = :contrato,
                                         celular = :celular,
@@ -131,6 +147,7 @@ class Usuario {
 
         $nome = ucwords(strtolower(trim($dados['nome'])));
         $usuario = trim($dados['usuario']);
+        $ativo = $dados['ativo'];
         $contrato = $dados['contrato'];        
         $celular  = preg_replace('/[^0-9]/', '', $dados['celular']); 
         $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']);
@@ -151,6 +168,7 @@ class Usuario {
         }
 
         $sql->bindParam(':nome',$nome);
+        $sql->bindParam(':ativo',$ativo);              
         $sql->bindParam(':usuario',$usuario);              
         $sql->bindParam(':contrato',$contrato);              
         $sql->bindParam(':celular',$celular);              
@@ -173,6 +191,42 @@ class Usuario {
 
         return header('location:/GRNacoes/configuracoes/usuarios');
     }
+
+    public function reativar(array $dados)
+    {
+        // Reativar o usuário
+        $sql = $this->pdo->prepare("UPDATE usuarios SET
+                                        ativo = 1                          
+                                        WHERE id_usuario = :id_usuario
+                                    ");
+        $sql->bindParam(':id_usuario', $dados['btnReativar']);
+        $sql->execute();
+
+        // Seleciona o usuário reativado
+        $sql = $this->pdo->prepare("SELECT * FROM usuarios WHERE id_usuario = :id_usuario AND ativo = 1 AND deleted_at IS NULL");
+        $sql->bindParam(':id_usuario', $dados['btnReativar']);
+        $sql->execute();
+
+        $usuario_reativado = $sql->fetch(PDO::FETCH_OBJ);
+
+        // Seleciona o nome do usuário logado que está reativando
+        $sql = $this->pdo->prepare("SELECT nome FROM usuarios WHERE id_usuario = :usuario_logado");
+        $sql->bindParam(':usuario_logado', $dados['usuario_logado']);
+        $sql->execute();
+
+        $usuario_logado = $sql->fetch(PDO::FETCH_OBJ);
+
+        // Verificar se os usuários foram encontrados
+        if ($usuario_reativado && $usuario_logado) {
+            // Adicionando log com o nome do usuário que reativou e o usuário reativado
+            $descricao = "O usuário {$usuario_logado->nome} (ID: {$dados['usuario_logado']}) reativou o usuário: {$usuario_reativado->nome} (ID: {$usuario_reativado->id_usuario})";
+            $this->addLog('Reativou', $descricao, $usuario_logado->nome);
+        }
+
+        // Redireciona de volta à página de gerenciamento de usuários
+        return header('location:/GRNacoes/configuracoes/usuarios');
+    }
+
 
     public function desativar(int $id_usuario, $usuario_logado)
     {
@@ -244,7 +298,7 @@ class Usuario {
 
     public function logar($usuario, $senha)
     {
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE usuario = :usuario AND senha = :senha');
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE usuario = :usuario AND senha = :senha AND deleted_at IS NULL AND ativo = 1');
         $sql->bindParam(':usuario', $usuario);
 
         $salt = 'GRN+'; 
@@ -273,7 +327,7 @@ class Usuario {
 
     public function contarUsuariosPorSetor($id_setor)
     {
-        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios WHERE id_setor = :id_setor');
+        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios WHERE id_setor = :id_setor AND deleted_at IS NULL AND ativo = 1');
         $sql->bindParam(':id_setor', $id_setor);
         $sql->execute();
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);
@@ -282,7 +336,7 @@ class Usuario {
 
     public function contarUsuariosPorCargo($id_cargo)
     {
-        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios WHERE id_cargo = :id_cargo');
+        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios WHERE id_cargo = :id_cargo AND deleted_at IS NULL AND ativo = 1');
         $sql->bindParam(':id_cargo', $id_cargo);
         $sql->execute();
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);
@@ -290,7 +344,7 @@ class Usuario {
     }
 
     public function listarVendedores($empresa = '%'){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11 ORDER BY nome');
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11 AND deleted_at IS NULL AND ativo = 1 ORDER BY nome');
         $sql->bindParam(':empresa',$empresa);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);

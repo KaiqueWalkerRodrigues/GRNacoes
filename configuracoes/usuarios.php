@@ -18,6 +18,9 @@
     if (isset($_POST['btnDesativar'])) {
         $Usuario->desativar($_POST['id_usuario'],$_POST['usuario_logado']);
     }
+    if (isset($_POST['btnReativar'])) {
+        $Usuario->reativar($_POST);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +77,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Usuários Ativos | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarUsuario" class="collapse-item">Cadastrar Novo Usuário</button> | <button class="btn btn-secondary">Ver Usuários Desativados</button></h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Usuários Ativos | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarUsuario" class="collapse-item">Cadastrar Novo Usuário</button> | <button class="btn btn-secondary" data-toggle="modal" data-target="#modalUsuariosDesativados">Ver Usuários Desativados</button></h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -89,7 +92,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Usuario->listar() as $usuario){ ?>
+                                        <?php foreach($Usuario->listarAtivos() as $usuario){ ?>
                                         <tr>
                                             <td><?php echo $usuario->nome; ?></td>
                                             <td><?php echo $Cargo->nomeCargo($usuario->id_cargo); ?></td>
@@ -101,16 +104,6 @@
                                                     <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                                                     <input type="hidden" name="id_destinatario" value="<?php echo $usuario->id_usuario ?>">
                                                 
-                                                <!-- <button class="btn btn-success" data-toggle="modal" data-target="#modalDocumentos" class="collapse-item"
-                                                    data-nome="<?php echo $usuario->nome ?>"
-                                                    data-contrato="<?php echo $usuario->contrato_nube ?>"
-                                                    data-rg="<?php echo $usuario->rg ?>"
-                                                    data-foto3x4="<?php echo $usuario->foto3x4 ?>"
-                                                    data-residencia="<?php echo $usuario->residencia ?>"
-                                                    data-id_usuario="<?php echo $usuario->id_usuario ?>"
-                                                    >
-                                                    <i class="fa-regular fa-address-book"></i>
-                                                </button> -->
                                                 <button class="btn btn-secondary" data-toggle="modal" type="button" data-target="#modalEditarUsuario" class="collapse-item" 
                                                     data-nome="<?php echo $usuario->nome ?>"
                                                     data-idusuario="<?php echo $usuario->id_usuario ?>"
@@ -438,6 +431,13 @@
                                 <label for="editar_data_admissao" class="form-label">Data de Admissão *</label>
                                 <input type="date" name="data_admissao" id="editar_data_admissao" class="form-control" required>
                             </div>
+                            <div class="col-2">
+                                <label for="editar_ativo" class="form-label">Ativo *</label>
+                                <select name="editar_ativo" id="editar_ativo" class="form-control">
+                                    <option value="1">Ativo</option>
+                                    <option value="0">Desativado</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 <div class="modal-footer">
@@ -449,7 +449,56 @@
         </div>
     </div>
 
-    <!-- Modal Desativar Usuário-->
+    <!-- Modal Usuários Desativados -->
+    <div class="modal fade" id="modalUsuariosDesativados" tabindex="-1" role="dialog" aria-labelledby="modalUsuariosDesativadosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Usuários Desativados</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTableDesativados" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Setor</th>
+                                    <th>Empresa</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($Usuario->listarDesativados() as $usuarioDesativado){ ?>
+                                <tr>
+                                    <td><?php echo $usuarioDesativado->nome; ?></td>
+                                    <td><?php echo $Cargo->nomeCargo($usuarioDesativado->id_cargo); ?></td>
+                                    <td><?php echo $Setor->nomeSetor($usuarioDesativado->id_setor); ?></td>
+                                    <td><?php echo Helper::mostrar_empresa($usuarioDesativado->empresa); ?></td>
+                                    <td class="text-center">
+                                        <form action="?" method="post">
+                                            <button class="btn btn-success" type="submit" name="btnReativar" value="<?php echo $usuarioDesativado->id_usuario ?>">
+                                                <i class="fa-solid fa-power-on"></i> Reativar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Usuário-->
     <div class="modal fade" id="modalDesativarUsuario" tabindex="-1" role="dialog" aria-labelledby="modalDesativarLabel" aria-hidden="true">
         <form action="?" method="post">  
             <div class="modal-dialog modal-md" role="document">

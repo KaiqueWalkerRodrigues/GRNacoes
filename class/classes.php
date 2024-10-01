@@ -2,6 +2,8 @@
     include_once('Conexao.php');
     include_once('Helper.php');
     include_once('Usuario.php');
+    include_once('Medicos.php');
+    include_once('Captacao.php');
     include_once('Setor.php');
     include_once('Chamados.php');
     include_once('Cargo.php');

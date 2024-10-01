@@ -57,22 +57,6 @@
    Central
 </div>
 
-<!-- Nav Item - Pages Collapse Menu -->
-<!-- <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-        aria-expanded="true" aria-controls="collapseTwo">
-        <i class="fas fa-fw fa-cog"></i>
-        <span>Components</span>
-    </a>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Custom Components:</h6>
-            <a class="collapse-item" href="buttons.html">Buttons</a>
-            <a class="collapse-item" href="cards.html">Cards</a>
-        </div>
-    </div>
-</li> -->
-
 <!-- Nav Item - Utilities Collapse Menu -->
 <li class="nav-item" id="cham">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#chamados"
@@ -86,11 +70,6 @@
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
             <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
             <?php if($_SESSION['id_setor'] == 1){ ?><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
-            <!-- <h6 class="collapse-header">Para:</h6> -->
-            <!-- <a class="collapse-item" href="<?php echo URL ?>/chamados">Faturamento</a>
-            <a class="collapse-item" href="<?php echo URL ?>/chamados">Financeiro</a>
-            <a class="collapse-item" href="<?php echo URL ?>/chamados">RH</a>
-            <a class="collapse-item" href="<?php echo URL ?>/chamados">TI</a> -->
         </div>
     </div>
 </li> 
@@ -122,18 +101,18 @@
 </li> 
 <?php } ?>
 
-<!-- <li class="nav-item" id="fat">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#faturamento"
-        aria-expanded="true" aria-controls="fat">
-        <i class="fa-solid fa-dollar-sign"></i>
-        <span>Faturamento</span>
+<li class="nav-item" id="cap">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao"
+        aria-expanded="true" aria-controls="comp">
+        <i class="fa-solid fa-people-pulling"></i>
+        <span>Captação</span>
     </a> 
-    <div id="faturamento" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">    
-            <a class="collapse-item" id="" href="<?php //echo URL ?>/faturamento/"></a>
+    <div id="captacao" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" id="captacao-index" href="<?php echo URL ?>/captacao/">Captar</a>
         </div>
     </div>
-</li>  -->
+</li> 
 
 <?php if($_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="finan">
@@ -145,24 +124,10 @@
     <div id="financeiro" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="financeiro_campanhas" href="<?php echo URL ?>/financeiro/campanhas">Campanhas</a>
-            <!-- <a class="collapse-item" id="financeiro_relatorios" href="<?php //echo URL ?>/financeiro/relatorios">Relatórios</a> -->
         </div>
     </div>
 </li> 
 <?php } ?>
-
-<!-- <li class="nav-item" id="proj">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#projeto"
-        aria-expanded="true" aria-controls="finan">
-        <i class="fa-solid fa-diagram-project"></i>
-        <span>Projetos</span>
-    </a> 
-    <div id="projeto" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" id="projetos_index" href="<?php echo URL ?>/projetos">Todos Projetos</a>
-        </div>
-    </div>
-</li>  -->
 
 <!-- Divider -->
 <hr class="sidebar-divider">
