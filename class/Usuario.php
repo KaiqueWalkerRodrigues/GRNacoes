@@ -315,6 +315,7 @@ class Usuario {
             $_SESSION['nome'] = $user->nome;
             $_SESSION['id_usuario'] = $user->id_usuario;
             $_SESSION['id_setor'] = $user->id_setor;
+            $_SESSION['id_empresa'] = $user->empresa;
 
             header('Location: ' . URL . '/');
             exit();

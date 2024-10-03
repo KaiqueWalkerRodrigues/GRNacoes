@@ -11,6 +11,26 @@ class Captacao {
     }
 
     /**
+     * Adiciona log de atividade
+     */
+    private function addLog($acao, $descricao, $id_usuario)
+    {
+        $agora = date("Y-m-d H:i:s");
+
+        $sql = $this->pdo->prepare('INSERT INTO logs 
+                                    (acao, descricao, data, id_usuario)
+                                    VALUES
+                                    (:acao, :descricao, :data, :id_usuario)
+                                ');
+
+        $sql->bindParam(':acao', $acao); 
+        $sql->bindParam(':id_usuario', $id_usuario); 
+        $sql->bindParam(':descricao', $descricao); 
+        $sql->bindParam(':data', $agora); 
+        $sql->execute();
+    }
+
+    /**
      * listar todos os captados
      * @return array
      */
@@ -33,15 +53,16 @@ class Captacao {
     {
         $id_captador = $dados['id_captador'];
         $id_medico = $dados['id_medico'];
+        $id_empresa = $dados['id_empresa'];
         $nome_paciente = ucwords(strtolower(trim($dados['nome_paciente'])));
         $captado = $dados['captado'];
         $observacao = trim($dados['observacao']);
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO captados 
-                                    (id_captador, id_medico, nome_paciente, captado, observacao, created_at, updated_at)
+                                    (id_captador, id_medico, id_empresa ,nome_paciente, captado, observacao, created_at, updated_at)
                                     VALUES
-                                    (:id_captador, :id_medico, :nome_paciente, :captado, :observacao, :created_at, :updated_at)
+                                    (:id_captador, :id_medico, :id_empresa ,:nome_paciente, :captado, :observacao, :created_at, :updated_at)
                                 ');
 
         $created_at  = $agora;
@@ -49,6 +70,7 @@ class Captacao {
 
         $sql->bindParam(':id_captador', $id_captador);
         $sql->bindParam(':id_medico', $id_medico);
+        $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':nome_paciente', $nome_paciente);
         $sql->bindParam(':captado', $captado);
         $sql->bindParam(':observacao', $observacao);
@@ -85,7 +107,6 @@ class Captacao {
     public function editar(array $dados)
     {
         $sql = $this->pdo->prepare("UPDATE captados SET
-            id_captador = :id_captador,
             id_medico = :id_medico,
             nome_paciente = :nome_paciente,
             captado = :captado,
@@ -97,7 +118,6 @@ class Captacao {
         $agora = date("Y-m-d H:i:s");
 
         $id_captado = $dados['id_captado'];
-        $id_captador = $dados['id_captador'];
         $id_medico = $dados['id_medico'];
         $nome_paciente = ucwords(strtolower(trim($dados['nome_paciente'])));
         $captado = $dados['captado'];
@@ -105,12 +125,17 @@ class Captacao {
         $updated_at = $agora;
 
         $sql->bindParam(':id_captado', $id_captado);
-        $sql->bindParam(':id_captador', $id_captador);
         $sql->bindParam(':id_medico', $id_medico);
         $sql->bindParam(':nome_paciente', $nome_paciente);
         $sql->bindParam(':captado', $captado);
         $sql->bindParam(':observacao', $observacao);
         $sql->bindParam(':updated_at', $updated_at);
+
+        if ($sql->execute()) {
+            // Adiciona o log da edição
+            $descricao = "Editou a captação: $nome_paciente ($id_captado)";
+            $this->addLog('Editar', $descricao, $dados['id_usuario']);
+        }
 
         return $sql->execute();
     }
@@ -121,17 +146,35 @@ class Captacao {
      * @param int $id_captado
      * @return bool
      */
-    public function desativar(int $id_captado)
+    public function desativar($id_captado, $id_usuario)
     {
         $sql = $this->pdo->prepare('UPDATE captados SET deleted_at = :deleted_at WHERE id_captado = :id_captado');
         $agora = date("Y-m-d H:i:s");
         $sql->bindParam(':deleted_at', $agora);
         $sql->bindParam(':id_captado', $id_captado);
 
+        if ($sql->execute()) {
+            // Adiciona o log da desativação
+            $descricao = "Desativou a captação ID: $id_captado";
+            $this->addLog('Desativar', $descricao, $id_usuario);
+        }
+
         return $sql->execute();
     }
 
-    public function listarHoje() {
+    public function listarHoje($id_empresa) {
+        $sql = $this->pdo->prepare("SELECT captados.*, medicos.nome AS nome_medico 
+                                    FROM captados 
+                                    JOIN medicos ON captados.id_medico = medicos.id_medico
+                                    WHERE id_empresa = :id_empresa AND DATE(captados.created_at) = CURDATE() 
+                                    AND captados.deleted_at IS NULL
+                                    ORDER BY captados.created_at DESC");
+        $sql->bindParam(':id_empresa',$id_empresa);
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }    
+
+    public function listarHojeAdmin() {
         $sql = $this->pdo->prepare("SELECT captados.*, medicos.nome AS nome_medico 
                                     FROM captados 
                                     JOIN medicos ON captados.id_medico = medicos.id_medico
@@ -189,10 +232,11 @@ include_once('Conexao.php');
 
 $Captacao = new Captacao();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrar'])) {
     $dados = [
         'id_captador' => $_POST['id_usuario'], // Ajuste conforme seu sistema de sessão
         'id_medico' => $_POST['id_medico'],
+        'id_empresa' => $_POST['id_empresa'],
         'nome_paciente' => $_POST['nome_paciente'],
         'captado' => $_POST['captado'],
         'observacao' => $_POST['observacao']

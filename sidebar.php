@@ -101,6 +101,7 @@
 </li> 
 <?php } ?>
 
+<?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1) ?>
 <li class="nav-item" id="cap">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao"
         aria-expanded="true" aria-controls="comp">
@@ -110,9 +111,11 @@
     <div id="captacao" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="captacao-index" href="<?php echo URL ?>/captacao/">Captar</a>
+            <a class="collapse-item" id="captacao-index" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
         </div>
     </div>
 </li> 
+<?php ?>
 
 <?php if($_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 1) { ?>
 <li class="nav-item" id="finan">
@@ -129,11 +132,12 @@
 </li> 
 <?php } ?>
 
-<!-- Divider -->
-<hr class="sidebar-divider">
 
 <?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15) { ?>
     
+<!-- Divider -->
+<hr class="sidebar-divider">
+
 <!-- Heading -->
 <div class="sidebar-heading">
    Gerenciamento

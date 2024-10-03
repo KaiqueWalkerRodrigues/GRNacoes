@@ -1,17 +1,36 @@
 <?php 
-    include_once("../const.php");
+    include_once('../const.php');
 
+    $Chamado = new Chamados();
+    $Cargo = new Cargo();
+    $Setor = new Setor();
     $Medico = new Medicos();
     $Captacao = new Captacao();
+    $Usuario = new Usuario();
 
-    // Captura as captações realizadas hoje
-    $capHoje = $Captacao->listarHoje();
+    if($_SESSION['id_setor'] == 1){
+        $capHoje = $Captacao->listarHojeAdmin();
+    }else{
+        $capHoje = $Captacao->listarHoje($_SESSION['id_empresa']);
+    }
 
+    $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
+    $setor = $Setor->mostrar($usuario->id_setor);
+
+    if(isset($_POST['btnEditar'])){
+        $Captacao->editar($_POST);
+        header('location:/GRNacoes/captacao/');
+    }
+
+    if(isset($_POST['btnExcluir'])){
+        $Captacao->desativar($_POST['id_captado'],$_POST['id_usuario']);
+        header('location:/GRNacoes/captacao/');
+    }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="en">
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -20,71 +39,21 @@
 
     <title>GRNacoes - Captar</title>
 
-    <!-- Custom fonts for this template-->
-    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    <!-- Custom fonts for this template -->
+    <link href="<?php echo URL ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- FullCalendar -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
-    
+    <!-- Custom styles for this template -->
+    <link href="<?php echo URL ?>/css/sb-admin-2.min.css" rel="stylesheet">
+
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
-    <style>
-        .weather-card {
-            background: linear-gradient(to right, #6dd5fa, #2980b9);
-            color: white;
-            padding: 11px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+    <!-- Custom styles for this page -->
+    <link href="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-        .time-card {
-            background-color: #f8f9fc;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        #weather {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
-            margin-left: 30%;
-        }
-
-        .user-card {
-            background-color: #f8f9fc;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        /* Estilo da tabela */
-        .data-table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        .data-table th, .data-table td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        /* Estilo do contador de captações */
-        .counter {
-            text-align: right;
-            font-size: 1.0rem;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 
 <body id="page-top">
@@ -92,7 +61,9 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
 
+        <!-- Sidebar -->
         <?php include_once('../sidebar.php'); ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -100,92 +71,101 @@
             <!-- Main Content -->
             <div id="content">
 
+                <!-- Topbar -->
                 <?php include_once('../topbar.php'); ?>
+                <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
                     <br><br><br><br>
 
-                    <!-- Contador de captações -->
-                    <div class="row">
-                        <div class="col-12 counter">
-                            Total de Pessoas Cadastradas: <?php echo $Captacao->contarPessoas(); ?>
-                            <br>
-                            Total Captados: <?php echo $Captacao->contarCaptacoes(); ?>
-                            <br>
-                            Total Não Captados: <?php echo $Captacao->contarNaoCaptacoes(); ?>
-                            <br>
-                            Total de Lentes: <?php echo $Captacao->contarLentes(); ?>
-                            <br>
-                            Total de Garantias: <?php echo $Captacao->contarGarantias(); ?>
-                            <br>
-                            <b style="font-size: 16px;"><?php echo $Captacao->contarCaptacoes(); ?>/<?php echo $Captacao->contarCaptaveis(); ?></b>
+                    <h5 class="fw-bold">Registro de Captação</h5>
+                    <br>
+                    <form id="dataForm" class="row" method="POST">
+                        <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
+                        <input type="hidden" name="captacao_cadastrar" value="1">
+                        <div class="col-3">
+                            <label class="form-label" for="name">Nome do Paciente:</label>
+                            <input class="form-control" type="text" id="name" name="nome_paciente" required>
                         </div>
-                    </div>
+                        <div class="col-3">
+                            <label class="form-label" for="captado">Captado:</label>
+                            <select class="form-control" id="captado" name="captado">
+                                <option value="1">Sim</option>
+                                <option value="0">Não</option>
+                                <option value="3">Lente de Contato - Sim</option>
+                                <option value="4">Lente de Contato - Não</option>
+                                <option value="5">Garantia</option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label" for="medico">Médico:</label>
+                            <select class="form-control" id="medico" name="id_medico" required>
+                                <option value="">Selecione...</option>
+                                <?php foreach($Medico->listar() as $medico){ ?>
+                                    <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label" for="observacao">Observação:</label>
+                            <input class="form-control" type="text" id="observacao" name="observacao">
+                        </div>
+                    </form>
 
-                    <div class="row">
-                        <!-- Formulário para adicionar informações -->
-                        <div class="col-12">
-                            <h5 class="fw-bold text-dark">Registro de Captação</h5>
-                            <br>
-                            <form id="dataForm" class="row" method="POST">
-                                <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
-                                <div class="col-3">
-                                    <label class="form-label" for="name">Nome do Paciente:</label>
-                                    <input class="form-control" type="text" id="name" name="nome_paciente" required>
-                                </div>
-                                <div class="col-3">
-                                    <label class="form-label" for="captado">Captado:</label>
-                                    <select class="form-control" id="captado" name="captado">
-                                        <option value="1">Sim</option>
-                                        <option value="0">Não</option>
-                                        <option value="3">Lente de Contato - Sim</option>
-                                        <option value="4">Lente de Contato - Não</option>
-                                        <option value="5">Garantia</option>
-                                    </select>
-                                </div>
-                                <div class="col-3">
-                                    <label class="form-label" for="medico">Médico:</label>
-                                    <select class="form-control" id="medico" name="id_medico" required>
-                                        <option value="">Selecione...</option>
-                                        <?php foreach($Medico->listar() as $medico){ ?>
-                                            <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                                <div class="col-3">
-                                    <label class="form-label" for="observacao">Observação:</label>
-                                    <input class="form-control" type="text" id="observacao" name="observacao">
-                                </div>
-                                <div class="col-12 mt-3">
-                                    <button type="submit" class="btn btn-primary" id="btnCadastrar">Cadastrar</button>
-                                </div>
-                            </form>
 
-                            <table class="data-table mt-4">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Captado</th>
-                                        <th>Médico</th>
-                                        <th>Observação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dataTableBody">
-                                    <!-- Listar as captações realizadas hoje -->
-                                    <?php foreach($capHoje as $cap) { ?>
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Captações</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
                                         <tr>
+                                            <?php if($_SESSION['id_setor'] == 1){ ?>
+                                                <th>Empresa</th>
+                                            <?php } ?>
+                                            <th>Captador</th>
+                                            <th>Paciente</th>
+                                            <th>Captado</th>
+                                            <th>Médico</th>
+                                            <th>Observação</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach($capHoje as $cap) { ?>
+                                        <tr class="text-center">
+                                            <?php if($_SESSION['id_setor'] == 1){ ?>
+                                                <td><?php echo Helper::mostrar_empresa($cap->id_empresa) ?></td>
+                                            <?php } ?>
+                                            <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
                                             <td><?php echo $cap->nome_paciente; ?></td>
                                             <td><?php echo Helper::captado($cap->captado); ?></td>
                                             <td><?php echo $cap->nome_medico; ?></td>
                                             <td><?php echo $cap->observacao; ?></td>
+                                            <td class="text-center">
+                                                <?php if($cap->id_captador == $_SESSION['id_usuario'] OR $_SESSION['id_setor'] == 1){ ?>
+                                                    <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditar"
+                                                            data-id="<?php echo $cap->id_captado; ?>"
+                                                            data-nome="<?php echo $cap->nome_paciente; ?>"
+                                                            data-captado="<?php echo $cap->captado; ?>"
+                                                            data-medico="<?php echo $cap->id_medico; ?>"
+                                                            data-observacao="<?php echo $cap->observacao; ?>"
+                                                            ><i class="fa-solid fa-gear"></i></button>
+                                                    <button class="btn btn-danger" data-toggle="modal" data-target="#modalExcluir" data-id="<?php echo $cap->id_captado; ?>"><i class="fa-solid fa-trash"></i></button>
+                                                <?php } ?>
+                                            </td>
                                         </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -198,11 +178,91 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Grupo Nações 2024</span>
+                        <span>Copyright &copy; Grupo Nações <?php echo date("Y"); ?></span>
                     </div>
                 </div>
             </footer>
             <!-- End of Footer -->
+
+            <!-- Modal Mostrar Chamado -->
+
+            <!-- Modal Editar -->
+            <div class="modal fade" id="modalEditar" tabindex="1" role="dialog" aria-labelledby="modalEditarLabel" aria-hidden="true">
+                <form action="?" method="post">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editando Captação</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden"  name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                                <input type="hidden"  name="id_captado" id="editar_id_captado">
+                                <div class="row">
+                                    <div class="col-6 offset-3">
+                                        <label for="nome_paciente" class="form-label">Nome do Paciente *</label>
+                                        <input type="text" id="editar_nome_paciente" name="nome_paciente" class="form-control">
+                                    </div>
+                                    <div class="col-4 offset-2">
+                                        <label for="captado" class="form-label">Captado *</label>
+                                        <select name="captado" id="editar_captado" class="form-control">
+                                            <option value="1">Sim</option>
+                                            <option value="0">Não</option>
+                                            <option value="3">Lente de Contato - Sim</option>
+                                            <option value="4">Lente de Contato - Não</option>
+                                            <option value="5">Garantia</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="id_medico" class="form-label">Médico *</label>
+                                        <select name="id_medico" id="editar_id_medico" class="form-control">
+                                            <?php foreach($Medico->listar() as $medico){ ?>
+                                                <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 offset-3">
+                                        <label for="observacao" class="form-label">Observação</label>
+                                        <input type="text" class="form-control" name="observacao" id="editar_observacao">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" name="btnEditar">Editar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Excluir -->
+            <div class="modal fade" id="modalExcluir" tabindex="-1" role="dialog" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+                <form action="?" method="post">
+                    <input type="hidden" name="id_captado" id="excluir_id_captado">
+                    <input type="hidden" name="id_usuario" id="excluir_id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                    <div class="modal-dialog modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalExcluirLabel">Excluir Captação</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Tem certeza de que deseja excluir esta captação?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-danger" name="btnExcluir">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
 
         </div>
         <!-- End of Content Wrapper -->
@@ -215,14 +275,55 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js"></script> <!-- Carregar o locale pt-br -->
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $('#cap').addClass('active');
         $('#captacao-index').addClass('active');
+
+        $(document).ready(function () {
+            $('#modalEditar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                let id = button.data('id');
+                let nome = button.data('nome');
+                let captado = button.data('captado');
+                let medico = button.data('medico');
+                let observacao = button.data('observacao');
+                
+                $('#editar_id_captado').val(id);
+                $('#editar_nome_paciente').val(nome);
+                $('#editar_captado').val(captado);
+                $('#editar_id_medico').val(medico);
+                $('#editar_observacao').val(observacao);
+            });
+
+            $('#modalExcluir').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botão que acionou o modal
+                var id = button.data('id');
+
+                $('#excluir_id_captado').val(id)
+            });
+
+        });
 
         // Função para adicionar dados à tabela dinamicamente
         function addDataToTable(name, captado, medico, observacao) {
@@ -259,14 +360,21 @@
     </script>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/jquery/jquery.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../js/sb-admin-2.min.js"></script>
+    <script src="<?php echo URL ?>/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="<?php echo URL ?>/vendor/datatables/jquery.dataTablesChamados.min.js"></script>
+    <script src="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="<?php echo URL ?>/js/demo/datatables-demo.js"></script>
 
 </body>
 

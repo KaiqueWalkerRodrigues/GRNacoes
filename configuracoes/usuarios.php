@@ -433,7 +433,7 @@
                             </div>
                             <div class="col-2">
                                 <label for="editar_ativo" class="form-label">Ativo *</label>
-                                <select name="editar_ativo" id="editar_ativo" class="form-control">
+                                <select name="ativo" id="editar_ativo" class="form-control">
                                     <option value="1">Ativo</option>
                                     <option value="0">Desativado</option>
                                 </select>
