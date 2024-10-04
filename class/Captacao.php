@@ -84,6 +84,53 @@ class Captacao {
         }
     }
 
+    public function cadastrarAlteracao(Array $dados)
+    {
+        $id_captador = $dados['id_captador'];
+        $id_medico = $dados['id_medico'];
+        $id_empresa = $dados['id_empresa'];
+        $nome_paciente = ucwords(strtolower(trim($dados['nome_paciente'])));
+        $captado = $dados['captado'];
+        $observacao = trim($dados['observacao']);
+
+        // Combinar $_POST['dia'] e $_POST['horario'] para formar o TIMESTAMP
+        $dia = $dados['dia']; // Ex: '2024-10-03'
+        $horario = $dados['horario']; // Ex: '14:30:00'
+        $date_time = "$dia $horario"; // Ex: '2024-10-03 14:30:00'
+
+        $sql = $this->pdo->prepare('INSERT INTO captados 
+                                    (id_captador, id_medico, id_empresa, nome_paciente, captado, observacao, created_at, updated_at)
+                                    VALUES
+                                    (:id_captador, :id_medico, :id_empresa, :nome_paciente, :captado, :observacao, :created_at, :updated_at)
+                                ');
+
+        $agora = date("Y-m-d H:i:s");
+
+        $created_at  = $date_time;
+        $updated_at  = $agora;
+
+        $sql->bindParam(':id_captador', $id_captador);
+        $sql->bindParam(':id_medico', $id_medico);
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':nome_paciente', $nome_paciente);
+        $sql->bindParam(':captado', $captado);
+        $sql->bindParam(':observacao', $observacao);
+        $sql->bindParam(':created_at', $created_at);          
+        $sql->bindParam(':updated_at', $updated_at);          
+
+        if ($sql->execute()) {         
+            $id_captado = $this->pdo->lastInsertId();    
+            // Adiciona o log da edição
+            $descricao = "Cadastrou a captação: $nome_paciente ($id_captado) no dia ($date_time)";
+            $this->addLog('Cadastrou', $descricao, $dados['id_usuario']);
+
+            return $this->pdo->lastInsertId(); // Retorna o ID do captado recém-cadastrado
+        } else {
+            // Tratar falha na execução da query, se necessário
+        }
+    }
+
+
     /**
      * Retorna os dados de um captado
      * @param int $id_captado
@@ -172,6 +219,23 @@ class Captacao {
         $sql->bindParam(':id_empresa',$id_empresa);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
+    }  
+
+    public function listarDoDia($id_empresa, $data) {
+        // Prepara a consulta SQL, usando a data passada como parâmetro
+        $sql = $this->pdo->prepare("SELECT captados.*, medicos.nome AS nome_medico 
+                                     FROM captados 
+                                     JOIN medicos ON captados.id_medico = medicos.id_medico
+                                     WHERE id_empresa = :id_empresa AND DATE(captados.created_at) = :data 
+                                     AND captados.deleted_at IS NULL
+                                     ORDER BY captados.created_at DESC");
+    
+        // Vincula os parâmetros
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':data', $data); // Bind da nova data
+        $sql->execute();
+    
+        return $sql->fetchAll(PDO::FETCH_OBJ);
     }    
 
     public function listarHojeAdmin() {
@@ -185,43 +249,125 @@ class Captacao {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }    
 
-    public function contarPessoas() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND deleted_at IS NULL");
+    public function listarDoDiaAdmin($data) {
+        // Prepara a consulta SQL, usando a data passada como parâmetro
+        $sql = $this->pdo->prepare("SELECT captados.*, medicos.nome AS nome_medico 
+                                     FROM captados 
+                                     JOIN medicos ON captados.id_medico = medicos.id_medico
+                                     WHERE DATE(captados.created_at) = :data 
+                                     AND captados.deleted_at IS NULL
+                                     ORDER BY captados.created_at DESC");
+    
+        // Vincula os parâmetros
+        $sql->bindParam(':data', $data); // Bind da nova data
+        $sql->execute();
+    
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    } 
+
+    //Relatórios
+    public function contarReceitas($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
     }
 
-    public function contarCaptacoes() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND captado = 1 OR captado = 3 AND deleted_at IS NULL");
+    public function contarCaptacoes($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND (captado = 1 OR captado = 3) 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
     }
 
-    public function contarNaoCaptacoes() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND captado = 0 AND deleted_at IS NULL");
+    public function contarNaoCaptacoes($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND captado = 0 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
     }
 
-    public function contarLentes() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND captado = 2 OR captado = 3 AND deleted_at IS NULL");
+    public function contarLentes($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND (captado = 2 OR captado = 3) 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
     }
 
-    public function contarGarantias() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND captado = 4 AND deleted_at IS NULL");
+    public function contarGarantias($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND captado = 4 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
     }
 
-    public function contarCaptaveis() {
-        $sql = $this->pdo->prepare("SELECT COUNT(*) as total FROM captados WHERE DATE(captados.created_at) = CURDATE() AND captado = 0 OR captado = 1 OR captado = 2 AND deleted_at IS NULL");
+    public function contarCaptaveis($data, $id_empresa, $id_captador = null) {
+        $sql = $this->pdo->prepare(
+            "SELECT COUNT(*) as total FROM captados 
+            WHERE DATE(captados.created_at) = :data 
+            AND captados.id_empresa = :id_empresa 
+            AND (captado = 0 OR captado = 1 OR captado = 2) 
+            AND deleted_at IS NULL" . ($id_captador ? " AND captados.id_captador = :id_captador" : "")
+        );
+        $sql->bindValue(':data', $data);
+        $sql->bindValue(':id_empresa', $id_empresa);
+        if ($id_captador) {
+            $sql->bindValue(':id_captador', $id_captador);
+        }
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_OBJ);
         return $result->total;
@@ -245,4 +391,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrar']
     header('Location: /GRNacoes/captacao/'); // Redireciona para evitar re-submissão de formulário
 }    
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrarAlteracao'])) {
+    $dados = [
+        'id_captador' => $_POST['id_usuario'], // Ajuste conforme seu sistema de sessão
+        'id_medico' => $_POST['id_medico'],
+        'id_empresa' => $_POST['id_empresa'],
+        'nome_paciente' => $_POST['nome_paciente'],
+        'captado' => $_POST['captado'],
+        'observacao' => $_POST['observacao'],
+        'dia' => $_POST['dia'],
+        'horario' => $_POST['horario']
+    ];
+    $Captacao->cadastrarAlteracao($dados);
+    $url = 'Location: /GRNacoes/captacao/alterar?data_atendimento='.$_POST['dia'];
+    header($url); // Redireciona para evitar re-submissão de formulário
+}    
 ?>

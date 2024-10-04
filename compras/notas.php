@@ -145,8 +145,9 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th class="d-none">#</th>
                                             <th>N° Nota</th>
+                                            <th>Valor</th>
                                             <th>Mês</th>
                                             <th>Data</th>
                                             <th>Empresa</th>
@@ -172,8 +173,9 @@
                                     <tbody>
                                         <?php foreach($Compras_Notas->listar() as $cn){ ?>
                                         <tr>
-                                            <td><?php echo $cn->id_compra_nota ?></td>
+                                            <td class="d-none"><?php echo $cn->id_compra_nota ?></td>
                                             <td class="text-center"><?php echo $cn->n_nota ?></td>
+                                            <td><?php echo 'R$ ' . number_format($cn->valor, 2, ',', '.'); ?></td>
                                             <td><?php $dt = new DateTime($cn->data); $mesAbreviado = Helper::traduzirMes($dt->format('M')); $anoAbreviado = $dt->format('y'); $dataFormatada = $mesAbreviado . '/' . $anoAbreviado; echo $dataFormatada?></td>
                                             <td><?php $dt = new DateTime($cn->data); echo $dt->format('d/m/Y') ?></td>
                                             <td><?php echo Helper::mostrar_empresa($cn->id_empresa) ?></td>

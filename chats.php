@@ -113,7 +113,7 @@
                                 <label for="categoria" class="form-label">Usuário *</label>
                                 <select class="form-control" name="id_destinatario" id="id_destinatario" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Usuarios->listar() as $u){ ?>
+                                    <?php foreach($Usuarios->listarAtivos() as $u){ ?>
                                         <option value="<?php echo $u->id_usuario ?>"><?php echo $u->nome ?> | <?php echo $Setores->mostrar($u->id_setor)->setor ?></option>
                                     <?php } ?>
                                 </select>

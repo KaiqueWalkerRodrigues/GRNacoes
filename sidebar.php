@@ -81,7 +81,7 @@
         <span>Chats</span></a>
 </li>
 
-<?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1) { ?>
+<?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
 <li class="nav-item" id="comp">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras"
         aria-expanded="true" aria-controls="comp">
@@ -101,7 +101,7 @@
 </li> 
 <?php } ?>
 
-<?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1) ?>
+<?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) ?>
 <li class="nav-item" id="cap">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao"
         aria-expanded="true" aria-controls="comp">
@@ -110,14 +110,14 @@
     </a> 
     <div id="captacao" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" id="captacao-index" href="<?php echo URL ?>/captacao/">Captar</a>
-            <a class="collapse-item" id="captacao-index" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
+            <a class="collapse-item" id="captacao_index" href="<?php echo URL ?>/captacao/">Captar</a>
+            <a class="collapse-item" id="captacao_alterar" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
         </div>
     </div>
 </li> 
 <?php ?>
 
-<?php if($_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 1) { ?>
+<?php if($_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
 <li class="nav-item" id="finan">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#financeiro"
         aria-expanded="true" aria-controls="finan">
@@ -133,7 +133,7 @@
 <?php } ?>
 
 
-<?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15) { ?>
+<?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_usuario'] == 15 OR $_SESSION['id_setor'] == 12) { ?>
     
 <!-- Divider -->
 <hr class="sidebar-divider">

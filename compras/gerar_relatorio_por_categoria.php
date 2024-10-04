@@ -57,6 +57,21 @@ $grey = [
     ],
 ];
 
+$total_dark = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => '000000',
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+        'color' => [
+            'rgb' => 'FFFFFF', // Branco
+        ],
+    ],
+];
+
 $mes_style_clinica = [
     'fill' => [
         'fillType' => Fill::FILL_SOLID,

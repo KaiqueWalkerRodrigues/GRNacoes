@@ -21,6 +21,37 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function listarAtivosDoSetorDaEmpresa($id_setor, $id_empresa = null) {
+        // Construir a base da consulta
+        $query = 'SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 AND id_setor = :id_setor';
+    
+        // Verificar se o id_empresa foi enviado
+        if ($id_empresa !== null) {
+            // Adicionar a condição para a empresa
+            $query .= ' AND empresa = :empresa';
+        }
+    
+        $query .= ' ORDER BY nome ASC';
+    
+        // Preparar a consulta
+        $sql = $this->pdo->prepare($query);
+    
+        // Vincular o parâmetro id_setor
+        $sql->bindParam(':id_setor', $id_setor);
+    
+        // Vincular o parâmetro empresa se foi fornecido
+        if ($id_empresa !== null) {
+            $sql->bindParam(':empresa', $id_empresa);
+        }
+    
+        // Executar a consulta
+        $sql->execute();
+    
+        // Retornar os resultados
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+
     public function listarDesativados(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 0 ORDER BY nome ASC');        
         $sql->execute();

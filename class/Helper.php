@@ -250,12 +250,29 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
     }
 
     public static function formatarData($data) {
-      // Verifica se a data não é nula ou vazia
-      if (!empty($data)) {
-          $data_formatada = new DateTime($data);
-          return $data_formatada->format('d/m/Y H:i');
-      }
-      return ''; // Retorna string vazia se a data for nula ou vazia
+        // Verifica se a data não é nula ou vazia
+        if (!empty($data)) {
+            $data_formatada = new DateTime($data);
+            
+            // Verifica se a data contém horário
+            if (strpos($data, ' ') !== false) { 
+                // Se a data contém horário, formata com data e horário
+                return $data_formatada->format('d/m/Y H:i');
+            } else {
+                // Se não contém horário, formata apenas a data
+                return $data_formatada->format('d/m/Y');
+            }
+        }
+        return ''; // Retorna string vazia se a data for nula ou vazia
+    }
+
+    public static function formatarHorario($horario) {
+        // Verifica se o horario não é nula ou vazia
+        if (!empty($horario)) {
+            $horario_formatada = new DateTime($horario);
+              return $horario_formatada->format('H:i');
+        }
+        return ''; // Retorna string vazia se a horario for nula ou vazia
     }
 
     public static function captado($tipo) {

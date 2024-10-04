@@ -46,7 +46,6 @@
 
     <!-- Custom styles for this page -->
     <link href="<?php echo URL ?>/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -450,7 +449,7 @@
     </div>
 
     <!-- Modal Usuários Desativados -->
-    <div class="modal fade" id="modalUsuariosDesativados" tabindex="-1" role="dialog" aria-labelledby="modalUsuariosDesativadosLabel" aria-hidden="true">
+    <div class="modal fade" id="modalUsuariosDesativados" tabindex="1" role="dialog" aria-labelledby="modalUsuariosDesativadosLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -480,6 +479,23 @@
                                     <td><?php echo Helper::mostrar_empresa($usuarioDesativado->empresa); ?></td>
                                     <td class="text-center">
                                         <form action="?" method="post">
+                                            <button class="btn btn-secondary" data-toggle="modal" type="button" data-target="#modalEditarUsuario" class="collapse-item" 
+                                                data-nome="<?php echo $usuario->nome ?>"
+                                                data-idusuario="<?php echo $usuario->id_usuario ?>"
+                                                data-usuario="<?php echo $usuario->usuario ?>"
+                                                data-senha="<?php echo $usuario->senha ?>"
+                                                data-contrato="<?php echo $usuario->contrato ?>"
+                                                data-celular="<?php echo $usuario->celular ?>"
+                                                data-cpf="<?php echo $usuario->cpf ?>"
+                                                data-data_nascimento="<?php echo $usuario->data_nascimento ?>"
+                                                data-email="<?php echo $usuario->email ?>"
+                                                data-empresa="<?php echo $usuario->empresa ?>"
+                                                data-n_folha="<?php echo $usuario->n_folha ?>"
+                                                data-idsetor="<?php echo $usuario->id_setor ?>"
+                                                data-idcargo="<?php echo $usuario->id_cargo ?>"
+                                                data-data_admissao="<?php echo $usuario->data_admissao ?>">
+                                                <i class="fa-solid fa-gear"></i>
+                                            </button>
                                             <button class="btn btn-success" type="submit" name="btnReativar" value="<?php echo $usuarioDesativado->id_usuario ?>">
                                                 <i class="fa-solid fa-power-on"></i> Reativar
                                             </button>

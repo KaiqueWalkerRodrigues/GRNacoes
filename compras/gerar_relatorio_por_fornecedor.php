@@ -94,6 +94,21 @@ $grey = [
     ],
 ];
 
+$total_dark = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => '000000',
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+        'color' => [
+            'rgb' => 'FFFFFF', // Branco
+        ],
+    ],
+];
+
 $border_black = [
     'borders' => [
         'allBorders' => [
@@ -207,7 +222,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -308,7 +323,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -406,7 +421,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -509,7 +524,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -610,7 +625,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -709,7 +724,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             $activeWorksheet->setCellValue('A' . $row_categoria,'TOTAL '.$cca.':');
-            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($grey);
+            $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_dark);
 
             $col = 'B';
             //Lista todos valores de categorias por mês
@@ -878,7 +893,7 @@ if($empresa == 0 OR $empresa == 2){
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
-                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
+                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($total_dark);
         
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
@@ -994,12 +1009,12 @@ if($empresa == 0 OR $empresa == 2){
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
-                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
+                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($total_dark);
         
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
                 for ($i = 1; $i <= 12; $i++) {
-                    $valor_total = $Compras_notas->totalQntdCategoria(2, $cc->id_compra_categoria, $i, date('Y'));
+                    $valor_total = $Compras_notas->totalQntdCategoria(4, $cc->id_compra_categoria, $i, date('Y'));
                     $newSheet->setCellValue($col . $row_categoria, $valor_total);
                     $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
@@ -1110,12 +1125,12 @@ if($empresa == 0 OR $empresa == 2){
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
-                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
+                $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($total_dark);
         
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
                 for ($i = 1; $i <= 12; $i++) {
-                    $valor_total = $Compras_notas->totalQntdCategoria(2, $cc->id_compra_categoria, $i, date('Y'));
+                    $valor_total = $Compras_notas->totalQntdCategoria(6, $cc->id_compra_categoria, $i, date('Y'));
                     $newSheet->setCellValue($col . $row_categoria, $valor_total);
                     $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);

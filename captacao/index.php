@@ -8,7 +8,7 @@
     $Captacao = new Captacao();
     $Usuario = new Usuario();
 
-    if($_SESSION['id_setor'] == 1){
+    if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
         $capHoje = $Captacao->listarHojeAdmin();
     }else{
         $capHoje = $Captacao->listarHoje($_SESSION['id_empresa']);
@@ -80,8 +80,106 @@
 
                     <br><br><br><br>
 
-                    <h5 class="fw-bold">Registro de Captação</h5>
-                    <br>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5 class="fw-bold">Registro de Captação (<?php $agora = date("d/m/Y"); echo $agora ?>)</h5>
+                        </div>
+                        <div class="card bg-dark text-white p-2 text-end">
+                            <?php 
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarReceitas(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarReceitas(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } 
+                            ?>
+                            <span><b>Total Receitas: </b><span><?php echo $Captacao->contarReceitas(date('Y-m-d'),$_SESSION['id_empresa']); ?></span></span>
+                        </div>
+
+                        <div class="card bg-success text-white p-2 text-end">
+                            <?php 
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } 
+                            ?>
+                            <span><b>Captados: </b><span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'),$_SESSION['id_empresa']); ?></span></span>
+                        </div>
+
+                        <div class="card bg-danger text-white p-2 text-end">
+                            <?php 
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } 
+                            ?>
+                            <span><b>Não Captados: </b><span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'),$_SESSION['id_empresa']); ?></span></span>
+                        </div>
+
+                        <div class="card bg-primary text-white p-2 text-end">
+                            <?php 
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } 
+                            ?>
+                            <span><b>Lentes de Contato: </b><span><?php echo $Captacao->contarLentes(date('Y-m-d'),$_SESSION['id_empresa']); ?></span></span>
+                        </div>
+
+                        <div class="card bg-warning text-white p-2 text-end">
+                            <?php 
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $_SESSION['id_empresa'], $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            } 
+                            ?>
+                            <span><b>Garantias: </b><span><?php echo $Captacao->contarGarantias(date('Y-m-d'),$_SESSION['id_empresa']); ?></span></span>
+                        </div>
+
+                    </div>
                     <form id="dataForm" class="row" method="POST">
                         <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
@@ -95,9 +193,9 @@
                             <select class="form-control" id="captado" name="captado">
                                 <option value="1">Sim</option>
                                 <option value="0">Não</option>
-                                <option value="3">Lente de Contato - Sim</option>
-                                <option value="4">Lente de Contato - Não</option>
-                                <option value="5">Garantia</option>
+                                <option value="2">Lente de Contato - Sim</option>
+                                <option value="3">Lente de Contato - Não</option>
+                                <option value="4">Garantia</option>
                             </select>
                         </div>
                         <div class="col-3">
@@ -126,7 +224,8 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <?php if($_SESSION['id_setor'] == 1){ ?>
+                                            <th>Horario</th>
+                                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
                                                 <th>Empresa</th>
                                             <?php } ?>
                                             <th>Captador</th>
@@ -140,7 +239,8 @@
                                     <tbody>
                                     <?php foreach($capHoje as $cap) { ?>
                                         <tr class="text-center">
-                                            <?php if($_SESSION['id_setor'] == 1){ ?>
+                                            <td><?php echo Helper::formatarHorario($cap->created_at) ?></td>
+                                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
                                                 <td><?php echo Helper::mostrar_empresa($cap->id_empresa) ?></td>
                                             <?php } ?>
                                             <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
@@ -298,7 +398,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $('#cap').addClass('active');
-        $('#captacao-index').addClass('active');
+        $('#captacao_index').addClass('active');
 
         $(document).ready(function () {
             $('#modalEditar').on('show.bs.modal', function (event) {
@@ -353,8 +453,19 @@
         // Submeter formulário com Enter ou com o botão
         document.getElementById('dataForm').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
-                event.preventDefault();
-                document.getElementById('dataForm').submit(); // Submete o formulário
+                event.preventDefault(); // Evita o envio do formulário
+
+                // Verifica se todos os campos obrigatórios estão preenchidos
+                const nomePaciente = document.getElementById('name').value;
+                const idMedico = document.getElementById('medico').value;
+                const captado = document.getElementById('captado').value;
+
+                // Condição para verificar os campos obrigatórios
+                if (!nomePaciente || !idMedico || !captado) {
+                    alert('Por favor, preencha todos os campos obrigatórios.'); // Exibe um alerta
+                } else {
+                    document.getElementById('dataForm').submit(); // Submete o formulário se tudo estiver preenchido
+                }
             }
         });
     </script>
