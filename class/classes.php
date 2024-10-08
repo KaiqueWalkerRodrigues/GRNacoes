@@ -17,4 +17,5 @@
     include_once('Financeiro_Boletos.php');
     include_once('Conversas.php');
     include_once('Mensagens.php');
+    include_once('Otica_estoque.php');
 ?>

@@ -93,6 +93,7 @@
                         data-periodo_inicio="<?php echo $campanha->periodo_inicio ?>"
                         data-periodo_fim="<?php echo $campanha->periodo_fim ?>"
                         data-data_pagamento="<?php echo $campanha->data_pagamento ?>"
+                        data-data_pagamento_pos="<?php echo $campanha->data_pagamento_pos ?>"
                         >
                         Editar Campanha</button>
                     <br><br>
@@ -101,6 +102,9 @@
                     </h6>
                     <h6 class="text-primary">
                         Pagamento: <span style="color:black;font-style:italic;"><?php echo Helper::converterData($campanha->data_pagamento) ?></span>
+                    </h6>
+                    <h6 class="text-primary">
+                        Pagamento POS: <span style="color:black;font-style:italic;"><?php echo Helper::converterData($campanha->data_pagamento_pos) ?></span>
                     </h6>
 
                     <br>
@@ -537,19 +541,23 @@
                         <div class="row">
                             <div class="col-3 offset-1">
                                 <label for="editar_nome" class="form-label">Nome Campanha *</label>
-                                <input type="text" name="nome" id="editar_nome" class="form-control">
+                                <input type="text" name="nome" id="editar_nome" class="form-control" required>
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="editar_periodo_inicio" class="form-label">Do dia *</label>
-                                <input type="date" name="periodo_inicio" id="editar_periodo_inicio" class="form-control">
+                                <input type="date" name="periodo_inicio" id="editar_periodo_inicio" class="form-control" required>
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="editar_periodo_fim" class="form-label">Até *</label>
-                                <input type="date" name="periodo_fim" id="editar_periodo_fim" class="form-control">
+                                <input type="date" name="periodo_fim" id="editar_periodo_fim" class="form-control" required>
                             </div>
-                            <div class="col-2">
+                            <div class="col-3 offset-1 mt-2">
                                 <label for="editar_data_pagamento" class="form-label">Dia Pagamento *</label>
-                                <input type="date" name="data_pagamento" id="editar_data_pagamento" class="form-control">
+                                <input type="date" name="data_pagamento" id="editar_data_pagamento" class="form-control" required>
+                            </div>
+                            <div class="col-3 mt-2">
+                                <label for="editar_data_pagamento_pos" class="form-label">Dia Pagamento PÓS *</label>
+                                <input type="date" name="data_pagamento_pos" id="editar_data_pagamento_pos" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -728,11 +736,13 @@
                 let periodo_inicio = button.data('periodo_inicio');
                 let periodo_fim = button.data('periodo_fim');
                 let data_pagamento = button.data('data_pagamento');
+                let data_pagamento_pos = button.data('data_pagamento_pos');
 
                 $('#editar_nome').val(nome);
                 $('#editar_periodo_inicio').val(periodo_inicio);
                 $('#editar_periodo_fim').val(periodo_fim);
                 $('#editar_data_pagamento').val(data_pagamento);
+                $('#editar_data_pagamento_pos').val(data_pagamento_pos);
             });
 
             $('#modalExcluirBoleto').on('show.bs.modal', function (event) {
@@ -759,30 +769,6 @@
                 $('#pagar_valor').text(' R$ '+valor);
             });
 
-            
-            function autoDownload() {
-                // Simulando o clique no botão de download
-                document.getElementById('downloadButton').click();
-            }
-
-            // Chamando a função autoDownload assim que a página for carregada
-            window.onload = autoDownload;
-
-            // Função para remover variáveis GET da URL
-            function removeGetParams() {
-                var url = new URL(window.location.href);
-                url.searchParams.delete('s');
-                window.history.replaceState({}, document.title, url);
-            }
-
-            function removeBaixarRelatorio(){
-                $('#downloadButton').addClass('d-none');
-            }
-
-            // Remove variáveis GET após o download
-            window.addEventListener('load', function() {
-                setTimeout(removeGetParams, 2000); // Ajuste o tempo de espera conforme necessário
-            });
 
             function recalcularTotal() {
                 var total = 0;

@@ -80,7 +80,7 @@ if($sql->rowCount() > 0) {
         echo '
         <a class="dropdown-item d-flex align-items-center" href="'.URL.'/chat?id='.$id_conversa.'&id_destinatario='.$id_mandante.'">
             <div class="dropdown-list-image mr-3">
-                <img class="rounded-circle" src="img/avatar/'.$id_avatar.'" alt="...">
+                <img class="rounded-circle" src="/GRNacoes/img/avatar/'.$id_avatar.'" alt="...">
             </div>
             <div class="font-weight-bold">
                 <div class="text-truncate">'.$mensagem.'</div>

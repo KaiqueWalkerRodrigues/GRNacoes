@@ -36,13 +36,14 @@ class Financeiro_Campanhas {
         $periodo_inicio = $dados['periodo_inicio'];
         $periodo_fim = $dados['periodo_fim'];
         $data_pagamento = $dados['data_pagamento'];
+        $data_pagamento_pos = $dados['data_pagamento_pos'];
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO financeiro_campanhas 
-                                    (nome, periodo_inicio, periodo_fim, data_pagamento, created_at, updated_at)
+                                    (nome, periodo_inicio, periodo_fim, data_pagamento, data_pagamento_pos, created_at, updated_at)
                                     VALUES
-                                    (:nome, :periodo_inicio, :periodo_fim, :data_pagamento, :created_at, :updated_at)
+                                    (:nome, :periodo_inicio, :periodo_fim, :data_pagamento, :data_pagamento_pos, :created_at, :updated_at)
                                 ');
 
         $created_at  = $agora;
@@ -52,6 +53,7 @@ class Financeiro_Campanhas {
         $sql->bindParam(':periodo_inicio', $periodo_inicio); 
         $sql->bindParam(':periodo_fim', $periodo_fim); 
         $sql->bindParam(':data_pagamento', $data_pagamento); 
+        $sql->bindParam(':data_pagamento_pos', $data_pagamento_pos); 
         $sql->bindParam(':created_at', $created_at);          
         $sql->bindParam(':updated_at', $updated_at);          
 
@@ -108,6 +110,7 @@ class Financeiro_Campanhas {
             periodo_inicio = :periodo_inicio,
             periodo_fim = :periodo_fim,
             data_pagamento = :data_pagamento,
+            data_pagamento_pos = :data_pagamento_pos,
             updated_at = :updated_at 
         WHERE id_financeiro_campanha = :id_financeiro_campanha
         ");
@@ -119,6 +122,7 @@ class Financeiro_Campanhas {
         $periodo_inicio = $dados['periodo_inicio'];
         $periodo_fim = $dados['periodo_fim'];
         $data_pagamento = $dados['data_pagamento'];
+        $data_pagamento_pos = $dados['data_pagamento_pos'];
         $updated_at = $agora; 
         $usuario_logado = $dados['usuario_logado'];
 
@@ -127,6 +131,7 @@ class Financeiro_Campanhas {
         $sql->bindParam(':periodo_inicio', $periodo_inicio);
         $sql->bindParam(':periodo_fim', $periodo_fim);
         $sql->bindParam(':data_pagamento', $data_pagamento);
+        $sql->bindParam(':data_pagamento_pos', $data_pagamento_pos);
         $sql->bindParam(':updated_at', $updated_at);       
 
         if ($sql->execute()) {

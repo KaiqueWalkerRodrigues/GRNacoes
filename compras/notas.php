@@ -487,9 +487,9 @@ $(document).ready(function() {
 
         // Aplicar filtros no DataTable usando a API search
         table.column(2).search(filtroMes);
-        table.column(6).search(filtroFornecedor);
-        table.column(4).search(filtroEmpresa);
-        table.column(5).search(filtroCategoria);
+        table.column(7).search(filtroFornecedor);
+        table.column(5).search(filtroEmpresa);
+        table.column(6).search(filtroCategoria);
 
         // Redesenhar a tabela e calcular a soma total
         table.draw();

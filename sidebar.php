@@ -69,7 +69,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
             <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
-            <?php if($_SESSION['id_setor'] == 1){ ?><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
+            <?php if($_SESSION['id_setor'] == 1){ ?><h6 class="collapse-header">Admin:</h6><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
         </div>
     </div>
 </li> 
@@ -92,16 +92,33 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="compras_pedidos" href="<?php echo URL ?>/compras/pedidos">Pedidos de Compras</a>
             <h6 class="collapse-header">Notas:</h6>
-            <a class="collapse-item" id="compras_notas" href="<?php echo URL ?>/compras/notas">Notas Fiscias</a>
+            <a class="collapse-item" id="compras_notas" href="<?php echo URL ?>/compras/notas">Notas Fiscais</a>
+            <a class="collapse-item" id="compras_relatorios" href="<?php echo URL ?>/compras/relatorios">Gerar Relatórios</a>
+            <h6 class="collapse-header">Configurações:</h6>
             <a class="collapse-item" id="compras_categorias" href="<?php echo URL ?>/compras/categorias">Gerenciar Categorias</a>
             <a class="collapse-item" id="compras_fornecedores" href="<?php echo URL ?>/compras/fornecedores">Gerenciar Fornecedores</a>
-            <a class="collapse-item" id="compras_relatorios" href="<?php echo URL ?>/compras/relatorios">Gerar Relatórios</a>
         </div>
     </div>
 </li> 
 <?php } ?>
 
-<?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) ?>
+<?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
+<li class="nav-item" id="otic">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#otica"
+        aria-expanded="true" aria-controls="otic">
+        <i class="fa-solid fa-glasses"></i>
+        <span>Ótica</span>
+    </a> 
+    <div id="otica" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+        <a class="collapse-item" id="otica_estoque" href="<?php echo URL ?>/otica/estoque">Estoque</a>
+        <a class="collapse-item" id="otica_vendas" href="<?php echo URL ?>/otica/vendas">Vendas</a>
+        </div>
+    </div>
+</li> 
+<?php } ?>
+
+<?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13) ?>
 <li class="nav-item" id="cap">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao"
         aria-expanded="true" aria-controls="comp">
@@ -112,6 +129,10 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" id="captacao_index" href="<?php echo URL ?>/captacao/">Captar</a>
             <a class="collapse-item" id="captacao_alterar" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
+            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13){ ?>
+                <h6 class="collapse-header">Relatório:</h6>
+                <a class="collapse-item" id="captacao_dashboard" href="<?php echo URL ?>/captacao/dashboard">Dashboard</a>
+            <?php } ?>
         </div>
     </div>
 </li> 

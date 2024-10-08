@@ -276,7 +276,8 @@ class Financeiro_Boletos {
                                         cliente, 
                                         data_venda, 
                                         valor, 
-                                        valor_pago 
+                                        valor_pago,
+                                        data_pago
                                     FROM 
                                         financeiro_boletos 
                                     WHERE 

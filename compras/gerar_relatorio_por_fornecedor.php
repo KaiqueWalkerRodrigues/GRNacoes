@@ -1166,6 +1166,43 @@ if($empresa == 0 OR $empresa == 2){
 
         $newSheet->getColumnDimension('A')->setAutoSize(true);
     }
+
+    {
+        $newSheet->getStyle('B')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('D')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('E')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('F')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('G')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('H')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('I')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('K')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('L')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('M')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('N')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('O')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('P')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('Q')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('R')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('S')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('T')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('U')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('V')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('W')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('X')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('Y')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('Z')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AA')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AB')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AC')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AD')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AE')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AF')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AG')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AH')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AI')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AJ')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('AK')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    }
 }
 
 $spreadsheet->setActiveSheetIndexByName('Valor');

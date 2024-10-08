@@ -6,19 +6,19 @@ require '../const.php';
 $id_campanha = $_GET['id_campanha'];
 $id_vendedor = $_GET['id_vendedor'];
 
+$Campanha = new Financeiro_Campanhas();
 $Usuarios = new Usuario();
 $Boletos = new Financeiro_Boletos();
+
+$periodo_inicio = $Campanha->mostrar($id_campanha)->periodo_inicio;
+$periodo_fim = $Campanha->mostrar($id_campanha)->periodo_fim;
 
 // Criando uma nova planilha
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Color;
-use PhpOffice\PhpSpreadsheet\Style\Font;
-use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 $cabecalho = [
     'font' => [
@@ -107,21 +107,32 @@ if ($id_vendedor > 0) {
 
             // Definir status
             if ($boleto->valor_pago == $boleto->valor) {
-                $status = 'Convertido';
+                // Verificar se o pagamento foi feito após o período
+                if ($boleto->data_pago > $periodo_fim) {
+                    $status = 'PÓS';
+                } else {
+                    $status = 'Convertido';
+                }
                 $total_convertido += $boleto->valor_pago;
             } elseif ($boleto->valor_pago == 0) {
-                $status = 'Pendente';
-                $total_pendente += $boleto->valor;
+                // Verificar se o boleto está atrasado
+                if (strtotime($boleto->data_venda) < strtotime($periodo_fim) && strtotime(date('Y-m-d')) > strtotime($periodo_fim)) {
+                    $status = 'Atrasado';
+                    $total_pendente += $boleto->valor;
+                } else {
+                    $status = 'Pendente';
+                    $total_pendente += $boleto->valor;
+                }
             } else {
                 $status = 'Erro';
             }
             $sheet->setCellValue('G' . $row, $status);
 
             $row++;
-
         }
-        //AutoSize
-        $sheet->getStyle('A1'.':G'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // AutoSize
+        $sheet->getStyle('A1:G' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         {
             $sheet->getColumnDimension('A')->setAutoSize(true);
             $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -131,27 +142,28 @@ if ($id_vendedor > 0) {
             $sheet->getColumnDimension('F')->setAutoSize(true);
             $sheet->getColumnDimension('G')->setAutoSize(true);
         }
+
         // Total Pendente
-        $sheet->setCellValue('F'.$row, 'Total Pendente:');
-        $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total_pendente, 2, ',', '.'));
+        $sheet->setCellValue('F' . $row, 'Total Pendente:');
+        $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total_pendente, 2, ',', '.'));
         // Aplicando a formatação do cabeçalho para os totais
-        $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $row++;
 
         // Total Convertido
-        $sheet->setCellValue('F'.$row, 'Total Convertido:');
-        $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total_convertido, 2, ',', '.'));
+        $sheet->setCellValue('F' . $row, 'Total Convertido:');
+        $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total_convertido, 2, ',', '.'));
         // Aplicando a formatação do cabeçalho para os totais
-        $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $row++;
 
-        $total = $total_convertido+$total_pendente;
+        $total = $total_convertido + $total_pendente;
 
         // Total Geral
-        $sheet->setCellValue('F'.$row, 'Total:');
-        $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total, 2, ',', '.'));
+        $sheet->setCellValue('F' . $row, 'Total:');
+        $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total, 2, ',', '.'));
         // Aplicando a formatação do cabeçalho para os totais
-        $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     }
 } else {
     // Se nenhum vendedor específico foi selecionado, mostra todos os vendedores
@@ -201,44 +213,55 @@ if ($id_vendedor > 0) {
 
                 // Definir status
                 if ($boleto->valor_pago == $boleto->valor) {
-                    $status = 'Convertido';
+                    // Verificar se o pagamento foi feito após o período
+                    if ($boleto->data_pago > $periodo_fim) {
+                        $status = 'PÓS';
+                    } else {
+                        $status = 'Convertido';
+                    }
                     $total_convertido += $boleto->valor_pago;
                 } elseif ($boleto->valor_pago == 0) {
-                    $status = 'Pendente';
-                    $total_pendente += $boleto->valor;
+                    // Verificar se o boleto está atrasado
+                    if (strtotime($boleto->data_venda) < strtotime($periodo_fim) && strtotime(date('Y-m-d')) > strtotime($periodo_fim)) {
+                        $status = 'Atrasado';
+                        $total_pendente += $boleto->valor;
+                    } else {
+                        $status = 'Pendente';
+                        $total_pendente += $boleto->valor;
+                    }
                 } else {
                     $status = 'Erro';
                 }
                 $sheet->setCellValue('G' . $row, $status);
 
                 $row++;
-
             }
+
             // Total Pendente
-            $sheet->setCellValue('F'.$row, 'Total Pendente:');
-            $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total_pendente, 2, ',', '.'));
+            $sheet->setCellValue('F' . $row, 'Total Pendente:');
+            $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total_pendente, 2, ',', '.'));
             // Aplicando a formatação do cabeçalho para os totais
-            $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $row++;
 
             // Total Convertido
-            $sheet->setCellValue('F'.$row, 'Total Convertido:');
-            $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total_convertido, 2, ',', '.'));
+            $sheet->setCellValue('F' . $row, 'Total Convertido:');
+            $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total_convertido, 2, ',', '.'));
             // Aplicando a formatação do cabeçalho para os totais
-            $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $row++;
 
-            $total = $total_convertido+$total_pendente;
+            $total = $total_convertido + $total_pendente;
 
             // Total Geral
-            $sheet->setCellValue('F'.$row, 'Total:');
-            $sheet->setCellValue('G'.$row, 'R$ ' . number_format($total, 2, ',', '.'));
+            $sheet->setCellValue('F' . $row, 'Total:');
+            $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total, 2, ',', '.'));
             // Aplicando a formatação do cabeçalho para os totais
-            $sheet->getStyle('F'.$row.':G'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             $sheetIndex++;
-            //AutoSize
-            $sheet->getStyle('A1'.':G'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            // AutoSize
+            $sheet->getStyle('A1:G' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             {
                 $sheet->getColumnDimension('A')->setAutoSize(true);
                 $sheet->getColumnDimension('B')->setAutoSize(true);

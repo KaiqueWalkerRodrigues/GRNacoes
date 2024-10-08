@@ -184,7 +184,7 @@
 
 </nav>
 <!-- End of Topbar -->
- <!-- Cadastrar Campanha -->
+ <!-- Modal Alterar Senha -->
  <div class="modal fade" id="modalAlterarSenha" tabindex="1" role="dialog" aria-labelledby="modalAlterarSenhaLabel" aria-hidden="true">
     <form action="?" method="post">
         <div class="modal-dialog modal-md" role="document">

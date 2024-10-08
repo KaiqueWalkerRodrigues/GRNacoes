@@ -141,15 +141,19 @@
                             </div>
                             <div class="col-3">
                                 <label for="periodo_inicio" class="form-label">Do dia</label>
-                                <input type="date" class="form-control" name="periodo_inicio" id="cadastrar_periodo_inicio">
+                                <input type="date" class="form-control" name="periodo_inicio" id="cadastrar_periodo_inicio" required>
                             </div>
                             <div class="col-3">
                                 <label for="periodo_fim" class="form-label">Até o dia</label>
-                                <input type="date" class="form-control" name="periodo_fim" id="cadastrar_periodo_fim">
+                                <input type="date" class="form-control" name="periodo_fim" id="cadastrar_periodo_fim" required>
                             </div>
-                            <div class="col-3 offset-1">
+                            <div class="col-3 offset-1 mt-2">
                                 <label for="data_pagamento" class="form-label">Data do Pagamento</label>
-                                <input type="date" name="data_pagamento" id="cadastrar_data_pagamento" class="form-control">
+                                <input type="date" name="data_pagamento" id="cadastrar_data_pagamento" class="form-control" required>
+                            </div>
+                            <div class="col-3 mt-2">
+                                <label for="data_pagamento_pos" class="form-label">Data do Pagamento PÓS</label>
+                                <input type="date" name="data_pagamento_pos" id="cadastrar_data_pagamento_pos" class="form-control" required>
                             </div>
                         </div>
                     </div>

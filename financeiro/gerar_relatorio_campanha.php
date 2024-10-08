@@ -146,6 +146,16 @@ $sheet->getStyle('F4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENT
     $sheet->setCellValue('F6', "VENDA EM BOLETOS - MATRIZ");
     $sheet->getStyle('F6')->applyFromArray($titulo)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+    $sheet->setCellValue('H6', "PAGAMENTO PÓS:");
+    $sheet->getStyle('H6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+    $sheet->getStyle('H6')->applyFromArray($titulo);
+
+    $data_pagamento_pos = date("d/m/Y", strtotime($Campanha->data_pagamento_pos));
+    $sheet->setCellValue('I6', $data_pagamento_pos);
+    $sheet->getStyle('I6')->applyFromArray($titulo);
+    // Centraliza o texto horizontalmente na célula E3
+    $sheet->getStyle('I6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
     $sheet->setCellValue('B7', "VENDEDOR");
     $sheet->setCellValue('C7', "VENDAS EM BOLETO");
     $sheet->setCellValue('D7', "CONVERTIDAS (3%)");
@@ -624,7 +634,7 @@ $writer = new Xlsx($spreadsheet);
 $nome_arquivo = "resumo_campanha_$n_campanha.xlsx";
 $writer->save($nome_arquivo);
 
-$url = 'Location:campanha?c='.$id_campanha.'&s';
-header($url);
-
+// Redirecionar para download
+header('Location: ' . $nome_arquivo);
 ?>
+

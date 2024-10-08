@@ -24,6 +24,19 @@ class Compras_Fornecedores {
     }      
 
     /**
+     * Lista todos os fornecedores de compras com categoria armações
+     * @return array
+     */
+    public function listarFornecedoresDeArmacoes(){
+        $sql = $this->pdo->prepare('SELECT * FROM compras_fornecedores WHERE id_categoria = 5 AND deleted_at IS NULL ORDER BY fornecedor');        
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }      
+
+    /**
      * Cadastra um novo fornecedor de compra
      * @param Array $dados    
      * @return int

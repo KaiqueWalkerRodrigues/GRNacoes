@@ -17,7 +17,7 @@
         var id_usuario = <?php echo json_encode($_SESSION['id_usuario']); ?>;
         $.ajax({
             type: "get",
-            url: "manter_online.php",
+            url: "/GRNacoes/manter_online.php",
             data: { id_usuario: id_usuario },
         });
     }

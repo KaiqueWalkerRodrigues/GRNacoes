@@ -110,6 +110,7 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr class="text-center">
+                                            <th>Protocolo</th>
                                             <th>Urgência</th>
                                             <th>Título</th>
                                             <th>Usuário</th>
@@ -125,6 +126,7 @@
                                             $criado = $created_at->diff($now);
                                         ?>
                                         <tr class="text-center">
+                                            <td><?php echo $chamado->id_chamado ?></td>
                                             <td><?php echo Helper::Urgencia($chamado->urgencia) ?></td>
                                             <td><?php echo $chamado->titulo ?></td>
                                             <td><?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?></td>
@@ -135,7 +137,7 @@
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>"
                                                     data-titulo="<?php echo $chamado->titulo ?>"
                                                     data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
-                                                    data-usuario="<?php echo $usuario->nome ?> (<?php echo $Setor->mostrar($usuario->id_setor)->setor ?>)"
+                                                    data-usuario="<?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?> (<?php echo $Setor->mostrar($Usuario->mostrar($chamado->id_usuario)->id_setor)->setor ?>)"
                                                     data-setor="<?php echo $setor->setor ?>"
                                                     data-urgencia="<?php echo Helper::TextoUrgencia($chamado->urgencia) ?>"
                                                     data-descricao="<?php echo $chamado->descricao ?>"
