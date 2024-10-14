@@ -21,7 +21,7 @@ class Compras_Fornecedores {
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
     
         return $dados;
-    }      
+    }   
 
     /**
      * Lista todos os fornecedores de compras com categoria armações
@@ -259,6 +259,49 @@ class Compras_Fornecedores {
     
         return $dados;
     }
+    
+    public function listarTudoPorCategoria($id_empresa, $id_categoria, $ano){
+        $sql = $this->pdo->prepare('
+            SELECT DISTINCT cf.* 
+            FROM compras_fornecedores cf
+            LEFT JOIN compras_notas cn ON cf.id_compra_fornecedor = cn.id_fornecedor 
+                AND cn.id_empresa = :id_empresa 
+                AND YEAR(cn.data) = :ano
+            WHERE cf.id_categoria = :id_categoria 
+            AND cf.deleted_at IS NULL
+            ORDER BY cf.fornecedor
+        ');        
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':ano', $ano);
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }
+
+    /**
+     * Conta o número de notas associadas a um fornecedor
+     * @param int $id_fornecedor
+     * @return int
+     */
+    public function contarNotasPorFornecedor(int $id_fornecedor)
+    {
+        $sql = $this->pdo->prepare('
+            SELECT COUNT(*) as total_notas 
+            FROM compras_notas 
+            WHERE id_fornecedor = :id_fornecedor
+        ');
+
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total_notas : 0;
+    }
+
 
 }
 

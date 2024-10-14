@@ -68,7 +68,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Categorias Ativas | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarCategoria" class="collapse-item">Cadastrar Nova Categoria</button> | <button class="btn btn-secondary">Ver Categorias Desativadas</button></h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Categorias Ativas | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarCategoria" class="collapse-item">Cadastrar Nova Categoria</button></h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -76,6 +76,7 @@
                                     <thead>
                                         <tr>
                                             <th>Categoria</th>
+                                            <th>Quantidade (Fornecedores)</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -83,6 +84,7 @@
                                         <?php foreach($Compras_Categorias->listar() as $cc){ ?>
                                         <tr>
                                             <td><?php echo $cc->categoria ?></td>
+                                            <td><?php echo $Compras_Categorias->contarFornecedores($cc->id_compra_categoria) ?></td>
                                             <td class="text-center">
                                                 <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarCategoria" class="collapse-item" 
                                                     data-id_categoria="<?php echo $cc->id_compra_categoria ?>" 

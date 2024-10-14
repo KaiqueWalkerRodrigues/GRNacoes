@@ -45,6 +45,55 @@ class Captacao {
     }      
 
     /**
+     * listar todos os captadores da empresa
+     * @return array
+     */
+    public function listarCaptadoresPorEmpresa($id_empresa){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 AND empresa = :empresa ORDER BY nome DESC');        
+        $sql->bindParam(':empresa',$id_empresa);
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        // Retorna os dados como JSON
+        return $dados;
+    }      
+
+    /**
+     * Contar captações no intervalo de datas
+     * @param int $id_captador
+     * @param string $inicio
+     * @param string $fim
+     * @return int
+     */
+    public function contarCaptacoesNoIntervalo($id_captador, $inicio, $fim) {
+        // Prepara a consulta SQL
+        $sql = $this->pdo->prepare('
+            SELECT count(*) as total
+            FROM captados 
+            WHERE id_captador = :id_captador 
+            AND created_at BETWEEN :inicio AND :fim
+            AND deleted_at IS NULL
+        ');
+
+        // Vincula os parâmetros à consulta
+        $sql->bindParam(':id_captador', $id_captador);
+        $sql->bindParam(':inicio', $inicio);
+        $sql->bindParam(':fim', $fim);
+
+        // Executa a consulta
+        $sql->execute();
+
+        // Obtém o resultado da contagem
+        $dados = $sql->fetch(PDO::FETCH_OBJ);
+
+        // Retorna apenas o número de captações
+        return $dados->total;
+    }
+
+
+
+    /**
      * cadastra um novo captado
      * @param Array $dados    
      * @return int

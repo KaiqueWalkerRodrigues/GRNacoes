@@ -81,7 +81,7 @@ $titulo_campanha = 'RESUMO CAMPANHA '.$n_campanha;
     $bordas = [
         'borders' => [
             'allBorders' => [
-                'borderStyle' => Border::BORDER_THIN, // Você pode ajustar o estilo da borda, por exemplo, BORDER_THIN, BORDER_MEDIUM, etc.
+                'borderStyle' => Border::BORDER_THIN,
                 'color' => ['argb' => '000000'], // Cor da borda (preto)
             ],
         ],

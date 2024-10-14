@@ -486,7 +486,7 @@ $(document).ready(function() {
         var filtroCategoria = $('#filtroCategoria').val();
 
         // Aplicar filtros no DataTable usando a API search
-        table.column(2).search(filtroMes);
+        table.column(3).search(filtroMes);
         table.column(7).search(filtroFornecedor);
         table.column(5).search(filtroEmpresa);
         table.column(6).search(filtroCategoria);

@@ -194,6 +194,24 @@ class Compras_Categorias {
     
         return $categoria->categoria;
     }
+
+    /**
+     * Conta a quantidade de fornecedores cadastrados em uma categoria
+     * @param int $id_categoria
+     * @return int
+     */
+    public function contarFornecedores(int $id_categoria)
+    {
+        $sql = $this->pdo->prepare('SELECT COUNT(*) as total FROM compras_fornecedores WHERE id_categoria = :id_categoria');
+        $sql->bindParam(':id_categoria', $id_categoria);
+        $sql->execute();
+        
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+        
+        return (int) $resultado->total;
+    }
+
+
 }
 
 ?>

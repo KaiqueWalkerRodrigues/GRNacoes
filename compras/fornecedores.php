@@ -70,7 +70,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Fornecedores Ativos | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarFornecedor" class="collapse-item">Cadastrar Novo Fornecedor</button> | <button class="btn btn-secondary">Ver Fornecedores Desativados</button></h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Fornecedores Ativos | <button class="btn btn-primary" data-toggle="modal" data-target="#modalCadastrarFornecedor" class="collapse-item">Cadastrar Novo Fornecedor</button></h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -79,6 +79,7 @@
                                         <tr>
                                             <th>Fornecedor</th>
                                             <th>Categoria</th>
+                                            <th>Quantidade Notas</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -87,6 +88,7 @@
                                         <tr>
                                             <td><?php echo $cf->fornecedor ?></td>
                                             <td><?php echo $Compras_Categorias->nomeCategoria($cf->id_categoria) ?></td>
+                                            <td><?php echo $Compras_Fornecedores->contarNotasPorFornecedor($cf->id_compra_fornecedor) ?></td>
                                             <td class="text-center">
                                             <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditarFornecedor" class="collapse-item"
                                                 data-fornecedor="<?php echo $cf->fornecedor ?>"

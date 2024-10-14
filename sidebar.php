@@ -132,6 +132,7 @@
             <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13){ ?>
                 <h6 class="collapse-header">Relatório:</h6>
                 <a class="collapse-item" id="captacao_dashboard" href="<?php echo URL ?>/captacao/dashboard">Dashboard</a>
+                <a class="collapse-item" id="captacao_relatorios" href="<?php echo URL ?>/captacao/relatorios">Gerar Relatórios</a>
             <?php } ?>
         </div>
     </div>

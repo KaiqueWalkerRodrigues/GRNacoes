@@ -314,24 +314,21 @@ class Compras_Notas {
 
     /**
      * Totaliza o valor das notas de um fornecedor em uma categoria específica no ano
-     * @param int $empresa_id
+     * @param int $id_empresa
      * @param int $id_fornecedor
-     * @param int $id_categoria
      * @param int $ano
      * @return float
      */
-    public function totalFornecedorAnual($empresa_id, $id_fornecedor, $id_categoria, $ano){
+    public function totalFornecedorAnual($id_empresa, $id_fornecedor, $ano){
         $sql = $this->pdo->prepare('
             SELECT SUM(cn.valor) AS total 
             FROM compras_notas cn 
             WHERE cn.id_fornecedor = :id_fornecedor 
-            AND cn.id_categoria = :id_categoria 
-            AND cn.empresa_id = :empresa_id 
+            AND cn.id_empresa = :id_empresa 
             AND YEAR(cn.data) = :ano
         ');
         $sql->bindParam(':id_fornecedor', $id_fornecedor);
-        $sql->bindParam(':id_categoria', $id_categoria);
-        $sql->bindParam(':empresa_id', $empresa_id);
+        $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':ano', $ano);
         $sql->execute();
 

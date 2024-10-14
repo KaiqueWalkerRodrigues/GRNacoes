@@ -294,6 +294,15 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
         break;
       }
     }
+
+    public static function primeiroNomeMaisculo($string) {
+      // Divide a string em palavras
+      $palavras = explode(' ', $string);
+  
+      // Retorna a primeira palavra em letras maiúsculas
+      return strtoupper($palavras[0]);
+  }
+  
 }
 
 ?>

@@ -295,7 +295,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(3, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -375,7 +375,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(5, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -459,7 +459,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(2, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -539,7 +539,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(4, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -619,7 +619,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(6, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -1020,7 +1020,7 @@ if($empresa == 0 OR $empresa == 2){
 
 $spreadsheet->setActiveSheetIndexByName('Valor');
 
-$filename = 'gerar_relatorio_categorias_' . date('Y') . '.xlsx';
+$filename = 'relatorio_categorias_' . date('Y') . '.xlsx';
 
 // Verifica se o arquivo já existe
 if (file_exists($filename)) {

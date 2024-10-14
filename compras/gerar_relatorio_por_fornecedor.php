@@ -143,6 +143,51 @@ $total_amarelo = [
     ],
 ];
 
+$estilo_compra = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => '1F497D', //Azul
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+        'color' => [
+            'rgb' => 'FFFFFF', // Branco
+        ],
+    ],
+];
+
+$estilo_venda = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => '8064A2', //Roxo
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+        'color' => [
+            'rgb' => 'FFFFFF', // Branco
+        ],
+    ],
+];
+
+$estilo_estoque = [
+    'fill' => [
+        'fillType' => Fill::FILL_SOLID,
+        'startColor' => [
+            'rgb' => 'C0504D', //Vermelho
+        ],
+    ],
+    'font' => [
+        'bold' => true,
+        'color' => [
+            'rgb' => 'FFFFFF', // Branco
+        ],
+    ],
+];
+
 $spreadsheet = new Spreadsheet();
 $activeWorksheet = $spreadsheet->getActiveSheet();
 $spreadsheet->getActiveSheet()->setTitle('Valor');
@@ -218,6 +263,9 @@ if($empresa == 0 OR $empresa == 1){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(1,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -319,6 +367,9 @@ if($empresa == 0 OR $empresa == 1){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(3,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -335,7 +386,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(3, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -417,6 +468,9 @@ if($empresa == 0 OR $empresa == 1){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(5,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -433,7 +487,7 @@ if($empresa == 0 OR $empresa == 1){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(5, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -520,6 +574,9 @@ if($empresa == 0 OR $empresa == 2){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(2,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -536,7 +593,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(2, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -621,6 +678,9 @@ if($empresa == 0 OR $empresa == 2){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(4,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -637,7 +697,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(4, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -720,6 +780,9 @@ if($empresa == 0 OR $empresa == 2){
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
                 }
+                $activeWorksheet->setCellValue('N' . $row_categoria,$Compras_notas->totalFornecedorAnual(6,$f->id_compra_fornecedor,date('Y')));
+                $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+                $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
                 $row_categoria++;
             }
 
@@ -736,7 +799,7 @@ if($empresa == 0 OR $empresa == 2){
             }
 
             //Lita o total de cada categoria
-            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(1, $cc->id_compra_categoria, date('Y')));
+            $activeWorksheet->setCellValue('N' . $row_categoria, $Compras_notas->totalCategoriaAnual(6, $cc->id_compra_categoria, date('Y')));
             $activeWorksheet->getCell('N' . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
             $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
@@ -850,14 +913,17 @@ if($empresa == 0 OR $empresa == 2){
         
         for ($i = 0; $i < 12; $i++) {
             $newSheet->setCellValue($coluna . $row_categoria, "COM");
+            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "EST");
+            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
         }
@@ -875,21 +941,40 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
         
-                foreach ($Compras_Fornecedor->listarPorCategoria(2, $cc->id_compra_categoria, date('Y')) as $f) {
-                    $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
-        
-                    $col = 'B';
-                    for ($i = 1; $i <= 12; $i++) {
-                        $total_f_mes = $Compras_notas->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i);
-                        if ($total_f_mes > 0) {
-                            $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                if($cc->id_compra_categoria == 5){
+                    foreach ($Compras_Fornecedor->listarTudoPorCategoria(2, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
                         }
-                        $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
+                        $row_categoria++;
                     }
-                    $row_categoria++;
+                }else{
+                    foreach ($Compras_Fornecedor->listarPorCategoria(2, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                        }
+                        $row_categoria++;
+                    }
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
@@ -991,21 +1076,40 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
         
-                foreach ($Compras_Fornecedor->listarPorCategoria(4, $cc->id_compra_categoria, date('Y')) as $f) {
-                    $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
-        
-                    $col = 'B';
-                    for ($i = 1; $i <= 12; $i++) {
-                        $total_f_mes = $Compras_notas->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i);
-                        if ($total_f_mes > 0) {
-                            $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                if($cc->id_compra_categoria == 5){
+                    foreach ($Compras_Fornecedor->listarTudoPorCategoria(4, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
                         }
-                        $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
+                        $row_categoria++;
                     }
-                    $row_categoria++;
+                }else{
+                    foreach ($Compras_Fornecedor->listarPorCategoria(4, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                        }
+                        $row_categoria++;
+                    }
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
@@ -1107,21 +1211,40 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
         
-                foreach ($Compras_Fornecedor->listarPorCategoria(6, $cc->id_compra_categoria, date('Y')) as $f) {
-                    $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
-        
-                    $col = 'B';
-                    for ($i = 1; $i <= 12; $i++) {
-                        $total_f_mes = $Compras_notas->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i);
-                        if ($total_f_mes > 0) {
-                            $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                if($cc->id_compra_categoria == 5){
+                    foreach ($Compras_Fornecedor->listarTudoPorCategoria(6, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
                         }
-                        $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
-                        $col = getNextColumn($col);
+                        $row_categoria++;
                     }
-                    $row_categoria++;
+                }else{
+                    foreach ($Compras_Fornecedor->listarPorCategoria(6, $cc->id_compra_categoria, date('Y')) as $f){
+                        $newSheet->setCellValue('A' . $row_categoria, $f->fornecedor);
+            
+                        $col = 'B';
+                        for ($i = 1; $i <= 12; $i++) {
+                            $total_f_mes = $Compras_notas->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i);
+                            if ($total_f_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                            $col = getNextColumn($col);
+                        }
+                        $row_categoria++;
+                    }
                 }
         
                 $newSheet->setCellValue('A' . $row_categoria, 'TOTAL ' . $cca . ':');
@@ -1208,7 +1331,7 @@ if($empresa == 0 OR $empresa == 2){
 $spreadsheet->setActiveSheetIndexByName('Valor');
 
 //Salva o Arquivo
-$filename = 'gerar_relatorio_fornecedores_' . date('Y') . '.xlsx';
+$filename = 'relatorio_fornecedores_' . date('Y') . '.xlsx';
 
 // Verifica se o arquivo já existe
 if (file_exists($filename)) {
