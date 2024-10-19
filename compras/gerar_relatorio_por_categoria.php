@@ -196,6 +196,7 @@ if($empresa == 0 OR $empresa == 1){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias com notas cadastradas para a empresa e ano específicos
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -225,6 +226,7 @@ if($empresa == 0 OR $empresa == 1){
     $activeWorksheet->setCellValue('A' . $row_categoria, 'TOTAL:');
     $activeWorksheet->getStyle('A' . $row_categoria)->applyFromArray($total_amarelo);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($total_amarelo);
+
     $mes = 1; // Ajustado para 1 em vez de 01
     $row_mês = 'B';
 
@@ -242,6 +244,20 @@ if($empresa == 0 OR $empresa == 1){
     $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
     $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
+
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;
@@ -277,6 +293,7 @@ if($empresa == 0 OR $empresa == 1){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -319,9 +336,23 @@ if($empresa == 0 OR $empresa == 1){
     }
 
     $totalempresa = $Compras_notas->totalEmpresa(3, date('Y'));
-    $activeWorksheet->setCellValue($row_mes . $row_categoria, $totalempresa);
-    $activeWorksheet->getCell($row_mes . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
+    $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
+
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;
@@ -357,6 +388,7 @@ if($empresa == 0 OR $empresa == 1){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -399,9 +431,23 @@ if($empresa == 0 OR $empresa == 1){
     }
 
     $totalempresa = $Compras_notas->totalEmpresa(5, date('Y'));
-    $activeWorksheet->setCellValue($row_mes . $row_categoria, $totalempresa);
-    $activeWorksheet->getCell($row_mes . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
+    $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
+
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;
@@ -441,6 +487,7 @@ if($empresa == 0 OR $empresa == 2){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -483,9 +530,23 @@ if($empresa == 0 OR $empresa == 2){
     }
 
     $totalempresa = $Compras_notas->totalEmpresa(2, date('Y'));
-    $activeWorksheet->setCellValue($row_mes . $row_categoria, $totalempresa);
-    $activeWorksheet->getCell($row_mes . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
+    $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
+
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;
@@ -521,6 +582,7 @@ if($empresa == 0 OR $empresa == 2){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -563,9 +625,23 @@ if($empresa == 0 OR $empresa == 2){
     }
 
     $totalempresa = $Compras_notas->totalEmpresa(4, date('Y'));
-    $activeWorksheet->setCellValue($row_mes . $row_categoria, $totalempresa);
-    $activeWorksheet->getCell($row_mes . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
+    $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
+
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;
@@ -601,6 +677,7 @@ if($empresa == 0 OR $empresa == 2){
 
     $row_categoria++;
 
+    $row_inicio = $row_categoria;
     //Lista todas as categorias
     foreach ($Compras_Categoria->listar() as $cc) {
         $cca = strtoupper($cc->categoria);
@@ -643,10 +720,23 @@ if($empresa == 0 OR $empresa == 2){
     }
 
     $totalempresa = $Compras_notas->totalEmpresa(6, date('Y'));
-    $activeWorksheet->setCellValue($row_mes . $row_categoria, $totalempresa);
-    $activeWorksheet->getCell($row_mes . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->setCellValue($row_mês . $row_categoria, $totalempresa);
+    $activeWorksheet->getCell($row_mês . $row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
     $activeWorksheet->getStyle('N' . $row_categoria)->applyFromArray($red);
 
+    $row_categoria++;
+
+    $activeWorksheet->setCellValue('A' . $row_categoria, 'MÉDIA:');
+    $col = 'B';
+    for($i = 1;$i<=12;$i++){
+        $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+        $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+        $col++;
+    }
+    $activeWorksheet->setCellValue($col.$row_categoria,'=IFERROR(AVERAGE('.$col.$row_inicio.':'.$col.($row_categoria-2).'),"")');
+    $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
+    $activeWorksheet->getStyle('A'.$row_categoria.':N'.$row_categoria)->applyFromArray($total_amarelo);
+    $activeWorksheet->getStyle($col.$row_categoria)->applyFromArray($red);
 
     $activeWorksheet->getStyle('A'.$row_titulo.':N' . $row_categoria)->applyFromArray($border_black);
     $row_categoria++;

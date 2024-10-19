@@ -302,6 +302,23 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
       // Retorna a primeira palavra em letras maiúsculas
       return strtoupper($palavras[0]);
   }
+
+  public static function Motivo($motivo){
+    switch($motivo){
+      case 1:
+        echo 'Pressa';
+      break;
+      case 2:
+        echo 'Já Tem Ótica';
+      break;
+      case 3:
+        echo 'Não mudou Grau';
+      break;
+      case 4:
+        echo 'Não passou no Balção';
+      break;
+    }
+  }
   
 }
 

@@ -36,6 +36,30 @@ $real = new Accounting(
     true
 );
 
+$azul_claro = [
+    'font' => [
+        'color' => [
+            'rgb' => 'DAEEF3', // azul_claro
+        ],
+    ],
+];
+
+$verde_claro = [
+    'font' => [
+        'color' => [
+            'rgb' => 'EBF1DE', // verde_claro
+        ],
+    ],
+];
+
+$vermelho_claro = [
+    'font' => [
+        'color' => [
+            'rgb' => 'F2DCDB', // vermelho_claro
+        ],
+    ],
+];
+
 $red = [
     'font' => [
         'bold' => true,
@@ -147,13 +171,7 @@ $estilo_compra = [
     'fill' => [
         'fillType' => Fill::FILL_SOLID,
         'startColor' => [
-            'rgb' => '1F497D', //Azul
-        ],
-    ],
-    'font' => [
-        'bold' => true,
-        'color' => [
-            'rgb' => 'FFFFFF', // Branco
+            'rgb' => 'DAEEF3', //Azul
         ],
     ],
 ];
@@ -162,13 +180,7 @@ $estilo_venda = [
     'fill' => [
         'fillType' => Fill::FILL_SOLID,
         'startColor' => [
-            'rgb' => '8064A2', //Roxo
-        ],
-    ],
-    'font' => [
-        'bold' => true,
-        'color' => [
-            'rgb' => 'FFFFFF', // Branco
+            'rgb' => 'EBF1DE', //Roxo
         ],
     ],
 ];
@@ -177,13 +189,7 @@ $estilo_estoque = [
     'fill' => [
         'fillType' => Fill::FILL_SOLID,
         'startColor' => [
-            'rgb' => 'C0504D', //Vermelho
-        ],
-    ],
-    'font' => [
-        'bold' => true,
-        'color' => [
-            'rgb' => 'FFFFFF', // Branco
+            'rgb' => 'F2DCDB', //Vermelho
         ],
     ],
 ];
@@ -913,17 +919,17 @@ if($empresa == 0 OR $empresa == 2){
         
         for ($i = 0; $i < 12; $i++) {
             $newSheet->setCellValue($coluna . $row_categoria, "COM");
-            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_compra);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "VEN");
-            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_venda);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "EST");
-            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_estoque);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
         }
@@ -951,9 +957,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -968,9 +977,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1086,9 +1098,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1103,9 +1118,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1221,9 +1239,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1238,9 +1259,12 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
                             $col = getNextColumn($col);
+                            $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;

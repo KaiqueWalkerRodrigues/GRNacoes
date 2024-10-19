@@ -85,6 +85,8 @@ $bordas = [
     ],
 ];
 
+$formatoReal = '_-"R$" * #,##0.00_-;-"R$" * #,##0.00_-;_-"R$" * "-"??_-;_-@_-';
+
 $row = 1;
 
 $spreadsheet = new Spreadsheet();
@@ -95,6 +97,9 @@ $captacao->setTitle('CAPTAÇÃO');
 $spreadsheet->getDefaultStyle()->getFont()->setName('Aptos Narrow');
 // Cria um estilo de fonte com tamanho 11
 $spreadsheet->getDefaultStyle()->getFont()->setSize(11);
+
+// Definir o zoom para 80%
+$captacao->getSheetView()->setZoomScale(80);
 
 // Remover as margens
 $captacao->getPageMargins()->setTop(0);
@@ -107,19 +112,19 @@ $spreadsheet->getDefaultStyle()->getFill()->setFillType(Fill::FILL_SOLID)->getSt
 
 $row++;
 
-$captacao->setCellValue('E'.$row,'PERIODO:');
-$captacao->getStyle('E'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-$captacao->getStyle('E'.$row)->applyFromArray($titulo);
-$captacao->setCellValue('F'.$row,$inicio_formatado.' - '.$fim_formatado);
-$captacao->getStyle('F'.$row)->applyFromArray($titulo);
+$captacao->setCellValue('A'.$row,'PERIODO:');
+$captacao->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+$captacao->getStyle('A'.$row)->applyFromArray($titulo);
+$captacao->setCellValue('B'.$row,$inicio_formatado.' - '.$fim_formatado);
+$captacao->getStyle('B'.$row)->applyFromArray($titulo);
 
 $row++;
 
-$captacao->setCellValue('E'.$row,'RELATÓRIO GERADO EM:');
-$captacao->getStyle('E'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-$captacao->getStyle('E'.$row)->applyFromArray($titulo);
-$captacao->setCellValue('F'.$row,date('d/m/Y').' ('.date('H:i'.')'));
-$captacao->getStyle('F'.$row)->applyFromArray($titulo);
+$captacao->setCellValue('A'.$row,'RELATÓRIO GERADO EM:');
+$captacao->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+$captacao->getStyle('A'.$row)->applyFromArray($titulo);
+$captacao->setCellValue('B'.$row,date('d/m/Y').' ('.date('H:i'.')'));
+$captacao->getStyle('B'.$row)->applyFromArray($titulo);
 
 $row++;
 $row++;
@@ -127,56 +132,203 @@ $row++;
 // CLÍNICA MATRIZ
 {
     //Título
-    $captacao->setCellValue('B'.$row,'CAPTAÇÃO  CLÍNICA - (PARQUE)');
-    $captacao->getStyle('B'.$row)->applyFromArray($titulo);
-    $captacao->mergeCells('B'.$row.':H'.$row);
-    $captacao->getStyle('B'.$row.':H'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $captacao->setCellValue('E'.$row,'CAPTAÇÃO  CLÍNICA - (PARQUE)');
+    $captacao->getStyle('E'.$row)->applyFromArray($titulo);
+    $captacao->mergeCells('E'.$row.':H'.$row);
+    $captacao->getStyle('E'.$row.':H'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $captacao->setCellValue('C'.$row,'SISTEMA');
+    $captacao->getStyle('C'.$row)->applyFromArray($titulo);
+    $captacao->getStyle('C'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $captacao->setCellValue('D'.$row,'CAPTAÇÃO');
+    $captacao->getStyle('D'.$row)->applyFromArray($titulo);
+    $captacao->getStyle('D'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     $row++;
 
     $row_inicio = $row;
 
+    $col = 'B';
+
     //Cabeçalhos
-    $captacao->setCellValue('B'.$row,'CAPTADOR');
-    $captacao->setCellValue('C'.$row,'RECEITAS');
-    $captacao->setCellValue('D'.$row,'CAPTADOS');
-    $captacao->setCellValue('E'.$row,'NÃO CAPTADOS');
-    $captacao->setCellValue('F'.$row,'(%) CAPTAÇÃO');
-    $captacao->setCellValue('G'.$row,'LENTES');
-    $captacao->setCellValue('H'.$row,'GARANTIAS');
-    $captacao->getStyle('B'.$row.':H'.$row)->applyFromArray($cabecalho_parque);
+    $captacao->setCellValue($col.$row,'CAPTADOR');
+    $col++;
+    $captacao->setCellValue($col.$row,'CAPTADOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'CAPTADOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'(%) CAPTADOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'CONVERTIDOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'(%) CONVERTIDOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'VENDIDOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'(%) VENDIDOS');
+    $col++;
+    $captacao->setCellValue($col.$row,'LENTES');
+    $col++;
+    $captacao->setCellValue($col.$row,'GARANTIAS');
+    $col++;
+    $captacao->setCellValue($col.$row,'COMISSÕES (R$2,00)');
+    $col++;
+    $captacao->setCellValue($col.$row,'PREMIAÇÃO (%)');
+    $captacao->getStyle('B'.$row.':M'.$row)->applyFromArray($cabecalho_parque);
+    $captacao->getStyle('B'.$row.':M'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $sistema = False;
 
     foreach($Captacao->listarCaptadoresPorEmpresa(1) as $captador){
         if($Captacao->contarCaptacoesNoIntervalo($captador->id_usuario,$inicio,$fim) > 0){
+            $col = 'B';
             $row++;
 
-            $captacao->setCellValue('B'.$row,Helper::primeiroNomeMaisculo($captador->nome));
-            $captacao->getStyle('B'.$row)->applyFromArray($titulo);
+            $Captados = $Captacao->contarCaptacoesDoPeriodo($inicio,$fim,$captador->id_usuario,1);
+            $NaoCaptados = $Captacao->contarNaoCaptacoesDoPeriodo($inicio,$fim,$captador->id_usuario,1);
+            $Captaveis = $Captacao->contarCaptaveisDoPeriodo($inicio,$fim,$captador->id_usuario,1);
+            $Pacientes = $Captacao->contarPacientesDoPeriodo($inicio,$fim,$captador->id_usuario,1);
+
+            $captacao->setCellValue($col.$row,Helper::primeiroNomeMaisculo($captador->nome));
+            $captacao->getStyle($col.$row)->applyFromArray($titulo);
+
+            $col++;
+        
+            if($sistema == True){
+                $captacao->setCellValue($col.$row,'=C'.$row_primeiro);
+            }else{
+                $row_primeiro = $row;
+                $sistema = True;
+            }
+
+            $col++;
+            
+            $captacao->setCellValue($col.$row,$Pacientes);
+
+            $col++;
+
+            $captacao->setCellValue($col.$row, '=IFERROR(D'.$row.'/C'.$row.',0)');
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+
+            $col++;
+
+            $captacao->setCellValue($col.$row,$Captados);
+
+            $col++;
+
+            $captacao->setCellValue($col.$row,($Captados/$Captaveis));
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+            
+            $col++;
+            $col++;
+
+            $captacao->setCellValue($col.$row,'=IFERROR(H'.$row.'/D'.$row.',0)');
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+
+            $col++;
+            
+            $captacao->setCellValue($col.$row,$Captacao->contarLentesDoPeriodo($inicio,$fim,$captador->id_usuario,1));
+            
+            $col++;
+            
+            $captacao->setCellValue($col.$row,$Captacao->contarGarantiasDoPeriodo($inicio,$fim,$captador->id_usuario,1));
+
+            $col++;
+
+            $captacao->setCellValue($col.$row,'=H'.$row.'*2');
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode($formatoReal);
+
+            $col++;
+
+            $captacao->setCellValue($col.$row, '=IF(E'.$row.'>90%, 250, IF(E'.$row.'>80%, 200, IF(E'.$row.'>70%, 150, IF(E'.$row.'>60%, 100, IF(E'.$row.'>50%, 50, 0)))))');
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode($formatoReal);
+
+            $col++;
+
+            $captacao->setCellValue($col.$row,'=SUM(L'.$row.':M'.$row.')');
+            $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode($formatoReal);
+            
+            $captacao->getStyle('B'.$row.':N'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         }
     }
 
     $row++;
 
-    $captacao->setCellValue('B'.$row,'TOTAL');
-    $captacao->getStyle('B'.$row.':H'.$row)->applyFromArray($cabecalho_parque);
+    $col = 'B';
+    
+    $TotalCaptados = $Captacao->contarTotalCaptacoesDoPeriodo($inicio,$fim,1);
+    $TotalNaoCaptados = $Captacao->contarTotalNaoCaptacoesDoPeriodo($inicio,$fim,1);
+    $TotalCaptaveis = $Captacao->contarTotalCaptaveisDoPeriodo($inicio,$fim,1);
+    $TotalPacientes= $Captacao->contarTotalPacientesDoPeriodo($inicio,$fim,1);
 
-    $captacao->getStyle('B'.$row_inicio.':H'.$row)->applyFromArray($bordas);
+    $captacao->setCellValue($col.$row,'TOTAL');
+
+    $col++;
+    
+    $captacao->setCellValue($col.$row,'=C'.$row_primeiro);
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,$TotalPacientes);
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,'=IFERROR(D'.$row.'/C'.$row.',0)');
+    $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,$TotalCaptados);
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+
+    
+    $col++;
+    
+    $captacao->setCellValue($col.$row,'=SUM('.$col.$row_primeiro.':'.$col.($row-1).')');
+
+    $col++;
+    
+    $captacao->setCellValue($col.$row,'=IFERROR(H'.$row.'/D'.$row.',0)');
+    $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+    
+    $col++;
+    
+    $captacao->setCellValue($col.$row,$Captacao->contarTotalLentesDoPeriodo($inicio,$fim,1));
+    
+    $col++;
+    
+    $captacao->setCellValue($col.$row,$Captacao->contarTotalGarantiasDoPeriodo($inicio,$fim,1));
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,'=H'.$row.'*2');
+    $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode($formatoReal);
+
+    $col++;
+
+    $captacao->setCellValue($col.$row,'=SUM('.$col.$row_primeiro.':'.$col.($row-1).')');
+    $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode($formatoReal);
+
+    $captacao->getStyle('B'.$row.':M'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $captacao->getStyle('B'.$row.':M'.$row)->applyFromArray($cabecalho_parque);
+
+    $captacao->getStyle('B'.$row_inicio.':M'.$row)->applyFromArray($bordas);
 }
 
 //AutoSize
 {
-    $captacao->getColumnDimension('A')->setAutoSize(true);
-    $captacao->getColumnDimension('B')->setAutoSize(true);
-    $captacao->getColumnDimension('C')->setAutoSize(true);
-    $captacao->getColumnDimension('D')->setAutoSize(true);
-    $captacao->getColumnDimension('E')->setAutoSize(true);
-    $captacao->getColumnDimension('F')->setAutoSize(true);
-    $captacao->getColumnDimension('G')->setAutoSize(true);
-    $captacao->getColumnDimension('H')->setAutoSize(true);
+    $col = 'A';
+    for($i = 0;$i < 15;$i++){
+        $captacao->getColumnDimension($col)->setAutoSize(true);
+        $col++;
+    }
 }
 
 //FIM
-
 $spreadsheet->setActiveSheetIndexByName('CAPTAÇÃO');
 
 // Converter a data para o formato (dia-mês-ano)
@@ -185,14 +337,18 @@ $fim_formatado = DateTime::createFromFormat('Y-m-d', $fim)->format('d-m-Y');
 
 $filename = 'relatorio_captacao_geral_'.$inicio_formatado.'a'.$fim_formatado.'.xlsx';
 
-// Verifica se o arquivo já existe
-if (file_exists($filename)) {
-    // Se existir, exclui o arquivo antigo
-    unlink($filename);
+// Verifica se existe algum arquivo que começa com "relatorio_captacao_geral"
+$files = glob('relatorio_captacao_geral*.xlsx');
+
+if (!empty($files)) {
+    // Se existirem, exclui todos os arquivos correspondentes
+    foreach ($files as $file) {
+        unlink($file);
+    }
 }
 
 // Salva o novo arquivo
 $writer = new Xlsx($spreadsheet);
 $writer->save($filename);
 
-header('Location: ' . $filename);
+header("Location: $filename");

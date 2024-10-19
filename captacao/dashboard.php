@@ -63,7 +63,7 @@
                                 <label for="empresa" class="form-label">Empresa</label>
                                 <select id="empresaSelect" class="form-control">
                                 <?php 
-                                    if ($_SESSION['id_setor'] == 1 || $_SESSION['id_setor'] == 12) { ?>
+                                    if ($_SESSION['id_setor'] == 1 || $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14) { ?>
                                         <option value="0">Todas</option>
                                         <option value="1">Clínica Parque</option>
                                         <option value="3">Clínica Mauá</option>

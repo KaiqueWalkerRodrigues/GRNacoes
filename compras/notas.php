@@ -153,11 +153,11 @@
                                             <th>Empresa</th>
                                             <th>Categoria</th>
                                             <th>Fornecedor</th>
-                                            <th class="d-none">Valor</th>
+                                            <!-- <th class="d-none">Valor</th> -->
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
+                                    <!-- <tfoot>
                                         <tr>
                                             <th>Total:</th>
                                             <th></th>
@@ -169,7 +169,7 @@
                                             <th class="d-none"></th>
                                             <th>R$ <span id="totalValor"></span></th>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> -->
                                     <tbody>
                                         <?php foreach($Compras_Notas->listar() as $cn){ ?>
                                         <tr>
@@ -181,7 +181,7 @@
                                             <td><?php echo Helper::mostrar_empresa($cn->id_empresa) ?></td>
                                             <td><?php echo $Compras_Categorias->nomeCategoria($Compras_Fornecedores->mostrar($cn->id_fornecedor)->id_categoria) ?></td>
                                             <td><?php echo $Compras_Fornecedores->nomeFornecedor($cn->id_fornecedor)?></td>
-                                            <td class="d-none"><?php echo $cn->valor ?></td>
+                                            <!-- <td class="d-none"><?php //echo $cn->valor ?></td> -->
                                             <td class="text-center"><button class="btn btn-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
                                                 data-descricao_nota="<?php echo $cn->descricao ?>"
                                                 data-valor="<?php echo $cn->valor ?>"
@@ -447,21 +447,6 @@
 $(document).ready(function() {
     $('#comp').addClass('active');
     $('#compras_notas').addClass('active');
-
-    // Função para calcular e exibir a soma total dos valores
-    function calcularSomaTotal() {
-        var table = $('#dataTable').DataTable();
-        var somaTotal = table
-            .column(7, { search: 'applied' }) // Ajuste o índice da coluna conforme necessário
-            .data()
-            .reduce(function(a, b) {
-                var x = parseFloat(a) || 0;
-                var y = parseFloat(b) || 0;
-                return x + y;
-            }, 0);
-
-        $('#totalValor').text(somaTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
-    }
 
     // Verificar se o DataTable já está inicializado e inicializá-lo se não estiver
     if (!$.fn.DataTable.isDataTable('#dataTable')) {

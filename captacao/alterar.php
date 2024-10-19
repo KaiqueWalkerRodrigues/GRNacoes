@@ -91,9 +91,9 @@
                         <div class="col-12">
                             <h5 class="fw-bold">Registro de Captação (<?php echo Helper::formatarData($dataSelecionada) ?>)</h5>
                             <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
-                                <h5 class="fw-bold">Total Receitas: <?php echo $Captacao->contarTotalReceitas($dataSelecionada) ?> </h5>
+                                <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes($dataSelecionada) ?> </h5>
                             <?php }else{ ?>
-                                <h5 class="fw-bold">Total Receitas: <?php echo $Captacao->contarTotalReceitas($dataSelecionada, $_SESSION['id_empresa']) ?></h5>
+                                <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes($dataSelecionada, $_SESSION['id_empresa']) ?></h5>
                             <?php } ?>
                         </div>
                         
@@ -238,6 +238,16 @@
                                 <option value="4">Garantia</option>
                             </select>
                         </div>
+                        <div class="col-3" id="motivoContainer" style="display:none;">
+                            <label class="form-label" for="motivo">Motivo:</label>
+                            <select class="form-control" id="motivo" name="id_motivo">
+                                <option value="">Selecione...</option>
+                                <option value="1">Pressa</option>
+                                <option value="2">Tem outra Ótica</option>
+                                <option value="3">Não mudou Grau</option>
+                                <option value="4">Não passou no Balção</option>
+                            </select>
+                        </div>
                         <div class="col-3">
                             <label class="form-label" for="medico">Médico:</label>
                             <select class="form-control" id="medico" name="id_medico" required>
@@ -275,8 +285,8 @@
                                             <th>Captador</th>
                                             <th>Paciente</th>
                                             <th>Captado</th>
+                                            <th>Motivo</th>
                                             <th>Médico</th>
-                                            <th>Observação</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -290,8 +300,8 @@
                                             <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
                                             <td><?php echo $cap->nome_paciente; ?></td>
                                             <td><?php echo Helper::captado($cap->captado); ?></td>
+                                            <td><?php echo Helper::motivo($cap->id_motivo) ?></td>
                                             <td><?php echo $cap->nome_medico; ?></td>
-                                            <td><?php echo $cap->observacao; ?></td>
                                             <td class="text-center">
                                                 <?php if($cap->id_captador == $_SESSION['id_usuario'] OR $_SESSION['id_setor'] == 1){ ?>
                                                     <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditar"
@@ -515,8 +525,18 @@
             $('#btnFecharModal').on('click', function () {
                 window.location.href = '/'; // Redireciona para a página '/'
             });
-        });
 
+            document.getElementById('captado').addEventListener('change', function() {
+                const captadoValue = this.value;
+                const motivoContainer = document.getElementById('motivoContainer');
+
+                if (captadoValue == "0") { // Verifica se a opção é "Não"
+                    motivoContainer.style.display = "block"; // Exibe o campo "Motivo"
+                } else {
+                    motivoContainer.style.display = "none"; // Esconde o campo "Motivo"
+                }
+            });
+        });
 
         // Função para adicionar dados à tabela dinamicamente
         function addDataToTable(name, captado, medico, observacao) {

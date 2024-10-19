@@ -25,6 +25,31 @@ class Financeiro_Boletos {
         return $dados;
     }      
 
+    public function listarAtrasados() {
+        $sql = $this->pdo->prepare("
+            SELECT 
+                fb.*
+            FROM 
+                financeiro_boletos fb
+            INNER JOIN 
+                financeiro_campanhas fc 
+            ON 
+                fb.id_campanha = fc.id_financeiro_campanha
+            WHERE 
+                fc.periodo_fim < CURDATE()    -- Verifica se o período da campanha já terminou
+                AND fb.valor_pago = 0         -- Verifica se o boleto ainda não foi pago
+                AND fb.deleted_at IS NULL     -- Garante que o boleto não foi deletado
+                AND fc.deleted_at IS NULL     -- Garante que a campanha não foi deletada
+            ORDER BY 
+                fb.data_venda
+        ");        
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }      
+
     /**
      * Cadastrar um novo boleto financeiro
      * @param array $dados    

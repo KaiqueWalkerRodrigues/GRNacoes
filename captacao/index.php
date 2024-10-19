@@ -85,9 +85,9 @@
                         <div class="col-12">
                             <h5 class="fw-bold">Registro de Captação (<?php $agora = date("d/m/Y"); echo $agora ?>)</h5>
                             <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
-                                <h5 class="fw-bold">Total Receitas: <?php echo $Captacao->contarTotalReceitas(date('Y-m-d')) ?></h5>
+                                <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d')) ?></h5>
                             <?php }else{ ?>
-                                <h5 class="fw-bold">Total Receitas: <?php echo $Captacao->contarTotalReceitas(date('Y-m-d'), $_SESSION['id_empresa']) ?></h5>
+                                <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d'), $_SESSION['id_empresa']) ?></h5>
                             <?php } ?>
                         </div>                       
 
@@ -213,7 +213,6 @@
 
                     </div>
 
-                    
                     <form id="dataForm" class="row" method="POST">
                         <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
@@ -232,6 +231,16 @@
                                 <option value="4">Garantia</option>
                             </select>
                         </div>
+                        <div class="col-3" id="motivoContainer" style="display:none;">
+                            <label class="form-label" for="motivo">Motivo:</label>
+                            <select class="form-control" id="motivo" name="id_motivo">
+                                <option value="">Selecione...</option>
+                                <option value="1">Pressa</option>
+                                <option value="2">Tem outra Ótica</option>
+                                <option value="3">Não mudou Grau</option>
+                                <option value="4">Não passou no Balção</option>
+                            </select>
+                        </div>
                         <div class="col-3">
                             <label class="form-label" for="medico">Médico:</label>
                             <select class="form-control" id="medico" name="id_medico" required>
@@ -241,9 +250,9 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-3">
+                        <div class="col-3" id="observacaoContainer">
                             <label class="form-label" for="observacao">Observação:</label>
-                            <input class="form-control" type="text" id="observacao" name="observacao">
+                            <input class="form-control" type="text" id="observacao">
                         </div>
                     </form>
 
@@ -265,8 +274,8 @@
                                             <th>Captador</th>
                                             <th>Paciente</th>
                                             <th>Captado</th>
+                                            <th>Motivo</th>
                                             <th>Médico</th>
-                                            <th>Observação</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -280,8 +289,8 @@
                                             <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
                                             <td><?php echo $cap->nome_paciente; ?></td>
                                             <td><?php echo Helper::captado($cap->captado); ?></td>
+                                            <td><?php echo Helper::motivo($cap->id_motivo) ?></td>
                                             <td><?php echo $cap->nome_medico; ?></td>
-                                            <td><?php echo $cap->observacao; ?></td>
                                             <td class="text-center">
                                                 <?php if($cap->id_captador == $_SESSION['id_usuario'] OR $_SESSION['id_setor'] == 1){ ?>
                                                     <button class="btn btn-secondary" data-toggle="modal" data-target="#modalEditar"
@@ -458,6 +467,20 @@
             });
 
         });
+
+        document.getElementById('captado').addEventListener('change', function() {
+            const captadoValue = this.value;
+            const motivoContainer = document.getElementById('motivoContainer');
+            const observacaoContainer = document.getElementById('observacaoContainer');
+
+            if (captadoValue == "0") { // Verifica se a opção é "Não"
+                motivoContainer.style.display = "block"; // Exibe o campo "Motivo"
+            } else {
+                motivoContainer.style.display = "none"; // Esconde o campo "Motivo"
+            }
+        });
+
+
 
         // Função para adicionar dados à tabela dinamicamente
         function addDataToTable(name, captado, medico, observacao) {
