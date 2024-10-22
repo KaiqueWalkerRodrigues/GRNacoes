@@ -13,6 +13,8 @@ $Boletos = new Financeiro_Boletos();
 $periodo_inicio = $Campanha->mostrar($id_campanha)->periodo_inicio;
 $periodo_fim = $Campanha->mostrar($id_campanha)->periodo_fim;
 
+$campanha = $Campanha->Mostrar($id_campanha);
+
 // Criando uma nova planilha
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -36,6 +38,12 @@ $cabecalho = [
     ],
 ];
 
+$titulo = [
+    'font' => [
+        'bold' => true,
+    ],
+];
+
 // Função para configurar o cabeçalho da planilha
 function configurarCabecalho($sheet) {
     $cabecalho = [
@@ -53,7 +61,7 @@ function configurarCabecalho($sheet) {
             ],
         ],
     ];
-    $sheet->getStyle('A1:G1')->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle('A2:G2')->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 }
 
 // Função auxiliar para obter primeiro e último nome
@@ -83,18 +91,53 @@ if ($id_vendedor > 0) {
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle(getPrimeiroUltimoNome($vendedor->nome));
 
+        $row = 1;
+
+        $sheet->setCellValue('A'.$row,$campanha->nome);
+        $sheet->getStyle('A'.$row)->applyFromArray($titulo);
+        $sheet->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        
+        $periodo_inicio = date("d/m/Y", strtotime($campanha->periodo_inicio));
+        $periodo_fim = date("d/m/Y", strtotime($campanha->periodo_fim));
+        $periodo = "$periodo_inicio - $periodo_fim";
+        
+        $sheet->setCellValue('B'.$row, 'PERÍODO:');
+        $sheet->getStyle('B'.$row)->applyFromArray($titulo);
+        $sheet->getStyle('B'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $sheet->setCellValue('C'.$row,$periodo);
+        $sheet->getStyle('C'.$row)->applyFromArray($titulo);
+
+        $sheet->setCellValue('D'.$row, 'PAGAMENTO:');
+        $sheet->getStyle('D'.$row)->applyFromArray($titulo);
+        $sheet->getStyle('D'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $data_pagamento = date("d/m/Y", strtotime($campanha->data_pagamento));
+        $sheet->setCellValue('E'.$row, $data_pagamento);
+        $sheet->getStyle('E'.$row)->applyFromArray($titulo);
+
+        $sheet->setCellValue('F'.$row, 'PAGAMENTO PÓS:');
+        $sheet->getStyle('F'.$row)->applyFromArray($titulo);
+        $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $data_pagamento_pos = date("d/m/Y", strtotime($campanha->data_pagamento_pos));
+        $sheet->setCellValue('G'.$row, $data_pagamento_pos);
+        $sheet->getStyle('G'.$row)->applyFromArray($titulo);
+
+        $row++;
+
         // Configurar cabeçalho das colunas
-        $sheet->setCellValue('A1', 'Vendedor');
-        $sheet->setCellValue('B1', 'N° Boleto');
-        $sheet->setCellValue('C1', 'Empresa');
-        $sheet->setCellValue('D1', 'Cliente');
-        $sheet->setCellValue('E1', 'Data Venda');
-        $sheet->setCellValue('F1', 'Valor');
-        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('A'.$row, 'Vendedor');
+        $sheet->setCellValue('B'.$row, 'N° Boleto');
+        $sheet->setCellValue('C'.$row, 'Empresa');
+        $sheet->setCellValue('D'.$row, 'Cliente');
+        $sheet->setCellValue('E'.$row, 'Data Venda');
+        $sheet->setCellValue('F'.$row, 'Valor');
+        $sheet->setCellValue('G'.$row, 'Status');
+
+        $row++;
 
         configurarCabecalho($sheet);
-
-        $row = 2; // Começa a preencher os dados na linha 2
 
         // Iterar pelos boletos do vendedor
         foreach ($boletosVendedor as $boleto) {
@@ -108,7 +151,7 @@ if ($id_vendedor > 0) {
             // Definir status
             if ($boleto->valor_pago == $boleto->valor) {
                 // Verificar se o pagamento foi feito após o período
-                if ($boleto->data_pago > $periodo_fim) {
+                if ($boleto->data_pago > $campanha->periodo_fim) {
                     $status = 'PÓS';
                 } else {
                     $status = 'Convertido';
@@ -116,7 +159,7 @@ if ($id_vendedor > 0) {
                 $total_convertido += $boleto->valor_pago;
             } elseif ($boleto->valor_pago == 0) {
                 // Verificar se o boleto está atrasado
-                if (strtotime($boleto->data_venda) < strtotime($periodo_fim) && strtotime(date('Y-m-d')) > strtotime($periodo_fim)) {
+                if (strtotime($boleto->data_venda) < strtotime($campanha->periodo_fim) && strtotime(date('Y-m-d')) > strtotime($campanha->periodo_fim)) {
                     $status = 'Atrasado';
                     $total_pendente += $boleto->valor;
                 } else {
@@ -189,18 +232,45 @@ if ($id_vendedor > 0) {
             // Definir o título da planilha com o primeiro e último nome do vendedor
             $sheet->setTitle(getPrimeiroUltimoNome($vendedor->nome));
 
+            $row = 1;
+
+            $sheet->setCellValue('A'.$row,$campanha->nome);
+            $sheet->getStyle('A'.$row)->applyFromArray($titulo);
+            $sheet->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            
+            $periodo_inicio = date("d/m/Y", strtotime($campanha->periodo_inicio));
+            $periodo_fim = date("d/m/Y", strtotime($campanha->periodo_fim));
+            $periodo = "$periodo_inicio - $periodo_fim";
+            
+            $sheet->setCellValue('C'.$row, 'PERÍODO:');
+            $sheet->getStyle('C'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle('C'.$row)->applyFromArray($titulo);
+
+            $sheet->setCellValue('D'.$row,$periodo);
+            $sheet->getStyle('D'.$row)->applyFromArray($titulo);
+
+            $sheet->setCellValue('E'.$row, 'PAGAMENTO:');
+            $sheet->getStyle('C'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle('E'.$row)->applyFromArray($titulo);
+
+            $data_pagamento = date("d/m/Y", strtotime($campanha->data_pagamento));
+            $sheet->setCellValue('F'.$row, $data_pagamento);
+            $sheet->getStyle('F'.$row)->applyFromArray($titulo);
+
+            $row++;
+
             // Configurar cabeçalho das colunas
-            $sheet->setCellValue('A1', 'Vendedor');
-            $sheet->setCellValue('B1', 'N° Boleto');
-            $sheet->setCellValue('C1', 'Empresa');
-            $sheet->setCellValue('D1', 'Cliente');
-            $sheet->setCellValue('E1', 'Data Venda');
-            $sheet->setCellValue('F1', 'Valor');
-            $sheet->setCellValue('G1', 'Status');
+            $sheet->setCellValue('A'.$row, 'Vendedor');
+            $sheet->setCellValue('B'.$row, 'N° Boleto');
+            $sheet->setCellValue('C'.$row, 'Empresa');
+            $sheet->setCellValue('D'.$row, 'Cliente');
+            $sheet->setCellValue('E'.$row, 'Data Venda');
+            $sheet->setCellValue('F'.$row, 'Valor');
+            $sheet->setCellValue('G'.$row, 'Status');
+
+            $row++;
 
             configurarCabecalho($sheet);
-
-            $row = 2; // Começa a preencher os dados na linha 2
 
             // Iterar pelos boletos do vendedor
             foreach ($boletosVendedor as $boleto) {
@@ -214,7 +284,7 @@ if ($id_vendedor > 0) {
                 // Definir status
                 if ($boleto->valor_pago == $boleto->valor) {
                     // Verificar se o pagamento foi feito após o período
-                    if ($boleto->data_pago > $periodo_fim) {
+                    if ($boleto->data_pago > $campanha->periodo_fim) {
                         $status = 'PÓS';
                     } else {
                         $status = 'Convertido';
@@ -222,7 +292,7 @@ if ($id_vendedor > 0) {
                     $total_convertido += $boleto->valor_pago;
                 } elseif ($boleto->valor_pago == 0) {
                     // Verificar se o boleto está atrasado
-                    if (strtotime($boleto->data_venda) < strtotime($periodo_fim) && strtotime(date('Y-m-d')) > strtotime($periodo_fim)) {
+                    if (strtotime($boleto->data_venda) < strtotime($campanha->periodo_fim) && strtotime(date('Y-m-d')) > strtotime($campanha->periodo_fim)) {
                         $status = 'Atrasado';
                         $total_pendente += $boleto->valor;
                     } else {

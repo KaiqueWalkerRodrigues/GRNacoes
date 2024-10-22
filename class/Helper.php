@@ -59,6 +59,14 @@ public static function sobeArquivo($arquivo,$diretorio = '../imagens/'){
        }
      }
 
+     public static function encurtarNome($nomeCompleto) {
+        $nomes = explode(' ', $nomeCompleto);
+        $primeiroNome = $nomes[0];
+        $primeiroSobrenome = isset($nomes[1]) ? $nomes[1] : ''; // Verifica se existe um sobrenome
+
+        return $primeiroNome . ' ' . $primeiroSobrenome;
+    }
+
      /**
       * Criptografa um valor
       *

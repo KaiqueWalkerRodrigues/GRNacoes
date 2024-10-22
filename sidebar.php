@@ -102,7 +102,7 @@
 </li> 
 <?php } ?>
 
-<?php if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
+<!-- <?php //if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
 <li class="nav-item" id="otic">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#otica"
         aria-expanded="true" aria-controls="otic">
@@ -116,7 +116,7 @@
         </div>
     </div>
 </li> 
-<?php } ?>
+<?php //} ?> -->
 
 <?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14) ?>
 <li class="nav-item" id="cap">

@@ -98,7 +98,6 @@
                                             <th class="d-none">ID Vendedor</th>
                                             <th>Cliente</th>
                                             <th>Data Venda</th>
-                                            <th>Data Limite</th>
                                             <th>Valor</th>
                                             <th>Status</th>
                                         </tr>
@@ -118,22 +117,10 @@
                                             <td class="d-none"><?php echo $boleto->id_usuario ?></td>
                                             <td><?php echo $boleto->cliente ?></td>
                                             <td><?php echo Helper::converterData($boleto->data_venda) ?></td>
-                                            <td><?php echo Helper::converterData($campanha->periodo_fim) ?></td>
                                             <td class="text-center">R$ <?php echo number_format($boleto->valor, 2, ',', '.'); ?></td>
                                             <td class="text-center">
                                                 <?php 
-                                                    $hoje = date("Y-m-d");
-                                                    if($boleto->valor_pago === $boleto->valor AND $boleto->data_pago<=$campanha->periodo_fim){
-                                                        echo '<b class="text-success">Convertido</b>';
-                                                    }elseif($boleto->valor_pago == 0 AND $hoje<=$campanha->periodo_fim){
-                                                        echo '<b>Pendente</b>';
-                                                    }elseif($boleto->valor_pago == 0 AND $hoje>=$campanha->periodo_fim){
-                                                        echo '<b class="text-danger">Atrasado</b>';
-                                                    }elseif($boleto->valor_pago === $boleto->valor AND $boleto->data_pago>$campanha->periodo_fim){
-                                                        echo '<b class="text-primary">PÓS</b>';
-                                                    }else{
-                                                        echo '<b class="text-danger">ERRO</b>';
-                                                    }
+                                                    echo '<b class="text-danger">Atrasado</b>';
                                                 ?>
                                             </td>
                                         </tr>

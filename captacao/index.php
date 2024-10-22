@@ -96,7 +96,7 @@
                             if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -105,7 +105,7 @@
                             } else {
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -120,7 +120,7 @@
                             if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -129,7 +129,7 @@
                             } else {
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -144,7 +144,7 @@
                             if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -153,7 +153,7 @@
                             } else {
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -168,7 +168,7 @@
                             if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -177,7 +177,7 @@
                             } else {
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -192,7 +192,7 @@
                             if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
                             <?php 
                                 }
                             ?>
@@ -201,7 +201,7 @@
                             } else {
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
                             ?>
-                                    <span><?php echo $usuario->nome ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
                             <?php 
                                 }
                             ?>
