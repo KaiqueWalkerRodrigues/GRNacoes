@@ -23,7 +23,12 @@
 
     <!-- Custom styles for this template-->
     <link href="<?php echo URL ?>/css/sb-admin-2.min.css" rel="stylesheet">
-
+    <style>
+        .porcentagem-p {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -58,8 +63,8 @@
                     <!-- Content Row -->                                 
                     <div class="row">
 
-                        <div class="col-12 mb-3">
-                            <div class="col-3">
+                        <div class="col-6 mb-3 row">
+                            <div class="col-6">
                                 <label for="empresa" class="form-label">Empresa</label>
                                 <select id="empresaSelect" class="form-control">
                                 <?php 
@@ -84,6 +89,8 @@
                                     } ?>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-4 offset-2 mb-3 text-center">
                         </div>
                         <!-- Area Chart -->
                         <div class="col-8">
@@ -112,18 +119,6 @@
                                     </h6>
 
                                     <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
                                     </div>
                                 </div>
                                 <!-- Card Body -->
@@ -141,31 +136,45 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary" id="tituloPizza">Receita por Empresa</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
+                                    <h6 class="m-0 font-weight-bold text-primary" id="tituloPizza">Receita por Empresa (Semanal)</h6>
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-pie pt-4 pb-2">
                                         <canvas id="myPieChart"></canvas>
                                     </div>
-                                    <br><br>
+                                    <br>
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="col-6">
+                            <!-- Project Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Motivos de Não Captação Mais Utilizados (Indeterminado)</h6>
+                                </div>
+                                <div class="card-body" id="motivosMaisUtilizados">
+                                    <!-- O conteúdo será carregado dinamicamente por AJAX -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <!-- Project Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Porcentagem de Captação Por Captador (Semanal)</h6>
+                                </div>
+                                <div class="card-body" id="porcentagemCaptacao">
+                                    <!-- O conteúdo será carregado dinamicamente por AJAX -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-xl-4 col-lg-5">
                     </div>
 
                 </div>
@@ -223,10 +232,75 @@
 
             $('#empresaSelect').change(function (e) { 
                 if($('#empresaSelect').val() == 0){
-                    $('#tituloPizza').text('Receita Por Empresa')
+                    $('#tituloPizza').text('Receita Por Empresa (Semanal)')
                 }else{
-                    $('#tituloPizza').text('Receita Por Profissional')
+                    $('#tituloPizza').text('Receita Por Profissional (Semanal)')
                 }
+            });
+
+            function carregarMotivos(id_empresa) {
+                $.ajax({
+                    url: '/GRNacoes/captacao/filtrarMotivos.php', // Certifique-se de que o caminho está correto
+                    type: 'GET',
+                    data: { id_empresa: id_empresa },
+                    success: function(data) {
+                        $('#motivosMaisUtilizados').html(data); // Atualiza o conteúdo dos motivos
+                    },
+                    error: function() {
+                        $('#motivosMaisUtilizados').html('<p>Erro ao carregar os motivos.</p>');
+                    }
+                });
+            }
+
+            // Função para carregar as porcentagens de captação
+            function carregarPorcentagemCaptacao(id_empresa) {
+                $.ajax({
+                    url: '/GRNacoes/captacao/get_porcentagem_captacao.php', // Caminho do arquivo que retorna o JSON
+                    type: 'GET',
+                    data: { empresaId: id_empresa },
+                    success: function(data) {
+                        var captadores = data; // Data já é um objeto JS, não precisa de JSON.parse()
+                        var html = '';
+
+                        captadores.forEach(function(captador) {
+                            html += `
+                                <h4 class="small font-weight-bold">
+                                    ${captador.nome}
+                                    <span class="float-right text-danger">${captador.nao_captado}% Não Captados</span>
+                                    <span class="float-right text-success" style="margin-right: 10px;">${captador.captado}% Captados</span>
+                                </h4>
+                                <div class="progress mb-4">
+                                    <!-- Barra de progresso verde para captados -->
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                        style="width: ${captador.captado}%"
+                                        aria-valuenow="${captador.captado}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+
+                                    <!-- Barra de progresso vermelha para não captados -->
+                                    <div class="progress-bar bg-danger" role="progressbar"
+                                        style="width: ${captador.nao_captado}%"
+                                        aria-valuenow="${captador.nao_captado}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>`;
+                        });
+
+                        $('#porcentagemCaptacao').html(html); // Preenche a div com as porcentagens
+                    },
+                    error: function() {
+                        $('#porcentagemCaptacao').html('<p>Erro ao carregar os dados de captação.</p>');
+                    }
+                });
+            }
+
+             // Carregar os motivos ao carregar a página
+                carregarMotivos($('#empresaSelect').val());
+                carregarPorcentagemCaptacao($('#empresaSelect').val());
+
+            // Carregar os motivos quando o select de empresa mudar
+            $('#empresaSelect').change(function () {
+                var id_empresa = $(this).val();
+                carregarMotivos(id_empresa);
+                carregarPorcentagemCaptacao(id_empresa);
             });
         });
     </script>

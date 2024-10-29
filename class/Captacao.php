@@ -883,6 +883,31 @@ class Captacao {
             $result = $sql->fetch(PDO::FETCH_OBJ);
             return $result->total;
         }
+
+        public function listarMotivosMaisUtilizados($id_empresa = null) {
+            $query = "SELECT id_motivo, COUNT(*) as total 
+                      FROM captados 
+                      WHERE id_motivo IS NOT NULL AND id_motivo != 0
+                      AND deleted_at IS NULL";
+            
+            if ($id_empresa) {
+                $query .= " AND id_empresa = :id_empresa";
+            }
+        
+            $query .= " GROUP BY id_motivo 
+                        ORDER BY total DESC 
+                        LIMIT 5"; // Limite de 5 motivos mais usados
+        
+            $sql = $this->pdo->prepare($query);
+        
+            if ($id_empresa) {
+                $sql->bindParam(':id_empresa', $id_empresa);
+            }
+        
+            $sql->execute();
+            return $sql->fetchAll(PDO::FETCH_OBJ);
+        }
+        
     
 }
 include_once('Conexao.php');

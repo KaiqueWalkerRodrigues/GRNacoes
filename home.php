@@ -104,6 +104,16 @@
             border-top: 1px solid #ccc;
             margin: 10px 0;
         }
+
+        /* Estilo para as colunas do Trello simples */
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .list-group-item {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -129,32 +139,76 @@
 
                     <div class="row">
 
-                        <!-- Weather Information -->
-                        <div class="col-2">
-                            <div class="card weather-card">
-                                <h5 class="card-title">Clima Atual</h5>
-                                <p id="weather">Carregando...</p>
-                                <small id="weather-desc"></small>
-                            </div>
-                        </div>
+                        <div class="col-8 row">
 
-                        <!-- Time and Date -->
-                        <div class="col-3 offset-2">
-                            <div class="card time-card">
-                                <p id="current-time"></p>
-                                <small id="current-date"></small>
-                            </div>
-                        </div>
-
-                        <div class="col-4 offset-1">
-                            <div class="card user-card p-3">
-                                <div class="user-list" id="user-list">
-                                    <!-- A lista de usuários será carregada aqui via AJAX -->
+                            <!-- Weather Information -->
+                            <div class="col-3">
+                                <div class="card weather-card">
+                                    <h5 class="card-title">Clima Atual</h5>
+                                    <p id="weather">Carregando...</p>
+                                    <small id="weather-desc"></small>
                                 </div>
                             </div>
+
+                            <!-- Time and Date -->
+                            <div class="col-4 offset-4">
+                                <div class="card time-card">
+                                    <p id="current-time"></p>
+                                    <small id="current-date"></small>
+                                </div>
+                            </div>
+                                
+                            <!-- Sistema Versão -->
+                            <div class="col-12 text-center" style="margin-top: -5%">
+                                <h1 style="font-size: 30px;">Versão: <span id="sistema-versao"></span></h1>
+                            </div>
+
+                            <!-- Coluna Pendente -->
+                            <div class="col-4" style="margin-top: -6%">
+                                <div class="card p-3">
+                                    <h5 class="card-title text-warning">Pendente</h5>
+                                    <ul id="todo-list" class="list-group">
+                                        <!-- As tarefas a fazer serão inseridas aqui -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Coluna Desenvolvimento -->
+                            <div class="col-4" style="margin-top: -6%">
+                                <div class="card p-3">
+                                    <h5 class="card-title text-primary">Desenvolvimento</h5>
+                                    <ul id="inprogress-list" class="list-group">
+                                        <!-- Tarefas em andamento serão inseridas aqui -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Coluna Concluído -->
+                            <div class="col-4" style="margin-top: -6%">
+                                <div class="card p-3">
+                                    <h5 class="card-title text-success">Concluído</h5>
+                                    <ul id="done-list" class="list-group">
+                                        <!-- Tarefas concluídas serão inseridas aqui -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-4">
+
+                            <div class="col-12 offset-1">
+                                <div class="card user-card p-3">
+                                    <div class="user-list" id="user-list">
+                                        <!-- A lista de usuários será carregada aqui via AJAX -->
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
+
+                    <br>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -232,12 +286,34 @@
             $('#current-date').text(formattedDate);
         }
 
+        // Função para popular as listas com tarefas
+        function loadTrelloTasks() {
+            setVersion('1.0.6'); // Aqui você altera para a versão atual
+            
+            const todoTasks = ['Sistema Ótica PDF','Orçamento Lente Ctt','Ótica Estoque e Venda','Ótica Metas e Vendas'];
+            const inProgressTasks = ['Orçamento Cirurgia'];
+            const doneTasks = ['Sistema Captação','Pedidos de Compras','Notas Fiscais Compras','Boletos Financeiro','Atrasos Financeiro','Chats','Chamados'];
+
+            $('#todo-list').html(todoTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));
+            $('#inprogress-list').html(inProgressTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));
+            $('#done-list').html(doneTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));
+        }
+
+        function setVersion(version) {
+            $('#sistema-versao').text(version);
+        }
+
         $(document).ready(function () {
             getWeather();
             updateTime();
             setInterval(updateTime, 1000);  // Atualiza a cada segundo
             loadOnlineUsers();
             setInterval(loadOnlineUsers, 1000); // Atualiza a cada segundo
+
+            // Carregar as tarefas no Trello simples
+            loadTrelloTasks();
+            
+            // Definir a versão do sistema
         });
     </script>
 

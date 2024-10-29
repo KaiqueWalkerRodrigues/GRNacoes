@@ -155,6 +155,21 @@
 </li> 
 <?php } ?>
 
+<?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 14) { ?>
+<li class="nav-item" id="ori">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#orientacao"
+        aria-expanded="true" aria-controls="ori">
+        <i class="fa-solid fa-eye"></i>
+        <span>Cirurgia</span>
+    </a> 
+    <div id="orientacao" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" id="orientacao_lanc" href="<?php echo URL ?>/orientacao/">Lançamento Cirurgia</a>
+        </div>
+    </div>
+</li> 
+<?php } ?>
+
 
 <?php if($_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 14 OR $_SESSION['id_setor'] == 12) { ?>
     

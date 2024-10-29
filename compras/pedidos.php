@@ -504,6 +504,7 @@
                         <table class="table table-bordered" id="tableComprados" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
+                                    <th class="d-none">Created_at</th>
                                     <th>Urgência</th>
                                     <th>Título</th>
                                     <th>Empresa</th>
@@ -518,6 +519,7 @@
                                 $comprados = $Compras_Pedidos->listarComprados($id_usuario_logado, $id_setor_usuario);
                                 foreach($comprados as $cp){ ?>
                                 <tr>
+                                    <td class="d-none"><?php echo $cp->created_at ?></td>
                                     <td><?php echo Helper::Urgencia($cp->urgencia); ?></td>
                                     <td><?php echo $cp->titulo ?></td>
                                     <td><?php echo Helper::mostrar_empresa($cp->empresa); ?></td>

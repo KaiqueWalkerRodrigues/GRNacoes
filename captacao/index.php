@@ -84,7 +84,7 @@
                         
                         <div class="col-12">
                             <h5 class="fw-bold">Registro de Captação (<?php $agora = date("d/m/Y"); echo $agora ?>)</h5>
-                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
+                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
                                 <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d')) ?></h5>
                             <?php }else{ ?>
                                 <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d'), $_SESSION['id_empresa']) ?></h5>
@@ -93,7 +93,7 @@
 
                         <div class="card bg-success text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -117,7 +117,7 @@
 
                         <div class="card bg-danger text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -141,7 +141,7 @@
 
                         <div class="card bg-dark text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -165,7 +165,7 @@
 
                         <div class="card bg-primary text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -189,7 +189,7 @@
 
                         <div class="card bg-warning text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
