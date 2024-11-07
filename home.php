@@ -291,7 +291,7 @@
             setVersion('1.0.6'); // Aqui você altera para a versão atual
             
             const todoTasks = ['Sistema Ótica PDF','Orçamento Lente Ctt','Ótica Estoque e Venda','Ótica Metas e Vendas'];
-            const inProgressTasks = ['Orçamento Cirurgia'];
+            const inProgressTasks = ['Lançamento Catarata'];
             const doneTasks = ['Sistema Captação','Pedidos de Compras','Notas Fiscais Compras','Boletos Financeiro','Atrasos Financeiro','Chats','Chamados'];
 
             $('#todo-list').html(todoTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));

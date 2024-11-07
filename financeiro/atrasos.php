@@ -134,8 +134,8 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
-                                            <td></td>
                                             <th><b>R$ <span id="total_valor">0,00</span></b></th>
+                                            <td></td>
                                             <th></th>
                                         </tr>
                                     </tfoot>
@@ -570,7 +570,7 @@
 
                 // Iterar sobre todas as linhas visíveis da tabela
                 $('#dataTable tbody tr:visible').each(function() {
-                    var valor = parseFloat($(this).find('td:eq(8)').text().replace('R$', '').replace('.', '').replace(',', '.'));
+                    var valor = parseFloat($(this).find('td:eq(7)').text().replace('R$', '').replace('.', '').replace(',', '.'));
                     if (!isNaN(valor)) {
                         total += valor;
                     }

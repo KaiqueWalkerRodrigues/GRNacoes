@@ -353,6 +353,19 @@ class Financeiro_Boletos {
         return $resultado ? $resultado->total : 0;
     }
 
+    public function totalPosPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite){
+        $sql = $this->pdo->prepare("SELECT sum(valor_pago) as total FROM financeiro_boletos WHERE id_campanha = :id_campanha AND id_usuario = :id_vendedor AND id_empresa = :id_empresa AND data_pago > :data_limite AND deleted_at IS NULL AND data_pago IS NOT NULL");
+        $sql->bindParam(':id_empresa',$id_empresa);
+        $sql->bindParam(':data_limite',$data_limite);
+        $sql->bindParam(':id_campanha',$id_campanha);
+        $sql->bindParam(':id_vendedor',$id_vendedor);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado ? $resultado->total : 0;
+    }
+
     public function totalNaoConvertidoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite){
         $valor_total = $this->totalPorVendedor($id_campanha,$id_vendedor,$id_empresa);
         $valor_convertido = $this->totalConvertidoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite);

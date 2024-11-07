@@ -13,11 +13,10 @@
         margin-left: 220px; /* Largura da sidebar */
         transition: margin-left 0.3s ease; /* Adiciona uma transição suave ao abrir/fechar a sidebar */
     }
-</style>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<style>
+    .nav-link,.collapse-item{
+        font-size: 13px !important;
+    }
     .botao{
         border: none;
         background-color: white;
@@ -29,6 +28,8 @@
         background-color: #f7f8fb;
     }
 </style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -160,11 +161,11 @@
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#orientacao"
         aria-expanded="true" aria-controls="ori">
         <i class="fa-solid fa-eye"></i>
-        <span>Cirurgia</span>
+        <span>Cirurgias</span>
     </a> 
     <div id="orientacao" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" id="orientacao_lanc" href="<?php echo URL ?>/orientacao/">Lançamento Cirurgia</a>
+            <a class="collapse-item" id="orientacao_lanc" href="<?php echo URL ?>/orientacao/">Cirurgia Catarata</a>
         </div>
     </div>
 </li> 
@@ -192,6 +193,7 @@
             <a class="collapse-item" id="gerenciar_cargos" href="<?php echo URL ?>/configuracoes/cargos">Gerenciar Cargos</a>
             <a class="collapse-item" id="gerenciar_setores" href="<?php echo URL ?>/configuracoes/setores">Gerenciar Setores</a>
             <a class="collapse-item" id="gerenciar_usuarios" href="<?php echo URL ?>/configuracoes/usuarios">Gerenciar Usuários</a>
+            <a class="collapse-item" id="gerenciar_medicos" href="<?php echo URL ?>/configuracoes/medicos">Gerenciar Médicos</a>
         </div>
     </div>
 </li> 

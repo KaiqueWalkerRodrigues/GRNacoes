@@ -512,6 +512,8 @@ $row++;
     $sheet->setCellValue('F'.$row, "NÃO CONVERTIDAS");
     $sheet->getStyle('B'.$row.':F'.$row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+    $row_four = $row+1;
+
     //Matriz
     foreach($Usuarios->listarVendedores(2) as $vendedor){
         
@@ -530,8 +532,8 @@ $row++;
 
             // Total por Vendedor
             $sheet->setCellValue('D'.$row, $total_vendedor);
-            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
-            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim)+$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? '-');
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim)-$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 2, $Campanha->periodo_fim) ?? '-');
         }
     }
 
@@ -555,8 +557,8 @@ $row++;
 
             // Total por Vendedor
             $sheet->setCellValue('D'.$row, $total_vendedor);
-            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
-            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim)+$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? '-');
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim)-$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 4, $Campanha->periodo_fim) ?? '-');
         }
     }
     
@@ -580,19 +582,21 @@ $row++;
 
             // Total por Vendedor
             $sheet->setCellValue('D'.$row, $total_vendedor);
-            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
-            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? 0);
+            $sheet->setCellValue('E'.$row, $Boletos->totalConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim)+$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? '-');
+            $sheet->setCellValue('F'.$row, $Boletos->totalNaoConvertidoPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim)-$Boletos->totalPosPorVendedor($id_campanha, $vendedor->id_usuario, 6, $Campanha->periodo_fim) ?? '-');
         }
     }
+
+    $row_five = $row;
 
     $row++;
 
     $sheet->getStyle('C'.$row_three.':F'.$row)->getNumberFormat()->setFormatCode($formatoReal);
     $sheet->getStyle('E'.($row_three+1).':E'.($row-1))->applyFromArray($pos);
     $sheet->setCellValue('C'.$row, "TOTAL");
-    $sheet->setCellValue('D'.$row, $total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily);
-    $sheet->setCellValue('E'.$row, $total_convertidas_matriz+$total_convertidas_prestigio+$total_convertidas_daily);
-    $sheet->setCellValue('F'.$row, $total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily);
+    $sheet->setCellValue('D'.$row, '=sum(D'.$row_four.':D'.$row_five.')');
+    $sheet->setCellValue('E'.$row, '=sum(E'.$row_four.':E'.$row_five.')');
+    $sheet->setCellValue('F'.$row, '=sum(F'.$row_four.':F'.$row_five.')');
 
     $sheet->getStyle('B'.$row.':F'.$row)->applyFromArray($cabecalho);
     $sheet->getStyle('B'.$row_three.':F'.$row)->applyFromArray($bordas);
@@ -602,7 +606,7 @@ $row++;
 
     $sheet->setCellValue('D'.$row, "CONVERTIDO:");
     $sheet->getStyle('D'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->setCellValue('E'.$row, ($total_convertidas_matriz+$total_convertidas_prestigio+$total_convertidas_daily)/($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily) ?? 0);
+    $sheet->setCellValue('E'.$row, '=(E'.($row-1).'/D'.($row-1).')');
     $sheet->getStyle('E'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
     $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
@@ -610,7 +614,7 @@ $row++;
 
     $sheet->setCellValue('D'.$row, "NÃO CONVERTIDO:");
     $sheet->getStyle('D'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    $sheet->setCellValue('E'.$row, ($total_nao_convertidas_matriz+$total_nao_convertidas_prestigio+$total_nao_convertidas_daily)/($total_vendas_matriz+$total_vendas_prestigio+$total_vendas_daily) ?? 0);
+    $sheet->setCellValue('E'.$row, '=(F'.($row-2).'/D'.($row-2).')');
     $sheet->getStyle('E'.$row)->applyFromArray($titulo_final)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
     $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 }

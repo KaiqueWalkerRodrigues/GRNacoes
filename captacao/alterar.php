@@ -520,6 +520,20 @@
                     window.location.href = window.location.href + '?data_atendimento=' + dataAtendimento;
                 }
             });
+            
+            $('#dataAtendimento').on('change', function () {
+                const dataSelecionada = new Date($(this).val());
+                const dataOntem = new Date();
+                dataOntem.setDate(dataOntem.getDate() - 1);
+
+                if (dataSelecionada > dataOntem) {
+                    alert('Data inválida: a data não pode ser maior que a de ontem.');
+                    $('#dataAtendimento').val(''); // Limpa o campo de data
+                    $('#btnContinuar').prop('disabled', true); // Desabilita o botão "Continuar"
+                } else {
+                    $('#btnContinuar').prop('disabled', false); // Habilita o botão "Continuar" se a data for válida
+                }
+            });
 
             // Redireciona ao clicar em "Fechar"
             $('#btnFecharModal').on('click', function () {
