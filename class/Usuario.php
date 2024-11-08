@@ -9,18 +9,21 @@ class Usuario {
         $this->pdo = Conexao::conexao();               
     }
 
+    //Função para listar todos os Usuários Não Deletados e Ordenados pelo Nome
     public function listar(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL ORDER BY nome ASC');        
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    //Função para listar todos os Usuários Ativos, Não Deletados e Ordenados pelo Nome
     public function listarAtivos(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 ORDER BY nome ASC');        
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    //Função para listar todos os Usuários Ativos de uma Determinado Setor/Empresa, Não Deletados e Ordenados pelo Nome
     public function listarAtivosDoSetorDaEmpresa($id_setor, $id_empresa = null) {
         // Construir a base da consulta
         $query = 'SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 AND id_setor = :id_setor';
@@ -51,13 +54,14 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
     
-
+    //Função para listar todos os Usuários Desativos, Não Deletados e Ordenados pelo Nome
     public function listarDesativados(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 0 ORDER BY nome ASC');        
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    //Função para cadastrar novos Usuários
     public function cadastrar(Array $dados)
     {
         $sql = $this->pdo->prepare('INSERT INTO usuarios 
@@ -123,7 +127,7 @@ class Usuario {
         return header('Location:/GRNacoes/configuracoes/usuarios');
     }
 
-
+    //Função para mostrar informações de um Usuário
     public function mostrar(int $id_usuario)
     {
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE id_usuario = :id_usuario LIMIT 1');
@@ -132,6 +136,7 @@ class Usuario {
         return $sql->fetch(PDO::FETCH_OBJ);
     }
 
+    //Função para editar um Usuário
     public function editar(array $dados)
     {
         if (isset($dados['senha']) && !empty($dados['senha'])) {
@@ -223,6 +228,7 @@ class Usuario {
         return header('location:/GRNacoes/configuracoes/usuarios');
     }
 
+    //Função para Reativar um Usuário Desativo.
     public function reativar(array $dados)
     {
         // Reativar o usuário
@@ -257,7 +263,6 @@ class Usuario {
         // Redireciona de volta à página de gerenciamento de usuários
         return header('location:/GRNacoes/configuracoes/usuarios');
     }
-
 
     public function desativar(int $id_usuario, $usuario_logado)
     {
@@ -297,9 +302,7 @@ class Usuario {
         }
     }
 
-
     // Métodos de login, logout e outras funcionalidades...
-
     private function addLog($acao, $descricao, $id_usuario)
     {
         $agora = date("Y-m-d H:i:s");

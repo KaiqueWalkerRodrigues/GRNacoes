@@ -8,14 +8,9 @@
         position: fixed;
         z-index: 1000; /* Garante que a sidebar esteja acima do conteúdo */
     }
-
     #content-wrapper {
         margin-left: 220px; /* Largura da sidebar */
         transition: margin-left 0.3s ease; /* Adiciona uma transição suave ao abrir/fechar a sidebar */
-    }
-
-    .nav-link,.collapse-item{
-        font-size: 13px !important;
     }
     .botao{
         border: none;
@@ -65,15 +60,30 @@
         <i class="fa-solid fa-headset"></i>
         <span>Chamados</span>
     </a> 
-    <div id="chamados" class="collapse" aria-labelledby="headingUtilities"
-        data-parent="#accordionSidebar">
+    <div id="chamados" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados" class="collapse-item">Meus Chamados</a>
             <a href="<?php echo URL ?>/chamados/" id="chamados_index" class="collapse-item">Chamados</a>
-            <?php if($_SESSION['id_setor'] == 1){ ?><h6 class="collapse-header">Admin:</h6><a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a><?php } ?>
+            <?php if($_SESSION['id_setor'] == 1){ ?>
+                <h6 class="collapse-header">Admin:</h6>
+                <a href="<?php echo URL ?>/chamados/todos" id="todos_chamados" class="collapse-item">Todos Chamados</a>
+            <?php } ?>
+            
+            <a class="collapse-item collapsed" href="#" data-toggle="collapse" data-target="#submenuTeste"
+                aria-expanded="true" aria-controls="submenuTeste">
+                <i class="fa-solid fa-headset mr-1"></i>
+                <span>Teste</span>
+                <i class="fas fa-chevron-right" style="float: right; margin-top: 5px;"></i>
+            </a> 
+            <div id="submenuTeste" class="collapse" aria-labelledby="headingTeste" data-parent="#chamados">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a href="<?php echo URL ?>/chamados/meus_chamados" id="meus_chamados_teste" class="collapse-item">Meus Chamados</a>
+                </div>
+            </div>
+            
         </div>
     </div>
-</li> 
+</li>
 
 <!-- Nav Item - Tables -->
 <li class="nav-item" id="chat">
@@ -102,22 +112,6 @@
     </div>
 </li> 
 <?php } ?>
-
-<!-- <?php //if($_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) { ?>
-<li class="nav-item" id="otic">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#otica"
-        aria-expanded="true" aria-controls="otic">
-        <i class="fa-solid fa-glasses"></i>
-        <span>Ótica</span>
-    </a> 
-    <div id="otica" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-        <a class="collapse-item" id="otica_estoque" href="<?php echo URL ?>/otica/estoque">Estoque</a>
-        <a class="collapse-item" id="otica_vendas" href="<?php echo URL ?>/otica/vendas">Vendas</a>
-        </div>
-    </div>
-</li> 
-<?php //} ?> -->
 
 <?php if($_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14) ?>
 <li class="nav-item" id="cap">
@@ -155,6 +149,7 @@
     </div>
 </li> 
 <?php } ?>
+
 
 <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 14) { ?>
 <li class="nav-item" id="ori">
