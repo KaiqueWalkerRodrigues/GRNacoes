@@ -1,7 +1,7 @@
-Options +FollowSymLinks
 RewriteEngine On
+RewriteBase /GRNacoes/
+
+# Redirecionar todas as requisições para o index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
-
-ErrorDocument 404 /GRNacoes/erro.php
+RewriteRule ^(.*)$ index.php [L]

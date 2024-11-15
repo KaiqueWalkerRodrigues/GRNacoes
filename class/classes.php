@@ -1,20 +1,23 @@
-<?php 
+<?php
     include_once('Conexao.php');
+    include_once('Log.php');
     include_once('Helper.php');
     include_once('Usuario.php');
-    include_once('Medicos.php');
-    include_once('Captacao.php');
-    include_once('Setor.php');
-    include_once('Chamados.php');
+    include_once('Medico.php');
     include_once('Cargo.php');
-    include_once('Log.php');
-    include_once('Compras_Categorias.php');
-    include_once('Compras_Fornecedores.php');
-    include_once('Compras_Notas.php');
-    include_once('Compras_Pedidos.php');
-    include_once('Financeiro_Campanhas.php');
-    include_once('Financeiro_Boletos.php');
-    include_once('Conversas.php');
-    include_once('Mensagens.php');
-    include_once('Otica_estoque.php');
-?>
+    include_once('Setor.php');
+    include_once('Chamado.php');
+    include_once('Conversa.php');
+    include_once('Captacao.php');
+    include_once('Mensagem.php');
+    include_once('Convenio.php');
+
+    include_once('Catarata_Lente.php');
+
+    include_once('Compra_Cetegoria.php');
+    include_once('Compra_Pedido.php');
+    include_once('Compra_Fornecedor.php');
+    include_once('Compra_Nota.php');
+    
+    include_once('Financeiro_Campanha.php');
+    include_once('Financeiro_Boleto.php');

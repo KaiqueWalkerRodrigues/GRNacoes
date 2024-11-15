@@ -4,13 +4,13 @@ class Log {
 
     public $pdo;
     
-    public function __construct()
-    {
+    //Construir Conexão com o Banco de Dados.
+    public function __construct(){
         $this->pdo = Conexao::conexao();               
     }
 
-    public function listar()
-    {
+    //Listar Logs do Sistema
+    public function listar(){
         $sql = $this->pdo->prepare('SELECT * FROM logs');
         $sql->execute();
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);

@@ -15,8 +15,10 @@ class DataValidator
      * Does this cell contain valid value?
      *
      * @param Cell $cell Cell to check the value
+     *
+     * @return bool
      */
-    public function isValid(Cell $cell): bool
+    public function isValid(Cell $cell)
     {
         if (!$cell->hasDataValidation() || $cell->getDataValidation()->getType() === DataValidation::TYPE_NONE) {
             return true;
@@ -52,7 +54,8 @@ class DataValidator
         return $returnValue;
     }
 
-    private function numericOperator(DataValidation $dataValidation, int|float $cellValue): bool
+    /** @param float|int $cellValue */
+    private function numericOperator(DataValidation $dataValidation, $cellValue): bool
     {
         $operator = $dataValidation->getOperator();
         $formula1 = $dataValidation->getFormula1();
@@ -83,8 +86,10 @@ class DataValidator
      * Does this cell contain valid value, based on list?
      *
      * @param Cell $cell Cell to check the value
+     *
+     * @return bool
      */
-    private function isValueInList(Cell $cell): bool
+    private function isValueInList(Cell $cell)
     {
         $cellValue = $cell->getValue();
         $dataValidation = $cell->getDataValidation();
@@ -106,7 +111,7 @@ class DataValidator
                     }
 
                     return $result !== ExcelError::NA();
-                } catch (Exception) {
+                } catch (Exception $ex) {
                     return false;
                 }
             }

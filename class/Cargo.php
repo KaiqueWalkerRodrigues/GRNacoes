@@ -5,9 +5,27 @@ class Cargo {
     # ATRIBUTOS	
 	public $pdo;
     
+    //Construir Conexão com o Banco de Dados.
     public function __construct()
     {
         $this->pdo = Conexao::conexao();               
+    }
+
+    //Registrar Logs(Ações) do Sistema.
+    private function addLog($acao, $descricao, $id_usuario){
+        $agora = date("Y-m-d H:i:s");
+
+        $sql = $this->pdo->prepare('INSERT INTO logs 
+                                    (acao, descricao, data, id_usuario)
+                                    VALUES
+                                    (:acao, :descricao, :data, :id_usuario)
+                                ');
+
+        $sql->bindParam(':acao', $acao); 
+        $sql->bindParam(':id_usuario', $id_usuario); 
+        $sql->bindParam(':descricao', $descricao); 
+        $sql->bindParam(':data', $agora); 
+        $sql->execute();
     }
 
     /**
@@ -32,49 +50,45 @@ class Cargo {
      * @example $Obj->cadastrar($_POST);
      * 
      */
-    public function cadastrar(Array $dados)
-{{
-    $cargo  = ucwords(strtolower(trim($dados['cargo'])));
-    $usuario_logado = $dados['usuario_logado'];
-    $agora = date("Y-m-d H:i:s");
+    public function cadastrar(Array $dados){
+        $cargo  = ucwords(strtolower(trim($dados['cargo'])));
+        $usuario_logado = $dados['usuario_logado'];
+        $agora = date("Y-m-d H:i:s");
 
-    $sql = $this->pdo->prepare('INSERT INTO cargos 
-                                (cargo, created_at, updated_at)
-                                VALUES
-                                (:cargo, :created_at, :updated_at)
-                            ');
-
-    $created_at  = $agora;
-    $updated_at  = $agora;
-
-    $sql->bindParam(':cargo', $cargo);          
-    $sql->bindParam(':created_at', $created_at);          
-    $sql->bindParam(':updated_at', $updated_at);          
-
-    if ($sql->execute()) {
-        $cargo_id = $this->pdo->lastInsertId();
-
-        $descricao = "Cadastrou o cargo: $cargo ($cargo_id)";
-        
-        $sql = $this->pdo->prepare('INSERT INTO logs 
-                                    (acao, id_usuario, descricao, data)
+        $sql = $this->pdo->prepare('INSERT INTO cargos 
+                                    (cargo, created_at, updated_at)
                                     VALUES
-                                    (:acao, :id_usuario, :descricao, :data)
+                                    (:cargo, :created_at, :updated_at)
                                 ');
 
-        $acao = 'Cadastrar';
+        $created_at  = $agora;
+        $updated_at  = $agora;
 
-        $sql->bindParam(':acao', $acao); 
-        $sql->bindParam(':id_usuario', $usuario_logado); 
-        $sql->bindParam(':descricao', $descricao); 
-        $sql->bindParam(':data', $agora); 
-        $sql->execute();
-        
-        return header('Location:/GRNacoes/configuracoes/cargos');
-    } else {
-        // Tratar falha na execução da query, se necessário
+        $sql->bindParam(':cargo', $cargo);          
+        $sql->bindParam(':created_at', $created_at);          
+        $sql->bindParam(':updated_at', $updated_at);          
+
+        if ($sql->execute()) {
+            $cargo_id = $this->pdo->lastInsertId();
+            
+            $descricao = "Cadastrou o Cargo: $cargo ($cargo_id)";
+            $this->addLog("Cadastrar",$descricao,$usuario_logado);
+
+            echo "
+            <script>
+                alert('Cargo Cadastrado com Sucesso!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Cadastrar o Cargo!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
+        }
     }
-}}
 
     /**
      * Retorna os dados de um ITEM
@@ -82,8 +96,7 @@ class Cargo {
      * @return object
      * @example $variavel = $Obj->mostrar($id_do_item);
      */
-    public function mostrar(int $id_cargo)
-    {
+    public function mostrar(int $id_cargo){
     	// Montar o SELECT ou o SQL
     	$sql = $this->pdo->prepare('SELECT * FROM cargos WHERE id_cargo = :id_cargo LIMIT 1');
         $sql->bindParam(':id_cargo', $id_cargo);
@@ -102,8 +115,7 @@ class Cargo {
      * @return int id - do ITEM
      * @example $Obj->editar($_POST);
      */
-    public function editar(array $dados)
-    {
+    public function editar(array $dados){
         $sql = $this->pdo->prepare("UPDATE cargos SET
             cargo = :cargo,
             updated_at = :updated_at 
@@ -122,33 +134,32 @@ class Cargo {
         $sql->bindParam(':updated_at', $updated_at);       
 
         if ($sql->execute()) {
-            $descricao = "Editou o cargo: $cargo ($id_cargo)";
-            
-            $sql = $this->pdo->prepare('INSERT INTO logs 
-                                        (acao, id_usuario, descricao, data)
-                                        VALUES
-                                        (:acao, :id_usuario, :descricao, :data)
-                                    ');
+            $descricao = "Editou o Cargo: $cargo ($id_cargo)";
+            $this->addLog("Editar",$descricao,$usuario_logado);
 
-            $acao = 'Editar';
-            $sql->bindParam(':acao', $acao); 
-            $sql->bindParam(':id_usuario', $usuario_logado); 
-            $sql->bindParam(':descricao', $descricao); 
-            $sql->bindParam(':data', $agora); 
-            $sql->execute();
+            echo "
+            <script>
+                alert('Cargo Editado com Sucesso!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
         } else {
-            // Tratar falha na execução da query, se necessário
+            echo "
+            <script>
+                alert('Não foi possível Editar o Cargo!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
         }
     }
 
     /**
-     * Excluir ITEM
+     * Deleta um ITEM
      *
      * @param integer $id_usuario
      * @return void (esse metodo não retorna nada)
      */
-    public function desativar(int $id_cargo, $usuario_logado)
-    {
+    public function deletar(int $id_cargo, $usuario_logado){
         // Consulta para obter o nome do cargo
         $consulta_cargo = $this->pdo->prepare('SELECT cargo FROM cargos WHERE id_cargo = :id_cargo');
         $consulta_cargo->bindParam(':id_cargo', $id_cargo);
@@ -170,34 +181,23 @@ class Cargo {
         $sql->bindParam(':id_cargo', $id_cargo);
 
         if ($sql->execute()) {
-            $descricao = "Desativou o cargo $nome_cargo($id_cargo)";
-            $sql = $this->pdo->prepare('INSERT INTO logs 
-                                        (acao, id_usuario, descricao, data)
-                                        VALUES
-                                        (:acao, :id_usuario, :descricao, :data)
-                                    ');
-            $acao = 'Desativar';
-            $sql->bindParam(':acao', $acao);
-            $sql->bindParam(':id_usuario', $usuario_logado);
-            $sql->bindParam(':descricao', $descricao);
-            $sql->bindParam(':data', $agora);
-            $sql->execute();
+            $descricao = "Deletou o cargo $nome_cargo ($id_cargo)";
+            $this->addLog("Deletar",$descricao,$usuario_logado);
 
-            // Redireciona para a página de configurações de cargos
-            return header('location:/GRNacoes/configuracoes/cargos');
+            echo "
+            <script>
+                alert('Cargo Deletado com Sucesso!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
         } else {
-            // Tratar falha na execução da query, se necessário
+            echo "
+            <script>
+                alert('Não foi possível Deletar o Cargo!');
+                window.location.href = '" . URL . "/configuracoes/cargos';
+            </script>";
+            exit;
         }
-    }
-    public function nomeCargo(int $id_cargo)
-    {
-        $sql = $this->pdo->prepare('SELECT cargo FROM cargos WHERE id_cargo = :id_cargo');
-        $sql->bindParam(':id_cargo',$id_cargo);
-        $sql->execute();
-
-        $cargo = $sql->fetch(PDO::FETCH_OBJ);
-    
-        return $cargo->cargo;
     }
 
  }

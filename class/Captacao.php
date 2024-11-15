@@ -243,12 +243,12 @@ class Captacao {
 
 
     /**
-     * Desativa um captado
+     * Deleta um captado
      *
      * @param int $id_captado
      * @return bool
      */
-    public function desativar($id_captado, $id_usuario)
+    public function deletar($id_captado, $id_usuario)
     {
         $sql = $this->pdo->prepare('UPDATE captados SET deleted_at = :deleted_at WHERE id_captado = :id_captado');
         $agora = date("Y-m-d H:i:s");
@@ -257,8 +257,8 @@ class Captacao {
 
         if ($sql->execute()) {
             // Adiciona o log da desativação
-            $descricao = "Desativou a captação ID: $id_captado";
-            $this->addLog('Desativar', $descricao, $id_usuario);
+            $descricao = "Deletou a captação ID: $id_captado";
+            $this->addLog('Deletar', $descricao, $id_usuario);
         }
 
         return $sql->execute();
@@ -927,7 +927,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrar']
         'observacao' => $_POST['observacao']
     ];
     $Captacao->cadastrar($dados);
-    header('Location: /GRNacoes/captacao/'); // Redireciona para evitar re-submissão de formulário
+    header('Location: '.URL.'/captacao/captar'); // Redireciona para evitar re-submissão de formulário
 }    
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrarAlteracao'])) {
@@ -943,7 +943,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' AND isset($_POST['captacao_cadastrarAl
         'horario' => $_POST['horario']
     ];
     $Captacao->cadastrarAlteracao($dados);
-    $url = 'Location: /GRNacoes/captacao/alterar?data_atendimento='.$_POST['dia'];
-    header($url); // Redireciona para evitar re-submissão de formulário
+    $url = 'Location: '.URL.'/captacao/alterar?data_atendimento='.$_POST['dia'];
+    header($url);
 }    
 ?>

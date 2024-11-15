@@ -125,6 +125,7 @@ class FunctionPrefix
         . '|switch'
         // functions added with Excel 2019
         . '|concat'
+        . '|countifs'
         . '|ifs'
         . '|maxifs'
         . '|minifs'
