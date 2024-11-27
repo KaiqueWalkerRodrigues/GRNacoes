@@ -86,14 +86,14 @@ class Compra_Fornecedor {
             echo "
             <script>
                 alert('Fornecedor Cadastrado com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Cadastrar o Fornecedor!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         }
@@ -146,14 +146,14 @@ class Compra_Fornecedor {
             echo "
             <script>
                 alert('Fornecedor Editado com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Editar o Fornecedor!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         }
@@ -185,14 +185,14 @@ class Compra_Fornecedor {
             echo "
             <script>
                 alert('Fornecedor Deletado com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Deletar o Fornecedor!');
-                window.location.href = '" . URL . "/configuracoes/fornecedores';
+                window.location.href = '" . URL . "/compras/configuracoes/fornecedores';
             </script>";
             exit;
         }

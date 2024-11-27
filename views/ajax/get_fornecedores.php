@@ -11,7 +11,7 @@
         $sql = $pdo->prepare('SELECT f.id_compra_fornecedor AS id_fornecedor, f.fornecedor, c.categoria 
                                 FROM compras_fornecedores f 
                                 JOIN compras_categorias c ON f.id_categoria = c.id_compra_categoria 
-                                WHERE c.categoria = :categoria
+                                WHERE c.categoria = :categoria AND deleted_at IS NULL
                                 ORDER BY fornecedor');
         $sql->bindParam(':categoria', $categoria);
         $sql->execute();
@@ -25,6 +25,7 @@
         $sql = $pdo->prepare('SELECT id_compra_fornecedor AS id_fornecedor, fornecedor, c.categoria 
                                 FROM compras_fornecedores f
                                 JOIN compras_categorias c ON f.id_categoria = c.id_compra_categoria
+                                WHERE f.deleted_at IS NULL
                                 ORDER BY fornecedor');
         $sql->execute();
 

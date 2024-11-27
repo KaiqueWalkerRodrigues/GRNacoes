@@ -96,6 +96,7 @@
                                                         data-idsetor="<?php echo $usuario->id_setor ?>"
                                                         data-idcargo="<?php echo $usuario->id_cargo ?>"
                                                         data-data_admissao="<?php echo $usuario->data_admissao ?>"
+                                                        data-ativo="<?php echo $usuario->ativo ?>"
                                                         ><i class="fa-solid fa-gear"></i></button>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalDeletarUsuario"
                                                         data-idusuario="<?php echo $usuario->id_usuario ?>"

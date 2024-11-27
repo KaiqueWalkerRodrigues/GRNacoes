@@ -215,15 +215,27 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
-    case 'cirurgias/catarata/orcamento':
-        $file = 'cirurgias/catarata/orcamento.php';
-        $pageTitle .= "Lançar Catarata";
+    case 'cirurgias/catarata/agenda':
+        $file = 'cirurgias/catarata/agenda.php';
+        $pageTitle .= "Agenda Catarata";
+        $requiredSectors = [1,12,13,15];
+        $requiredLogin = true;
+        break;
+    case 'cirurgias/catarata/agendas':
+        $file = 'cirurgias/catarata/agendas.php';
+        $pageTitle .= "Agendas Catarata";
+        $requiredSectors = [1,12,13,15];
+        $requiredLogin = true;
+        break;
+    case 'cirurgias/catarata/agendamento':
+        $file = 'cirurgias/catarata/agendamento.php';
+        $pageTitle .= "Agendamento Catarata";
         $requiredSectors = [1,12,13,15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/configuracoes/lentes':
         $file = 'cirurgias/catarata/configuracoes/lentes.php';
-        $pageTitle .= "Lançar Catarata";
+        $pageTitle .= "Lentes Catarata";
         $requiredSectors = [1,12,13,15];
         $requiredLogin = true;
         break;

@@ -12,7 +12,10 @@
     include_once('Mensagem.php');
     include_once('Convenio.php');
 
+    include_once('Catarata_Agendamento.php');
     include_once('Catarata_Lente.php');
+    include_once('Catarata_Agenda.php');
+    include_once('Catarata_Turma.php');
 
     include_once('Compra_Cetegoria.php');
     include_once('Compra_Pedido.php');

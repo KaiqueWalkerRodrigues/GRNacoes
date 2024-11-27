@@ -46,10 +46,10 @@ class Compra_Pedido {
 
     public function listarComprados($id_usuario = null, $id_id_setor = null) {
         if ($id_id_setor !== null && $id_id_setor !== 1 && $id_id_setor !== 3) {
-            $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE id_usuario = :id_usuario AND status = :status');
+            $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE id_usuario = :id_usuario AND status = :status ORDER BY id_compra_pedido DESC');
             $sql->bindParam(':id_usuario', $id_usuario);
         } else {
-            $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE status = :status');
+            $sql = $this->pdo->prepare('SELECT * FROM compras_pedidos WHERE status = :status ORDER BY id_compra_pedido DESC');
         }
 
         $status = 'comprado';

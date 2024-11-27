@@ -102,7 +102,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <div class="row">
-                            <div class="col-10 offset-1">
+                            <div class="col-8 offset-2">
                                 <label for="cadastrar_lente" class="form-label">Lente *</label>
                                 <input type="text" class="form-control" id="cadastrar_lente" name="lente" required>
                             </div>
@@ -130,7 +130,7 @@
                         <input type="hidden" name="id_lente" id="editar_id_lente">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <div class="row">
-                            <div class="col-10 offset-1">
+                            <div class="col-8 offset-2">
                                 <label for="editar_Lente" class="form-label">Lente *</label>
                                 <input type="text" class="form-control" name="lente" id="editar_lente" required>
                             </div>

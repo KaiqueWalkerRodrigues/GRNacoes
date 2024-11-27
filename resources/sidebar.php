@@ -22,18 +22,18 @@
                 
                 <div class="sidenav-menu-heading">Interfaces</div>
                 
+                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
                 <a class="nav-link collapsed" id="dash" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
                     <div class="nav-link-icon"><i class="fa-solid fa-chart-line"></i></div>
                     Dashboards
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseDashboards" data-parent="#accordionSidenav">
-                    <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                         <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação<span class="badge badge-primary ml-2">Novo!</span></a>
                     </nav>
-                    <?php } ?>
                 </div> 
+                <?php } ?>
 
                 <a class="nav-link collapsed" id="cham" href="javascript:void(0);" data-toggle="collapse" data-target="#chamados" aria-expanded="false" aria-controls="chamados">
                     <div class="nav-link-icon"><i class="fa-solid fa-ticket-simple"></i></div>
@@ -72,7 +72,8 @@
 
                         <div class="collapse" id="cirurgias_catarata" data-parent="#accordionSidenavLayout">
                             <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" id="cirurgias_catarata_orcamento" href="<?php echo URL ?>/cirurgias/catarata/orcamento">Orçamento</a>
+                                <a class="nav-link" id="cirurgias_catarata_agendas" href="<?php echo URL ?>/cirurgias/catarata/agendas">Agendas</a>
+                                <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento">Agendamento</a>
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata_configuracoes" data-target="#cirurgias_catarata_configuracoes" aria-expanded="false" aria-controls="cirurgias_catarata_configuracoes">Configurações
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
@@ -123,7 +124,7 @@
 
                 <?php } ?>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
+                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
 
                     <a class="nav-link collapsed" id="capt" href="javascript:void(0);" data-toggle="collapse" data-target="#captacao" aria-expanded="false" aria-controls="captacao">
                         <div class="nav-link-icon"><i class="fa-solid fa-people-pulling"></i></div>
@@ -134,13 +135,16 @@
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                             <a class="nav-link" id="captcao_captar" href="<?php echo URL ?>/captacao/captar">Captar</a>
                             <a class="nav-link" id="captacao_alterar" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
+                            <?php if($_SESSION['id_setor'] != 8){ ?>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao_relatorios" aria-expanded="false" aria-controls="captacao_relatorios">Relatórios
                                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="captacao_relatorios" data-parent="#accordionSidenavLayout">
                                 <nav class="sidenav-menu-nested nav">
                                     <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalCaptacaoGeral">Geral</a>
+                                </nav>
                             </div>
+                            <?php } ?>
                         </nav>
                     </div>
 

@@ -74,14 +74,14 @@ class Compra_Categoria {
             echo "
             <script>
                 alert('Categoria Cadastrada com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Cadastrar a Categoria!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         }
@@ -134,14 +134,14 @@ class Compra_Categoria {
             echo "
             <script>
                 alert('Categoria Editada com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Editar a Categoria!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         }
@@ -173,14 +173,14 @@ class Compra_Categoria {
             echo "
             <script>
                 alert('Categoria Deletada com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível Deletar a Categoria!');
-                window.location.href = '" . URL . "/configuracoes/categorias';
+                window.location.href = '" . URL . "/compras/configuracoes/categorias';
             </script>";
             exit;
         }
