@@ -285,6 +285,21 @@ class Helper{
       break;
     }
   }
+
+  public static function statusParcelaContrato($status){
+    switch($status){
+      case 0:
+        return 'Pendente';
+      break;
+      case 1:
+        return 'Pago';
+      break;
+      case 2:
+        return 'Atrasado';
+      break;
+
+    }
+  }
   
 }
 

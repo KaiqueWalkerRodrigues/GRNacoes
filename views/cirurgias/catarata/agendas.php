@@ -58,7 +58,7 @@
                                                     data-data="<?php echo $agenda->data ?>"
                                                     ><i class="fa-solid fa-gear"></i></button>
                                                 <?php }else{ ?>
-                                                <button class="btn btn-icon btn-success"><i class="fa-solid fa-check"></i></button>
+                                                <a class="btn btn-icon btn-success" href="<?php echo URL ?>/cirurgias/catarata/agenda?id=<?php echo $agenda->id_catarata_agenda ?>"><i class="fa-solid fa-check"></i></a>
                                             <?php }?>
                                         </div>
                                     </div>

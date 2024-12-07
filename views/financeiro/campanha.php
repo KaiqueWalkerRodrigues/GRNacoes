@@ -243,7 +243,7 @@
                                 <input type="hidden" name="id_campanha" value="<?php echo $campanha->id_financeiro_campanha  ?>">
                                 <select name="id_vendedor" id="id_vendedor" class="form-control">
                                     <option value="0">Todos</option>
-                                    <?php foreach($Usuario->listarVendedores() as $vendedor){ ?>
+                                    <?php foreach($Usuario->listarVendedoresAtivos() as $vendedor){ ?>
                                         <option value="<?php echo $vendedor->id_usuario ?>"><?php echo $vendedor->nome ?></option>
                                     <?php } ?>
                                 </select>

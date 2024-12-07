@@ -65,11 +65,13 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Nome</th>
+                                            <th>Empresa</th>
+                                            <th>Nome Paciente</th>
                                             <th>Médico Solicitante</th>
                                             <th>Convenio</th>
                                             <th>Data Cirurgia</th>
                                             <th>Turma</th>
+                                            <th>Status</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -77,13 +79,15 @@
                                         <?php foreach($Catarata_Agendamento->listar() as $agendamento){ ?>
                                             <tr>
                                                 <td><?php echo $agendamento->id_catarata_agendamento ?></td>
+                                                <td><?php echo Helper::mostrar_empresa($Usuario->mostrar($agendamento->id_orientador)->empresa) ?></td>
                                                 <td><?php echo $agendamento->nome ?></td>
-                                                <td><?php echo $Medico->mostrar($agendamento->id_solicitante)->nome ?></td>
+                                                <td><?php echo Helper::encurtarNome($Medico->mostrar($agendamento->id_solicitante)->nome) ?></td>
                                                 <td><?php echo $Convenio->mostrar($agendamento->id_convenio)->convenio ?></td>
                                                 <td><?php echo Helper::formatarData($Catarata_Agenda->mostrar($agendamento->id_agenda)->data) ?></td>
                                                 <td><?php echo Helper::formatarHorario($Catarata_Turma->mostrar($agendamento->id_turma)->horario) ?></td>
+                                                <td class="text-center"><?php if($agendamento->dioptria_esquerda != 0 OR $agendamento->dioptria_direita != 0){ echo "<b class='text-success'>Completo</b>"; }else{ echo "<b class='text-warning'>Incompleto</b>"; } ?></td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark mr-2" type="button" data-toggle="modal" data-target="#modalEditarAgendamento"
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark 2" type="button" data-toggle="modal" data-target="#modalEditarAgendamento"
                                                         data-id_agendamento="<?php echo $agendamento->id_catarata_agendamento ?>"
                                                         data-nome="<?php echo $agendamento->nome ?>"
                                                         data-cpf="<?php echo $agendamento->cpf ?>"

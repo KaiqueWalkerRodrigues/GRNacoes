@@ -120,7 +120,6 @@ class Catarata_turma {
      */
     public function editar(array $dados){
         $sql = $this->pdo->prepare("UPDATE catarata_turmas SET
-            id_agenda = :id_agenda,
             horario = :horario,
             qntd = :qntd,
             updated_at = :updated_at 
@@ -137,7 +136,6 @@ class Catarata_turma {
         $usuario_logado = $dados['usuario_logado'];
 
         $sql->bindParam(':id_catarata_turma', $id_catarata_turma);
-        $sql->bindParam(':id_agenda', $id_agenda);
         $sql->bindParam(':horario', $horario);
         $sql->bindParam(':qntd', $qntd);
         $sql->bindParam(':updated_at', $updated_at);       
@@ -224,7 +222,7 @@ class Catarata_turma {
     }
 
     public function listarAgendamentos($id_turma){
-        $sql = $this->pdo->prepare("SELECT * FROM catarata_agendamentos WHERE id_turma = :id_turma");
+        $sql = $this->pdo->prepare("SELECT * FROM catarata_agendamentos WHERE id_turma = :id_turma ORDER BY nome");
         $sql->bindParam(':id_turma',$id_turma);
         $sql->execute();
 
@@ -233,5 +231,4 @@ class Catarata_turma {
         return $agendamentos;
     }
 }
-
 ?>

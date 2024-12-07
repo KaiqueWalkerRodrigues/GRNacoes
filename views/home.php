@@ -170,10 +170,10 @@
 
             // Função para popular as listas com tarefas
             function loadTrelloTasks() {
-                setVersion('1.1.6'); // Aqui você altera para a versão atual
+                setVersion('1.1.7'); // Aqui você altera para a versão atual
                 
                 const todoTasks = ['Orçamento Lente Ctt','Ótica Estoque e Venda','Ótica Metas e Vendas','Cargos/Setores Update','Notifição/Onlines'];
-                const inProgressTasks = ['Lançamento Catarata'];
+                const inProgressTasks = ['Lançamento Catarata','Registro Computadores','Contratos Clínica'];
                 const doneTasks = ['Transição de Interface','Sistema Captação','Pedidos de Compras','Notas Fiscais Compras','Boletos Financeiro','Atrasos Financeiro'];
 
                 $('#todo-list').html(todoTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));

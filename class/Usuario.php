@@ -103,6 +103,14 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    //Listar Usuários Vendedores (Se houver) uma empresa em Especifico.
+    public function listarVendedoresAtivos($empresa = '%'){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 AND empresa LIKE :empresa AND id_cargo = 9 OR id_cargo = 10 OR id_cargo = 11 AND deleted_at IS NULL AND ativo = 1 ORDER BY nome');
+        $sql->bindParam(':empresa',$empresa);
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function cadastrar(Array $dados){
         $sql = $this->pdo->prepare('INSERT INTO usuarios 
                                     (nome,ativo,usuario,senha,contrato,celular,cpf,

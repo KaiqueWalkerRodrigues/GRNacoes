@@ -183,6 +183,24 @@ switch ($route) {
         $requiredSectors = [1,5,12,14];
         $requiredLogin = true;
         break;
+    case 'financeiro/contratos':
+        $file = 'financeiro/contratos.php';
+        $pageTitle .= "Contratos";
+        $requiredSectors = [1,5,12,14];
+        $requiredLogin = true;
+        break;
+    case 'financeiro/contrato':
+        $file = 'financeiro/documentos/contrato.html';
+        $pageTitle .= "Contratos";
+        $requiredSectors = [1,5,12,14];
+        $requiredLogin = true;
+        break;
+    case 'financeiro/documentos/gerar_contrato_pdf':
+        $file = 'financeiro/documentos/gerar_contrato_pdf.php';
+        $pageTitle .= "Gerar PDF do Contrato";
+        $requiredSectors = [1,5,12,14];
+        $requiredLogin = true;
+        break;
     case 'financeiro/relatorios/campanha':
         $file = 'financeiro/relatorios/gerar_relatorio_campanha.php';
         $pageTitle .= "Captar";
@@ -240,6 +258,13 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'tecnologia/configuracoes/sockets':
+        $file = 'tecnologia/configuracoes/sockets.php';
+        $pageTitle .= "Sockets Processadores";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
+
     // case 'ajax/get_fornecedores':
     //     $file = 'ajax/get_fornecedores.php';
     //     $pageTitle .= "Notas Fiscais";
@@ -276,6 +301,18 @@ switch ($route) {
     //     $requiredSectors = null;
     //     $requiredLogin = true;
     //     break;
+    // case 'ajax/get_parcelas':
+    //     $file = 'ajax/get_parcelas.php';
+    //     $pageTitle .= "Listar Parcelas";
+    //     $requiredSectors = null;
+    //     $requiredLogin = true;
+    //     break;
+    case 'ajax/set_confirmarpagamento':
+        $file = 'ajax/set_confirmarpagamento.php';
+        $pageTitle .= "ConfirmarPagamento";
+        $requiredSectors = null;
+        $requiredLogin = true;
+        break;
 
     default:
         $file = '404.php';

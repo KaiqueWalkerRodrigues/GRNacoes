@@ -22,5 +22,9 @@
     include_once('Compra_Fornecedor.php');
     include_once('Compra_Nota.php');
     
-    include_once('Financeiro_Campanha.php');
     include_once('Financeiro_Boleto.php');
+    include_once('Financeiro_Contrato.php');
+    include_once('Financeiro_Campanha.php');
+
+    include_once('Tecnologia_Socket.php');
+
