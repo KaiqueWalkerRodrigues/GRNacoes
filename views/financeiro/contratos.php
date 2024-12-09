@@ -5,9 +5,9 @@
     if (isset($_POST['btnCadastrar'])) {
         $Financeiro_Contrato->cadastrar($_POST);
     }
-    // if (isset($_POST['btnEditar'])) {
-    //     $Financeiro_Contrato->editar($_POST);
-    // }
+    if (isset($_POST['btnEditar'])) {
+        $Financeiro_Contrato->editar($_POST);
+    }
     // if (isset($_POST['btnDeletar'])) {
     //     $Financeiro_Contrato->deletar($_POST['id_financeiro_contrato'],$_POST['usuario_logado']);
     // }
@@ -93,7 +93,7 @@
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                R$ <?php echo number_format($contrato->valor_total_atualizado, 2, ',', '.'); ?>
+                                                R$ <?php echo number_format($contrato->valor, 2, ',', '.'); ?>
                                             </td>
                                             <td class="text-center">
                                                 <a class="btn btn-datatable btn-icon btn-transparent-dark" href="documentos/gerar_contrato_pdf?id=<?php echo $contrato->id_financeiro_contrato ?>"><i class="fa-solid fa-file-pdf"></i></a>
@@ -103,6 +103,20 @@
                                                         data-n_contrato="<?php echo $contrato->n_contrato; ?>"
                                                         data-data="<?php echo $contrato->data; ?>"
                                                         data-id_testemunha1="<?php echo $contrato->id_testemunha1; ?>"
+                                                        data-nome="<?php echo $contrato->nome; ?>"
+                                                        data-data_nascimento="<?php echo $contrato->data_nascimento; ?>"
+                                                        data-cpf="<?php echo $contrato->cpf; ?>"
+                                                        data-cep="<?php echo $contrato->cep; ?>"
+                                                        data-numero="<?php echo $contrato->numero; ?>"
+                                                        data-endereco="<?php echo $contrato->endereco; ?>"
+                                                        data-complemento="<?php echo $contrato->complemento; ?>"
+                                                        data-bairro="<?php echo $contrato->bairro; ?>"
+                                                        data-cidade="<?php echo $contrato->cidade; ?>"
+                                                        data-uf="<?php echo $contrato->uf; ?>"
+                                                        data-telefone_residencial="<?php echo $contrato->telefone_residencial; ?>"
+                                                        data-telefone_comercial="<?php echo $contrato->telefone_comercial; ?>"
+                                                        data-celular1="<?php echo $contrato->celular1; ?>"
+                                                        data-celular2="<?php echo $contrato->celular2; ?>"
                                                     ><i class="fa-solid fa-gear"></i></button>
                                                 <?php } ?>
                                             </td>
@@ -1340,7 +1354,7 @@
                                         <td class='text-center'>R$ ${valorPago > 0 ? formatarValor(valorPago) : formatarValor(valorParcela)}</td>
                                         <td class='text-center'>${statusBadge}</td>
                                         <td class='text-center'>
-                                            ${parcela.status === 0 || parcela.status === 2 ? "<button class='confirmarPagamento btn btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : ""}
+                                            ${parcela.status === 0 || parcela.status === 2 ? "<button class='confirmarPagamento btn btn-sm btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : ""}
                                         </td>
                                     </tr>
                                 `;

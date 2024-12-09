@@ -110,6 +110,107 @@ class Financeiro_Contrato {
         }
     }
 
+    public function editar($dados) {
+        try {
+            $this->pdo->beginTransaction(); // Inicia uma transação
+    
+            $agora = date('Y-m-d H:i:s');
+    
+            // Atualiza os dados do contrato principal
+            $sql = $this->pdo->prepare('UPDATE financeiro_contratos
+                                        SET id_empresa = :id_empresa,
+                                            n_contrato = :n_contrato,
+                                            data = :data,
+                                            id_testemunha1 = :id_testemunha1,
+                                            nome = :nome,
+                                            data_nascimento = :data_nascimento,
+                                            cpf = :cpf,
+                                            cep = :cep,
+                                            numero = :numero,
+                                            endereco = :endereco,
+                                            complemento = :complemento,
+                                            bairro = :bairro,
+                                            cidade = :cidade,
+                                            uf = :uf,
+                                            telefone_residencial = :tel_res,
+                                            telefone_comercial = :tel_com,
+                                            celular1 = :celular1,
+                                            celular2 = :celular2,
+                                            sinal_entrada = :sinal_entrada,
+                                            valor = :valor,
+                                            updated_at = :updated_at
+                                        WHERE id_financeiro_contrato = :id_financeiro_contrato');
+            $sql->execute([
+                ':id_empresa' => $dados['id_empresa'],
+                ':n_contrato' => $dados['n_contrato'],
+                ':data' => $dados['data'],
+                ':id_testemunha1' => $dados['id_testemunha1'],
+                ':nome' => $dados['nome'],
+                ':data_nascimento' => $dados['data_nascimento'],
+                ':cpf' => $dados['cpf'],
+                ':cep' => $dados['cep'],
+                ':numero' => $dados['numero'],
+                ':endereco' => $dados['endereco'],
+                ':complemento' => $dados['complemento'],
+                ':bairro' => $dados['bairro'],
+                ':cidade' => $dados['cidade'],
+                ':uf' => $dados['uf'],
+                ':tel_res' => $dados['tel_res'],
+                ':tel_com' => $dados['tel_com'],
+                ':celular1' => $dados['celular1'],
+                ':celular2' => $dados['celular2'],
+                ':sinal_entrada' => $dados['sinal_entrada'],
+                ':valor' => $dados['valor'],
+                ':updated_at' => $agora,
+                ':id_financeiro_contrato' => $dados['id_financeiro_contrato']
+            ]);
+    
+            // Remove as parcelas antigas
+            $sql = $this->pdo->prepare('DELETE FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato');
+            $sql->execute([':id_contrato' => $dados['id_financeiro_contrato']]);
+    
+            // Insere as novas parcelas
+            for ($x = 1; $x <= $dados['parcelas']; $x++) {
+                $data_key = "data_parcela$x";
+                $valor_key = "valor_parcela$x";
+    
+                if (!isset($dados[$data_key]) || !isset($dados[$valor_key])) {
+                    throw new Exception("Dados da parcela $x estão ausentes.");
+                }
+    
+                $sql = $this->pdo->prepare('INSERT INTO financeiro_contratos_parcelas
+                                            (id_contrato, parcela, data, valor, created_at, updated_at)
+                                            VALUES
+                                            (:id_contrato, :parcela, :data, :valor, :created_at, :updated_at)');
+                $sql->execute([
+                    ':id_contrato' => $dados['id_financeiro_contrato'],
+                    ':parcela' => $x,
+                    ':data' => $dados[$data_key],
+                    ':valor' => $dados[$valor_key],
+                    ':created_at' => $agora,
+                    ':updated_at' => $agora
+                ]);
+            }
+    
+            // Adiciona o log
+            $descricao = "Editou o contrato: {$dados['n_contrato']}";
+            $this->addLog('Editar', $descricao, $dados['usuario_logado']);
+    
+            $this->pdo->commit();
+    
+            echo "<script>
+                    alert('Contrato editado com sucesso!');
+                    window.location.href = '" . URL . "/financeiro/contratos';
+                  </script>";
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            echo "<script>
+                    alert('Erro ao editar contrato: " . $e->getMessage() . "');
+                    window.location.href = '" . URL . "/financeiro/contratos';
+                  </script>";
+        }
+    }
+
     public function listar() {
         $sql = $this->pdo->prepare("
             SELECT 
