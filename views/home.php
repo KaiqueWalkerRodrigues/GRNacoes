@@ -108,6 +108,9 @@
                                     <small id="current-date"></small>
                                 </div>
                             </div>
+                            <div class="col-12 text-center">
+                                <h2 class="fw-bold text-primary">Feliz 2025!</h2>
+                            </div>
                             <div class="col-12 mt-3 text-center">
                                 <!-- Sistema Versão -->
                                 <h1 style="font-size: 1.6rem;">Versão: <span id="sistema-versao"></span></h1>
@@ -170,11 +173,11 @@
 
             // Função para popular as listas com tarefas
             function loadTrelloTasks() {
-                setVersion('1.1.7'); // Aqui você altera para a versão atual
+                setVersion('1.1.8'); // Aqui você altera para a versão atual
                 
                 const todoTasks = ['Orçamento Lente Ctt','Ótica Estoque e Venda','Ótica Metas e Vendas','Cargos/Setores Update','Notifição/Onlines'];
-                const inProgressTasks = ['Lançamento Catarata','Registro Computadores','Contratos Clínica'];
-                const doneTasks = ['Transição de Interface','Sistema Captação','Pedidos de Compras','Notas Fiscais Compras','Boletos Financeiro','Atrasos Financeiro'];
+                const inProgressTasks = ['Registro Computadores'];
+                const doneTasks = ['Lançamento Catarata','Contratos Clínica','Transição de Interface','Sistema Captação','Pedidos de Compras','Notas Fiscais Compras'];
 
                 $('#todo-list').html(todoTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));
                 $('#inprogress-list').html(inProgressTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));

@@ -477,9 +477,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Deseja Deletar o boleto: <b id="Deletar_titulo"></b>?</p>
+                        <p>Deseja Deletar o boleto: <b id="deletar_titulo"></b>?</p>
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_financeiro_boleto" id="Deletar_id_financeiro_boleto">
+                        <input type="hidden" name="id_financeiro_boleto" id="deletar_id_financeiro_boleto">
                         <input type="hidden" name="id_campanha" value="<?php echo $id ?>">
                     </div>
                     <div class="modal-footer">
@@ -642,13 +642,13 @@
                 $('#editar_data_pagamento_pos').val(data_pagamento_pos);
             });
 
-            $('#modalExcluirBoleto').on('show.bs.modal', function (event) {
+            $('#modalDeletarBoleto').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
                 let id_financeiro_boleto = button.data('id_financeiro_boleto');
                 let n_boleto = button.data('n_boleto');
 
-                $('#excluir_id_financeiro_boleto').val(id_financeiro_boleto);
-                $('#excluir_titulo').text(n_boleto);
+                $('#deletar_id_financeiro_boleto').val(id_financeiro_boleto);
+                $('#deletar_titulo').text(n_boleto);
             });
 
             $('#modalCadastrarValorPago').on('show.bs.modal', function (event) {

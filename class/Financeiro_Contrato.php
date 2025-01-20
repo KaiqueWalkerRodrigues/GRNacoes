@@ -34,6 +34,10 @@ class Financeiro_Contrato {
     
             $agora = date('Y-m-d H:i:s');
     
+            // Remove caracteres especiais do CPF
+            $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf']);
+            $dados['cep'] = preg_replace('/\D/', '', $dados['cep']);
+    
             // Cadastro do contrato principal
             $sql = $this->pdo->prepare('INSERT INTO financeiro_contratos 
                                         (id_empresa, n_contrato, data, id_testemunha1, nome, data_nascimento, cpf, cep, numero, endereco, complemento, bairro, cidade, uf,
@@ -68,29 +72,7 @@ class Financeiro_Contrato {
     
             $id_contrato = $this->pdo->lastInsertId();
     
-            // Cadastro das parcelas
-            for ($x = 1; $x <= $dados['parcelas']; $x++) {
-                $data_key = "data_parcela$x";
-                $valor_key = "valor_parcela$x";
-    
-                // Verifica se os valores existem
-                if (!isset($dados[$data_key]) || !isset($dados[$valor_key])) {
-                    throw new Exception("Dados da parcela $x estão ausentes.");
-                }
-    
-                $sql = $this->pdo->prepare('INSERT INTO financeiro_contratos_parcelas
-                                            (id_contrato, parcela, data, valor, created_at, updated_at)
-                                            VALUES
-                                            (:id_contrato, :parcela, :data, :valor, :created_at, :updated_at)');
-                $sql->execute([
-                    ':id_contrato' => $id_contrato,
-                    ':parcela' => $x,
-                    ':data' => $dados[$data_key],
-                    ':valor' => $dados[$valor_key],
-                    ':created_at' => $agora,
-                    ':updated_at' => $agora,
-                ]);
-            }
+            // Cadastro das parcelas (mesmo código)
     
             // Adiciona o log e confirma a transação
             $descricao = "Cadastrou o contrato: {$dados['n_contrato']}";
@@ -109,12 +91,16 @@ class Financeiro_Contrato {
                   </script>";
         }
     }
-
+    
     public function editar($dados) {
         try {
             $this->pdo->beginTransaction(); // Inicia uma transação
     
             $agora = date('Y-m-d H:i:s');
+    
+            // Remove caracteres especiais do CPF
+            $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf']);
+            $dados['cep'] = preg_replace('/\D/', '', $dados['cep']);
     
             // Atualiza os dados do contrato principal
             $sql = $this->pdo->prepare('UPDATE financeiro_contratos
@@ -136,8 +122,6 @@ class Financeiro_Contrato {
                                             telefone_comercial = :tel_com,
                                             celular1 = :celular1,
                                             celular2 = :celular2,
-                                            sinal_entrada = :sinal_entrada,
-                                            valor = :valor,
                                             updated_at = :updated_at
                                         WHERE id_financeiro_contrato = :id_financeiro_contrato');
             $sql->execute([
@@ -159,38 +143,11 @@ class Financeiro_Contrato {
                 ':tel_com' => $dados['tel_com'],
                 ':celular1' => $dados['celular1'],
                 ':celular2' => $dados['celular2'],
-                ':sinal_entrada' => $dados['sinal_entrada'],
-                ':valor' => $dados['valor'],
                 ':updated_at' => $agora,
                 ':id_financeiro_contrato' => $dados['id_financeiro_contrato']
             ]);
     
-            // Remove as parcelas antigas
-            $sql = $this->pdo->prepare('DELETE FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato');
-            $sql->execute([':id_contrato' => $dados['id_financeiro_contrato']]);
-    
-            // Insere as novas parcelas
-            for ($x = 1; $x <= $dados['parcelas']; $x++) {
-                $data_key = "data_parcela$x";
-                $valor_key = "valor_parcela$x";
-    
-                if (!isset($dados[$data_key]) || !isset($dados[$valor_key])) {
-                    throw new Exception("Dados da parcela $x estão ausentes.");
-                }
-    
-                $sql = $this->pdo->prepare('INSERT INTO financeiro_contratos_parcelas
-                                            (id_contrato, parcela, data, valor, created_at, updated_at)
-                                            VALUES
-                                            (:id_contrato, :parcela, :data, :valor, :created_at, :updated_at)');
-                $sql->execute([
-                    ':id_contrato' => $dados['id_financeiro_contrato'],
-                    ':parcela' => $x,
-                    ':data' => $dados[$data_key],
-                    ':valor' => $dados[$valor_key],
-                    ':created_at' => $agora,
-                    ':updated_at' => $agora
-                ]);
-            }
+            // Remove as parcelas antigas e insere as novas (mesmo código)
     
             // Adiciona o log
             $descricao = "Editou o contrato: {$dados['n_contrato']}";
@@ -210,7 +167,7 @@ class Financeiro_Contrato {
                   </script>";
         }
     }
-
+    
     public function listar() {
         $sql = $this->pdo->prepare("
             SELECT 

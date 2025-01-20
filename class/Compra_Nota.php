@@ -206,7 +206,8 @@ class Compra_Nota {
                                     WHERE id_empresa = :id_empresa 
                                     AND id_categoria = :id_categoria 
                                     AND month(data) = :mes
-                                    AND year(data) = :ano');
+                                    AND year(data) = :ano
+                                    AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_categoria', $id_categoria);
@@ -225,7 +226,8 @@ class Compra_Nota {
                                     INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                     WHERE id_empresa = :id_empresa 
                                     AND id_categoria = :id_categoria 
-                                    AND year(data) = :ano');
+                                    AND year(data) = :ano
+                                    AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_categoria', $id_categoria);
@@ -243,7 +245,8 @@ class Compra_Nota {
                                         INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                         WHERE id_empresa = :id_empresa
                                         AND month(data) = :mes
-                                        AND year(data) = :ano');
+                                        AND year(data) = :ano
+                                        AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':mes', $mes);
@@ -260,7 +263,8 @@ class Compra_Nota {
                                         INNER JOIN compras_fornecedores ON compras_notas.id_fornecedor = compras_fornecedores.id_compra_fornecedor 
                                         INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                         WHERE id_empresa = :id_empresa
-                                        AND year(data) = :ano');
+                                        AND year(data) = :ano
+                                        AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':ano', $ano);
@@ -277,7 +281,8 @@ class Compra_Nota {
                                     INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                     WHERE id_compra_categoria = :id_categoria
                                     AND id_empresa = :id_empresa
-                                    AND YEAR(data) = :ano');
+                                    AND YEAR(data) = :ano
+                                    AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_categoria', $id_categoria);
         $sql->bindParam(':id_empresa', $id_empresa);
@@ -288,22 +293,32 @@ class Compra_Nota {
         return $resultado['total_notas'];
     }
 
-    public function totalClinicas()
+    public function totalClinicas($ano)
     {
-        $sql = $this->pdo->prepare('SELECT SUM(valor) AS total_clinica FROM compras_notas WHERE id_empresa IN (1, 3, 5)');
+        $sql = $this->pdo->prepare('
+            SELECT SUM(valor) AS total_clinica 
+            FROM compras_notas 
+            WHERE id_empresa IN (1, 3, 5) AND YEAR(data) = :ano AND deleted_at IS NULL
+        ');
+        $sql->bindValue(':ano', $ano, PDO::PARAM_INT);
         $sql->execute();
 
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);
-        return $resultado['total_clinica'];
+        return $resultado['total_clinica'] ?? 0; // Retorna 0 se o resultado for nulo
     }
 
-    public function totalOticas()
+    public function totalOticas($ano)
     {
-        $sql = $this->pdo->prepare('SELECT SUM(valor) AS total_otica FROM compras_notas WHERE id_empresa IN (2, 4, 6)');
+        $sql = $this->pdo->prepare('
+            SELECT SUM(valor) AS total_otica 
+            FROM compras_notas 
+            WHERE id_empresa IN (2, 4, 6) AND YEAR(data) = :ano AND deleted_at IS NULL
+        ');
+        $sql->bindValue(':ano', $ano, PDO::PARAM_INT);
         $sql->execute();
 
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);
-        return $resultado['total_otica'];
+        return $resultado['total_otica'] ?? 0; // Retorna 0 se o resultado for nulo
     }
 
     /**
@@ -324,6 +339,7 @@ class Compra_Nota {
             AND cn.empresa_id = :empresa_id 
             AND MONTH(cn.data) = :mes 
             AND YEAR(cn.data) = :ano
+            AND deleted_at IS NULL
         ');
         $sql->bindParam(':id_fornecedor', $id_fornecedor);
         $sql->bindParam(':id_categoria', $id_categoria);
@@ -351,6 +367,7 @@ class Compra_Nota {
             WHERE cn.id_fornecedor = :id_fornecedor 
             AND cn.id_empresa = :id_empresa 
             AND YEAR(cn.data) = :ano
+            AND deleted_at IS NULL
         ');
         $sql->bindParam(':id_fornecedor', $id_fornecedor);
         $sql->bindParam(':id_empresa', $id_empresa);
@@ -368,6 +385,7 @@ class Compra_Nota {
         WHERE id_fornecedor = :id_fornecedor
         AND id_empresa = :id_empresa
         AND MONTH(data) = :mes
+        AND deleted_at IS NULL
         ');
 
         $sql->bindParam(':id_fornecedor',$id_fornecedor);
@@ -389,7 +407,8 @@ class Compra_Nota {
                                     WHERE id_empresa = :id_empresa 
                                     AND id_categoria = :id_categoria 
                                     AND month(data) = :mes
-                                    AND year(data) = :ano');
+                                    AND year(data) = :ano
+                                    AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_categoria', $id_categoria);
@@ -409,7 +428,8 @@ class Compra_Nota {
                                     INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                     WHERE id_empresa = :id_empresa 
                                     AND id_categoria = :id_categoria 
-                                    AND year(data) = :ano');
+                                    AND year(data) = :ano
+                                    AND deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_categoria', $id_categoria);
@@ -427,6 +447,7 @@ class Compra_Nota {
         WHERE id_fornecedor = :id_fornecedor
         AND id_empresa = :id_empresa
         AND MONTH(data) = :mes
+        AND deleted_at IS NULL
         ');
 
         $sql->bindParam(':id_fornecedor',$id_fornecedor);
@@ -447,7 +468,8 @@ class Compra_Nota {
                                         INNER JOIN compras_categorias ON compras_fornecedores.id_categoria = compras_categorias.id_compra_categoria 
                                         WHERE id_empresa = :id_empresa
                                         AND month(data) = :mes
-                                        AND year(data) = :ano');
+                                        AND year(data) = :ano
+                                        AND compras_notas.deleted_at IS NULL');
 
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':mes', $mes);

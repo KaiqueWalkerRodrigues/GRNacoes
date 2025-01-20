@@ -99,7 +99,13 @@ switch ($route) {
     case 'dashboards/captacao':
         $file = 'dashboards/captacao.php';
         $pageTitle .= "Dashboard Captação";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1,2,12,13,14];
+        $requiredLogin = true;
+        break;
+    case 'dashboards/catarata':
+        $file = 'dashboards/catarata.php';
+        $pageTitle .= "Dashboard Catarata";
+        $requiredSectors = [1];
         $requiredLogin = true;
         break;
 
@@ -251,6 +257,12 @@ switch ($route) {
         $requiredSectors = [1,12,13,15];
         $requiredLogin = true;
         break;
+    case 'cirurgias/catarata/agendamento_externo':
+        $file = 'cirurgias/catarata/agendamento_externo.php';
+        $pageTitle .= "Agendamento Externo Catarata";
+        $requiredSectors = [1,12,13,15];
+        $requiredLogin = true;
+        break;
     case 'cirurgias/catarata/configuracoes/lentes':
         $file = 'cirurgias/catarata/configuracoes/lentes.php';
         $pageTitle .= "Lentes Catarata";
@@ -261,6 +273,19 @@ switch ($route) {
     case 'tecnologia/configuracoes/sockets':
         $file = 'tecnologia/configuracoes/sockets.php';
         $pageTitle .= "Sockets Processadores";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
+
+    case 'lente_contato/orcamentos':
+        $file = 'lente_contato/orcamentos.php';
+        $pageTitle .= "Orçamentos Lente de Contato";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
+    case 'lente_contato/configuracoes/modelos':
+        $file = 'lente_contato/configuracoes/modelos.php';
+        $pageTitle .= "Orçamentos Lente de Contato";
         $requiredSectors = [1];
         $requiredLogin = true;
         break;
@@ -307,12 +332,12 @@ switch ($route) {
     //     $requiredSectors = null;
     //     $requiredLogin = true;
     //     break;
-    case 'ajax/set_confirmarpagamento':
-        $file = 'ajax/set_confirmarpagamento.php';
-        $pageTitle .= "ConfirmarPagamento";
-        $requiredSectors = null;
-        $requiredLogin = true;
-        break;
+    // case 'ajax/set_confirmarpagamento':
+    //     $file = 'ajax/set_confirmarpagamento.php';
+    //     $pageTitle .= "ConfirmarPagamento";
+    //     $requiredSectors = null;
+    //     $requiredLogin = true;
+    //     break;
 
     default:
         $file = '404.php';

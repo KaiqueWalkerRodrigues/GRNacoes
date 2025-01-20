@@ -4,6 +4,17 @@
     if(isset($_POST['btnAlterarSenha'])){
         $Usuario->alterarSenha($_POST);
     }
+
+    function gerarOpcoesAnos() {
+        $anoAtual = date('Y'); // Obtém o ano atual
+        $anos = range(2024, $anoAtual); // Cria um intervalo de anos de 2024 até o ano atual
+    
+        foreach ($anos as $ano) {
+            // Adiciona o atributo "selected" se for o ano atual
+            $selected = ($ano == $anoAtual) ? 'selected' : '';
+            echo "<option value=\"$ano\" $selected>$ano</option>\n";
+        }
+    }
 ?>
 <style>
     .nav-link-icon{
@@ -31,7 +42,8 @@
                     </a>
                     <div class="collapse" id="collapseDashboards" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                            <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação<span class="badge badge-primary ml-2">Novo!</span></a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação</a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/catarata">Catarata<span class="badge badge-primary ml-2">Novo!</span></a>
                         </nav>
                     </div> 
 
@@ -56,75 +68,6 @@
                     <div class="nav-link-icon"><i class="fa-solid fa-messages"></i></div>
                     Chats
                 </a>
-
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
-
-                    <a class="nav-link collapsed" id="ciru" href="javascript:void(0);" data-toggle="collapse" data-target="#cirurgias" aria-expanded="false" aria-controls="cirurgias">
-                        <div class="nav-link-icon"><i class="fa-solid fa-eye"></i></div>
-                        Cirurgias<span class="badge badge-primary ml-2">Novo!</span>
-                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-
-                    <div class="collapse" id="cirurgias" data-parent="#accordionSidenav">
-
-                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata" data-target="#cirurgias_catarata" aria-expanded="false" aria-controls="cirurgias_catarata">Catarata
-                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-
-                            <div class="collapse" id="cirurgias_catarata" data-parent="#accordionSidenavLayout">
-                                <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" id="cirurgias_catarata_agendas" href="<?php echo URL ?>/cirurgias/catarata/agendas">Agendas</a>
-                                    <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento">Agendamento</a>
-                                    <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata_configuracoes" data-target="#cirurgias_catarata_configuracoes" aria-expanded="false" aria-controls="cirurgias_catarata_configuracoes">Configurações
-                                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="cirurgias_catarata_configuracoes" data-parent="#accordionSidenavLayout">
-                                        <nav class="sidenav-menu-nested nav">
-                                            <a class="nav-link" id="cirurgias_catarata_configuracoes_lentes" href="<?php echo URL ?>/cirurgias/catarata/configuracoes/lentes">Lentes</a>
-                                        </nav>
-                                    </div>
-                                </nav>
-                            </div>
-
-                        </nav>
-                    </div>
-
-                <?php } ?>
-
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 12){ ?>
-
-                    <a class="nav-link collapsed" id="comp" href="javascript:void(0);" data-toggle="collapse" data-target="#compras" aria-expanded="false" aria-controls="compras">
-                        <div class="nav-link-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                        Compras
-                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="compras" data-parent="#accordionSidenav">
-                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
-                            <a class="nav-link" id="compras_pedidos" href="<?php echo URL ?>/compras/pedidos">Pedidos de Compras</a>
-                            <a class="nav-link" id="compras_notas" href="<?php echo URL ?>/compras/notas">Notas Fiscais</a>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras_relatorios" aria-expanded="false" aria-controls="compras_relatorios">Relatórios
-                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="compras_relatorios" data-parent="#accordionSidenavLayout">
-                                <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorCategoria">Categorias</a>
-                                    <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorFornecedor">Fornecedores</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" id="compras_configuracoes" data-target="#compras_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
-                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="compras_configuracoes" data-parent="#accordionSidenavLayout">
-                                <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" id="compras_configuracoes_categorias" href="<?php echo URL ?>/compras/configuracoes/categorias">Gerenciar Categorias</a>
-                                    <a class="nav-link" id="compras_configuracoes_fornecedores" href="<?php echo URL ?>/compras/configuracoes/fornecedores">Gerenciar Fornecedores</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div>
-
-                <?php } ?>
 
                 <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
 
@@ -152,6 +95,85 @@
 
                 <?php } ?>
 
+                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14 OR $_SESSION['id_setor'] == 15){ ?>
+
+                    <a class="nav-link collapsed" id="ciru" href="javascript:void(0);" data-toggle="collapse" data-target="#cirurgias" aria-expanded="false" aria-controls="cirurgias">
+                        <div class="nav-link-icon"><i class="fa-solid fa-eye"></i></div>
+                        Cirurgias<span class="badge badge-primary ml-2">Novo!</span>
+                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+
+                    <div class="collapse" id="cirurgias" data-parent="#accordionSidenav">
+
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata" data-target="#cirurgias_catarata" aria-expanded="false" aria-controls="cirurgias_catarata">Catarata
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+
+                            <div class="collapse" id="cirurgias_catarata" data-parent="#accordionSidenavLayout">
+                                <nav class="sidenav-menu-nested nav">
+                                    <a class="nav-link" id="cirurgias_catarata_agendas" href="<?php echo URL ?>/cirurgias/catarata/agendas">Agendas</a>
+                                    <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento">Agendamento</a>
+                                    <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento_externo">Agendamento Exter</a>
+                                    <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata_configuracoes" data-target="#cirurgias_catarata_configuracoes" aria-expanded="false" aria-controls="cirurgias_catarata_configuracoes">Configurações
+                                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="cirurgias_catarata_configuracoes" data-parent="#accordionSidenavLayout">
+                                        <nav class="sidenav-menu-nested nav">
+                                            <a class="nav-link" id="cirurgias_catarata_configuracoes_lentes" href="<?php echo URL ?>/cirurgias/catarata/configuracoes/lentes">Lentes</a>
+                                        </nav>
+                                    </div>
+                                    <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata_relatorios" data-target="#cirurgias_catarata_relatorios" aria-expanded="false" aria-controls="cirurgias_catarata_relatorios">Relatórios
+                                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="cirurgias_catarata_relatorios" data-parent="#accordionSidenavLayout">
+                                        <nav class="sidenav-menu-nested nav">
+                                            <a class="nav-link" id="cirurgias_catarata_relatorios_lentes" href="<?php echo URL ?>/cirurgias/catarata/relatorios/lentes">Vendas</a>
+                                        </nav>
+                                    </div>
+                                </nav>
+                            </div>
+
+                        </nav>
+                    </div>
+
+                <?php } ?>
+
+                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 12){ ?>
+
+                    <a class="nav-link collapsed" id="comp" href="javascript:void(0);" data-toggle="collapse" data-target="#compras" aria-expanded="false" aria-controls="compras">
+                        <div class="nav-link-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                        Compras
+                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="compras" data-parent="#accordionSidenav">
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link" id="compras_pedidos" href="<?php echo URL ?>/compras/pedidos">Pedidos de Compras</a>
+                            <a class="nav-link" id="compras_notas" href="<?php echo URL ?>/compras/notas">Notas Fiscais</a>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" id="compras_configuracoes" data-target="#compras_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="compras_configuracoes" data-parent="#accordionSidenavLayout">
+                                <nav class="sidenav-menu-nested nav">
+                                    <a class="nav-link" id="compras_configuracoes_categorias" href="<?php echo URL ?>/compras/configuracoes/categorias">Gerenciar Categorias</a>
+                                    <a class="nav-link" id="compras_configuracoes_fornecedores" href="<?php echo URL ?>/compras/configuracoes/fornecedores">Gerenciar Fornecedores</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras_relatorios" aria-expanded="false" aria-controls="compras_relatorios">Relatórios
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="compras_relatorios" data-parent="#accordionSidenavLayout">
+                                <nav class="sidenav-menu-nested nav">
+                                    <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorCategoria">Categorias</a>
+                                    <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorFornecedor">Fornecedores</a>
+                                </nav>
+                            </div>
+                        </nav>
+                    </div>
+
+                <?php } ?>
+
+
                 <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
 
                     <a class="nav-link collapsed" id="fina" href="javascript:void(0);" data-toggle="collapse" data-target="#financeiro" aria-expanded="false" aria-controls="financeiro">
@@ -164,6 +186,29 @@
                             <a class="nav-link" id="financeiro_campanhas" href="<?php echo URL ?>/financeiro/campanhas">Campanhas</a>
                             <a class="nav-link" id="financeiro_contratos" href="<?php echo URL ?>/financeiro/contratos">Contratos</a>
                             <a class="nav-link" id="financeiro_pendencias" href="<?php echo URL ?>/financeiro/pendencias">Pendencias</a>
+                        </nav>
+                    </div>
+                
+                <?php } ?>
+
+                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5){ ?>
+
+                    <a class="nav-link collapsed" id="lent" href="javascript:void(0);" data-toggle="collapse" data-target="#lente_contato" aria-expanded="false" aria-controls="financeiro">
+                        <div class="nav-link-icon"><i class="fa-sharp fa-light fa-eye-low-vision"></i></div>
+                        Lente de Contato
+                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="lente_contato" data-parent="#accordionSidenav">
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link" id="lente_contato_orcamentos" href="<?php echo URL ?>/lente_contato/orcamentos">Orçamentos</a>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" id="lente_contato_configuracoes" data-target="#lente_contato_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="lente_contato_configuracoes" data-parent="#accordionSidenavLayout">
+                                <nav class="sidenav-menu-nested nav">
+                                    <a class="nav-link" id="lente_contato_configuracoes_modelos" href="<?php echo URL ?>/lente_contato/configuracoes/modelos">Gerenciar Modelos</a>
+                                </nav>
+                            </div>
                         </nav>
                     </div>
                 
@@ -255,9 +300,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-6 offset-3">
+                            <div class="col-2 offset-3">
+                                <label for="ano" class="form-label">Ano:</label>
+                                <select name="ano" class="form-control" id="porcategoria_ano">
+                                    <?php gerarOpcoesAnos(); ?>
+                                </select>
+                            </div>
+                            <div class="col-4">
                                 <label for="empresa" class="form-label">Empresas:</label>
-                                <select name="empresa" class="form-control" id="porcategoria_empresa">
+                                <select name="empresa" class="form-control" id="porcategoria_empresa" required>
                                     <option value="0">Todas</option>
                                     <option value="1">Clínicas</option>
                                     <option value="2">Óticas</option>
@@ -287,7 +338,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-6 offset-3">
+                            <div class="col-2 offset-3">
+                                <label for="ano" class="form-label">Ano:</label>
+                                <select name="ano" class="form-control" id="porfornecedor_ano">
+                                    <?php gerarOpcoesAnos(); ?>
+                                </select>
+                            </div>
+                            <div class="col-4">
                                 <label for="empresa" class="form-label">Empresas:</label>
                                 <select name="empresa" class="form-control" id="porfornecedor_empresa">
                                     <option value="0">Todas</option>
@@ -409,18 +466,5 @@
         dataFim.addEventListener('change', validarDatas);
     });
     $(document).ready(function () {
-         // Verificação das senhas no modal de alteração de senha
-         $('#senha, #confirma_senha').keyup(function() { 
-            let senha = $('#senha').val();
-            let confirma_senha = $('#confirma_senha').val();
-
-            if(senha === confirma_senha){
-                $('#senhasDifentes').addClass('d-none');
-                $('#btnAlterar').removeClass('disabled');
-            } else {
-                $('#senhasDifentes').removeClass('d-none');
-                $('#btnAlterar').addClass('disabled');
-            }
-        });
     });
 </script>

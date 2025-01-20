@@ -160,11 +160,8 @@ class Usuario {
         $sql->bindParam(':created_at',$created_at);          
         $sql->bindParam(':updated_at',$updated_at);              
 
-        $sql->execute();
-
-        $id_usuario = $this->pdo->lastInsertId();
-
         if ($sql->execute()) {
+            $id_usuario = $this->pdo->lastInsertId();
             $descricao = "Cadastrou o usuário: $nome ($id_usuario)";
             $this->addLog('Cadastrar', $descricao, $usuario_logado);
 

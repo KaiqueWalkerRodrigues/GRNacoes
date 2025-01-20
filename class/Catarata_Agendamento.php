@@ -33,7 +33,21 @@ class Catarata_Agendamento {
      * @return array
      */
     public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM catarata_agendamentos WHERE deleted_at IS NULL ORDER BY nome');        
+        $sql = $this->pdo->prepare('SELECT * FROM catarata_agendamentos WHERE deleted_at IS NULL AND externo = 0 ORDER BY nome');        
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        // Retorna os dados como JSON
+        return $dados;
+    }      
+
+    /**
+     * Listar todos os agendamentos
+     * @return array
+     */
+    public function listarExternos(){
+        $sql = $this->pdo->prepare('SELECT * FROM catarata_agendamentos WHERE deleted_at IS NULL AND externo = 1 ORDER BY nome');        
         $sql->execute();
     
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -117,6 +131,73 @@ class Catarata_Agendamento {
     }
 
     /**
+     * Cadastrar um novo Paciente Externo
+     * @param Array $dados    
+     * @return void
+     */
+    public function cadastrarExterno(Array $dados){
+        // Variáveis obtidas do desencapsulamento
+        $nome = ucwords(strtolower(trim($dados['nome'])));
+        $id_solicitante = (int)$dados['id_solicitante'];
+        $id_lente = (int)$dados['id_lente'];
+        $id_agenda = (int)$dados['id_agenda'];
+        $id_turma = (int)$dados['id_turma'];
+        $id_orientador = (int)$dados['id_orientador']; // Novo campo adicionado
+        $olhos = trim($dados['olhos']);
+        $dioptria_esquerda = trim($dados['dioptria_esquerda']);
+        $dioptria_direita = trim($dados['dioptria_direita']);
+        $valor = trim($dados['valor']);
+        $usuario_logado = $dados['usuario_logado'];
+        $agora = date("Y-m-d H:i:s");
+
+        // Preparar a consulta de inserção usando apenas as variáveis disponíveis
+        $sql = $this->pdo->prepare('INSERT INTO catarata_agendamentos 
+                                    (id_solicitante, id_lente, id_agenda, id_turma, id_orientador, nome, olhos, dioptria_esquerda, dioptria_direita, valor, externo, created_at, updated_at)
+                                    VALUES
+                                    (:id_solicitante, :id_lente, :id_agenda, :id_turma, :id_orientador, :nome, :olhos, :dioptria_esquerda, :dioptria_direita, :valor, 1, :created_at, :updated_at)
+        ');
+
+        $created_at = $agora;
+        $updated_at = $agora;
+
+        // Bind dos parâmetros
+        $sql->bindParam(':id_solicitante', $id_solicitante, PDO::PARAM_INT);
+        $sql->bindParam(':id_lente', $id_lente, PDO::PARAM_INT);
+        $sql->bindParam(':id_agenda', $id_agenda, PDO::PARAM_INT);
+        $sql->bindParam(':id_turma', $id_turma, PDO::PARAM_INT);
+        $sql->bindParam(':id_orientador', $id_orientador, PDO::PARAM_INT);
+        $sql->bindParam(':nome', $nome, PDO::PARAM_STR);
+        $sql->bindParam(':olhos', $olhos, PDO::PARAM_STR);
+        $sql->bindParam(':dioptria_esquerda', $dioptria_esquerda, PDO::PARAM_STR);
+        $sql->bindParam(':dioptria_direita', $dioptria_direita, PDO::PARAM_STR);
+        $sql->bindParam(':valor', $valor, PDO::PARAM_STR);
+        $sql->bindParam(':created_at', $created_at, PDO::PARAM_STR);
+        $sql->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
+
+        // Execução e tratamento
+        if ($sql->execute()) {
+            $id_agendamento = $this->pdo->lastInsertId();
+            $descricao = "Cadastrou o agendamento externo: $nome ($id_agendamento)";
+            $this->addLog("Cadastrar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Agendamento Externo cadastrado com sucesso!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível cadastrar o agendamento externo!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
+            </script>";
+            exit;
+        }
+
+    }
+
+    /**
      * Retorna os dados de um Paciente
      * @param int $id_agendamento
      * @return object
@@ -145,6 +226,7 @@ class Catarata_Agendamento {
         $dioptria_direita = trim($dados['dioptria_direita']);
         $valor = trim($dados['valor']);
         $forma_pgto = trim($dados['forma_pgto']);
+        $id_convenio = $dados['id_convenio'];
         $id_orientador = (int)$dados['id_orientador'];
         $id_turma = (int)$dados['id_turma'];
         $usuario_logado = $dados['usuario_logado'];
@@ -161,6 +243,7 @@ class Catarata_Agendamento {
             valor = :valor,
             forma_pgto = :forma_pgto,
             id_orientador = :id_orientador,
+            id_convenio = :id_convenio,
             id_turma = :id_turma,
             updated_at = :updated_at
         WHERE id_catarata_agendamento = :id_agendamento
@@ -175,6 +258,7 @@ class Catarata_Agendamento {
         $sql->bindParam(':dioptria_direita', $dioptria_direita, PDO::PARAM_STR);
         $sql->bindParam(':valor', $valor, PDO::PARAM_STR);
         $sql->bindParam(':forma_pgto', $forma_pgto, PDO::PARAM_STR);
+        $sql->bindParam(':id_convenio', $id_convenio, PDO::PARAM_INT);
         $sql->bindParam(':id_orientador', $id_orientador, PDO::PARAM_INT);
         $sql->bindParam(':id_turma', $id_turma, PDO::PARAM_INT);
         $sql->bindParam(':updated_at', $agora, PDO::PARAM_STR);
@@ -199,6 +283,79 @@ class Catarata_Agendamento {
             exit;
         }
     }
+
+    /**
+     * Atualiza um determinado Paciente Externo
+     * @param array $dados   
+     * @return void
+     */
+    public function editarExterno(array $dados){
+        // Sanitização e formatação dos dados
+        $id_agendamento = (int)$dados['id_agendamento'];
+        $nome = ucwords(strtolower(trim($dados['nome'])));
+        $id_solicitante = (int)$dados['id_solicitante'];
+        $id_lente = (int)$dados['id_lente'];
+        $id_agenda = (int)$dados['id_agenda'];
+        $id_turma = (int)$dados['id_turma'];
+        $id_orientador = (int)$dados['id_orientador'];
+        $olhos = trim($dados['olhos']);
+        $dioptria_esquerda = trim($dados['dioptria_esquerda']);
+        $dioptria_direita = trim($dados['dioptria_direita']);
+        $valor = trim($dados['valor']);
+        $usuario_logado = $dados['usuario_logado'];
+        $agora = date("Y-m-d H:i:s");
+
+        // Preparar a consulta de atualização para agendamento externo
+        $sql = $this->pdo->prepare("UPDATE catarata_agendamentos SET
+            nome = :nome,
+            id_solicitante = :id_solicitante,
+            id_lente = :id_lente,
+            id_agenda = :id_agenda,
+            id_turma = :id_turma,
+            id_orientador = :id_orientador,
+            olhos = :olhos,
+            dioptria_esquerda = :dioptria_esquerda,
+            dioptria_direita = :dioptria_direita,
+            valor = :valor,
+            updated_at = :updated_at
+        WHERE id_catarata_agendamento = :id_agendamento
+        ");
+
+        // Bind dos parâmetros
+        $sql->bindParam(':nome', $nome, PDO::PARAM_STR);
+        $sql->bindParam(':id_solicitante', $id_solicitante, PDO::PARAM_INT);
+        $sql->bindParam(':id_lente', $id_lente, PDO::PARAM_INT);
+        $sql->bindParam(':id_agenda', $id_agenda, PDO::PARAM_INT);
+        $sql->bindParam(':id_turma', $id_turma, PDO::PARAM_INT);
+        $sql->bindParam(':id_orientador', $id_orientador, PDO::PARAM_INT);
+        $sql->bindParam(':olhos', $olhos, PDO::PARAM_STR);
+        $sql->bindParam(':dioptria_esquerda', $dioptria_esquerda, PDO::PARAM_STR);
+        $sql->bindParam(':dioptria_direita', $dioptria_direita, PDO::PARAM_STR);
+        $sql->bindParam(':valor', $valor, PDO::PARAM_STR);
+        $sql->bindParam(':updated_at', $agora, PDO::PARAM_STR);
+        $sql->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
+
+        // Execução e tratamento
+        if ($sql->execute()) {
+            $descricao = "Editou o agendamento externo: $nome ($id_agendamento)";
+            $this->addLog("Editar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Agendamento externo editado com sucesso!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível editar o agendamento externo!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
+            </script>";
+            exit;
+        }
+    }
+
 
     /**
      * Deleta um Paciente
@@ -236,6 +393,47 @@ class Catarata_Agendamento {
             <script>
                 alert('Não foi possível deletar o agendamento!');
                 window.location.href = '" . URL . "/cirurgias/catarata/agendamento';
+            </script>";
+            exit;
+        }
+    }
+
+    /**
+     * Deleta um Paciente Externo
+     * @param integer $id_agendamento
+     * @param integer $usuario_logado
+     * @return void
+     */
+    public function deletarExterno(int $id_agendamento, $usuario_logado){
+        // Consulta para obter o nome do Paciente
+        $consulta = $this->pdo->prepare('SELECT nome FROM catarata_agendamentos WHERE id_catarata_agendamento = :id_agendamento');
+        $consulta->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        $nome = $resultado ? $resultado['nome'] : "Agendamento Não encontrado";
+
+        // Atualiza o registro de Paciente com a data de exclusão
+        $sql = $this->pdo->prepare('UPDATE catarata_agendamentos SET deleted_at = :deleted_at WHERE id_catarata_agendamento = :id_agendamento');
+        $agora = date("Y-m-d H:i:s");
+        $sql->bindParam(':deleted_at', $agora, PDO::PARAM_STR);
+        $sql->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
+
+        if ($sql->execute()) {
+            $descricao = "Deletou o agendamento $nome ($id_agendamento)";
+            $this->addLog("Deletar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Agendamento deletado com sucesso!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível deletar o agendamento!');
+                window.location.href = '" . URL . "/cirurgias/catarata/agendamento_externo';
             </script>";
             exit;
         }

@@ -53,7 +53,7 @@
                         <br><br>
                         <div class="row">
                             <?php foreach($Catarata_Turma->listar($agenda->id_catarata_agenda) as $turma){ ?>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <span>Turma <?php echo Helper::formatarHorario($turma->horario) ?></span>
@@ -79,7 +79,7 @@
                                     <div class="card-body">
                                         <ul>
                                             <?php foreach($Catarata_Turma->listarAgendamentos($turma->id_catarata_turma) as $agendamento){ ?>
-                                                <li><?php echo $agendamento->nome.' ('.Helper::encurtarNome($Usuario->mostrar($agendamento->id_orientador)->nome).')' ?></li>
+                                                <li><?php if($agendamento->externo == 1){ echo "<b>(Externo)</b> "; } echo $agendamento->nome.' <b>('.Helper::encurtarNome($Usuario->mostrar($agendamento->id_orientador)->nome).')</b>' ?></li>
                                             <?php } ?>
                                         </ul>
                                     </div>

@@ -667,7 +667,14 @@ $row++;
 
     $col++;
 
-    $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    if ($TotalCaptaveis != 0) {
+        $valor = $TotalCaptados / $TotalCaptaveis;
+    } else {
+        // Defina um comportamento alternativo para quando $TotalCaptaveis for zero
+        $valor = 0; // ou outro valor/padrão que faça sentido no seu contexto
+    }
+
+    $captacao->setCellValue($col.$row, $valor);
     $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
     

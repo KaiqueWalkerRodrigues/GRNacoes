@@ -7,13 +7,13 @@
     $Catarata_Agendamento = new Catarata_Agendamento();
 
     if(isset($_POST['btnAgendar'])){
-        $Catarata_Agendamento->cadastrar($_POST);
+        $Catarata_Agendamento->cadastrarExterno($_POST);
     }
     if(isset($_POST['btnEditar'])){
-        $Catarata_Agendamento->editar($_POST);
+        $Catarata_Agendamento->editarExterno($_POST);
     }
     if(isset($_POST['btnDeletar'])){
-        $Catarata_Agendamento->deletar($_POST['id_agendamento'],$_SESSION['id_usuario']);
+        $Catarata_Agendamento->deletarExterno($_POST['id_agendamento'],$_SESSION['id_usuario']);
     }
 ?>
 <!DOCTYPE html>
@@ -47,15 +47,15 @@
                         <div class="page-header-content">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"><i class="fa-solid fa-rectangle-history"></i></div>
-                                <span>Agendamento Cirurgia</span>
+                                <span>Agendamento Externo Cirurgia</span>
                             </h1>
                         </div>
                     </div>
                 </div>
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
-                        <div class="card-header">Cirurgias de Catarata
-                            <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2" type="button" data-toggle="modal" data-target="#modalCadastrarCatarata">
+                        <div class="card-header">Cirurgias de Catarata Externo
+                            <button class="btn btn-datatable btn-icon btn-sm btn-info ml-2" type="button" data-toggle="modal" data-target="#modalCadastrarCatarata">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
@@ -65,10 +65,8 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Empresa</th>
                                             <th>Nome Paciente</th>
                                             <th>Médico Solicitante</th>
-                                            <th>Convenio</th>
                                             <th>Data Cirurgia</th>
                                             <th>Turma</th>
                                             <th>Status</th>
@@ -76,13 +74,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Catarata_Agendamento->listar() as $agendamento){ ?>
+                                        <?php foreach($Catarata_Agendamento->listarExternos() as $agendamento){ ?>
                                             <tr>
                                                 <td><?php echo $agendamento->id_catarata_agendamento ?></td>
-                                                <td><?php echo Helper::mostrar_empresa($Usuario->mostrar($agendamento->id_orientador)->empresa) ?></td>
                                                 <td><?php echo $agendamento->nome ?></td>
                                                 <td><?php echo Helper::encurtarNome($Medico->mostrar($agendamento->id_solicitante)->nome) ?></td>
-                                                <td><?php echo $Convenio->mostrar($agendamento->id_convenio)->convenio ?></td>
                                                 <td><?php echo Helper::formatarData($Catarata_Agenda->mostrar($agendamento->id_agenda)->data) ?></td>
                                                 <td><?php echo Helper::formatarHorario($Catarata_Turma->mostrar($agendamento->id_turma)->horario) ?></td>
                                                 <td class="text-center"><?php if($agendamento->dioptria_esquerda != 0 OR $agendamento->dioptria_direita != 0){ echo "<b class='text-success'>Completo</b>"; }else{ echo "<b class='text-warning'>Incompleto</b>"; } ?></td>
@@ -127,7 +123,7 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Agendar Cirurgia Catarata</h5>
+                        <h5 class="modal-title">Agendar Externo Cirurgia Catarata</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -135,7 +131,6 @@
                     <div class="modal-body">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_orientador" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
                         <div class="row">
                             <div class="offset-1 col-10">
                                 <b class="text-dark">Ficha Paciente:</b>
@@ -146,29 +141,12 @@
                                 <label for="nome" class="form-label">Nome do Paciente *</label>
                                 <input type="text" id="cadastrar_nome" name="nome" class="form-control" required>
                             </div>
-                            <div class="col-3">
-                                <label for="cpf" class="form-label">CPF *</label>
-                                <input type="text" id="cadastrar_cpf" name="cpf" class="form-control" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="contato" class="form-label">Contato *</label>
-                                <input type="text" id="cadastrar_contato" name="contato" class="form-control" required>
-                            </div>
-                            <div class="col-4 offset-1">
+                            <div class="col-4">
                                 <label for="id_solicitante" class="form-label">Médico Solicitante *</label>
                                 <select id="cadastrar_id_solicitante" name="id_solicitante" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="id_convenio" class="form-label">Convênio *</label>
-                                <select id="cadastrar_id_convenio" name="id_convenio" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Convenio->listar() as $convenio){ ?>
-                                        <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -178,7 +156,7 @@
                                 <hr style="margin-top: -0.2%;">
                             </div>
                             <div class="col-3 offset-1">
-                                <label for="olhos" class="form-label">Olho(s) *</label>
+                                <label for="olhos" class="form-label">Olhos *</label>
                                 <select name="olhos" id="cadastrar_olhos" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="0">Ambos os Olhos</option>
@@ -227,27 +205,13 @@
                                             <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor" required>
                                         </div>
                                     </div>
-                                    <div class="col-2">
-                                        <label for="forma_pgto" class="form-label">Forma Pagamento *</label>
-                                        <select name="forma_pgto" id="cadastrar_forma_pgto" class="form-control" required>
-                                            <option value="">Selecione...</option>
-                                            <option value="0">Credito</option>
-                                            <option value="1">Debito</option>
-                                            <option value="2">Boleto</option>
-                                            <option value="3">Pix</option>
-                                            <option value="4">Credito AO</option>
-                                            <option value="5">Debito AO</option>
-                                            <option value="6">Boleto AO</option>
-                                            <option value="7">Pix AO</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" name="btnAgendar" class="btn btn-success">Agendar</button>
+                        <button type="submit" name="btnAgendar" class="btn btn-primary">Agendar</button>
                     </div>
                 </div>
             </div>
@@ -255,21 +219,22 @@
     </div>
 
     <!-- Modal Editar Agendamento Cirurgia -->
-    <div class="modal fade" id="modalEditarAgendamento" tabindex="1" role="dialog" aria-labelledby="modalEditarAgendamentoLabel" aria-hidden="true">
+    <div class="modal fade" id="modalEditarAgendamento" tabindex="-1" role="dialog" aria-labelledby="modalEditarAgendamentoLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar Agendamento de Cirurgia Catarata</h5>
+                        <h5 class="modal-title">Editar Agendamento Externo Cirurgia Catarata</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <!-- Campos ocultos necessários -->
                         <input type="hidden" name="id_agendamento" id="editar_id_agendamento">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_orientador" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
+                        
                         <div class="row">
                             <div class="offset-1 col-10">
                                 <b class="text-dark">Ficha Paciente:</b>
@@ -280,29 +245,12 @@
                                 <label for="nome" class="form-label">Nome do Paciente *</label>
                                 <input type="text" id="editar_nome" name="nome" class="form-control" required>
                             </div>
-                            <div class="col-3">
-                                <label for="cpf" class="form-label">CPF *</label>
-                                <input type="text" id="editar_cpf" name="cpf" class="form-control" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="contato" class="form-label">Contato *</label>
-                                <input type="text" id="editar_contato" name="contato" class="form-control" required>
-                            </div>
-                            <div class="col-4 offset-1">
+                            <div class="col-4">
                                 <label for="id_solicitante" class="form-label">Médico Solicitante *</label>
                                 <select id="editar_id_solicitante" name="id_solicitante" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="id_convenio" class="form-label">Convênio *</label>
-                                <select id="editar_id_convenio" name="id_convenio" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Convenio->listar() as $convenio){ ?>
-                                        <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -312,7 +260,7 @@
                                 <hr style="margin-top: -0.2%;">
                             </div>
                             <div class="col-3 offset-1">
-                                <label for="olhos" class="form-label">Olho(s) *</label>
+                                <label for="olhos" class="form-label">Olhos *</label>
                                 <select name="olhos" id="editar_olhos" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="0">Ambos os Olhos</option>
@@ -329,7 +277,7 @@
                                 <input type="number" step="0.01" max="35" min="-6" name="dioptria_direita" id="editar_dioptria_direita" class="form-control">
                             </div>
                             <div class="col-2">
-                                <label for="id_lente" class="form-label">Modelo *</label>
+                                <label for="id_lente" class="form-label">Modelo Lente *</label>
                                 <select name="id_lente" id="editar_id_lente" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Catarata_Lente->listar() as $Catarata_lente){ ?>
@@ -344,40 +292,28 @@
                                         <select name="id_agenda" id="editar_id_agenda" class="form-control" required>
                                             <option value="">Selecione...</option>
                                             <?php foreach($Catarata_Agenda->listarProximas() as $Catarata_agenda){ ?>
-                                                <option value="<?php echo $Catarata_agenda->id_catarata_agenda ?>"><?php echo helper::formatarData($Catarata_agenda->data); ?></option>
+                                                <option value="<?php echo $Catarata_agenda->id_catarata_agenda ?>">
+                                                    <?php echo helper::formatarData($Catarata_agenda->data); ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-2 d-none">
                                         <label for="id_turma" class="form-label">Turma *</label>
                                         <select name="id_turma" id="editar_turma" class="form-control" required>
                                             <option value="">Selecione...</option>
                                         </select>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 text-center">
                                         <label for="valor" class="form-label">Valor Total *</label>
                                         <div class="input-group">
                                             <span class="input-group-text">R$</span>
                                             <input type="number" class="form-control" step="0.01" name="valor" id="editar_valor" required>
                                         </div>
                                     </div>
-                                    <div class="col-2">
-                                        <label for="forma_pgto" class="form-label">Forma Pagamento *</label>
-                                        <select name="forma_pgto" id="editar_forma_pgto" class="form-control" required>
-                                            <option value="">Selecione...</option>
-                                            <option value="0">Credito</option>
-                                            <option value="1">Debito</option>
-                                            <option value="2">Boleto</option>
-                                            <option value="3">Pix</option>
-                                            <option value="4">Credito AO</option>
-                                            <option value="5">Debito AO</option>
-                                            <option value="6">Boleto AO</option>
-                                            <option value="7">Pix AO</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>                    
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
@@ -387,6 +323,8 @@
             </div>
         </form>
     </div>
+
+
 
     <!-- Modal Deletar Catarata -->
     <div class="modal fade" id="modalDeletarAgendamento" tabindex="-1" role="dialog" aria-labelledby="modalDeletarAgendamentoLabel" aria-hidden="true">
@@ -421,87 +359,6 @@
             $('#ciru').addClass('active')
             $('#cirurgias_catarata').addClass('active')
             $('#cirurgias_catarata_orcamento').addClass('active')
-
-            $('#cadastrar_cpf').on('input', function() {
-                formatarCPF($(this));
-            });
-
-            $('#cadastrar_contato').on('input', function() {
-                formatarCelular($(this));
-            });
-
-            function formatarCelular(campo) {
-                let telefone = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-
-                if (telefone.length === 10) {
-                    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
-                    telefone = telefone.replace(/(\d{4})(\d{4})$/, '$1-$2');
-                    campo.val(telefone);
-                }
-                if (telefone.length === 11) {
-                    telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
-                    telefone = telefone.replace(/(\d{5})(\d{4})$/, '$1-$2');
-                    campo.val(telefone);
-                }
-            }
-
-            function formatarCPF(campo) {
-                let cpf = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-
-                if (cpf.length === 11) {
-                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-                    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    campo.val(cpf);
-                }
-
-                if (!validarCPF(cpf)) {
-                    campo.addClass('is-invalid');
-                    if (campo.next('.invalid-feedback').length === 0) {
-                        $('<div class="invalid-feedback">CPF Inválido. Tente novamente.</div>').insertAfter(campo);
-                    }
-                } else {
-                    campo.removeClass('is-invalid').addClass('is-valid');
-                    campo.next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
-                }
-            }
-
-            function validarCPF(cpf) {
-                cpf = cpf.replace(/[^\d]+/g,''); // Remove caracteres não numéricos
-                if (cpf == '') return false;
-                // Elimina CPFs conhecidos que são inválidos
-                if (cpf.length != 11 || 
-                    cpf == "00000000000" || 
-                    cpf == "11111111111" || 
-                    cpf == "22222222222" || 
-                    cpf == "33333333333" || 
-                    cpf == "44444444444" || 
-                    cpf == "55555555555" || 
-                    cpf == "66666666666" || 
-                    cpf == "77777777777" || 
-                    cpf == "88888888888" || 
-                    cpf == "99999999999")
-                    return false;
-                // Validação do primeiro dígito
-                let add = 0;
-                for (let i=0; i < 9; i ++)
-                    add += parseInt(cpf.charAt(i)) * (10 - i);
-                let rev = 11 - (add % 11);
-                if (rev == 10 || rev == 11) 
-                    rev = 0;
-                if (rev != parseInt(cpf.charAt(9))) 
-                    return false;
-                // Validação do segundo dígito
-                add = 0;
-                for (let i = 0; i < 10; i ++)
-                    add += parseInt(cpf.charAt(i)) * (11 - i);
-                rev = 11 - (add % 11);
-                if (rev == 10 || rev == 11) 
-                    rev = 0;
-                if (rev != parseInt(cpf.charAt(10)))
-                    return false;
-                return true;
-            }
 
             $('#cadastrar_id_agenda').on('change', function () {
                 const idAgenda = $(this).val();
@@ -594,78 +451,67 @@
 
             $('#modalEditarAgendamento').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
-                let id_agendamento = button.data('id_agendamento')
-                let nome = button.data('nome')
-                let cpf = button.data('cpf')
-                let contato = button.data('contato')
-                let id_solicitante = button.data('id_solicitante')
-                let id_convenio = button.data('id_convenio')
-                let olhos = button.data('olhos')
-                let dioptria_esquerda = button.data('dioptria_esquerda')
-                let dioptria_direita = button.data('dioptria_direita')
-                let id_lente = button.data('id_lente')
-                let id_agenda = button.data('id_agenda')
-                let id_turma = button.data('id_turma')
-                let valor = button.data('valor')
-                let forma_pgto = button.data('forma_pgto')
+                // Captura os dados do botão que acionou o modal
+                let id_agendamento = button.data('id_agendamento');
+                let nome = button.data('nome');
+                let id_solicitante = button.data('id_solicitante');
+                let olhos = button.data('olhos');
+                let dioptria_esquerda = button.data('dioptria_esquerda');
+                let dioptria_direita = button.data('dioptria_direita');
+                let id_lente = button.data('id_lente');
+                let id_agenda = button.data('id_agenda');
+                let id_turma = button.data('id_turma');
+                let valor = button.data('valor');
 
-                EditarDioptriaOlhos(olhos)
+                // Preenche os campos do modal com os dados do agendamento
+                $('#editar_id_agendamento').val(id_agendamento);
+                $('#editar_nome').val(nome);
+                $('#editar_id_solicitante').val(id_solicitante);
+                $('#editar_olhos').val(olhos).change(); // Dispara mudança para ajustar dioptrias
+                $('#editar_dioptria_esquerda').val(dioptria_esquerda);
+                $('#editar_dioptria_direita').val(dioptria_direita);
+                $('#editar_id_lente').val(id_lente);
+                $('#editar_id_agenda').val(id_agenda).change(); // Dispara mudança para carregar turmas
+                $('#editar_valor').val(valor);
 
+                // Após carregar as turmas via AJAX, definir a turma selecionada
                 $.ajax({
                     url: '/GRNacoes/views/ajax/get_catarata_turmas.php',
                     type: 'GET',
                     data: { id_agenda: id_agenda },
                     dataType: 'json',
-                    // Dentro do success da chamada AJAX no modalEditarAgendamento
                     success: function (response) {
                         const turmaSelect = $('#editar_turma');
-                        turmaSelect.empty(); // Limpa as opções atuais
+                        turmaSelect.empty();
                         if (response.error) {
                             alert(response.error);
                             turmaSelect.closest('.col-2').addClass('d-none');
                         } else if (response.length > 0) {
                             let options = '<option value="">Selecione...</option>';
                             response.forEach(function (turma) {
-                                if (turma.vagas_disponiveis > 0 || turma.id_turma === id_turma) {
+                                // Permite selecionar a turma atual, mesmo se estiver lotada
+                                if (turma.vagas_disponiveis > 0 || turma.id_turma == id_turma) {
                                     options += `<option value="${turma.id_turma}">
-                                        ${turma.horario} (${turma.vagas_disponiveis} vagas)
-                                    </option>`;
+                                                    ${turma.horario} (${turma.vagas_disponiveis} vagas)
+                                                </option>`;
                                 } else {
                                     options += `<option value="${turma.id_turma}" disabled>
-                                        ${turma.horario} (Lotado)
-                                    </option>`;
+                                                    ${turma.horario} (Lotado)
+                                                </option>`;
                                 }
                             });
                             turmaSelect.html(options).closest('.col-2').removeClass('d-none');
-                            turmaSelect.val(id_turma); // Define a turma atual como selecionada
+                            turmaSelect.val(id_turma);
                         } else {
                             turmaSelect.html('<option value="">Nenhuma turma disponível</option>').closest('.col-2').removeClass('d-none');
                         }
                     },
-
                     error: function () {
                         alert('Erro ao buscar turmas. Tente novamente.');
                     }
                 });
-
-                $('#editar_id_agendamento').val(id_agendamento)
-                $('#editar_nome').val(nome)
-                $('#editar_cpf').val(cpf)
-                $('#editar_contato').val(contato)
-                $('#editar_id_solicitante').val(id_solicitante)
-                $('#editar_id_convenio').val(id_convenio)
-                $('#editar_olhos').val(olhos)
-                $('#editar_dioptria_esquerda').val(dioptria_esquerda)
-                $('#editar_dioptria_direita').val(dioptria_direita)
-                $('#editar_id_lente').val(id_lente)
-                $('#editar_id_agenda').val(id_agenda)
-                $('#editar_turma').val(id_turma)
-                $('#editar_valor').val(valor)
-                $('#editar_forma_pgto').val(forma_pgto)
-
-                EditarformatarCPF($('#editar_cpf'));
-                EditarformatarContato($('#editar_contato'));
             });
+
 
             $('#editar_cpf').on('input', function() {
                 EditarformatarCPF($(this));
@@ -673,37 +519,6 @@
             $('#editar_contato').on('input', function() {
                 EditarformatarCelular($(this));
             });
-
-            function EditarformatarCPF(campo) {
-                let cpf = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-
-                if (cpf.length === 11) {
-                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-                    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-                    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    campo.val(cpf);
-                }
-
-                if (!validarCPF(cpf)) {
-                    campo.addClass('is-invalid');
-                    if (campo.next('.invalid-feedback').length === 0) {
-                        $('<div class="invalid-feedback">CPF inválido. Verifique e tente novamente.</div>').insertAfter(campo);
-                    }
-                } else {
-                    campo.removeClass('is-invalid').addClass('is-valid');
-                    campo.next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
-                }
-            }
-
-            function EditarformatarContato(campo) {
-                let contato = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-
-                if (contato.length === 11) {
-                    contato = contato.replace(/(\d{2})(\d)/, '($1) $2');
-                    contato = contato.replace(/(\d{5})(\d{4})$/, '$1-$2');
-                    campo.val(contato);
-                }
-            }
 
             $('#modalDeletarAgendamento').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
@@ -721,7 +536,7 @@
     <script src="<?php echo URL_RESOURCES ?>/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-agendamentos.js"></script>
+    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-agendamentos_externo.js"></script>
 </body>
 
 </html>

@@ -49,14 +49,14 @@
                             <div class="col-4 mb-4">
                                 <div class="card">
                                     <div class="card-header"><?php echo $campanha->nome ?></div>
-                                    <div class="card-body">
+                                    <div class="card-body" style="font-size: 15px;">
                                         <b>Início: <?php echo Helper::formatarData($campanha->periodo_inicio) ?></b>
                                         <br>
                                         <b>Fim: <?php echo Helper::formatarData($campanha->periodo_fim) ?></b>
                                         <br>
-                                        <b>Pagamento: <?php echo Helper::formatarData($campanha->data_pagamento) ?></b>
+                                        <b>Pagamento da Conversão: <?php echo Helper::formatarData($campanha->data_pagamento) ?></b>
                                         <br>
-                                        <b>Pagamento Pós: <?php echo Helper::formatarData($campanha->data_pagamento_pos) ?></b>
+                                        <b>Pagamento da Conversão Pós: <?php echo Helper::formatarData($campanha->data_pagamento_pos) ?></b>
                                         <hr>
                                         <div class="col-12 text-center">
                                             <a class="btn btn-icon btn-primary" href="<?php echo URL ?>/financeiro/campanha?id=<?php echo $campanha->id_financeiro_campanha ?>"><i class="fa-solid fa-piggy-bank"></i></a>
@@ -108,12 +108,12 @@
                                     <label for="periodo_fim" class="form-label">Até o dia</label>
                                     <input type="date" class="form-control" name="periodo_fim" id="cadastrar_periodo_fim" required>
                                 </div>
-                                <div class="col-3 offset-5 mt-2">
-                                    <label for="data_pagamento" class="form-label">Data do Pagamento</label>
+                                <div class="col-3 offset-4 mt-2">
+                                    <label for="data_pagamento" class="form-label">Data do Pagamento da Conversão</label>
                                     <input type="date" name="data_pagamento" id="cadastrar_data_pagamento" class="form-control" required>
                                 </div>
-                                <div class="col-3 mt-2">
-                                    <label for="data_pagamento_pos" class="form-label">Data do Pagamento PÓS</label>
+                                <div class="col-4 mt-2">
+                                    <label for="data_pagamento_pos" class="form-label">Data do Pagamento da Conversão PÓS</label>
                                     <input type="date" name="data_pagamento_pos" id="cadastrar_data_pagamento_pos" class="form-control" required>
                                 </div>
                             </div>
@@ -141,6 +141,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-4 offset-1">
+                                    <input type="hidden" name="id_financeiro_campanha" id="editar_id_financeiro_campanha">
                                     <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                                     <label for="nome" class="form-label">Nome da Campanha *</label>
                                     <input type="text" name="nome" id="editar_nome" class="form-control" required>
@@ -153,12 +154,12 @@
                                     <label for="periodo_fim" class="form-label">Até o dia</label>
                                     <input type="date" class="form-control" name="periodo_fim" id="editar_periodo_fim" required>
                                 </div>
-                                <div class="col-3 offset-5 mt-2">
-                                    <label for="data_pagamento" class="form-label">Data do Pagamento</label>
+                                <div class="col-3 offset-4 mt-2">
+                                    <label for="data_pagamento" class="form-label">Data do Pagamento da Conversão</label>
                                     <input type="date" name="data_pagamento" id="editar_data_pagamento" class="form-control" required>
                                 </div>
-                                <div class="col-3 mt-2">
-                                    <label for="data_pagamento_pos" class="form-label">Data do Pagamento PÓS</label>
+                                <div class="col-4 mt-2">
+                                    <label for="data_pagamento_pos" class="form-label">Data do Pagamento da Conversão PÓS</label>
                                     <input type="date" name="data_pagamento_pos" id="editar_data_pagamento_pos" class="form-control" required>
                                 </div>
                             </div>
