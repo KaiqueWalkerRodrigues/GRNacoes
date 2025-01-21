@@ -277,8 +277,20 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'lente_contato/testes':
+        $file = 'lente_contato/testes.php';
+        $pageTitle .= "Orçamentos Lente de Contato";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
     case 'lente_contato/orcamentos':
         $file = 'lente_contato/orcamentos.php';
+        $pageTitle .= "Orçamentos Lente de Contato";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
+    case 'lente_contato/configuracoes/fornecedores':
+        $file = 'lente_contato/configuracoes/fornecedores.php';
         $pageTitle .= "Orçamentos Lente de Contato";
         $requiredSectors = [1];
         $requiredLogin = true;

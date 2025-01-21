@@ -175,9 +175,9 @@
             function loadTrelloTasks() {
                 setVersion('1.1.8'); // Aqui você altera para a versão atual
                 
-                const todoTasks = ['Orçamento Lente Ctt','Ótica Estoque e Venda','Ótica Metas e Vendas','Cargos/Setores Update','Notifição/Onlines'];
-                const inProgressTasks = ['Registro Computadores'];
-                const doneTasks = ['Lançamento Catarata','Contratos Clínica','Transição de Interface','Sistema Captação','Pedidos de Compras','Notas Fiscais Compras'];
+                const todoTasks = ['Cargos/Setores Update','Ótica Estoque, Venda e Metas','Notifição/Onlines'];
+                const inProgressTasks = ['Orçamento Lente Ctt'];
+                const doneTasks = ['Lançamento Catarata','Contratos Clínica','Transição de Interface','Sistema Captação','Pedidos de Compras'];
 
                 $('#todo-list').html(todoTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));
                 $('#inprogress-list').html(inProgressTasks.map(task => `<li class="list-group-item">${task}</li>`).join(''));

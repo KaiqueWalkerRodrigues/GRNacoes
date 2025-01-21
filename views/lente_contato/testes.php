@@ -44,7 +44,7 @@
                         <div class="page-header-content">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"><i class="fa-solid fa-rectangle-history"></i></div>
-                                <span>Orçamento Lente de Contato</span>
+                                <span>Testes Lente de Contato</span>
                             </h1>
                             <br>
                             <div class="row mb-4">
@@ -70,7 +70,7 @@
                 </div>
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
-                        <div class="card-header">Orçamentos
+                        <div class="card-header">Testes
                             <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2 mr-2" type="button" data-toggle="modal" data-target="#modalCadastrarOrcamento">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -99,13 +99,13 @@
         </div>
     </div>
 
-    <!-- Modal Cadastrar Orçamento -->
+    <!-- Modal Cadastrar Testes -->
     <div class="modal fade" id="modalCadastrarOrcamento" tabindex="1" role="dialog" aria-labelledby="modalCadastrarOrcamentoLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Cadastrar Novo Orçamento</h5>
+                        <h5 class="modal-title">Cadastrar Novo Teste</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -177,42 +177,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-4 offset-1 text-center mt-1">
-                                <label for="valor" class="form-label">Valor Total *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor" required>
-                                </div>
-                            </div>
-                            <div class="col-2 mt-2">
-                                <label for="forma_pgto" class="form-label">Forma Pagamento 1</label>
-                                <select name="forma_pgto" id="cadastrar_forma_pgto" class="form-control">
-                                    <option value="">Selecione...</option>
-                                    <option value="0">Credito</option>
-                                    <option value="1">Debito</option>
-                                    <option value="2">Boleto</option>
-                                    <option value="3">Pix</option>
-                                </select>
-                            </div>
-                            <div class="col-2 mt-2">
-                                <label for="forma_pgto" class="form-label">Forma Pagamento 2</label>
-                                <select name="forma_pgto" id="cadastrar_forma_pgto" class="form-control">
-                                    <option value="">Selecione...</option>
-                                    <option value="0">Credito</option>
-                                    <option value="1">Debito</option>
-                                    <option value="2">Boleto</option>
-                                    <option value="3">Pix</option>
-                                </select>
-                            </div>
-                            <div class="col-2 mt-2">
-                                <label for="forma_pgto" class="form-label">Pagamento *</label>
-                                <select name="forma_pgto" id="cadastrar_forma_pgto" class="form-control" required>
-                                    <option value="0">Pendente</option>
-                                    <option value="1">Concluído</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
@@ -231,7 +195,7 @@
 
         $(document).ready(function () {
             $('#lent').addClass('active')
-            $('#lente_contato_orcamentos').addClass('active')
+            $('#lente_contato_testes').addClass('active')
 
             $('#preloader').fadeOut('slow', function() { $(this).remove(); });
 
