@@ -1,4 +1,6 @@
 <?php 
+    $Lc_fornecedor = new Lente_contato_fornecedor();
+
     if (isset($_POST['btnCadastrar'])) {
        
     }
@@ -48,15 +50,15 @@
                             <div class="row mb-4">
                                 <div class="col-md-3">
                                     <label for="filtroMes" class="form-label text-light">Filtrar por Mês:</label>
-                                    <div class="col-md-3">
-                                    <label for="filtroMes" class="form-label text-light">Filtrar por Mês:</label>
                                     <input type="month" name="filtroMes" id="FiltroMes" class="form-control">
-                                </div>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="filtroFornecedor" class="form-label text-light">Filtrar por Fornecedor:</label>
                                     <select id="filtroFornecedor" class="form-control">
-                                        
+                                        <option value="">Selecione...</option>
+                                        <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                            <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -66,7 +68,7 @@
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
                         <div class="card-header">Modelos
-                            <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2 mr-2" type="button" data-toggle="modal" data-target="#modalCadastrarNota">
+                            <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2 mr-2" type="button" data-toggle="modal" data-target="#modalCadastrarModelo">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
@@ -92,6 +94,54 @@
             </main>
             <?php include_once('resources/footer.php') ?>
         </div>
+    </div>
+
+    <!-- Modal Cadastrar Modelo -->
+    <div class="modal fade" id="modalCadastrarModelo" tabindex="1" role="dialog" aria-labelledby="modalCadastrarModeloLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cadastrar Novo Modelo<h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                            <div class="col-5 offset-1">
+                                <label for="cadastrar_modelo" class="form-label">Nome Modelo *</label>
+                                <input type="text" name="modelo" id="cadastrar_modelo" class="form-control" required>
+                            </div>
+                            <div class="col-5">
+                                <label for="cadastrar_id_fornecedor" class="form-label">Fornecedor da Lente *</label>
+                                <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                        <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <br>
+                            <div class="col-4 offset-4">
+                                <label for="cadastrar_valor" class="form-label">Valor *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="btnCadastrar" class="btn btn-success">Cadastrar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>

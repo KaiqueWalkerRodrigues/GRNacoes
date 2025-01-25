@@ -114,7 +114,7 @@
                             <div class="row col-10 offset-1">
                                 <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                                 <label for="fornecedor" class="form-label">Nome Fornecedor *</label>
-                                <input type="text" name="fornecedor" id="cadastrar_fornecedor" class="form-control">
+                                <input type="text" name="fornecedor" id="cadastrar_fornecedor" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                                 <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                                 <input type="hidden" name="id_lente_contato_fornecedor" id="editar_id_lente_contato_fornecedor">
                                 <label for="fornecedor" class="form-label">Nome Fornecedor *</label>
-                                <input type="text" name="fornecedor" id="editar_fornecedor" class="form-control">
+                                <input type="text" name="fornecedor" id="editar_fornecedor" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="id_lente_contato_fornecedor" id="Deletar_id_lente_contato_fornecedor">
-                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>" required>
                         <div class="container row">
                             <p>Deseja Deletar o Fornecedor: <span class="modalDeletarFornecedorLabel"></span>?</p>
                         </div>
