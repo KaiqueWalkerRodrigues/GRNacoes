@@ -79,7 +79,7 @@
                                     <select class="form-control" name="id_destinatario" id="id_destinatario" required>
                                         <option value="">Selecione...</option>
                                         <?php foreach($Usuario->listarAtivosMenosEu($_SESSION['id_usuario']) as $u){ ?>
-                                            <option value="<?php echo $u->id_usuario ?>"><?php echo $u->nome ?> | <?php echo $Setor->mostrar($u->id_setor)->setor ?></option>
+                                            <option value="<?php echo $u->id_usuario ?>"><?php echo $u->nome ?> | <?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($u->id_usuario)->id_setor)->setor; ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>

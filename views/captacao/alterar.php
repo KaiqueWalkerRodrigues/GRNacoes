@@ -12,14 +12,14 @@
     // Determina se o modal deve ser exibido
     $mostrarModalDataAtendimento = !isset($_GET['data_atendimento']);
 
-    if ($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12) {
+    if (verificarSetor([1,12])) {
         $capHoje = $Captacao->listarDoDiaAdmin($dataSelecionada);
     } else {
         $capHoje = $Captacao->listarDoDia($_SESSION['id_empresa'], $dataSelecionada);
     }
 
     $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
-    $setor = $Setor->mostrar($usuario->id_setor);
+    $setor = $Setor->mostrar($_SESSION['id_setor']);
 
     if(isset($_POST['btnEditar'])){
         $Captacao->editar($_POST);

@@ -48,36 +48,13 @@
                             <div class="row mb-4">
                                 <div class="col-md-3">
                                     <label for="filtroMes" class="form-label text-light">Filtrar por Mês:</label>
-                                    <select id="filtroMes" class="form-control">
-                                        <option value="">Todos</option>
-                                        <option value="Jan/24">Jan/24</option>
-                                        <option value="Fev/24">Fev/24</option>
-                                        <option value="Mar/24">Mar/24</option>
-                                        <option value="Abr/24">Abr/24</option>
-                                        <option value="Mai/24">Mai/24</option>
-                                        <option value="Jun/24">Jun/24</option>
-                                        <option value="Jul/24">Jul/24</option>
-                                        <option value="Ago/24">Ago/24</option>
-                                        <option value="Set/24">Set/24</option>
-                                        <option value="Out/24">Out/24</option>
-                                        <option value="Nov/24">Nov/24</option>
-                                        <option value="Dez/24">Dez/24</option>
-                                        <option value="Jan/25">Jan/25</option>
-                                        <option value="Fev/25">Fev/25</option>
-                                        <option value="Mar/25">Mar/25</option>
-                                        <option value="Abr/25">Abr/25</option>
-                                        <option value="Mai/25">Mai/25</option>
-                                        <option value="Jun/25">Jun/25</option>
-                                        <option value="Jul/25">Jul/25</option>
-                                        <option value="Ago/25">Ago/25</option>
-                                        <option value="Set/25">Set/25</option>
-                                        <option value="Out/25">Out/25</option>
-                                        <option value="Nov/25">Nov/25</option>
-                                        <option value="Dez/25">Dez/25</option>
-                                    </select>
+                                    <div class="col-md-3">
+                                    <label for="filtroMes" class="form-label text-light">Filtrar por Mês:</label>
+                                    <input type="month" name="filtroMes" id="FiltroMes" class="form-control">
+                                </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="filtroFornecedor" class="form-label text-light">Filtrar por Modelo Lente:</label>
+                                    <label for="filtroFornecedor" class="form-label text-light">Filtrar por Fornecedor:</label>
                                     <select id="filtroFornecedor" class="form-control">
                                         
                                     </select>

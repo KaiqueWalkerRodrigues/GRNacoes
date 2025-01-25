@@ -191,7 +191,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="id_compra_fornecedor" id="Deletar_id_compra_fornecedor">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <div class="row">
+                        <div class="container row">
                             <p>Deseja Deletar o Fornecedor: <span class="modalDeletarFornecedorLabel"></span>?</p>
                         </div>
                     </div>

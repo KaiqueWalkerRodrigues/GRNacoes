@@ -32,8 +32,7 @@
                 </a>
                 
                 <div class="sidenav-menu-heading">Interfaces</div>
-                
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
+                <?php if(verificarSetor([1,12,13,14])){ ?>
                     
                     <a class="nav-link collapsed" id="dash" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
                         <div class="nav-link-icon"><i class="fa-solid fa-chart-line"></i></div>
@@ -58,7 +57,7 @@
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                         <a class="nav-link" id="chamados_meus_chamados" href="<?php echo URL ?>/chamados/meus_chamados">Meus Chamados</a>
                         <a class="nav-link" id="chamados_chamados" href="<?php echo URL ?>/chamados">Chamados</a>
-                        <?php if($_SESSION['id_setor'] == 1){ ?>
+                        <?php if(verificarSetor([1])){ ?>
                             <a class="nav-link" id="chamados_todos" href="<?php echo URL ?>/chamados/todos">Todos os Chamados</a>
                         <?php } ?>
                     </nav>
@@ -69,7 +68,7 @@
                     Chats
                 </a>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 8 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 13 OR $_SESSION['id_setor'] == 14){ ?>
+                <?php if(verificarSetor([1,8,12,13,14])){ ?>
 
                     <a class="nav-link collapsed" id="capt" href="javascript:void(0);" data-toggle="collapse" data-target="#captacao" aria-expanded="false" aria-controls="captacao">
                         <div class="nav-link-icon"><i class="fa-solid fa-people-pulling"></i></div>
@@ -80,7 +79,7 @@
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                             <a class="nav-link" id="captcao_captar" href="<?php echo URL ?>/captacao/captar">Captar</a>
                             <a class="nav-link" id="captacao_alterar" href="<?php echo URL ?>/captacao/alterar">Alterar Captação</a>
-                            <?php if($_SESSION['id_setor'] != 8){ ?>
+                            <?php if(bloquearSetor([8])){ ?>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#captacao_relatorios" aria-expanded="false" aria-controls="captacao_relatorios">Relatórios
                                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
@@ -95,7 +94,7 @@
 
                 <?php } ?>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14 OR $_SESSION['id_setor'] == 15){ ?>
+                <?php if(verificarSetor([1,5,12,14,15])){ ?>
 
                     <a class="nav-link collapsed" id="ciru" href="javascript:void(0);" data-toggle="collapse" data-target="#cirurgias" aria-expanded="false" aria-controls="cirurgias">
                         <div class="nav-link-icon"><i class="fa-solid fa-eye"></i></div>
@@ -139,7 +138,7 @@
 
                 <?php } ?>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 12){ ?>
+                <?php if(verificarSetor([1,3,12])){ ?>
 
                     <a class="nav-link collapsed" id="comp" href="javascript:void(0);" data-toggle="collapse" data-target="#compras" aria-expanded="false" aria-controls="compras">
                         <div class="nav-link-icon"><i class="fa-solid fa-cart-shopping"></i></div>
@@ -174,7 +173,7 @@
                 <?php } ?>
 
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
+                <?php if(verificarSetor([1,5,12,14])){ ?>
 
                     <a class="nav-link collapsed" id="fina" href="javascript:void(0);" data-toggle="collapse" data-target="#financeiro" aria-expanded="false" aria-controls="financeiro">
                         <div class="nav-link-icon"><i class="fa-solid fa-money-bill"></i></div>
@@ -191,7 +190,7 @@
                 
                 <?php } ?>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 5){ ?>
+                <?php if(verificarSetor([1,5,12,17])){ ?>
 
                     <a class="nav-link collapsed" id="lent" href="javascript:void(0);" data-toggle="collapse" data-target="#lente_contato" aria-expanded="false" aria-controls="financeiro">
                         <div class="nav-link-icon"><i class="fa-sharp fa-light fa-eye-low-vision"></i></div>
@@ -216,7 +215,7 @@
                 
                 <?php } ?>
 
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 3){ ?>
+                <?php if(verificarSetor([1,3])){ ?>
                 
                     <a class="nav-link collapsed" id="tec" href="javascript:void(0);" data-toggle="collapse" data-target="#tecnologia" aria-expanded="false" aria-controls="financeiro">
                         <div class="nav-link-icon"><i class="fa-solid fa-microchip"></i></div>
@@ -226,7 +225,7 @@
                     <div class="collapse" id="tecnologia" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                             <a class="nav-link" id="tecnologia_computadores" href="<?php echo URL ?>/tecnologia/computadores">Computadores</a>
-                            <?php if($_SESSION['id_setor'] == 1){ ?>
+                            <?php if(verificarSetor([1])){ ?>
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse" id="tecnologia_configuracoes" data-target="#tecnologia_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
@@ -241,8 +240,7 @@
                     </div>
 
                 <?php } ?>
-
-                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 2 OR $_SESSION['id_setor'] == 3 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
+                <?php if(verificarSetor([1,2,3,12,14])){ ?>
 
                     <div class="sidenav-menu-heading">Gerenciamento</div>
 
@@ -254,7 +252,7 @@
                     <div class="collapse" id="configuracoes" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                             
-                            <?php if ($_SESSION['id_setor'] != 3) { ?>
+                            <?php if (bloquearSetor([3])) { ?>
                                 <a class="nav-link" id="configuracoes_cargos" href="<?php echo URL ?>/configuracoes/cargos">Gerenciar Cargos</a>
                                 <a class="nav-link" id="configuracoes_convenios" href="<?php echo URL ?>/configuracoes/convenios">Gerenciar Convênios</a>
                                 <a class="nav-link" id="configuracoes_medicos" href="<?php echo URL ?>/configuracoes/medicos">Gerenciar Médicos</a>
@@ -265,7 +263,7 @@
                         </nav>
                     </div>
 
-                    <?php if($_SESSION['id_setor'] == 1){ ?>
+                    <?php if(verificarSetor([1])){ ?>
 
                         <a class="nav-link" id="logs" href="<?php echo URL ?>/logs">
                             <div class="nav-link-icon"><i class="fa-solid fa-rectangle-history"></i></div>

@@ -10,7 +10,7 @@
     $id = $_SESSION['id_usuario'];
     
     $usuario = $Usuario->mostrar($id);
-    $setor = $Setor->mostrar($usuario->id_setor);
+    $setor = $Setor->mostrar($_SESSION['id_setor']);
     $cargo = $Cargo->mostrar($usuario->id_cargo);
 ?>
 <!DOCTYPE html>

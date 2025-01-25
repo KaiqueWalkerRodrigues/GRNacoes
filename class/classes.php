@@ -26,5 +26,7 @@
     include_once('Financeiro_Contrato.php');
     include_once('Financeiro_Campanha.php');
 
+    include_once('Lente_Contato_Fornecedor.php');
+
     include_once('Tecnologia_Socket.php');
 

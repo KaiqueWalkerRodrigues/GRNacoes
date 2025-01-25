@@ -18,7 +18,7 @@
    $id_usuario_dono_chamado = $chamado->id_usuario;
 
    // Setor do usuário logado
-   $setor_logado = $Usuario->mostrar($id_usuario)->id_setor;
+   $setor_logado = $_SESSION['id_setor'];
 
    // Consultar as mensagens
    $sql = $pdo->prepare("
@@ -70,7 +70,7 @@
            $ultimoNome = array_pop($partesNome);
 
            // Setor do remetente
-           $setor_mandante = $Usuario->mostrar($id_usuario_remetente)->id_setor;
+           $setor_mandante = $_SESSION['id_setor'];
 
            // Verifica se o usuário logado é o remetente da mensagem
            $is_usuario_logado = $id_usuario_remetente == $id_usuario;

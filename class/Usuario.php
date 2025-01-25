@@ -27,6 +27,33 @@ class Usuario {
         $sql->execute();
     }
 
+    private function adicionarSetor($id_usuario,$id_setor,$principal = 0){
+        $sql=$this->pdo->prepare('INSERT INTO usuarios_setores (id_usuario,id_setor,principal,created_at,updated_at) 
+                                                        VALUES (:id_usuario,:id_setor,:principal,:created_at,:updated_at)');
+        $agora = date("Y-m-d H:i:s");
+
+        $sql->bindParam(':id_usuario',$id_usuario);
+        $sql->bindParam(':id_setor',$id_setor);
+        $sql->bindParam('principal',$principal);
+        $sql->bindParam('created_at',$agora);
+        $sql->bindParam('updated_at',$agora);
+        $sql->execute();
+    }
+
+    private function EditarSetorPrincipal($id_usuario,$id_setor){
+        $sql=$this->pdo->prepare('UPDATE usuarios_setores SET id_setor = :id_setor,
+                                                        updated_at = :updated_at
+                                                        WHERE id_usuario = :id_usuario
+                                                        AND principal = 1
+                                                        AND deleted_at IS NULL');
+        $agora = date("Y-m-d H:i:s");
+
+        $sql->bindParam(':id_usuario',$id_usuario);
+        $sql->bindParam(':id_setor',$id_setor);
+        $sql->bindParam('updated_at',$agora);
+        $sql->execute();
+    }
+
     //Listar todos os Usuários Não Deletados e Ordenados pelo Nome.
     public function listar(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL ORDER BY nome ASC');        
@@ -60,7 +87,7 @@ class Usuario {
     //Listar todos os Usuários Ativos de uma Determinado Setor/Empresa, Não Deletados e Ordenados pelo Nome.
     public function listarAtivosDoSetorDaEmpresa($id_setor, $id_empresa = null){
         // Construir a base da consulta
-        $query = 'SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 AND id_setor = :id_setor';
+        $query = 'SELECT * FROM usuarios u INNER JOIN usuarios_setores us ON u.id_usuario = us.id_usuario WHERE us.deleted_at IS NULL AND ativo = 1 AND us.id_setor = :id_setor';
     
         // Verificar se o id_empresa foi enviado
         if ($id_empresa !== null) {
@@ -114,11 +141,11 @@ class Usuario {
     public function cadastrar(Array $dados){
         $sql = $this->pdo->prepare('INSERT INTO usuarios 
                                     (nome,ativo,usuario,senha,contrato,celular,cpf,
-                                    data_nascimento,email,empresa,id_setor,id_cargo,n_folha,
+                                    data_nascimento,email,empresa,id_cargo,n_folha,
                                     data_admissao,created_at,updated_at)
                                     VALUES
                                     (:nome,:ativo,:usuario,:senha,:contrato,:celular,:cpf,
-                                    :data_nascimento,:email,:empresa,:id_setor,:id_cargo,:n_folha,
+                                    :data_nascimento,:email,:empresa,:id_cargo,:n_folha,
                                     :data_admissao,:created_at,:updated_at)
                                 ');
 
@@ -152,18 +179,19 @@ class Usuario {
         $sql->bindParam(':cpf',$cpf);              
         $sql->bindParam(':data_nascimento',$data_nascimento);              
         $sql->bindParam(':email',$email);              
-        $sql->bindParam(':empresa',$empresa);              
-        $sql->bindParam(':id_setor',$id_setor);              
+        $sql->bindParam(':empresa',$empresa);                            
         $sql->bindParam(':id_cargo',$id_cargo);              
         $sql->bindParam(':n_folha',$n_folha);              
         $sql->bindParam(':data_admissao',$data_admissao);              
         $sql->bindParam(':created_at',$created_at);          
-        $sql->bindParam(':updated_at',$updated_at);              
+        $sql->bindParam(':updated_at',$updated_at);       
 
         if ($sql->execute()) {
             $id_usuario = $this->pdo->lastInsertId();
             $descricao = "Cadastrou o usuário: $nome ($id_usuario)";
             $this->addLog('Cadastrar', $descricao, $usuario_logado);
+
+            $this->adicionarSetor($id_usuario,$id_setor,1);
 
             echo "
             <script>
@@ -204,7 +232,6 @@ class Usuario {
                                         data_nascimento = :data_nascimento,
                                         email = :email,
                                         empresa = :empresa,                                   
-                                        id_setor = :id_setor,
                                         id_cargo = :id_cargo,
                                         n_folha = :n_folha,
                                         data_admissao = :data_admissao,
@@ -223,7 +250,6 @@ class Usuario {
                                         data_nascimento = :data_nascimento,
                                         email = :email,
                                         empresa = :empresa,                                   
-                                        id_setor = :id_setor,
                                         id_cargo = :id_cargo,
                                         n_folha = :n_folha,
                                         data_admissao = :data_admissao,
@@ -262,7 +288,6 @@ class Usuario {
         $sql->bindParam(':data_nascimento',$data_nascimento);              
         $sql->bindParam(':email', $email);
         $sql->bindParam(':empresa',$empresa);   
-        $sql->bindParam(':id_setor',$id_setor);  
         $sql->bindParam(':id_cargo',$id_cargo);  
         $sql->bindParam(':n_folha',$n_folha);  
         $sql->bindParam(':data_admissao',$data_admissao);  
@@ -272,6 +297,8 @@ class Usuario {
         if ($sql->execute()) {
             $descricao = "Editou o usuário: $nome ($id_usuario)";
             $this->addLog('Editar', $descricao, $usuario_logado);
+
+            $this->EditarSetorPrincipal($id_usuario,$id_setor);
     
             echo "
             <script>
@@ -331,6 +358,76 @@ class Usuario {
                 exit;
         }
     }
+
+    public function editarSetores(array $id_setores, int $id_usuario){
+        try {
+            // Iniciar transação para garantir a atomicidade das operações
+            $this->pdo->beginTransaction();
+    
+            // Obter setores atuais do usuário (ativos)
+            $stmt = $this->pdo->prepare("SELECT id_setor FROM usuarios_setores WHERE id_usuario = :id_usuario AND principal = 0 AND deleted_at IS NULL");
+            $stmt->execute([':id_usuario' => $id_usuario]);
+            $setores_atuais = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    
+            // Processar setores a serem adicionados ou reativados
+            foreach($id_setores as $id_setor){
+                if(!in_array($id_setor, $setores_atuais)){
+                    // Verificar se o setor foi previamente removido
+                    $stmt = $this->pdo->prepare("SELECT id_usuario_setor FROM usuarios_setores WHERE id_usuario = :id_usuario AND id_setor = :id_setor AND deleted_at IS NOT NULL LIMIT 1");
+                    $stmt->execute([
+                        ':id_usuario' => $id_usuario,
+                        ':id_setor' => $id_setor
+                    ]);
+                    $registro = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                    if($registro){
+                        // Reativar o setor removido anteriormente
+                        $stmt = $this->pdo->prepare("UPDATE usuarios_setores SET deleted_at = NULL, updated_at = :updated_at WHERE id_usuario_setor = :id_usuario_setor");
+                        $stmt->execute([
+                            ':updated_at' => date("Y-m-d H:i:s"),
+                            ':id_usuario_setor' => $registro['id_usuario_setor']
+                        ]);
+                    } else {
+                        // Inserir um novo registro de setor para o usuário
+                        $agora = date("Y-m-d H:i:s");
+                        $stmt = $this->pdo->prepare("INSERT INTO usuarios_setores (id_usuario, id_setor, created_at, updated_at) VALUES (:id_usuario, :id_setor, :created_at, :updated_at)");
+                        $stmt->execute([
+                            ':id_usuario' => $id_usuario,
+                            ':id_setor' => $id_setor,
+                            ':created_at' => $agora,
+                            ':updated_at' => $agora
+                        ]);
+                    }
+                }
+            }
+    
+            // Determinar quais setores precisam ser removidos (estão nos atuais, mas não nos novos)
+            $setores_para_remover = array_diff($setores_atuais, $id_setores);
+            if(!empty($setores_para_remover)){
+                $agora = date("Y-m-d H:i:s");
+                // Atualizar o campo deleted_at para os setores que foram removidos
+                $stmt = $this->pdo->prepare("UPDATE usuarios_setores SET deleted_at = :deleted_at, updated_at = :updated_at WHERE id_usuario = :id_usuario AND id_setor = :id_setor AND deleted_at IS NULL");
+                
+                foreach($setores_para_remover as $setor_para_remover){
+                    $stmt->execute([
+                        ':deleted_at' => $agora,
+                        ':updated_at' => $agora,
+                        ':id_usuario' => $id_usuario,
+                        ':id_setor' => $setor_para_remover
+                    ]);
+                }
+            }
+    
+            // Confirmar transação
+            $this->pdo->commit();
+        } catch (Exception $e) {
+            // Reverter transação em caso de erro
+            $this->pdo->rollBack();
+            // Opcional: lançar a exceção ou lidar com o erro conforme necessário
+            throw $e;
+        }
+    }
+    
 
     public function alterarSenha(array $dados){   
         $sqlVerificaSenha = $this->pdo->prepare("SELECT senha FROM usuarios WHERE id_usuario = :id_usuario");
@@ -466,6 +563,8 @@ class Usuario {
         $sql->execute();
     
         $user = $sql->fetch(PDO::FETCH_OBJ);
+
+        $id_usuario = $user->id_usuario;
     
         // Verifica se o usuário existe e se a senha fornecida corresponde à senha armazenada
         if ($user && password_verify($senha, $user->senha)) {
@@ -474,8 +573,25 @@ class Usuario {
             $_SESSION['nome'] = $user->nome;
             $_SESSION['id_usuario'] = $user->id_usuario;
             $_SESSION['id_avatar'] = $user->id_avatar;
-            $_SESSION['id_setor'] = $user->id_setor;
             $_SESSION['id_empresa'] = $user->empresa;
+
+            //Buscando Setor Principal
+            {
+                $sql=$this->pdo->query("SELECT * FROM usuarios_setores WHERE id_usuario = $id_usuario AND deleted_at IS NULL ORDER BY principal DESC LIMIT 1");
+                $sql->execute();
+
+                $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+                $_SESSION['id_setor'] = $resultado->id_setor;
+            }
+            
+            //Buscando todos Setores
+            {
+                $sql=$this->pdo->query("SELECT id_setor FROM usuarios_setores WHERE id_usuario = $id_usuario AND deleted_at IS NULL ORDER BY principal DESC");
+                $sql->execute();
+
+                $_SESSION['id_setores'] = $sql->fetchAll(PDO::FETCH_COLUMN);
+            }
     
             header('Location: ' . URL . '/');
             exit();
@@ -486,10 +602,19 @@ class Usuario {
         }
     }
     
+    public function mostrarSetorPrincipal($id_usuario){
+        $sql=$this->pdo->prepare("SELECT * FROM usuarios_setores WHERE id_usuario = :id_usuario AND deleted_at IS NULL AND principal = 1 LIMIT 1");
+        $sql->bindParam(':id_usuario',$id_usuario);
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+
+        return $resultado;
+    }
 
     //Contar Usuários de Acordo com o Setor.
     public function contarUsuariosPorSetor($id_setor){
-        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios WHERE id_setor = :id_setor AND deleted_at IS NULL AND ativo = 1');
+        $sql = $this->pdo->prepare('SELECT COUNT(*) AS total FROM usuarios_setores WHERE id_setor = :id_setor AND deleted_at IS NULL');
         $sql->bindParam(':id_setor', $id_setor);
         $sql->execute();
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);

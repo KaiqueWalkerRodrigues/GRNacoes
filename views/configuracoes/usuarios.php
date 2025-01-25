@@ -15,6 +15,18 @@
     if (isset($_POST['btnReativar'])) {
         $Usuario->reativar($_POST);
     }
+    if (isset($_POST['btnEditarSetores'])) {
+        // Verifica se o input oculto está definido e não está vazio
+        if (isset($_POST['setores_selecionados']) && !empty($_POST['setores_selecionados'])) {
+            // Divide a string de IDs em um array
+            $setoresSelecionados = explode(',', $_POST['setores_selecionados']);
+        } else {
+            $setoresSelecionados = []; // Nenhum setor selecionado
+        }
+    
+        // Agora, você pode passar $setoresSelecionados para a função que gerencia a atualização dos setores do usuário
+        $Usuario->EditarSetores($setoresSelecionados,$_POST['id_usuario']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -78,10 +90,15 @@
                                             <tr>
                                                 <td><?php echo $usuario->nome ?></td>
                                                 <td><?php echo $Cargo->mostrar($usuario->id_cargo)->cargo ?></td>
-                                                <td><?php echo $Setor->mostrar($usuario->id_setor)->setor ?></td>
+                                                <td><?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($usuario->id_usuario)->id_setor)->setor ?></td>
                                                 <td><?php echo Helper::mostrar_empresa($usuario->empresa) ?></td>
-                                                <td>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark mr-2" type="button" data-toggle="modal" data-target="#modalEditarUsuario"
+                                                <td class="text-center">
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalSetoresUsuario"
+                                                        data-id_usuario="<?php echo $usuario->id_usuario ?>"
+                                                        data-nome="<?php echo $usuario->nome ?>">
+                                                        <i class="fa-solid fa-toolbox"></i>
+                                                    </button>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalEditarUsuario"
                                                         data-nome="<?php echo $usuario->nome ?>"
                                                         data-idusuario="<?php echo $usuario->id_usuario ?>"
                                                         data-usuario="<?php echo $usuario->usuario ?>"
@@ -93,7 +110,7 @@
                                                         data-email="<?php echo $usuario->email ?>"
                                                         data-empresa="<?php echo $usuario->empresa ?>"
                                                         data-n_folha="<?php echo $usuario->n_folha ?>"
-                                                        data-idsetor="<?php echo $usuario->id_setor ?>"
+                                                        data-idsetor="<?php echo $Usuario->mostrarSetorPrincipal($usuario->id_usuario)->id_setor ?>"
                                                         data-idcargo="<?php echo $usuario->id_cargo ?>"
                                                         data-data_admissao="<?php echo $usuario->data_admissao ?>"
                                                         data-ativo="<?php echo $usuario->ativo ?>"
@@ -143,10 +160,10 @@
                                     <tr>
                                         <td><?php echo $usuarioDesativado->nome; ?></td>
                                         <td><?php echo $Cargo->mostrar($usuarioDesativado->id_cargo)->cargo; ?></td>
-                                        <td><?php echo $Setor->mostrar($usuarioDesativado->id_setor)->setor; ?></td>
+                                        <td><?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($usuarioDesativado->id_usuario)->id_setor)->setor; ?></td>
                                         <td><?php echo Helper::mostrar_empresa($usuarioDesativado->empresa); ?></td>
                                         <td class="text-center">
-                                            <button class="btn btn-datatable btn-icon btn-transparent-dark mr-2" data-toggle="modal" data-target="#modalEditarUsuario"
+                                            <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarUsuario"
                                                 data-nome="<?php echo $usuarioDesativado->nome ?>"
                                                 data-idusuario="<?php echo $usuarioDesativado->id_usuario ?>"
                                                 data-usuario="<?php echo $usuarioDesativado->usuario ?>"
@@ -158,7 +175,7 @@
                                                 data-email="<?php echo $usuarioDesativado->email ?>"
                                                 data-empresa="<?php echo $usuarioDesativado->empresa ?>"
                                                 data-n_folha="<?php echo $usuarioDesativado->n_folha ?>"
-                                                data-idsetor="<?php echo $usuarioDesativado->id_setor ?>"
+                                                data-idsetor="<?php echo $Usuario->mostrarSetorPrincipal($usuarioDesativado->id_usuario)->id_setor ?>"
                                                 data-idcargo="<?php echo $usuarioDesativado->id_cargo ?>"
                                                 data-data_admissao="<?php echo $usuarioDesativado->data_admissao ?>"
                                                 data-ativo="<?php echo $usuarioDesativado->ativo ?>"
@@ -444,23 +461,36 @@
             </form>  
         </div>
 
-        <!-- Modal Usuários do Cargo -->
-        <div class="modal fade" id="modalUsuariosCargo" tabindex="-1" role="dialog" aria-labelledby="modalUsuariosCargoLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+        <!-- Modal Editar Setores -->
+        <div class="modal fade" id="modalSetoresUsuario" tabindex="1" role="dialog" aria-labelledby="modalSetoresUsuarioLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalUsuariosCargoLabel">Usuários do Cargo</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <div class="modal-body" id="usuariosDoCargo">
-                        <!-- Lista de usuários -->
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-dark" type="button" data-dismiss="modal">Fechar</button>
-                    </div>
+                    <form action="?" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Gerenciar Setores de <span id="nome-titulo"></span></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-10 offset-1">
+                                <h2>Setores</h2>
+                                <hr style="margin-top: -0.2%;">
+                                <div id="setores"></div>
+                                <!-- Input Oculto para Armazenar Setores Selecionados -->
+                                <input type="hidden" name="setores_selecionados" id="setores_selecionados" value="">
+                                <input type="hidden" name="id_usuario" id="SetoresUsuario_id_usuario">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" name="btnEditarSetores" class="btn btn-success">Salvar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+
 
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
         <script>
@@ -788,6 +818,49 @@
                         $('#colfoto').addClass('d-none');
                         $('#formfoto').removeClass('d-none');
                     }
+                });
+
+                 // Função para atualizar o input oculto com os setores selecionados (excluindo os desativados)
+                function updateSelectedSetores() {
+                    let selectedSetores = [];
+                    // Seleciona apenas os checkboxes que estão marcados e não estão desativados
+                    $('#setores').find('input[type=checkbox]:checked:not(:disabled)').each(function () {
+                        selectedSetores.push($(this).val());
+                    });
+                    $('#setores_selecionados').val(selectedSetores.join(','));
+                }
+
+                // Evento para abrir o modal de Gerenciar Setores
+                $('#modalSetoresUsuario').on('show.bs.modal', function (event) {
+                    let button = $(event.relatedTarget);
+                    let id_usuario = button.data('id_usuario');
+                    $('#SetoresUsuario_id_usuario').val(id_usuario)
+                    let nome = button.data('nome');
+
+                    $('#nome-titulo').text(nome);
+
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_setores_para_usuario.php',
+                        type: 'GET',
+                        data: { id_usuario: id_usuario },
+                        dataType: 'html', // Alterado para 'html'
+                        success: function (setores) {
+                            $('#setores').empty();
+                            $('#setores').append(setores);
+
+                            // Inicializar o input oculto com setores já selecionados (incluindo desativados)
+                            updateSelectedSetores();
+
+                            // Adicionar listeners aos checkboxes para atualizar o input oculto quando forem alterados
+                            $('#setores').find('input[type=checkbox]').not(':disabled').on('change', function () {
+                                updateSelectedSetores();
+                            });
+                        },
+                        error: function () {
+                            $('#setores').empty();
+                            $('#setores').append('<h1 class="text-danger">ERRO</h1>');
+                        }
+                    });
                 });
             });
         </script>

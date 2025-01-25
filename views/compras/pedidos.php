@@ -150,21 +150,21 @@
                                                     data-descricao="<?php echo $cp->descricao ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
-                                                <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
+                                                <?php if(verificarSetor([1,3])){ ?>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalConfirmarCompra" class="collapse-item"
                                                         data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                         data-titulo="<?php echo $cp->titulo ?>">
                                                         <i class="fa-solid fa-check"></i>
                                                     </button>
                                                 <?php } ?>
-                                                <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
+                                                <?php if(verificarSetor([1,3])){ ?>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalNegarCompra" class="collapse-item"
                                                         data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                         data-titulo="<?php echo $cp->titulo ?>">
                                                         <i class="fa-solid fa-times"></i>
                                                     </button>
                                                 <?php } ?>
-                                                <?php if($cp->id_usuario == $_SESSION['id_usuario'] or $_SESSION['id_setor'] == 1){ ?>
+                                                <?php if($cp->id_usuario == $_SESSION['id_usuario'] or verificarSetor([1])){ ?>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalDeletarPedido" class="collapse-item"
                                                     data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                                     data-titulo="<?php echo $cp->titulo ?>">
@@ -518,7 +518,7 @@
                                             data-descricao="<?php echo $cp->descricao ?>">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
-                                        <?php if($_SESSION['id_setor'] == 1 or $_SESSION['id_setor'] == 3){ ?>
+                                        <?php if(verificarSetor([1,3])){ ?>
                                         <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalCancelarNegacao" class="collapse-item"
                                             data-id_compra_pedido="<?php echo $cp->id_compra_pedido ?>"
                                             data-titulo="<?php echo $cp->titulo ?>">

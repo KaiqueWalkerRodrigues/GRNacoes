@@ -173,7 +173,7 @@
 
             // Função para popular as listas com tarefas
             function loadTrelloTasks() {
-                setVersion('1.1.8'); // Aqui você altera para a versão atual
+                setVersion('1.2.0'); // Aqui você altera para a versão atual
                 
                 const todoTasks = ['Cargos/Setores Update','Ótica Estoque, Venda e Metas','Notifição/Onlines'];
                 const inProgressTasks = ['Orçamento Lente Ctt'];

@@ -32,13 +32,13 @@
                                         <label for="empresa" class="form-label text-light">Empresa</label>
                                         <select id="empresaSelect" class="form-control">
                                         <?php 
-                                            if ($_SESSION['id_setor'] == 1 || $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14) { ?>
+                                            if (verificarSetor([1,12,14])) { ?>
                                                 <option value="0">Todas</option>
                                                 <option value="1">Clínica Parque</option>
                                                 <option value="3">Clínica Mauá</option>
                                                 <option value="5">Clínica Jardim</option>
                                             <?php 
-                                            } elseif ($_SESSION['id_setor'] == 13) {
+                                            } elseif (verificarSetor([13])) {
                                                 if ($_SESSION['id_empresa'] == 1) { ?>
                                                     <option value="1">Clínica Parque</option>
                                                 <?php 

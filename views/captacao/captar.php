@@ -6,14 +6,14 @@
     $Captacao = new Captacao();
     $Usuario = new Usuario();
 
-    if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){
+    if(verificarSetor([1,12])){
         $capHoje = $Captacao->listarHojeAdmin();
     }else{
         $capHoje = $Captacao->listarHoje($_SESSION['id_empresa']);
     }
 
     $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
-    $setor = $Setor->mostrar($usuario->id_setor);
+    $setor = $Setor->mostrar($_SESSION['id_setor']);
 
     if(isset($_POST['btnEditar'])){
         $Captacao->editar($_POST);
@@ -113,7 +113,7 @@
                                     <thead>
                                         <tr>
                                             <th>Hórario</th>
-                                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
+                                            <?php if(verificarSetor([1,12])){ ?>
                                                 <th>Empresa</th>
                                             <?php } ?>
                                             <th>Captador</th>
@@ -128,7 +128,7 @@
                                         <?php foreach($capHoje as $cap) { ?>
                                             <tr class="text-center">
                                                 <td><?php echo Helper::formatarHorario($cap->created_at) ?></td>
-                                                <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12){ ?>
+                                                <?php if(verificarSetor([1,12])){ ?>
                                                     <td><?php echo Helper::mostrar_empresa($cap->id_empresa) ?></td>
                                                 <?php } ?>
                                                 <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
@@ -160,7 +160,7 @@
                         
                         <div class="col-12">
                             <h5 class="fw-bold">Registro de Captação (<?php $agora = date("d/m/Y"); echo $agora ?>)</h5>
-                            <?php if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){ ?>
+                            <?php if(verificarSetor([1,12,14])){ ?>
                                 <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d')) ?></h5>
                             <?php }else{ ?>
                                 <h5 class="fw-bold">Total Pacientes: <?php echo $Captacao->contarTotalPacientes(date('Y-m-d'), $_SESSION['id_empresa']) ?></h5>
@@ -169,7 +169,7 @@
 
                         <div class="card bg-success text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
+                            if(verificarSetor([1,12,14])){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -207,7 +207,7 @@
 
                         <div class="card bg-danger text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
+                            if(verificarSetor([1,12,14])){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarNaoCaptacoes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -245,7 +245,7 @@
 
                         <div class="card bg-dark text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
+                            if(verificarSetor([1,12,14])){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCaptaveis(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -283,7 +283,7 @@
 
                         <div class="card bg-primary text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
+                            if(verificarSetor([1,12,14])){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarLentes(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
@@ -321,7 +321,7 @@
 
                         <div class="card bg-warning text-white p-2 text-end">
                             <?php 
-                            if($_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 12 OR $_SESSION['id_setor'] == 14){
+                            if(verificarSetor([1,12,14])){
                                 foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
                             ?>
                                     <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarGarantias(date('Y-m-d'), $usuario->id_usuario); ?></span></span>

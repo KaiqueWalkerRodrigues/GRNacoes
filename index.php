@@ -5,6 +5,29 @@
 
 include_once('const.php');
 
+function verificarSetor(array $setores_necessario){
+    foreach($_SESSION['id_setores'] as $setor){
+        foreach($setores_necessario as $setor_necessario){
+            if($setor == $setor_necessario){
+                return true;
+                break;
+            }
+        }
+    }
+}
+function bloquearSetor(array $setores_bloqueado){
+    foreach($_SESSION['id_setores'] as $setor){
+        foreach($setores_bloqueado as $setor_bloqueado){
+            if($setor != $setor_bloqueado){
+                return true;
+                break;
+            }else{
+                return false;
+            }
+        }
+    }
+}
+
 session_start();
 
 // Configurações básicas
@@ -367,10 +390,16 @@ if ($requiredLogin && !$_SESSION['logado']) {
 }
 
 // Verificar se o setor do usuário tem permissão para acessar a página
-if ($requiredSectors !== null && (!isset($_SESSION['id_setor']) || !in_array($_SESSION['id_setor'], $requiredSectors))) {
-    // Redireciona para a página de erro 401 (Acesso não autorizado) se o setor não corresponde
-    $file = '401.php';
-    $pageTitle = "Acesso não autorizado";
+// if ($requiredSectors !== null && (!isset($_SESSION['id_setor']) || !in_array($_SESSION['id_setor'], $requiredSectors))) {
+//     // Redireciona para a página de erro 401 (Acesso não autorizado) se o setor não corresponde
+//     $file = '401.php';
+//     $pageTitle = "Acesso não autorizado";
+// }
+if($requiredSectors != null){
+    if(!verificarSetor($requiredSectors)){
+        $file = '401.php';
+        $pageTitle = "Acesso não autorizado";
+    }
 }
 
 // Incluir o arquivo correspondente se existir, caso contrário, exibir erro 404

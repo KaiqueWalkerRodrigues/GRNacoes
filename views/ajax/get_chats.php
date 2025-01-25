@@ -8,7 +8,7 @@ $id_usuario = $_SESSION['id_usuario'];
 
 $Setor = new Setor();
 $Chats = new Conversa();
-$Usuarios = new Usuario();
+$Usuario = new Usuario();
 $Setores = new Setor();
 $Mensagem = new Mensagem(); 
 
@@ -21,7 +21,7 @@ $chats = $Chats->listar($id_usuario);
     <?php foreach($chats as $chat): ?>
         <?php 
         // Recuperar destinatário
-        $destinatario = $Usuarios->mostrar($Chats->destinatario($chat->id_conversa, $id_usuario)->id_usuario); 
+        $destinatario = $Usuario->mostrar($Chats->destinatario($chat->id_conversa, $id_usuario)->id_usuario); 
         
         // Recuperar última mensagem
         $ultimaMensagem = $Mensagem->ultimaMensagem($chat->id_conversa, $id_usuario);
@@ -56,7 +56,7 @@ $chats = $Chats->listar($id_usuario);
                         <img class="btn-icon btn-lg" src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $destinatario->id_avatar ?>.png" alt="">
                     </div>
                     <div class="col-9">
-                        <b><?php echo $destinatario->nome ?> (<?php echo $Setor->mostrar($destinatario->id_setor)->setor; ?>)</b>
+                        <b><?php echo $destinatario->nome ?> (<?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($destinatario->id_usuario)->id_setor)->setor; ?>)</b>
                         <br>
                         <?php if($ultimaMensagem != false){ echo $iconeLeitura; } ?> <span style="color: gray;"><?php if($ultimaMensagem != false){ echo $ultimaMensagem->mensagem; }else{} ?></span>
                     </div>
