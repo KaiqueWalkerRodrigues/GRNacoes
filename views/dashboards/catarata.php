@@ -81,6 +81,7 @@
             $(document).ready(function () {
                 $('#dash').addClass('active')
                 $('#dashboards_catarata').addClass('active')
+                
             });
         </script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

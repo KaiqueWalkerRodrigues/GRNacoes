@@ -219,7 +219,7 @@
     <script src="<?php echo URL_RESOURCES ?>/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-lente_contato_modelos.js"></script>
+    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-lente_contato_fornecedores.js"></script>
 </body>
 
 </html>

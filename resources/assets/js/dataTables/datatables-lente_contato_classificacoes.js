@@ -14,13 +14,9 @@ $(document).ready(function() {
             "emptyTable": "Nenhum dado disponível na tabela"
         },
         "columnDefs": [
-            { "width": "5%", "targets": 0 },
-            { "width": "11%", "targets": 1 },
-            { "width": "25%", "targets": 2 },
-            { "width": "15%", "targets": 3 },
-            { "width": "15%", "targets": 4 },
-            { "width": "15%", "targets": 5 },
-            { "width": "20%", "targets": 6 }
+            { "width": "0%", "targets": 0 },
+            { "width": "80%", "targets": 1 },
+            { "width": "20%", "targets": 2 }
         ]
     });
 });

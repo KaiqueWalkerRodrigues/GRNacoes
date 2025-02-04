@@ -165,12 +165,6 @@
                         </div>
                         <div class="row">
                             <div class="col-3 offset-1">
-                                <label for="id_lente" class="form-label">Fornecedor Lente *</label>
-                                <select name="id_lente" id="cadastrar_id_lente" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                </select>
-                            </div>
-                            <div class="col-3">
                                 <label for="id_lente" class="form-label">Modelo Lente *</label>
                                 <select name="id_lente" id="cadastrar_id_lente" class="form-control" required>
                                     <option value="">Selecione...</option>

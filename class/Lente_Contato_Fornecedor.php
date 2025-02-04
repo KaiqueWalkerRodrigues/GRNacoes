@@ -34,7 +34,7 @@ class Lente_contato_fornecedor {
      * @example $variavel = $Obj->listar()
      */
     public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM lente_contato_fornecedor WHERE deleted_at IS NULL ORDER BY fornecedor');        
+        $sql = $this->pdo->prepare('SELECT * FROM lente_contato_fornecedores WHERE deleted_at IS NULL ORDER BY fornecedor');        
         $sql->execute();
     
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -54,7 +54,7 @@ class Lente_contato_fornecedor {
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
-        $sql = $this->pdo->prepare('INSERT INTO lente_contato_fornecedor 
+        $sql = $this->pdo->prepare('INSERT INTO lente_contato_fornecedores 
                                     (fornecedor, created_at, updated_at)
                                     VALUES
                                     (:fornecedor, :created_at, :updated_at)
@@ -97,7 +97,7 @@ class Lente_contato_fornecedor {
      */
     public function mostrar(int $id_lente_contato_fornecedor){
         // Montar o SELECT ou o SQL
-        $sql = $this->pdo->prepare('SELECT * FROM lente_contato_fornecedor WHERE id_lente_contato_fornecedor = :id_lente_contato_fornecedor LIMIT 1');
+        $sql = $this->pdo->prepare('SELECT * FROM lente_contato_fornecedores WHERE id_lente_contato_fornecedor = :id_lente_contato_fornecedor LIMIT 1');
         $sql->bindParam(':id_lente_contato_fornecedor', $id_lente_contato_fornecedor);
         // Executar a consulta
         $sql->execute();
@@ -115,7 +115,7 @@ class Lente_contato_fornecedor {
      * @example $Obj->editar($_POST);
      */
     public function editar(array $dados){
-        $sql = $this->pdo->prepare("UPDATE lente_contato_fornecedor SET
+        $sql = $this->pdo->prepare("UPDATE lente_contato_fornecedores SET
             fornecedor = :fornecedor,
             updated_at = :updated_at 
         WHERE id_lente_contato_fornecedor = :id_lente_contato_fornecedor
@@ -161,7 +161,7 @@ class Lente_contato_fornecedor {
      */
     public function deletar(int $id_lente_contato_fornecedor, $usuario_logado){
         // Consulta para obter o nome do fornecedor
-        $consulta_fornecedor = $this->pdo->prepare('SELECT fornecedor FROM lente_contato_fornecedor WHERE id_lente_contato_fornecedor = :id_lente_contato_fornecedor');
+        $consulta_fornecedor = $this->pdo->prepare('SELECT fornecedor FROM lente_contato_fornecedores WHERE id_lente_contato_fornecedor = :id_lente_contato_fornecedor');
         $consulta_fornecedor->bindParam(':id_lente_contato_fornecedor', $id_lente_contato_fornecedor);
         $consulta_fornecedor->execute();
         $resultado_fornecedor = $consulta_fornecedor->fetch(PDO::FETCH_ASSOC);
