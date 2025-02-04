@@ -2,8 +2,8 @@ $(document).ready(function() {
     $('#dataTable').DataTable({
         "order": [[ 0, 'asc' ]],
         "language": {
-            "info": "Exibindo _START_ a _END_ de _TOTAL_ fornecedores",
-            "lengthMenu": "Mostrar _MENU_ fornecedores",
+            "info": "Exibindo _START_ a _END_ de _TOTAL_ modelos",
+            "lengthMenu": "Mostrar _MENU_ modelos",
             "search": "Pesquisar:",
             "paginate": {
                 "first": "Primeiro",

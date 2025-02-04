@@ -208,7 +208,6 @@
                             </a>
                             <div class="collapse" id="lente_contato_configuracoes" data-parent="#accordionSidenavLayout">
                                 <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" id="lente_contato_configuracoes_classificacoes" href="<?php echo URL ?>/lente_contato/configuracoes/classificacoes">Gerenciar Classificações</a>
                                     <a class="nav-link" id="lente_contato_configuracoes_fornecedores" href="<?php echo URL ?>/lente_contato/configuracoes/fornecedores">Gerenciar Fornecedores</a>
                                     <a class="nav-link" id="lente_contato_configuracoes_modelos" href="<?php echo URL ?>/lente_contato/configuracoes/modelos">Gerenciar Modelos</a>
                                 </nav>

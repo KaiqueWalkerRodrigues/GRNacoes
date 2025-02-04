@@ -1,4 +1,5 @@
 <?php 
+    $Lc_fornecedor = new Lente_contato_fornecedor();
     $Lc_orcamento = new Lente_contato_Orcamento();
     $Lc_modelo = new Lente_contato_Modelo();
     $Medico = new Medico();
@@ -109,7 +110,8 @@
                                                         data-valor="<?php echo $orcamento->valor ?>"
                                                         data-forma_pgto1="<?php echo $orcamento->id_forma_pagamento1 ?>"
                                                         data-forma_pgto2="<?php echo $orcamento->id_forma_pagamento2 ?>"
-                                                        data-pagamento="<?php echo $orcamento->pagamento ?>">
+                                                        data-pagamento="<?php echo $orcamento->pagamento ?>"
+                                                        data-id_fornecedor="<?php echo $orcamento->id_fornecedor ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalDeletarOrcamento"
@@ -197,12 +199,18 @@
                         </div>
                         <div class="row">
                             <div class="col-3 offset-1">
+                                <label for="id_fornecedor" class="form-label">Fornecedor *</label>
+                                <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                        <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-3 d-none" id="campo_id_lente">
                                 <label for="id_lente" class="form-label">Modelo Lente *</label>
                                 <select name="id_lente" id="cadastrar_id_lente" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Lc_modelo->listar() as $modelo){ ?>
-                                        <option value="<?php echo $modelo->id_lente_contato_modelo ?>"><?php echo $modelo->modelo ?></option>
-                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
@@ -318,12 +326,18 @@
                         </div>
                         <div class="row">
                             <div class="col-3 offset-1">
+                                <label for="id_fornecedor" class="form-label">Fornecedor *</label>
+                                <select name="id_fornecedor" id="editar_id_fornecedor" class="form-control" required>
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                        <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-3 d-none" id="editar_campo_id_lente">
                                 <label for="id_lente" class="form-label">Modelo Lente *</label>
                                 <select name="id_lente" id="editar_id_lente" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Lc_modelo->listar() as $modelo){ ?>
-                                        <option value="<?php echo $modelo->id_lente_contato_modelo ?>"><?php echo $modelo->modelo ?></option>
-                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
@@ -579,6 +593,7 @@
                 var forma_pgto1 = button.data('forma_pgto1');
                 var forma_pgto2 = button.data('forma_pgto2');
                 var pagamento = button.data('pagamento');
+                var id_fornecedor = button.data('id_fornecedor');
 
                 $('#editar_id_orcamento').val(id_orcamento);
                 $('#editar_nome').val(nome);
@@ -593,6 +608,25 @@
                 $('#editar_forma_pgto1').val(forma_pgto1);
                 $('#editar_forma_pgto2').val(forma_pgto2);
                 $('#editar_pagamento').val(pagamento);
+                $('#editar_id_fornecedor').val(id_fornecedor);
+
+                // Disparar o evento de change para carregar os modelos de lente
+                $('#editar_id_fornecedor').trigger('change');
+
+                // Formatar CPF e Celular ao abrir o modal
+                formatarCPF($('#editar_cpf'));
+                formatarCelular($('#editar_contato'));
+
+                // Validar CPF ao abrir o modal
+                if (!validarCPF($('#editar_cpf').val().replace(/\D/g, ''))) {
+                    $('#editar_cpf').addClass('is-invalid');
+                    if ($('#editar_cpf').next('.invalid-feedback').length === 0) {
+                        $('<div class="invalid-feedback">CPF Inválido. Tente novamente.</div>').insertAfter($('#editar_cpf'));
+                    }
+                } else {
+                    $('#editar_cpf').removeClass('is-invalid').addClass('is-valid');
+                    $('#editar_cpf').next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
+                }
 
                 // Mostrar/ocultar campos de olho esquerdo e direito
                 if (olhos === 0 || olhos === 1) {
@@ -722,6 +756,53 @@
             // Adicionar formatação ao celular no formulário de edição
             $('#editar_contato').on('input', function() {
                 formatarCelular($(this));
+            });
+
+            $('#cadastrar_id_fornecedor').on('change', function () {
+                var idFornecedor = $(this).val();
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: {
+                            id_fornecedor: idFornecedor
+                        },
+                        success: function (response) {
+                            $('#cadastrar_id_lente').html(response);
+                            $('#cadastrar_id_lente').parent().removeClass('d-none');
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX.');
+                        }
+                    });
+                } else {
+                    $('#cadastrar_id_lente').html('<option value="">Selecione...</option>');
+                    $('#cadastrar_id_lente').parent().addClass('d-none');
+                }
+            });
+
+            // Evento para o formulário de edição
+            $('#editar_id_fornecedor').on('change', function () {
+                var idFornecedor = $(this).val();
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: {
+                            id_fornecedor: idFornecedor
+                        },
+                        success: function (response) {
+                            $('#editar_id_lente').html(response);
+                            $('#editar_id_lente').parent().removeClass('d-none');
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX.');
+                        }
+                    });
+                } else {
+                    $('#editar_id_lente').html('<option value="">Selecione...</option>');
+                    $('#editar_id_lente').parent().addClass('d-none');
+                }
             });
         });
     </script>

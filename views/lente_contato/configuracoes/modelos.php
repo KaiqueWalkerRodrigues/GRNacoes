@@ -1,7 +1,6 @@
 <?php 
     $Lc_modelo = new Lente_contato_Modelo();
     $Lc_fornecedor = new Lente_contato_fornecedor();
-    $Lc_classificacao = new Lente_contato_classificacao();
 
     if (isset($_POST['btnCadastrar'])) {
        $Lc_modelo->cadastrar($_POST);
@@ -91,7 +90,6 @@
                                                         data-codigo_simah="<?php echo $modelo->codigo_simah ?>"
                                                         data-modelo="<?php echo $modelo->modelo ?>"
                                                         data-id_fornecedor="<?php echo $modelo->id_fornecedor ?>"
-                                                        data-id_classificacao="<?php echo $modelo->id_classificacao ?>"
                                                         data-unidade="<?php echo $modelo->unidade ?>"
                                                         data-valor_custo="<?php echo $modelo->valor_custo ?>"
                                                         data-valor_venda="<?php echo $modelo->valor_venda ?>">
@@ -138,21 +136,12 @@
                                 <label for="cadastrar_modelo" class="form-label">Nome Modelo *</label>
                                 <input type="text" name="modelo" id="cadastrar_modelo" class="form-control" required>
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="cadastrar_id_fornecedor" class="form-label">Fornecedor *</label>
                                 <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
                                         <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label for="cadastrar_id_classificacao" class="form-label">Classificação *</label>
-                                <select name="id_classificacao" id="cadastrar_id_classificacao" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Lc_classificacao->listar() as $classificacao){ ?>
-                                        <option value="<?php echo $classificacao->id_lente_contato_classificacao ?>"><?php echo $classificacao->classificacao ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -220,15 +209,6 @@
                                     <option value="">Selecione...</option>
                                     <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
                                         <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <label for="editar_id_classificacao" class="form-label">Classificação *</label>
-                                <select name="id_classificacao" id="editar_id_classificacao" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Lc_classificacao->listar() as $classificacao){ ?>
-                                        <option value="<?php echo $classificacao->id_lente_contato_classificacao ?>"><?php echo $classificacao->classificacao ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -313,7 +293,6 @@
                 var codigo_simah = button.data('codigo_simah');
                 var modelo = button.data('modelo');
                 var id_fornecedor = button.data('id_fornecedor');
-                var id_classificacao = button.data('id_classificacao');
                 var unidade = button.data('unidade');
                 var valor_custo = button.data('valor_custo');
                 var valor_venda = button.data('valor_venda');
@@ -322,7 +301,6 @@
                $('#editar_codigo_simah').val(codigo_simah);
                $('#editar_modelo').val(modelo);
                $('#editar_id_fornecedor').val(id_fornecedor);
-               $('#editar_id_classificacao').val(id_classificacao);
                $('#editar_unidade').val(unidade);
                $('#editar_valor_custo').val(valor_custo);
                $('#editar_valor_venda').val(valor_venda);

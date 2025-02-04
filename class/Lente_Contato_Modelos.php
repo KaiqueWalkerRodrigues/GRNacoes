@@ -54,9 +54,8 @@ class Lente_contato_Modelo {
     public function cadastrar(Array $dados){
         // Sanitizar e preparar os dados
         $id_fornecedor = intval($dados['id_fornecedor']);
-        $id_classificacao = intval($dados['id_classificacao']);
         $codigo_simah = strtoupper(trim($dados['codigo_simah']));
-        $modelo = ucfirst(strtolower(trim($dados['modelo'])));
+        $modelo = ucwords(strtolower(trim($dados['modelo'])));
         $unidade = strtoupper(trim($dados['unidade']));
         $valor_custo = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_custo'])));
         $valor_venda = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_venda'])));
@@ -65,13 +64,12 @@ class Lente_contato_Modelo {
 
         $sql = $this->pdo->prepare('
             INSERT INTO lente_contato_modelos 
-                (id_fornecedor, id_classificacao, codigo_simah, modelo, unidade, valor_custo, valor_venda, created_at, updated_at)
+                (id_fornecedor, codigo_simah, modelo, unidade, valor_custo, valor_venda, created_at, updated_at)
             VALUES
-                (:id_fornecedor, :id_classificacao, :codigo_simah, :modelo, :unidade, :valor_custo, :valor_venda, :created_at, :updated_at)
+                (:id_fornecedor, :codigo_simah, :modelo, :unidade, :valor_custo, :valor_venda, :created_at, :updated_at)
         ');
 
-        $sql->bindParam(':id_fornecedor', $id_fornecedor);          
-        $sql->bindParam(':id_classificacao', $id_classificacao);          
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);                  
         $sql->bindParam(':codigo_simah', $codigo_simah);          
         $sql->bindParam(':modelo', $modelo);          
         $sql->bindParam(':unidade', $unidade);          
@@ -133,9 +131,8 @@ class Lente_contato_Modelo {
         // Sanitizar e preparar os dados
         $id_lente_contato_modelo = intval($dados['id_lente_contato_modelo']);
         $id_fornecedor = intval($dados['id_fornecedor']);
-        $id_classificacao = intval($dados['id_classificacao']);
         $codigo_simah = strtoupper(trim($dados['codigo_simah']));
-        $modelo = ucfirst(strtolower(trim($dados['modelo'])));
+        $modelo = ucwords(strtolower(trim($dados['modelo'])));
         $unidade = strtoupper(trim($dados['unidade']));
         $valor_custo = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_custo'])));
         $valor_venda = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_venda'])));
@@ -145,7 +142,6 @@ class Lente_contato_Modelo {
         $sql = $this->pdo->prepare('
             UPDATE lente_contato_modelos SET
                 id_fornecedor = :id_fornecedor,
-                id_classificacao = :id_classificacao,
                 codigo_simah = :codigo_simah,
                 modelo = :modelo,
                 unidade = :unidade,
@@ -158,7 +154,6 @@ class Lente_contato_Modelo {
 
         $sql->bindParam(':id_lente_contato_modelo', $id_lente_contato_modelo);
         $sql->bindParam(':id_fornecedor', $id_fornecedor);
-        $sql->bindParam(':id_classificacao', $id_classificacao);
         $sql->bindParam(':codigo_simah', $codigo_simah);
         $sql->bindParam(':modelo', $modelo);
         $sql->bindParam(':unidade', $unidade);

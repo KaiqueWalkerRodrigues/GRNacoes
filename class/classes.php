@@ -26,8 +26,7 @@
     include_once('Financeiro_Boleto.php');
     include_once('Financeiro_Campanha.php');
     include_once('Financeiro_Contrato.php');
-
-    include_once('Lente_Contato_Classificacao.php');
+    
     include_once('Lente_Contato_Fornecedor.php');
     include_once('Lente_Contato_Modelos.php');
     include_once('Lente_Contato_Orcamento.php');

@@ -330,12 +330,6 @@ switch ($route) {
         $requiredSectors = [1,17];
         $requiredLogin = true;
         break;
-    case 'lente_contato/configuracoes/classificacoes':
-        $file = 'lente_contato/configuracoes/classificacoes.php';
-        $pageTitle .= "Classificações Lente de Contato";
-        $requiredSectors = [1,17];
-        $requiredLogin = true;
-        break;
 
     // case 'ajax/get_fornecedores':
     //     $file = 'ajax/get_fornecedores.php';

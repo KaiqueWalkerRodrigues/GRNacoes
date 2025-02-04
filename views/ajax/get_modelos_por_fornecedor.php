@@ -14,8 +14,7 @@ if (isset($_GET['id_fornecedor'])) {
         $modelos = $sql->fetchAll(PDO::FETCH_OBJ);
 
         foreach ($modelos as $modelo) {
-            // Adicionar o código SIMAH após o nome da lente
-            echo '<option value="' . $modelo->id_lente_contato_modelo . '">' . $modelo->modelo . ' (' . $modelo->codigo_simah . ')</option>';
+            echo '<option value="' . $modelo->id_lente_contato_modelo . '">' . $modelo->modelo .' ('.$modelo->codigo_simah.')</option>';
         }
     }
 }
