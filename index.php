@@ -128,7 +128,13 @@ switch ($route) {
     case 'dashboards/catarata':
         $file = 'dashboards/catarata.php';
         $pageTitle .= "Dashboard Catarata";
-        $requiredSectors = [1];
+        $requiredSectors = [1,5,12];
+        $requiredLogin = true;
+        break;
+    case 'dashboards/lente_contato':
+        $file = 'dashboards/lente_contato.php';
+        $pageTitle .= "Dashboard Lente de Contato";
+        $requiredSectors = [1,3,5,12];
         $requiredLogin = true;
         break;
 

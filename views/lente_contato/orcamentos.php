@@ -13,8 +13,6 @@
         $Lc_orcamento->deletar($_POST['id_orcamento'], $_POST['usuario_logado']);
     }
 ?>
-
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -166,9 +164,9 @@
                                 <input type="text" id="cadastrar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_medico" class="form-label">Médico Solicitante *</label>
-                                <select id="cadastrar_id_medico" name="id_medico" class="form-control" required>
-                                    <option value="">Selecione...</option>
+                                <label for="id_medico" class="form-label">Médico Solicitante</label>
+                                <select id="cadastrar_id_medico" name="id_medico" class="form-control">
+                                    <option value="0">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
                                     <?php } ?>
@@ -287,9 +285,9 @@
                                 <input type="text" id="editar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_medico" class="form-label">Médico Solicitante *</label>
-                                <select id="editar_id_medico" name="id_medico" class="form-control" required>
-                                    <option value="">Selecione...</option>
+                                <label for="id_medico" class="form-label">Médico Solicitante</label>
+                                <select id="editar_id_medico" name="id_medico" class="form-control">
+                                    <option value="0">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
                                     <?php } ?>
@@ -421,6 +419,55 @@
             $('#cadastrar_contato').on('input', function() {
                 formatarCelular($(this));
             });
+
+            // Evento para o formulário de cadastro
+            $('#cadastrar_id_lente, #cadastrar_olhos').on('change', function () {
+                var id_modelo = $('#cadastrar_id_lente').val();
+                var olhos = $('#cadastrar_olhos').val();
+                if (id_modelo && olhos) {
+                    buscarValorLente(id_modelo, olhos, '#cadastrar_valor');
+                }
+            });
+
+            // Evento para o formulário de edição
+            $('#editar_id_lente, #editar_olhos').on('change', function () {
+                var id_modelo = $('#editar_id_lente').val();
+                var olhos = $('#editar_olhos').val();
+                if (id_modelo && olhos) {
+                    buscarValorLente(id_modelo, olhos, '#editar_valor');
+                }
+            });
+
+            // Disparar o evento de change ao abrir o modal de edição
+            $('#modalEditarOrcamento').on('show.bs.modal', function (event) {
+                var id_modelo = $('#editar_id_lente').val();
+                var olhos = $('#editar_olhos').val();
+                if (id_modelo && olhos) {
+                    buscarValorLente(id_modelo, olhos, '#editar_valor');
+                }
+            });
+
+            function buscarValorLente(id_modelo, olhos, campoValor) {
+            $.ajax({
+                    url: '/GRNacoes/views/ajax/get_valor_lente_contato_modelo.php',
+                    type: 'GET',
+                    data: {
+                        id_modelo: id_modelo,
+                        olhos: olhos
+                    },
+                    success: function (response) {
+                        var data = JSON.parse(response);
+                        if (data.valor_total) {
+                            $(campoValor).val(data.valor_total);
+                        } else {
+                            alert(data.error || 'Erro ao buscar o valor da lente.');
+                        }
+                    },
+                    error: function () {
+                        alert('Erro na requisição AJAX.');
+                    }
+                });
+            }
 
             function formatarCelular(campo) {
                 let telefone = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos

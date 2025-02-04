@@ -108,9 +108,6 @@
                                     <small id="current-date"></small>
                                 </div>
                             </div>
-                            <div class="col-12 text-center">
-                                <h2 class="fw-bold text-primary">Feliz 2025!</h2>
-                            </div>
                             <div class="col-12 mt-3 text-center">
                                 <!-- Sistema Versão -->
                                 <h1 style="font-size: 1.6rem;">Versão: <span id="sistema-versao"></span></h1>
@@ -173,7 +170,7 @@
 
             // Função para popular as listas com tarefas
             function loadTrelloTasks() {
-                setVersion('1.2.0'); // Aqui você altera para a versão atual
+                setVersion('1.2.1'); // Aqui você altera para a versão atual
                 
                 const todoTasks = ['Cargos/Setores Update','Ótica Estoque, Venda e Metas','Notifição/Onlines'];
                 const inProgressTasks = ['Orçamento Lente Ctt'];

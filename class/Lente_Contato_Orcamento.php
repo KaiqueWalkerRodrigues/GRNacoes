@@ -35,7 +35,23 @@ class Lente_contato_Orcamento {
      */
     public function listar(){
         $sql = $this->pdo->prepare('
-            SELECT * FROM lente_contato_orcamentos WHERE deleted_at IS NULL
+            SELECT * FROM lente_contato_orcamentos WHERE deleted_at IS NULL AND valor IS NOT NULL
+        ');        
+        $sql->execute();
+
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+
+        return $dados;
+    }   
+
+    /**
+     * Listar todos os testes
+     * @return array
+     * @example $variavel = $Obj->listar()
+     */
+    public function listarTeste(){
+        $sql = $this->pdo->prepare('
+            SELECT * FROM lente_contato_orcamentos WHERE deleted_at IS NULL AND valor IS NULL
         ');        
         $sql->execute();
 
@@ -55,7 +71,11 @@ class Lente_contato_Orcamento {
         $nome = ucwords(strtolower(trim($dados['nome'])));
         $cpf = preg_replace('/\D/', '', $dados['cpf']);
         $contato = preg_replace('/\D/', '', $dados['contato']);
-        $id_medico = intval($dados['id_medico']);
+        if($dados['id_medico'] > 0){
+            $id_medico = intval($dados['id_medico']);
+        }else{
+            $id_medico = Null;
+        }
         $olhos = intval($dados['olhos']);
         $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
         $olho_direito = isset($dados['olho_direito']) ? trim($dados['olho_direito']) : null;
@@ -109,6 +129,72 @@ class Lente_contato_Orcamento {
             <script>
                 alert('Não foi possível Cadastrar o Orçamento!');
                 window.location.href = '" . URL . "/lente_contato/orcamentos';
+            </script>";
+            exit;
+        }
+    }
+
+    /**
+     * Cadastrar um novo Teste de Lente
+     * @param Array $dados    
+     * @return void
+     * @example $Obj->cadastrar($_POST);
+     */
+    public function cadastrarTeste(Array $dados){
+        // Extrair e sanitizar os dados do formulário
+        $nome = ucwords(strtolower(trim($dados['nome'])));
+        $cpf = preg_replace('/\D/', '', $dados['cpf']);
+        $contato = preg_replace('/\D/', '', $dados['contato']);
+        if($dados['id_medico'] > 0){
+            $id_medico = intval($dados['id_medico']);
+        }else{
+            $id_medico = Null;
+        }
+        $olhos = intval($dados['olhos']);
+        $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
+        $olho_direito = isset($dados['olho_direito']) ? trim($dados['olho_direito']) : null;
+        $id_modelo = intval($dados['id_lente']);
+        $usuario_logado = intval($dados['usuario_logado']);
+        $id_empresa = intval($dados['id_empresa']);
+        $agora = date("Y-m-d H:i:s");
+
+        // Preparar a consulta SQL para inserir o novo orçamento
+        $sql = $this->pdo->prepare('
+            INSERT INTO lente_contato_orcamentos 
+            (nome, cpf, contato, id_medico, olhos, olho_esquerdo, olho_direito, id_modelo, id_empresa, created_at, updated_at)
+            VALUES
+            (:nome, :cpf, :contato, :id_medico, :olhos, :olho_esquerdo, :olho_direito, :id_modelo, :id_empresa, :created_at, :updated_at)
+        ');
+
+        $sql->bindParam(':nome', $nome);          
+        $sql->bindParam(':cpf', $cpf);          
+        $sql->bindParam(':contato', $contato);          
+        $sql->bindParam(':id_medico', $id_medico);          
+        $sql->bindParam(':olhos', $olhos);          
+        $sql->bindParam(':olho_esquerdo', $olho_esquerdo);          
+        $sql->bindParam(':olho_direito', $olho_direito);          
+        $sql->bindParam(':id_modelo', $id_modelo);                  
+        $sql->bindParam(':id_empresa', $id_empresa);          
+        $sql->bindParam(':created_at', $agora);          
+        $sql->bindParam(':updated_at', $agora);          
+
+        if ($sql->execute()) {
+            $orcamento_id = $this->pdo->lastInsertId();
+            
+            $descricao = "Cadastrou o Testes: $nome ($orcamento_id)";
+            $this->addLog("Cadastrar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Testes Cadastrado com Sucesso!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Cadastrar o Teste de Lente!');
+                window.location.href = '" . URL . "/lente_contato/testes';
             </script>";
             exit;
         }
@@ -221,6 +307,69 @@ class Lente_contato_Orcamento {
         }
     }
     
+    public function editarTeste(array $dados){
+        // Extrair e sanitizar os dados do formulário
+    
+        // Para os campos numéricos, removemos quaisquer caracteres que não sejam dígitos
+        $id_orcamento = intval(preg_replace('/\D/', '', $dados['id_orcamento']));
+        $nome = ucwords(strtolower(trim($dados['nome'])));
+        $cpf = preg_replace('/\D/', '', $dados['cpf']);
+        $contato = preg_replace('/\D/', '', $dados['contato']);
+        $id_medico = intval(preg_replace('/\D/', '', $dados['id_medico']));
+        $olhos = intval(preg_replace('/\D/', '', $dados['olhos']));
+        $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
+        $olho_direito = isset($dados['olho_direito']) ? trim($dados['olho_direito']) : null;
+        $id_modelo = intval(preg_replace('/\D/', '', $dados['id_lente']));
+        
+        $usuario_logado = intval(preg_replace('/\D/', '', $dados['usuario_logado']));
+        $agora = date("Y-m-d H:i:s");
+    
+        // Preparar a consulta SQL para atualizar o orçamento
+        $sql = $this->pdo->prepare('
+            UPDATE lente_contato_orcamentos SET
+                nome = :nome,
+                cpf = :cpf,
+                contato = :contato,
+                id_medico = :id_medico,
+                olhos = :olhos,
+                olho_esquerdo = :olho_esquerdo,
+                olho_direito = :olho_direito,
+                id_modelo = :id_modelo,
+                updated_at = :updated_at
+            WHERE 
+                id_lente_contato_orcamento = :id_orcamento
+        ');
+    
+        $sql->bindParam(':nome', $nome);          
+        $sql->bindParam(':cpf', $cpf);          
+        $sql->bindParam(':contato', $contato);          
+        $sql->bindParam(':id_medico', $id_medico);          
+        $sql->bindParam(':olhos', $olhos);          
+        $sql->bindParam(':olho_esquerdo', $olho_esquerdo);          
+        $sql->bindParam(':olho_direito', $olho_direito);          
+        $sql->bindParam(':id_modelo', $id_modelo);            
+        $sql->bindParam(':updated_at', $agora);          
+        $sql->bindParam(':id_orcamento', $id_orcamento);          
+    
+        if ($sql->execute()) {
+            $descricao = "Editou o Teste: $nome ($id_orcamento)";
+            $this->addLog("Editar", $descricao, $usuario_logado);
+    
+            echo "
+            <script>
+                alert('Teste Editado com Sucesso!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Editar o Teste!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        }
+    }
 
     /**
      * Deleta um orçamento (soft delete)
@@ -269,5 +418,55 @@ class Lente_contato_Orcamento {
             exit;
         }
     }
+
+    public function transferirTeste(Array $dados){
+        // Sanitização dos dados recebidos
+        $id_teste      = intval($dados['id_teste']);
+        $valor         = floatval($dados['valor']);
+        $forma_pgto1   = intval($dados['forma_pgto1']);
+        $forma_pgto2   = intval($dados['forma_pgto2']);
+        $pagamento     = intval($dados['pagamento']);
+        $usuario_logado= intval($dados['usuario_logado']);
+        $agora         = date("Y-m-d H:i:s");
+    
+        // Atualiza o registro do teste, inserindo os dados financeiros
+        $sql = $this->pdo->prepare('
+            UPDATE lente_contato_orcamentos 
+            SET 
+                valor = :valor, 
+                id_forma_pagamento1 = :forma_pgto1, 
+                id_forma_pagamento2 = :forma_pgto2, 
+                pagamento = :pagamento, 
+                updated_at = :updated_at 
+            WHERE 
+                id_lente_contato_orcamento = :id_teste AND valor IS NULL
+        ');
+    
+        $sql->bindParam(':valor', $valor);
+        $sql->bindParam(':forma_pgto1', $forma_pgto1);
+        $sql->bindParam(':forma_pgto2', $forma_pgto2);
+        $sql->bindParam(':pagamento', $pagamento);
+        $sql->bindParam(':updated_at', $agora);
+        $sql->bindParam(':id_teste', $id_teste);
+    
+        if ($sql->execute()){
+            $descricao = "Transferiu o Teste para Orçamento: Teste ID $id_teste";
+            $this->addLog("Transferir", $descricao, $usuario_logado);
+            echo "
+            <script>
+                alert('Teste Transferido para Orçamento com Sucesso!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível transferir o Teste!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        }
+    }
+    
 
 }

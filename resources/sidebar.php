@@ -43,6 +43,7 @@
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação</a>
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/catarata">Catarata<span class="badge badge-primary ml-2">Novo!</span></a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/lente_contato">Lente de Contato<span class="badge badge-primary ml-2">Novo!</span></a>
                         </nav>
                     </div> 
 
@@ -190,7 +191,7 @@
                 
                 <?php } ?>
 
-                <?php if(verificarSetor([1,5,12,17])){ ?>
+                <?php if(verificarSetor([1,3,5,12,17])){ ?>
 
                     <a class="nav-link collapsed" id="lent" href="javascript:void(0);" data-toggle="collapse" data-target="#lente_contato" aria-expanded="false" aria-controls="financeiro">
                         <div class="nav-link-icon"><i class="fa-sharp fa-light fa-eye-low-vision"></i></div>
@@ -199,8 +200,9 @@
                     </a>
                     <div class="collapse" id="lente_contato" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
-                            <a class="nav-link" id="lente_contato_testes" href="<?php echo URL ?>/lente_contato/testes">Testes</a>
                             <a class="nav-link" id="lente_contato_orcamentos" href="<?php echo URL ?>/lente_contato/orcamentos">Orçamentos</a>
+                            <a class="nav-link" id="lente_contato_testes" href="<?php echo URL ?>/lente_contato/testes">Testes</a>
+                            <?php if(verificarSetor([1,3,5,12])){ ?>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" id="lente_contato_configuracoes" data-target="#lente_contato_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
                                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
@@ -211,6 +213,7 @@
                                     <a class="nav-link" id="lente_contato_configuracoes_modelos" href="<?php echo URL ?>/lente_contato/configuracoes/modelos">Gerenciar Modelos</a>
                                 </nav>
                             </div>
+                            <?php } ?>
                         </nav>
                     </div>
                 
