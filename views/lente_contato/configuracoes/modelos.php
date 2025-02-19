@@ -62,9 +62,7 @@
                                 <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <?php if(verificarSetor([1])){ ?>
-                                                <th>#</th>
-                                            <?php } ?>
+                                            <th>#</th>
                                             <th>Cód Simah</th>
                                             <th>Nome Modelo</th>
                                             <th>Fornecedor</th>
@@ -76,9 +74,7 @@
                                     <tbody>
                                         <?php foreach($Lc_modelo->listar() as $modelo){ ?>
                                         <tr>
-                                            <?php if(verificarSetor([1])){ ?>
-                                                <td><?php echo $modelo->id_lente_contato_modelo ?></td>
-                                            <?php } ?>
+                                            <td><?php echo $modelo->id_lente_contato_modelo ?></td>
                                             <td><?php echo $modelo->codigo_simah ?></td>
                                             <td><?php echo $modelo->modelo ?></td>
                                             <td><?php echo $Lc_fornecedor->mostrar($modelo->id_fornecedor)->fornecedor ?></td>
@@ -226,14 +222,14 @@
                                 <label for="editar_valor_custo" class="form-label">Valor de Custo *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" name="valor_custo" id="editar_valor_custo" required>
+                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="valor_custo" id="editar_valor_custo" required>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <label for="editar_valor_venda" class="form-label">Valor de Venda *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" name="valor_venda" id="editar_valor_venda" required>
+                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="valor_venda" id="editar_valor_venda" required>
                                 </div>
                             </div>
                         </div>

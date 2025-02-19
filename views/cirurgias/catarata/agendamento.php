@@ -101,7 +101,8 @@
                                                         data-id_agenda="<?php echo $agendamento->id_agenda ?>"
                                                         data-id_turma="<?php echo $agendamento->id_turma ?>"
                                                         data-valor="<?php echo $agendamento->valor ?>"
-                                                        data-forma_pgto="<?php echo $agendamento->forma_pgto ?>"
+                                                        data-forma_pgto1="<?php echo $agendamento->forma_pgto1 ?>"
+                                                        data-forma_pgto2="<?php echo $agendamento->forma_pgto2 ?>"
                                                     ><i class="fa-solid fa-gear"></i></button>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark mr-2" type="button" data-toggle="modal" data-target="#modalDeletarAgendamento"
                                                         data-id_agendamento="<?php echo $agendamento->id_catarata_agendamento ?>"
@@ -227,9 +228,25 @@
                                             <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor" required>
                                         </div>
                                     </div>
-                                    <div class="col-2">
-                                        <label for="forma_pgto" class="form-label">Forma Pagamento *</label>
-                                        <select name="forma_pgto" id="cadastrar_forma_pgto" class="form-control" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 offset-1 mt-2">
+                                        <label for="forma_pgto1" class="form-label">Forma Pagamento 1 *</label>
+                                        <select name="forma_pgto1" id="cadastrar_forma_pgto1" class="form-control" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="0">Credito</option>
+                                            <option value="1">Debito</option>
+                                            <option value="2">Boleto</option>
+                                            <option value="3">Pix</option>
+                                            <option value="4">Credito AO</option>
+                                            <option value="5">Debito AO</option>
+                                            <option value="6">Boleto AO</option>
+                                            <option value="7">Pix AO</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2 mt-2">
+                                        <label for="forma_pgto2" class="form-label">Forma Pagamento 2</label>
+                                        <select name="forma_pgto2" id="cadastrar_forma_pgto2" class="form-control">
                                             <option value="">Selecione...</option>
                                             <option value="0">Credito</option>
                                             <option value="1">Debito</option>
@@ -361,9 +378,25 @@
                                             <input type="number" class="form-control" step="0.01" name="valor" id="editar_valor" required>
                                         </div>
                                     </div>
-                                    <div class="col-2">
-                                        <label for="forma_pgto" class="form-label">Forma Pagamento *</label>
-                                        <select name="forma_pgto" id="editar_forma_pgto" class="form-control" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 offset-1 mt-2">
+                                        <label for="forma_pgto1" class="form-label">Forma Pagamento 1 *</label>
+                                        <select name="forma_pgto1" id="editar_forma_pgto1" class="form-control" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="0">Credito</option>
+                                            <option value="1">Debito</option>
+                                            <option value="2">Boleto</option>
+                                            <option value="3">Pix</option>
+                                            <option value="4">Credito AO</option>
+                                            <option value="5">Debito AO</option>
+                                            <option value="6">Boleto AO</option>
+                                            <option value="7">Pix AO</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2 mt-2">
+                                        <label for="forma_pgto2" class="form-label">Forma Pagamento 2</label>
+                                        <select name="forma_pgto2" id="editar_forma_pgto2" class="form-control">
                                             <option value="">Selecione...</option>
                                             <option value="0">Credito</option>
                                             <option value="1">Debito</option>
@@ -607,7 +640,8 @@
                 let id_agenda = button.data('id_agenda')
                 let id_turma = button.data('id_turma')
                 let valor = button.data('valor')
-                let forma_pgto = button.data('forma_pgto')
+                let forma_pgto1 = button.data('forma_pgto1')
+                let forma_pgto2 = button.data('forma_pgto2')
 
                 EditarDioptriaOlhos(olhos)
 
@@ -661,7 +695,8 @@
                 $('#editar_id_agenda').val(id_agenda)
                 $('#editar_turma').val(id_turma)
                 $('#editar_valor').val(valor)
-                $('#editar_forma_pgto').val(forma_pgto)
+                $('#editar_forma_pgto1').val(forma_pgto1)
+                $('#editar_forma_pgto2').val(forma_pgto2)
 
                 EditarformatarCPF($('#editar_cpf'));
                 EditarformatarContato($('#editar_contato'));

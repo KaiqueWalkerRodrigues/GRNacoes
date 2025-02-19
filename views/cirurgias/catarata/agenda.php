@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="container-fluid mt-n10">
-                        <?php if($agenda->data > date("Y-m-d")){ ?>
+                        <?php if($agenda->data > date("Y-m-d") AND $_SESSION['id_usuario'] == 35 OR verificarSetor([1,12,14,15])){ ?>
                             <button class="btn btn-success" data-toggle="modal" data-target="#modalCadastrarTurma">Abrir Turma</button>
                         <?php } ?>
                         <br><br>
@@ -58,6 +58,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <span>Turma <?php echo Helper::formatarHorario($turma->horario) ?></span>
                                         <div class="dropdown no-caret">
+                                            <?php if($_SESSION['id_usuario'] == 35 OR verificarSetor([1,12,14,15])){ ?>
                                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i data-feather="more-vertical"></i>
                                             </button>
@@ -74,6 +75,7 @@
                                                 >Deletar</button>
                                                 <?php } ?>
                                             </div>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                     <div class="card-body">

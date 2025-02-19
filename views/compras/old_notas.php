@@ -43,7 +43,7 @@
         <?php include_once('resources/sidebar.php'); ?>
         <div id="layoutSidenav_content">
             <main>
-                <div class="page-header pb-10 page-header-dark bg-dark">
+                <div class="page-header pb-10 page-header-dark bg-primary">
                     <div class="container-fluid">
                         <div class="page-header-content">
                             <h1 class="page-header-title">
@@ -115,7 +115,7 @@
                 </div>
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
-                        <div class="card-header text-primary">Notas
+                        <div class="card-header">Notas
                             <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2 mr-2" type="button" data-toggle="modal" data-target="#modalCadastrarNota">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -149,14 +149,12 @@
                                             <td><?php echo $Compra_Fornecedor->nomeFornecedor($cn->id_fornecedor)?></td>
                                             <td class="text-center">
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVerDescricao" class="collapse-item"
-                                                    data-id_nota="<?php echo $cn->id_compra_nota ?>"
-                                                    data-valor="<?php echo $cn->valor ?>"
-                                                    data-quantidade="<?php echo $cn->quantidade ?>">
+                                                data-valor="<?php echo $cn->valor ?>"
+                                                data-quantidade="<?php echo $cn->quantidade ?>">
                                                 <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarNota" class="collapse-item"
                                                     data-id_compra_nota="<?php echo $cn->id_compra_nota ?>"
-                                                    data-id_categoria="<?php echo $Compra_Fornecedor->mostrar($cn->id_fornecedor)->id_categoria ?>"
                                                     data-id_fornecedor="<?php echo $cn->id_fornecedor ?>"
                                                     data-n_nota="<?php echo $cn->n_nota ?>"
                                                     data-valor="<?php echo $cn->valor ?>"
@@ -184,35 +182,21 @@
         </div>
     </div>
 
-    <!-- Modal Ver Itens da Nota -->
+    <!-- Modal Ver Descrição -->
     <div class="modal fade" id="modalVerDescricao" tabindex="-1" role="dialog" aria-labelledby="modalVerDescricaoLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Itens da Nota</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <h5 class="modal-title">Descrição da Nota</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Tabela que exibirá os itens -->
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th>Item</th>
-                                <th>Quantidade</th>
-                                <th>Valor Unitário</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaItensNota">
-                            <!-- Os itens serão carregados via AJAX -->
-                        </tbody>
-                    </table>
+                    <div><p id="descricao_nota"></p></div>
                 </div>
                 <div class="modal-footer">
-                    <!-- Aqui será exibido o total da nota -->
-                    <span class="totalNota font-weight-bold"></span>
+                    <p>Qntd: <span id="ver_quantidade"></span> | R$ <span id="ver_valor"></span></p>
                     <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
@@ -227,30 +211,30 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Cadastrar Nova Nota</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- Campo oculto do usuário logado -->
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <!-- Campo oculto para armazenar o valor total da nota -->
-                        <input type="hidden" name="valor" id="valorTotal">
-
                         <div class="row">
-                            <div class="col-3 offset-1">
-                                <label for="n_nota" class="form-label">Número da Nota *</label>
+                            <div class="col-4">
+                                <label for="n_nota" class="form-label">Numero da Nota *</label>
                                 <input type="number" id="cadastrar_n_nota" name="n_nota" class="form-control" required>
                                 <div class="invalid-feedback" id="n_nota_feedback">
                                     Este número de nota já está cadastrado.
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="data" class="form-label">Data da Nota *</label>
-                                <input type="date" id="cadastrar_data" name="data" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                                <input type="date" id="cadastrar_data" name="data" class="form-control" required>
+                            </div>
+                            <div class="col-4">
+                                <label for="valor" class="form-label">Valor da Nota *</label>
+                                <input type="number" step="0.01" id="cadastrar_valor" lang="pt-br" name="valor" class="form-control" required>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-3 offset-1">
+                            <div class="col-4">
                                 <label for="cadastrar_id_empresa" class="form-label">Empresa *</label>
                                 <select name="id_empresa" id="cadastrar_id_empresa" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -262,60 +246,24 @@
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
-                            <div class="col-3">
-                                <label for="id_categoria" class="form-label">Categoria *</label>
-                                <select id="cadastrar_id_categoria" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Compra_Categoria->listar() as $cl){ ?>
-                                        <option value="<?php echo $cl->id_compra_categoria ?>"><?php echo $cl->categoria ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-3">
+                            <div class="col-6">
                                 <label for="id_fornecedor" class="form-label">Fornecedor *</label>
                                 <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <!-- Preenchimento Automático -->
+                                        <?php foreach($Compra_Fornecedor->listar() as $cf){ ?>
+                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compra_Categoria->mostrar($cf->id_categoria)->categoria ?>)</option>
+                                        <?php } ?>
                                 </select>
                             </div>
-                        </div>
-                        <!-- Itens da Nota Fiscal -->
-                        <div class="offset-1 col-10 mt-4">
-                            <b class="text-dark">Itens:</b>
-                            <hr style="margin-top: -0.2%;">
-                        </div>
-                        <!-- Exemplo da linha do Item 1 -->
-                        <div class="row item-row" id="itemRow1">
-                            <div class="col-4 offset-1">
-                                <label for="cadastrar_item1" class="form-label">Item 1 *</label>
-                                <input type="text" name="item1" id="cadastrar_item1" class="form-control" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="cadastrar_quantidade1" class="form-label">Quantidade 1 *</label>
-                                <input type="number" class="form-control" step="0.01" name="quantidade1" id="cadastrar_quantidade1" required>
-                            </div>
-                            <div class="col-3">
-                                <label for="cadastrar_valuni1" class="form-label">Valor Unitário 1 *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="valuni1" id="cadastrar_valuni1" required>
-                                </div>
-                            </div>
-                            <div class="col-1 mt-3">
-                                <br>
-                                <!-- Botão para adicionar novo item -->
-                                <button type="button" class="btn btn-sm btn-icon btn-primary btn-adicionar-item">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
+                            <div class="col-2">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" step="0.01" lang="pt-br" id="cadastrar_quantidade" name="quantidade" class="form-control" value="1">
                             </div>
                         </div>
-                        <!-- Novas linhas de itens poderão ser adicionadas dinamicamente -->
                     </div>
                     <div class="modal-footer">
-                        <!-- Exibe o total calculado -->
-                        <span id="totalText" class="mr-auto font-weight-bold">Total: R$ 0,00</span>
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" name="btnCadastrar" id="btnCadastrar" class="btn btn-success">Cadastrar</button>
+                        <button type="submit" name="btnCadastrar" id="btnCadastrar" class="btn btn-primary">Cadastrar</button>
                     </div>
                 </div>
             </div>
@@ -323,36 +271,35 @@
     </div>
 
     <!-- Modal Editar Nota -->
-    <div class="modal fade" id="modalEditarNota" tabindex="-1" role="dialog" aria-labelledby="modalEditarNotaLabel" aria-hidden="true">
-        <form action="?" method="post" id="formEditarNota">
+    <div class="modal fade" id="modalEditarNota" tabindex="1" role="dialog" aria-labelledby="modalEditarNotaLabel" aria-hidden="true">
+        <form action="?" method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <!-- O label será preenchido via script -->
                         <h5 class="modal-title">Editar Nota: <span class="modalEditarNotaLabel"></span></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- Campos ocultos -->
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_compra_nota" id="editar_id_compra_nota">
-                        <!-- Campo oculto para o valor total -->
-                        <input type="hidden" name="valor" id="valorTotalEditar">
-
                         <div class="row">
-                            <div class="col-3 offset-1">
-                                <label for="editar_n_nota" class="form-label">Número da Nota *</label>
+                            <div class="col-4">
+                                <label for="n_nota" class="form-label">Numero da Nota *</label>
                                 <input type="number" id="editar_n_nota" name="n_nota" class="form-control" required>
                             </div>
-                            <div class="col-3">
-                                <label for="editar_data" class="form-label">Data da Nota *</label>
+                            <div class="col-4">
+                                <label for="data" class="form-label">Data da Nota *</label>
                                 <input type="date" id="editar_data" name="data" class="form-control" required>
                             </div>
+                            <div class="col-4">
+                                <label for="valor" class="form-label">Valor da Nota *</label>
+                                <input type="number" step="0.01" id="editar_valor" name="valor" class="form-control" required>
+                            </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-3 offset-1">
+                        <div class="row">
+                            <div class="col-4">
                                 <label for="editar_id_empresa" class="form-label">Empresa *</label>
                                 <select name="id_empresa" id="editar_id_empresa" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -364,37 +311,22 @@
                                     <option value="6">Ótica Daily</option>
                                 </select>
                             </div>
-                            <div class="col-3">
-                                <label for="editar_id_categoria" class="form-label">Categoria *</label>
-                                <select id="editar_id_categoria" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <?php foreach($Compra_Categoria->listar() as $cl){ ?>
-                                        <option value="<?php echo $cl->id_compra_categoria ?>"><?php echo $cl->categoria ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <div class="col-3">
+                            <div class="col-6">
                                 <label for="editar_id_fornecedor" class="form-label">Fornecedor *</label>
                                 <select name="id_fornecedor" id="editar_id_fornecedor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <!-- Será preenchido via AJAX conforme a categoria selecionada -->
+                                        <?php foreach($Compra_Fornecedor->listar() as $cf){ ?>
+                                            <option value="<?php echo $cf->id_compra_fornecedor ?>"><?php echo $cf->fornecedor ?> (<?php echo $Compra_Categoria->mostrar($cf->id_categoria)->categoria ?>)</option>
+                                        <?php } ?>
                                 </select>
                             </div>
-                        </div>
-
-                        <!-- Itens da Nota Fiscal -->
-                        <div class="offset-1 col-10 mt-4">
-                            <b class="text-dark">Itens:</b>
-                            <hr style="margin-top: -0.2%;">
-                        </div>
-                        <!-- Container para os itens -->
-                        <div id="editarItensContainer">
-                            <!-- As linhas serão geradas dinamicamente -->
+                            <div class="col-2">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" step="0.01" lang="pt-br" id="editar_quantidade" name="quantidade" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <!-- Exibe o total calculado -->
-                        <span id="totalTextEditar" class="mr-auto font-weight-bold">Total: R$ 0,00</span>
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
                         <button type="submit" name="btnEditar" class="btn btn-primary">Editar</button>
                     </div>
@@ -460,89 +392,6 @@
                 }
             });
 
-            function calcularTotal() {
-                let total = 0;
-                // Percorre cada linha de item
-                document.querySelectorAll('.item-row').forEach(function(row) {
-                    const valuniInput = row.querySelector('input[name^="valuni"]');
-                    const quantidadeInput = row.querySelector('input[name^="quantidade"]');
-                    let valuni = parseFloat(valuniInput ? valuniInput.value : 0) || 0;
-                    let quantidade = parseFloat(quantidadeInput ? quantidadeInput.value : 0) || 0;
-                    total += valuni * quantidade;
-                });
-
-                // Atualiza o campo oculto "valor" (usando ponto para a separação decimal)
-                document.getElementById('valorTotal').value = total.toFixed(2);
-
-                // Formata o total para o padrão brasileiro (milhares com ponto, decimais com vírgula)
-                const formattedTotal = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                // Atualiza o texto exibido no footer
-                document.getElementById('totalText').textContent = "Total: R$ " + formattedTotal;
-            }
-
-            // Atualiza o total sempre que houver alteração nos campos de valor unitário ou quantidade
-            document.addEventListener('input', function(e) {
-                if (e.target.name && (e.target.name.startsWith('valuni') || e.target.name.startsWith('quantidade'))) {
-                    calcularTotal();
-                }
-            });
-
-            $('#cadastrar_id_categoria').change(function (e) { 
-                let id_categoria = $(this).val()
-                $.ajax({
-                    type: "GET",
-                    url: "/GRNacoes/views/ajax/get_notas_fornecedores_por_categoria.php",
-                    data: { id_categoria: id_categoria },
-                    success: function (response) {
-                        $('#cadastrar_id_fornecedor').html(response)
-                    },
-                    error: function () {
-                        alert('Erro na requisição AJAX para a categoria fornecida.');
-                    }
-                });
-            });
-
-            // Contador que já inicia com 1, pois já existe o Item 1
-            var itemCount = 1;
-
-            // Evento para quando o botão "plus" for clicado
-            $(document).on('click', '.btn-adicionar-item', function(){
-                itemCount++; // Incrementa o contador para o novo item
-
-                // Remove o botão "plus" da linha atual para que ele seja reposicionado na nova linha
-                $(this).remove();
-
-                // Cria o HTML da nova linha, atualizando os atributos name e id com o novo número
-                var novoItem = 
-                    '<div class="row mt-3 item-row" id="itemRow' + itemCount + '">' +
-                        '<div class="col-4 offset-1">' +
-                            '<label for="cadastrar_item' + itemCount + '" class="form-label">Item ' + itemCount + ' *</label>' +
-                            '<input type="text" name="item' + itemCount + '" id="cadastrar_item' + itemCount + '" class="form-control" required>' +
-                        '</div>' +
-                        '<div class="col-3">' +
-                            '<label for="cadastrar_quantidade' + itemCount + '" class="form-label">Quantidade ' + itemCount + ' *</label>' +
-                            '<input type="number" class="form-control" step="0.01" name="quantidade' + itemCount + '" id="cadastrar_quantidade' + itemCount + '" required>' +
-                        '</div>' +
-                        '<div class="col-3">' +
-                            '<label for="cadastrar_valuni' + itemCount + '" class="form-label">Valor Unitário ' + itemCount + ' *</label>' +
-                            '<div class="input-group">' +
-                                '<span class="input-group-text">R$</span>' +
-                                '<input type="number" class="form-control" step="0.01" lang="pt-br" name="valuni' + itemCount + '" id="cadastrar_valuni' + itemCount + '" required>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="col-1 mt-3">' +
-                            '<br>' +
-                            // O botão "plus" que será reposicionado para a nova linha
-                            '<button type="button" class="btn btn-sm btn-icon btn-primary btn-adicionar-item">' +
-                                '<i class="fa-solid fa-plus"></i>' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>';
-
-                // Adiciona a nova linha de item no final do modal (dentro do .modal-body)
-                $('#modalCadastrarNota .modal-body').append(novoItem);
-            });
-
             // Evento de alteração nos filtros
             $('#filtroMes, #filtroFornecedor, #filtroEmpresa, #filtroCategoria').change(function() {
                 var filtroMes = $('#filtroMes').val();
@@ -561,232 +410,36 @@
                 table.draw();
             });
 
+            // Inicializar modais e outras funcionalidades
             $('#modalVerDescricao').on('show.bs.modal', function (event) {
-                // Recupera o botão que acionou o modal
                 let button = $(event.relatedTarget);
-                // Obtém o id da nota a partir do data-id_nota
-                let id_nota = button.data('id_nota');
+                let valor = button.data('valor');
+                let quantidade = button.data('quantidade');
 
-                // Limpa a tabela e o total antes de carregar os novos itens
-                $('#tabelaItensNota').empty();
-                $('.totalNota').text('');
+                // Formatar o valor com o padrão brasileiro
+                let valorFormatado = parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-                // Realiza a requisição AJAX para buscar os itens
-                $.ajax({
-                    url: '/GRNacoes/views/ajax/get_compras_itens_nota.php',
-                    type: 'GET',
-                    data: { id_nota: id_nota },
-                    dataType: 'json',
-                    success: function (data) {
-                        let totalNota = 0;
-                        if(data.length > 0){
-                            $.each(data, function (index, item) {
-                                // Calcula o total (valor unitário * quantidade)
-                                totalNota += parseFloat(item.valor_uni) * parseFloat(item.quantidade);
-                                let linha = `<tr class="text-center">
-                                    <td>${item.item}</td>
-                                    <td>${item.quantidade}</td>
-                                    <td>R$ ${parseFloat(item.valor_uni).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-                                    <td>${item.descricao}</td>
-                                </tr>`;
-                                $('#tabelaItensNota').append(linha);
-                            });
-                            // Atualiza o total no footer do modal
-                            $('.totalNota').text("Total da Nota: R$ " + totalNota.toLocaleString('pt-BR', {minimumFractionDigits: 2}));
-                        } else {
-                            $('#tabelaItensNota').append('<tr class="text-center"><td colspan="4">Nenhum item encontrado.</td></tr>');
-                        }
-                    },
-                    error: function () {
-                        $('#tabelaItensNota').append('<tr class="text-center"><td colspan="4">Erro ao carregar os itens.</td></tr>');
-                    }
-                });
+                $('#ver_valor').text(valorFormatado);
+                $('#ver_quantidade').text(quantidade);
             });
 
-            // Evento para quando o modal de edição for exibido
             $('#modalEditarNota').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget);
-                
-                // Recupera os dados passados via data-attributes do botão que abriu o modal
                 let id_compra_nota = button.data('id_compra_nota');
+                let quantidade = button.data('quantidade');
+                let id_fornecedor = button.data('id_fornecedor');
                 let n_nota = button.data('n_nota');
-                let dataNota = button.data('data');
+                let valor = button.data('valor');
+                let data = button.data('data');
                 let id_empresa = button.data('id_empresa');
-                let id_categoria = button.data('id_categoria'); // Certifique-se de enviar esse atributo no botão
-                let id_fornecedor = button.data('id_fornecedor'); // Certifique-se de enviar esse atributo no botão
 
-                // Preenche os campos do modal
                 $('#editar_id_compra_nota').val(id_compra_nota);
+                $('#editar_id_fornecedor').val(id_fornecedor);
+                $('#editar_quantidade').val(quantidade);
                 $('#editar_n_nota').val(n_nota);
-                $('#editar_data').val(dataNota);
+                $('#editar_valor').val(valor);
+                $('#editar_data').val(data);
                 $('#editar_id_empresa').val(id_empresa);
-                $('#editar_id_categoria').val(id_categoria);
-                $('.modalEditarNotaLabel').text(n_nota);
-
-                // Preenche o campo de fornecedores baseado na categoria selecionada via AJAX
-                $.ajax({
-                    type: "GET",
-                    url: "/GRNacoes/views/ajax/get_notas_fornecedores_por_categoria.php",
-                    data: { id_categoria: id_categoria },
-                    success: function (response) {
-                        // Atualiza o select de fornecedores
-                        $('#editar_id_fornecedor').html(response);
-                        // Seleciona o fornecedor que já está cadastrado na nota
-                        $('#editar_id_fornecedor').val(id_fornecedor);
-                    },
-                    error: function () {
-                        alert('Erro na requisição AJAX para a categoria fornecida.');
-                    }
-                });
-
-                // Carrega os itens da nota via AJAX
-                $.ajax({
-                    type: "GET",
-                    url: "/GRNacoes/views/ajax/get_compras_itens_nota.php",
-                    data: { id_nota: id_compra_nota },
-                    dataType: "json",
-                    success: function (data) {
-                        // Limpa o container dos itens
-                        $('#editarItensContainer').empty();
-                        let count = 1;
-                        if(data.length > 0){
-                            $.each(data, function(index, item) {
-                                let count = index + 1;
-                                // Se for o último item, insere o botão de adicionar; senão, deixa um espaço vazio
-                                let addButtonHtml = (index === data.length - 1) ? 
-                                    `<div class="col-1 mt-3">
-                                        <br>
-                                        <button type="button" class="btn btn-sm btn-icon btn-primary btn-adicionar-item-editar">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>` : 
-                                    `<div class="col-1 mt-3"><br></div>`;
-                                
-                                let rowHtml = `
-                                    <div class="row item-row mt-3" id="editarItemRow${count}">
-                                        <div class="col-4 offset-1">
-                                            <label for="editar_item${count}" class="form-label">Item ${count} *</label>
-                                            <input type="text" name="item${count}" id="editar_item${count}" class="form-control" value="${item.item}" required>
-                                        </div>
-                                        <div class="col-3">
-                                            <label for="editar_quantidade${count}" class="form-label">Quantidade ${count} *</label>
-                                            <input type="number" class="form-control" step="0.01" name="quantidade${count}" id="editar_quantidade${count}" value="${item.quantidade}" required>
-                                        </div>
-                                        <div class="col-3">
-                                            <label for="editar_valuni${count}" class="form-label">Valor Unitário ${count} *</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text">R$</span>
-                                                <input type="number" class="form-control" step="0.01" lang="pt-BR" name="valuni${count}" id="editar_valuni${count}" value="${item.valor_uni}" required>
-                                            </div>
-                                        </div>
-                                        ${addButtonHtml}
-                                    </div>`;
-                                
-                                $('#editarItensContainer').append(rowHtml);
-                            });
-                        } else {
-                            // Se não houver itens, cria uma linha vazia
-                            let rowHtml = `
-                                <div class="row item-row" id="editarItemRow1">
-                                    <div class="col-4 offset-1">
-                                        <label for="editar_item1" class="form-label">Item 1 *</label>
-                                        <input type="text" name="item1" id="editar_item1" class="form-control" required>
-                                    </div>
-                                    <div class="col-3">
-                                        <label for="editar_quantidade1" class="form-label">Quantidade 1 *</label>
-                                        <input type="number" class="form-control" step="0.01" name="quantidade1" id="editar_quantidade1" required>
-                                    </div>
-                                    <div class="col-3">
-                                        <label for="editar_valuni1" class="form-label">Valor Unitário 1 *</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">R$</span>
-                                            <input type="number" class="form-control" step="0.01" lang="pt-br" name="valuni1" id="editar_valuni1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-1 mt-3">
-                                        <br>
-                                        <button type="button" class="btn btn-sm btn-icon btn-primary btn-adicionar-item-editar">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>`;
-                            $('#editarItensContainer').append(rowHtml);
-                        }
-                        // Após carregar os itens, atualize o total (função semelhante à do modal de cadastro)
-                        calcularTotalEditar();
-                    },
-                    error: function () {
-                        alert("Erro ao carregar os itens da nota.");
-                    }
-                });
-            });
-
-            $('#editar_id_categoria').change(function (e) { 
-                let id_categoria = $(this).val()
-                $.ajax({
-                    type: "GET",
-                    url: "/GRNacoes/views/ajax/get_notas_fornecedores_por_categoria.php",
-                    data: { id_categoria: id_categoria },
-                    success: function (response) {
-                        $('#editar_id_fornecedor').html(response)
-                    },
-                    error: function () {
-                        alert('Erro na requisição AJAX para a categoria fornecida.');
-                    }
-                });
-            });
-
-            // Evento para adicionar nova linha de item no modal de edição
-            var itemCountEditar = 0;
-            $(document).on('click', '.btn-adicionar-item-editar', function(){
-                // Se houver linhas existentes, atualiza o contador
-                itemCountEditar = $('#editarItensContainer .item-row').length + 1;
-
-                // Remove o botão "+" da linha anterior para evitar duplicidade
-                $(this).remove();
-
-                var novoItem = 
-                    '<div class="row item-row mt-3" id="editarItemRow' + itemCountEditar + '">' +
-                        '<div class="col-4 offset-1">' +
-                            '<label for="editar_item' + itemCountEditar + '" class="form-label">Item ' + itemCountEditar + ' *</label>' +
-                            '<input type="text" name="item' + itemCountEditar + '" id="editar_item' + itemCountEditar + '" class="form-control" required>' +
-                        '</div>' +
-                        '<div class="col-3">' +
-                            '<label for="editar_quantidade' + itemCountEditar + '" class="form-label">Quantidade ' + itemCountEditar + ' *</label>' +
-                            '<input type="number" class="form-control" step="0.01" name="quantidade' + itemCountEditar + '" id="editar_quantidade' + itemCountEditar + '" required>' +
-                        '</div>' +
-                        '<div class="col-3">' +
-                            '<label for="editar_valuni' + itemCountEditar + '" class="form-label">Valor Unitário ' + itemCountEditar + ' *</label>' +
-                            '<div class="input-group">' +
-                                '<span class="input-group-text">R$</span>' +
-                                '<input type="number" class="form-control" step="0.01" lang="pt-br" name="valuni' + itemCountEditar + '" id="editar_valuni' + itemCountEditar + '" required>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="col-1 mt-3">' +
-                            '<br>' +
-                            '<button type="button" class="btn btn-sm btn-icon btn-primary btn-adicionar-item-editar">' +
-                                '<i class="fa-solid fa-plus"></i>' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>';
-
-                $('#editarItensContainer').append(novoItem);
-            });
-
-            function calcularTotalEditar() {
-                let total = 0;
-                $('#editarItensContainer .item-row').each(function() {
-                    let valuni = parseFloat($(this).find('input[name^="valuni"]').val()) || 0;
-                    let quantidade = parseFloat($(this).find('input[name^="quantidade"]').val()) || 0;
-                    total += valuni * quantidade;
-                });
-                $('#valorTotalEditar').val(total.toFixed(2));
-                $('#totalTextEditar').text("Total: R$ " + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            }
-
-            // Atualiza o total sempre que houver alteração nos inputs de valor unitário ou quantidade no modal de edição
-            $(document).on('input', '#editarItensContainer input[name^="valuni"], #editarItensContainer input[name^="quantidade"]', function() {
-                calcularTotalEditar();
             });
 
             $('#modalDeletarNota').on('show.bs.modal', function (event) {

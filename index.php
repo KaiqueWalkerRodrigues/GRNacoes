@@ -122,12 +122,18 @@ switch ($route) {
     case 'dashboards/captacao':
         $file = 'dashboards/captacao.php';
         $pageTitle .= "Dashboard Captação";
-        $requiredSectors = [1,2,12,13,14];
+        $requiredSectors = [1,2,5,12,13,14];
         $requiredLogin = true;
         break;
     case 'dashboards/catarata':
         $file = 'dashboards/catarata.php';
         $pageTitle .= "Dashboard Catarata";
+        $requiredSectors = [1,5,12];
+        $requiredLogin = true;
+        break;
+    case 'dashboards/cobranca':
+        $file = 'dashboards/cobranca.php';
+        $pageTitle .= "Dashboard Cobrança";
         $requiredSectors = [1,5,12];
         $requiredLogin = true;
         break;
@@ -309,13 +315,13 @@ switch ($route) {
     case 'lente_contato/testes':
         $file = 'lente_contato/testes.php';
         $pageTitle .= "Orçamentos Lente de Contato";
-        $requiredSectors = [1,17];
+        $requiredSectors = [1,5,17];
         $requiredLogin = true;
         break;
     case 'lente_contato/orcamentos':
         $file = 'lente_contato/orcamentos.php';
         $pageTitle .= "Orçamentos Lente de Contato";
-        $requiredSectors = [1,17];
+        $requiredSectors = [1,5,17];
         $requiredLogin = true;
         break;
     case 'lente_contato/configuracoes/fornecedores':
@@ -331,54 +337,13 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
-    // case 'ajax/get_fornecedores':
-    //     $file = 'ajax/get_fornecedores.php';
-    //     $pageTitle .= "Notas Fiscais";
-    //     $requiredSectors = [1,3,12];
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/check_numero_nota':
-        //     $file = 'ajax/check_numero_nota.php';
-        //     $pageTitle .= "Verificar Numero Nota Disponivel";
-        //     $requiredSectors = [1,3,12];
-        //     $requiredLogin = true;
-        //     break;
-        // case 'ajax/get_lista_vendedores':
-    //     $file = 'ajax/get_lista_vendedores.php';
-    //     $pageTitle .= "Listar Vendedores";
-    //     $requiredSectors = [1,5,12,14];
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/get_chats':
-    //     $file = 'ajax/get_chats.php';
-    //     $pageTitle .= "Chats";
-    //     $requiredSectors = null;
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/check_online':
-    //     $file = 'ajax/check_online.php';
-    //     $pageTitle .= "Verificar Online";
-    //     $requiredSectors = null;
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/get_mensagens':
-    //     $file = 'ajax/get_mensagens.php';
-    //     $pageTitle .= "Listar Mensagens";
-    //     $requiredSectors = null;
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/get_parcelas':
-    //     $file = 'ajax/get_parcelas.php';
-    //     $pageTitle .= "Listar Parcelas";
-    //     $requiredSectors = null;
-    //     $requiredLogin = true;
-    //     break;
-    // case 'ajax/set_confirmarpagamento':
-    //     $file = 'ajax/set_confirmarpagamento.php';
-    //     $pageTitle .= "ConfirmarPagamento";
-    //     $requiredSectors = null;
-    //     $requiredLogin = true;
-    //     break;
+    //Ajax
+    case 'ajax/get_compras_itens_nota':
+        $file = 'ajax/get_compras_itens_nota.php';
+        $pageTitle .= "Teste de ajax";
+        $requiredSectors = [1];
+        $requiredLogin = true;
+        break;
 
     default:
         $file = '404.php';

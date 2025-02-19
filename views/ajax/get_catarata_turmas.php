@@ -18,7 +18,7 @@ try {
                 (t.qntd - COUNT(a.id_catarata_agendamento)) AS vagas_disponiveis
              FROM catarata_turmas t
              LEFT JOIN catarata_agendamentos a ON t.id_catarata_turma = a.id_turma
-             WHERE t.id_agenda = :id_agenda AND t.deleted_at IS NULL
+             WHERE t.id_agenda = :id_agenda AND t.deleted_at IS NULL AND a.deleted_at IS NULL
              GROUP BY t.id_catarata_turma, t.horario, t.qntd
              ORDER BY t.horario'
         );

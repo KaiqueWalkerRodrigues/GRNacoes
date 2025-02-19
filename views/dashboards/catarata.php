@@ -63,12 +63,7 @@
 
                     <div class="container-fluid mt-n10">
 
-                            <div class="col-3">
-                                <div class="card bg-success text-white mb-4 text-center">
-                                    <div class="card-header" style="font-weight: bolder"><span style="margin-left: 15%;">Cirurgias Vendidas</span></div>
-                                    <div class="card-body" style="font-weight: bolder; font-size: 1.5rem;text-decoration: underline;"><span id="n_cirurgias_vendidas"></span></div>
-                                </div>
-                            </div>
+                            <div class="row"></div>
 
                     </div>
 

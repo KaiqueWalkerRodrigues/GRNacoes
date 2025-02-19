@@ -1,20 +1,13 @@
-// Declaração global da variável para armazenar o gráfico de Lente de Contato
-let graficoLenteContato = null;
+// Declaração global da variável para armazenar o gráfico
+let Area_Receitas = null;
 
-// Define a família de fontes e a cor padrão para o Chart.js (imitando o estilo do Bootstrap)
+// Define a fonte e a cor padrão para o Chart.js (imitando o estilo do Bootstrap)
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-/**
- * Formata um número de acordo com os parâmetros informados.
- * @param {number} number - O número a ser formatado.
- * @param {number} decimals - Número de casas decimais.
- * @param {string} dec_point - Separador decimal.
- * @param {string} thousands_sep - Separador de milhares.
- * @returns {string} Número formatado.
- */
 function number_format(number, decimals, dec_point, thousands_sep) {
-    // Exemplo: number_format(1234.56, 2, ',', ' ') retornará '1 234,56'
+    // *     Exemplo: number_format(1234.56, 2, ',', ' ');
+    // *     Retorna: '1 234,56'
     number = (number + '').replace(',', '').replace(' ');
     var n = !isFinite(+number) ? 0 : +number,
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
@@ -36,90 +29,89 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     return s.join(dec);
 }
 
-/**
- * Função para buscar os dados do JSON e atualizar o gráfico para cada dia da semana.
- * Os dados são referentes à Lente de Contato.
- * @param {string} semana - Valor da semana no formato "YYYY-Www".
- */
+// Função para buscar os dados do JSON e atualizar o gráfico para cada dia da semana
 async function fetchDataAndUpdateChart(semana) {
-    // Obtém o contexto do canvas para renderizar o gráfico
-    var ctx = document.getElementById("area_receita_semanal");
+    var ctx = document.getElementById("area_lente_contato_semanal");
+    var { daysWithDates, datesISO } = getDatesFromInput(semana); // Obtém as datas da semana selecionada
 
-    // Gera as datas da semana selecionada
-    var { daysWithDates: diasComDatas, datesISO: datasISO } = getDatesFromInput(semana);
-
-    // Obtém o ID da empresa selecionada
     var idEmpresa = document.getElementById("empresaSelect").value;
 
     try {
         // Realiza a requisição passando a data inicial da semana e o id da empresa
-        let response = await fetch(`/grnacoes/resources/assets/js/dados/get_captacoes_area.php?data=${datasISO[0]}&id_empresa=${idEmpresa}`);
+        let response = await fetch(`/grnacoes/resources/assets/js/dados/get_lente_contato_area.php?data=${datesISO[0]}&id_empresa=${idEmpresa}`);
         let dadosSemana = await response.json();
 
-        // Criação dos arrays para os diferentes conjuntos de dados da Lente de Contato
-        let dadosCaptados = [];
-        let dadosNaoCaptados = [];
-        let dadosLentes = [];
-        let dadosGarantia = [];
-        let dadosReceitas = [];
-        let dadosReceitasValidas = [];
+        // Criação dos arrays para os diferentes conjuntos de dados
+        let dataPedidos = [];
+        let dataPagos = [];
+        let dataEntregues = [];
+        let dataTestes = [];
+        let dataOrcamentos = [];
+        let dataLentes = [];
 
-        // Preenche os arrays com os dados retornados pelo backend
+        // Preenche os arrays com os dados retornados do backend
         dadosSemana.forEach(dia => {
-            dadosCaptados.push(dia.captados);
-            dadosNaoCaptados.push(dia.naoCaptados);
-            dadosLentes.push(dia.lentes);
-            dadosGarantia.push(dia.garantia);
-            dadosReceitas.push(dia.receitas);
-            dadosReceitasValidas.push(dia.receitasValidas);
+            dataPedidos.push(dia.pedidos);
+            dataPagos.push(dia.pagos);
+            dataEntregues.push(dia.entregues);
+            dataTestes.push(dia.testes);
+            dataOrcamentos.push(dia.total_orcamentos);
+            dataLentes.push(dia.total_lentes);
         });
 
-        // Se o gráfico já foi criado, destrói-o para criar um novo com os dados atualizados
-        if (graficoLenteContato) {
-            graficoLenteContato.destroy();
+        // Se o gráfico já existir, destrói-o para criar um novo
+        if (Area_Receitas) {
+            Area_Receitas.destroy();
         }
 
-        // Criação do gráfico com os datasets atualizados
-        graficoLenteContato = new Chart(ctx, {
+        // Criação do gráfico com os novos datasets
+        Area_Receitas = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: diasComDatas,
+                labels: daysWithDates,
                 datasets: [
                     {
-                        label: "Receitas Captáveis",
+                        label: "Pedidos",
                         lineTension: 0.3,
-                        backgroundColor: "rgba(255, 99, 132, 0.05)",
-                        borderColor: "rgba(255, 99, 132, 1)",
-                        data: dadosReceitasValidas,
+                        backgroundColor: "rgba(255, 159, 64, 0.05)",
+                        borderColor: "rgba(255, 159, 64, 1)",
+                        data: dataPedidos
+                    },
+                    {
+                        label: "Pagos",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(75, 192, 192, 0.05)",
+                        borderColor: "rgba(153, 102, 255, 1)",
+                        data: dataPagos
+                    },
+                    {
+                        label: "Entregues",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(153, 102, 255, 0.05)",
+                        borderColor: "rgb(21, 241, 68)",
+                        data: dataEntregues
+                    },
+                    {
+                        label: "Testes",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(255, 205, 86, 0.05)",
+                        borderColor: "rgb(233, 84, 225)",
+                        data: dataTestes
+                    },
+                    {
+                        label: "Total Orçamentos",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(54, 162, 235, 0.05)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        data: dataOrcamentos
+                    },
+                    {
+                        label: "Total Lentes",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(201, 203, 207, 0.05)",
+                        borderColor: "rgba(201, 203, 207, 1)",
+                        data: dataLentes,
                         hidden: true
-                    },
-                    {
-                        label: "Captados",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(0, 128, 0, 0.05)",
-                        borderColor: "rgba(0, 128, 0, 1)",
-                        data: dadosCaptados
-                    },
-                    {
-                        label: "Não Captados",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(255, 0, 0, 0.05)",
-                        borderColor: "rgba(255, 0, 0, 1)",
-                        data: dadosNaoCaptados
-                    },
-                    {
-                        label: "Lentes",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(0, 91, 143, 0.05)",
-                        borderColor: "rgba(0, 91, 143, 1)",
-                        data: dadosLentes
-                    },
-                    {
-                        label: "Garantia",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(246, 194, 62, 0.05)",
-                        borderColor: "rgba(246, 194, 62, 1)",
-                        data: dadosGarantia
                     }
                 ]
             },
@@ -154,7 +146,7 @@ async function fetchDataAndUpdateChart(semana) {
                             borderDash: [2],
                             zeroLineBorderDash: [2]
                         }
-                    }]
+                    }],
                 },
                 legend: { display: true },
                 tooltips: {
@@ -181,16 +173,16 @@ async function fetchDataAndUpdateChart(semana) {
             }
         });
     } catch (error) {
-        console.error('Erro ao buscar os dados da semana para Lente de Contato:', error);
+        console.error('Erro ao buscar os dados da semana:', error);
     }
 }
 
-// Atualiza o gráfico ao alterar a empresa selecionada
+// Atualiza o gráfico ao alterar a empresa
 document.getElementById("empresaSelect").addEventListener("change", function () {
     fetchDataAndUpdateChart(document.getElementById("semanaInput").value);
 });
 
-// Atualiza o gráfico ao alterar a semana selecionada
+// Atualiza o gráfico ao alterar a semana
 document.getElementById("semanaInput").addEventListener("change", function () {
     fetchDataAndUpdateChart(this.value);
 });
@@ -198,33 +190,27 @@ document.getElementById("semanaInput").addEventListener("change", function () {
 // Chama a função ao carregar a página com a semana atual
 fetchDataAndUpdateChart(document.getElementById("semanaInput").value);
 
-/**
- * Gera as datas da semana selecionada no formato ISO "YYYY-MM-DD" e uma label com dia e data.
- * @param {string} semana - Valor da semana no formato "YYYY-Www".
- * @returns {object} Objeto contendo o array de labels (diasComDatas) e o array de datas no formato ISO (datasISO).
- */
+// Função para gerar as datas da semana selecionada no formato ISO "YYYY-MM-DD"
 function getDatesFromInput(semana) {
     const [ano, semanaNum] = semana.split('-W');
     const dataInicio = new Date(ano, 0, 1 + (semanaNum - 1) * 7);
 
-    // Ajusta para a segunda-feira da semana
     while (dataInicio.getDay() !== 1) {
         dataInicio.setDate(dataInicio.getDate() - 1);
     }
 
-    const diasComDatas = [];
-    const datasISO = [];
+    const daysWithDates = [];
+    const datesISO = [];
     const weekDays = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
 
     for (let i = 0; i < 7; i++) {
-        const dataAtual = new Date(dataInicio);
-        dataAtual.setDate(dataInicio.getDate() + i);
+        const currentDate = new Date(dataInicio);
+        currentDate.setDate(dataInicio.getDate() + i);
 
-        // Formata a data para exibição (ex: "Seg (01/02)")
-        const dataFormatada = dataAtual.getDate().toString().padStart(2, '0') + '/' + (dataAtual.getMonth() + 1).toString().padStart(2, '0');
-        diasComDatas.push(`${weekDays[i]} (${dataFormatada})`);
-        datasISO.push(dataAtual.toISOString().split('T')[0]);
+        const formattedDate = currentDate.getDate().toString().padStart(2, '0') + '/' + (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        daysWithDates.push(`${weekDays[i]} (${formattedDate})`);
+        datesISO.push(currentDate.toISOString().split('T')[0]);
     }
 
-    return { daysWithDates: diasComDatas, datesISO: datasISO };
+    return { daysWithDates, datesISO };
 }

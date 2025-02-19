@@ -43,7 +43,7 @@ class Catarata_Agendamento {
     }      
 
     /**
-     * Listar todos os agendamentos
+     * Listar todos os agendamentos externos
      * @return array
      */
     public function listarExternos(){
@@ -76,21 +76,25 @@ class Catarata_Agendamento {
         $dioptria_esquerda = trim($dados['dioptria_esquerda']);
         $dioptria_direita = trim($dados['dioptria_direita']);
         $valor = trim($dados['valor']);
-        $forma_pgto = trim($dados['forma_pgto']);
+        
+        // Renomeando e adicionando os campos de forma de pagamento:
+        $forma_pgto1 = trim($dados['forma_pgto1']);      // antigo forma_pgto agora forma_pgto1
+        $forma_pgto2 = trim($dados['forma_pgto2']);       // novo campo forma_pgto2
+        
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
-        // Preparar a consulta de inserção com o novo campo
+        // Preparar a consulta de inserção com os novos campos de forma de pagamento
         $sql = $this->pdo->prepare('INSERT INTO catarata_agendamentos 
-                                    (id_solicitante, id_convenio, id_lente, id_agenda, id_turma, id_orientador, nome, cpf, contato, olhos, dioptria_esquerda, dioptria_direita, valor, forma_pgto, created_at, updated_at)
+                                    (id_solicitante, id_convenio, id_lente, id_agenda, id_turma, id_orientador, nome, cpf, contato, olhos, dioptria_esquerda, dioptria_direita, valor, forma_pgto1, forma_pgto2, created_at, updated_at)
                                     VALUES
-                                    (:id_solicitante, :id_convenio, :id_lente, :id_agenda, :id_turma, :id_orientador, :nome, :cpf, :contato, :olhos, :dioptria_esquerda, :dioptria_direita, :valor, :forma_pgto, :created_at, :updated_at)
+                                    (:id_solicitante, :id_convenio, :id_lente, :id_agenda, :id_turma, :id_orientador, :nome, :cpf, :contato, :olhos, :dioptria_esquerda, :dioptria_direita, :valor, :forma_pgto1, :forma_pgto2, :created_at, :updated_at)
                                 ');
 
         $created_at  = $agora;
         $updated_at  = $agora;
 
-        // Bind dos parâmetros incluindo o novo campo
+        // Bind dos parâmetros incluindo os novos campos
         $sql->bindParam(':id_solicitante', $id_solicitante, PDO::PARAM_INT);
         $sql->bindParam(':id_convenio', $id_convenio, PDO::PARAM_INT);
         $sql->bindParam(':id_lente', $id_lente, PDO::PARAM_INT);
@@ -104,7 +108,8 @@ class Catarata_Agendamento {
         $sql->bindParam(':dioptria_esquerda', $dioptria_esquerda, PDO::PARAM_STR);
         $sql->bindParam(':dioptria_direita', $dioptria_direita, PDO::PARAM_STR);
         $sql->bindParam(':valor', $valor, PDO::PARAM_STR);
-        $sql->bindParam(':forma_pgto', $forma_pgto, PDO::PARAM_STR);
+        $sql->bindParam(':forma_pgto1', $forma_pgto1, PDO::PARAM_STR);
+        $sql->bindParam(':forma_pgto2', $forma_pgto2, PDO::PARAM_STR);
         $sql->bindParam(':created_at', $created_at, PDO::PARAM_STR);
         $sql->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);          
 
@@ -194,7 +199,6 @@ class Catarata_Agendamento {
             </script>";
             exit;
         }
-
     }
 
     /**
@@ -225,14 +229,18 @@ class Catarata_Agendamento {
         $dioptria_esquerda= trim($dados['dioptria_esquerda']);
         $dioptria_direita = trim($dados['dioptria_direita']);
         $valor = trim($dados['valor']);
-        $forma_pgto = trim($dados['forma_pgto']);
+        
+        // Renomeando e adicionando os campos de forma de pagamento:
+        $forma_pgto1 = trim($dados['forma_pgto1']);      // antigo forma_pgto agora forma_pgto1
+        $forma_pgto2 = trim($dados['forma_pgto2']);       // novo campo forma_pgto2
+        
+        $usuario_logado = $dados['usuario_logado'];
         $id_convenio = $dados['id_convenio'];
         $id_orientador = (int)$dados['id_orientador'];
         $id_turma = (int)$dados['id_turma'];
-        $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
-        // Preparar a consulta de atualização incluindo o novo campo
+        // Preparar a consulta de atualização incluindo os novos campos de forma de pagamento
         $sql = $this->pdo->prepare("UPDATE catarata_agendamentos SET
             nome = :nome,
             cpf = :cpf,
@@ -241,7 +249,8 @@ class Catarata_Agendamento {
             dioptria_esquerda = :dioptria_esquerda,
             dioptria_direita = :dioptria_direita,
             valor = :valor,
-            forma_pgto = :forma_pgto,
+            forma_pgto1 = :forma_pgto1,
+            forma_pgto2 = :forma_pgto2,
             id_orientador = :id_orientador,
             id_convenio = :id_convenio,
             id_turma = :id_turma,
@@ -249,7 +258,7 @@ class Catarata_Agendamento {
         WHERE id_catarata_agendamento = :id_agendamento
         ");
 
-        // Bind dos parâmetros incluindo o novo campo
+        // Bind dos parâmetros incluindo os novos campos
         $sql->bindParam(':nome', $nome, PDO::PARAM_STR);
         $sql->bindParam(':cpf', $cpf, PDO::PARAM_STR);
         $sql->bindParam(':contato', $contato, PDO::PARAM_STR);
@@ -257,13 +266,16 @@ class Catarata_Agendamento {
         $sql->bindParam(':dioptria_esquerda', $dioptria_esquerda, PDO::PARAM_STR);
         $sql->bindParam(':dioptria_direita', $dioptria_direita, PDO::PARAM_STR);
         $sql->bindParam(':valor', $valor, PDO::PARAM_STR);
-        $sql->bindParam(':forma_pgto', $forma_pgto, PDO::PARAM_STR);
+        $sql->bindParam(':forma_pgto1', $forma_pgto1, PDO::PARAM_STR);
+        $sql->bindParam(':forma_pgto2', $forma_pgto2, PDO::PARAM_STR);
         $sql->bindParam(':id_convenio', $id_convenio, PDO::PARAM_INT);
         $sql->bindParam(':id_orientador', $id_orientador, PDO::PARAM_INT);
         $sql->bindParam(':id_turma', $id_turma, PDO::PARAM_INT);
         $sql->bindParam(':updated_at', $agora, PDO::PARAM_STR);
         $sql->bindParam(':id_agendamento', $id_agendamento, PDO::PARAM_INT);
 
+        // var_dump($dados);
+        // die();
         if ($sql->execute()) {
             $descricao = "Editou o agendamento: $nome ($id_agendamento)";
             $this->addLog("Editar", $descricao, $usuario_logado);
@@ -355,7 +367,6 @@ class Catarata_Agendamento {
             exit;
         }
     }
-
 
     /**
      * Deleta um Paciente

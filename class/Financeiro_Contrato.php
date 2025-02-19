@@ -28,69 +28,82 @@ class Financeiro_Contrato {
         $sql->execute();
     }
 
-    public function cadastrar($dados) {
+    public function cadastrarNovo(array $dados)
+    {
         try {
             $this->pdo->beginTransaction(); // Inicia uma transação
-    
-            $agora = date('Y-m-d H:i:s');
-    
-            // Remove caracteres especiais do CPF
-            $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf']);
-            $dados['cep'] = preg_replace('/\D/', '', $dados['cep']);
-    
-            // Cadastro do contrato principal
-            $sql = $this->pdo->prepare('INSERT INTO financeiro_contratos 
-                                        (id_empresa, n_contrato, data, id_testemunha1, nome, data_nascimento, cpf, cep, numero, endereco, complemento, bairro, cidade, uf,
-                                        telefone_residencial, telefone_comercial, celular1, celular2, sinal_entrada, valor, created_at, updated_at)
+            $agora = date("Y-m-d H:i:s");
+
+            // Inserção da nota de compra
+            $sql = $this->pdo->prepare('INSERT INTO compras_notas 
+                                        (id_fornecedor, valor, n_nota, data, id_empresa, created_at, updated_at)
                                         VALUES
-                                        (:id_empresa, :n_contrato, :data, :id_testemunha1, :nome, :data_nascimento, :cpf, :cep, :numero, :endereco, :complemento, :bairro, :cidade, :uf,
-                                        :telefone_residencial, :telefone_comercial, :celular1, :celular2, :sinal_entrada, :valor, :created_at, :updated_at)');
+                                        (:id_fornecedor, :valor, :n_nota, :data, :id_empresa, :created_at, :updated_at)');
             $sql->execute([
-                ':id_empresa' => $dados['id_empresa'],
-                ':n_contrato' => $dados['n_contrato'],
-                ':data' => $dados['data'],
-                ':id_testemunha1' => $dados['id_testemunha1'],
-                ':nome' => $dados['nome'],
-                ':data_nascimento' => $dados['data_nascimento'],
-                ':cpf' => $dados['cpf'],
-                ':cep' => $dados['cep'],
-                ':numero' => $dados['numero'],
-                ':endereco' => $dados['endereco'],
-                ':complemento' => $dados['complemento'],
-                ':bairro' => $dados['bairro'],
-                ':cidade' => $dados['cidade'],
-                ':uf' => $dados['uf'],
-                ':telefone_residencial' => $dados['tel_res'],
-                ':telefone_comercial' => $dados['tel_com'],
-                ':celular1' => $dados['celular1'],
-                ':celular2' => $dados['celular2'],
-                ':sinal_entrada' => $dados['sinal_entrada'],
-                ':valor' => $dados['valor'],
-                ':created_at' => $agora,
-                ':updated_at' => $agora,
+                ':id_fornecedor' => $dados['id_fornecedor'],
+                ':valor'         => $dados['valor'],
+                ':n_nota'        => $dados['n_nota'],
+                ':data'          => $dados['data'],
+                ':id_empresa'    => $dados['id_empresa'],
+                ':created_at'    => $agora,
+                ':updated_at'    => $agora,
             ]);
-    
-            $id_contrato = $this->pdo->lastInsertId();
-    
-            // Cadastro das parcelas (mesmo código)
-    
-            // Adiciona o log e confirma a transação
-            $descricao = "Cadastrou o contrato: {$dados['n_contrato']}";
-            $this->addLog('Cadastrar', $descricao, $dados['usuario_logado']);
+
+            $id_nota = $this->pdo->lastInsertId();
+
+            // Inserção dos itens da nota fiscal na tabela compras_notas_itens
+            // Espera-se que os itens venham em $dados['itens'] como um array de itens,
+            // onde cada item é um array associativo com as chaves: item, valor_uni, quantidade, descricao.
+            if (isset($dados['itens']) && is_array($dados['itens'])) {
+                foreach ($dados['itens'] as $item) {
+                    $sqlItem = $this->pdo->prepare("INSERT INTO compras_notas_itens 
+                        (id_nota, item, valor_uni, quantidade, descricao, created_at, updated_at, deleted_at)
+                        VALUES (:id_nota, :item, :valor_uni, :quantidade, :descricao, :created_at, :updated_at, :deleted_at)");
+                    $sqlItem->execute([
+                        ':id_nota'    => $id_nota,
+                        ':item'       => $item['item'],
+                        ':valor_uni'  => $item['valor_uni'],
+                        ':quantidade' => $item['quantidade'],
+                        ':descricao'  => $item['descricao'],
+                        ':created_at' => $agora,
+                        ':updated_at' => $agora,
+                        ':deleted_at' => null,
+                    ]);
+                }
+            }
+
+            // Adiciona o log da operação
+            $descricao_log = "Cadastrou a nota de compra: {$dados['n_nota']} ($id_nota)";
+            $this->addLog('Cadastrar', $descricao_log, $dados['usuario_logado']);
+
             $this->pdo->commit();
-    
+
             echo "<script>
-                    alert('Contrato cadastrado com sucesso!');
-                    window.location.href = '" . URL . "/financeiro/contratos';
-                  </script>";
-        } catch (Exception $e) {
+                    alert('Nota de compra cadastrada com sucesso!');
+                    window.location.href = '" . URL . "/compras/notas';
+                </script>";
+            exit;
+
+        } catch (PDOException $e) {
             $this->pdo->rollBack();
+
+            // Verifica se o erro é de entrada duplicada
+            if ($e->getCode() == 23000 && strpos($e->getMessage(), '1062 Duplicate entry') !== false) {
+                echo "<script>
+                        alert('A nota de compra já foi cadastrada!');
+                        window.location.href = '" . URL . "/compras/notas';
+                    </script>";
+                exit;
+            }
+
             echo "<script>
-                    alert('Erro ao cadastrar contrato: " . $e->getMessage() . "');
-                    window.location.href = '" . URL . "/financeiro/contratos';
-                  </script>";
+                    alert('Não foi possível cadastrar a nota de compra! Erro: " . addslashes($e->getMessage()) . "');
+                    window.location.href = '" . URL . "/compras/notas';
+                </script>";
+            exit;
         }
     }
+
     
     public function editar($dados) {
         try {
@@ -98,9 +111,13 @@ class Financeiro_Contrato {
     
             $agora = date('Y-m-d H:i:s');
     
-            // Remove caracteres especiais do CPF
+            // Remove caracteres especiais do CPF, CEP, telefones e celulares
             $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf']);
             $dados['cep'] = preg_replace('/\D/', '', $dados['cep']);
+            $dados['tel_res'] = preg_replace('/\D/', '', $dados['tel_res']);
+            $dados['tel_com'] = preg_replace('/\D/', '', $dados['tel_com']);
+            $dados['celular1'] = preg_replace('/\D/', '', $dados['celular1']);
+            $dados['celular2'] = preg_replace('/\D/', '', $dados['celular2']);
     
             // Atualiza os dados do contrato principal
             $sql = $this->pdo->prepare('UPDATE financeiro_contratos
@@ -146,8 +163,8 @@ class Financeiro_Contrato {
                 ':updated_at' => $agora,
                 ':id_financeiro_contrato' => $dados['id_financeiro_contrato']
             ]);
-    
-            // Remove as parcelas antigas e insere as novas (mesmo código)
+            
+            // Remova ou atualize as parcelas, se necessário
     
             // Adiciona o log
             $descricao = "Editou o contrato: {$dados['n_contrato']}";
@@ -168,6 +185,7 @@ class Financeiro_Contrato {
         }
     }
     
+    
     public function listar() {
         $sql = $this->pdo->prepare("
             SELECT 
@@ -181,6 +199,8 @@ class Financeiro_Contrato {
                 financeiro_contratos_parcelas AS fp 
             ON 
                 fc.id_financeiro_contrato = fp.id_contrato
+            WHERE 
+                fc.deleted_at IS NULL
             GROUP BY 
                 fc.id_financeiro_contrato
             ORDER BY 
@@ -191,7 +211,7 @@ class Financeiro_Contrato {
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
     
         return $dados;
-    }    
+    }      
 
     public function mostrar($id_financeiro_contrato){
         $sql = $this->pdo->prepare('SELECT * FROM financeiro_contratos WHERE id_financeiro_contrato = :id_financeiro_contrato ORDER BY n_contrato DESC');
@@ -239,6 +259,7 @@ class Financeiro_Contrato {
     public function confirmarPagamento($id_parcela, $usuario_logado, $valor_pago) {
         try {
             $this->pdo->beginTransaction();
+            $agora = date('Y-m-d H:i:s');
     
             // Recupera o id_contrato e o valor da parcela
             $sqlParcela = $this->pdo->prepare('SELECT id_contrato, valor FROM financeiro_contratos_parcelas WHERE id_financeiro_contrato_parcela = :id_parcela');
@@ -252,19 +273,11 @@ class Financeiro_Contrato {
             $id_contrato = $parcela['id_contrato'];
             $valor_parcela = (float)$parcela['valor'];
     
-            // Define o status com base no valor pago
-            $status = 2; // Pendente (valor pago < valor parcela)
-            if ($valor_pago == $valor_parcela) {
-                $status = 1; // Pago
-            } elseif ($valor_pago > $valor_parcela) {
-                $status = 3; // Pago com excesso
-            }
-    
             // Atualiza a parcela
             $sql = $this->pdo->prepare('UPDATE financeiro_contratos_parcelas SET valor_pago = :valor_pago, status = :status WHERE id_financeiro_contrato_parcela = :id_parcela');
             $sql->execute([
                 ':valor_pago' => $valor_pago,
-                ':status' => $status,
+                ':pago_em' => $agora,
                 ':id_parcela' => $id_parcela
             ]);
     

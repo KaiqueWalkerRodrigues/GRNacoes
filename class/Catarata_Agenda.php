@@ -267,7 +267,7 @@ class Catarata_Agenda {
 
     //Conta quantos agendamentos tem naquela agenda
     public function contarAgendamentos($id_agenda){
-        $sql = $this->pdo->prepare("SELECT count(id_catarata_agendamento) AS qntd FROM catarata_agendamentos WHERE id_agenda = :id_agenda");
+        $sql = $this->pdo->prepare("SELECT count(id_catarata_agendamento) AS qntd FROM catarata_agendamentos WHERE id_agenda = :id_agenda AND deleted_at IS NULL");
         $sql->bindParam(':id_agenda',$id_agenda);
         $sql->execute();
 
@@ -278,7 +278,7 @@ class Catarata_Agenda {
 
     //Conta a quantidade de Vagas totais na agenda
     public function somarQntdVagas($id_agenda){
-        $sql = $this->pdo->prepare("SELECT sum(qntd) as soma FROM catarata_turmas WHERE id_agenda = :id_agenda");
+        $sql = $this->pdo->prepare("SELECT sum(qntd) as soma FROM catarata_turmas WHERE id_agenda = :id_agenda AND deleted_at IS NULL");
         $sql->bindParam(':id_agenda',$id_agenda);
         $sql->execute();
 

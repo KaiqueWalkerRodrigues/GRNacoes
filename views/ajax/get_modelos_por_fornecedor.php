@@ -1,21 +1,23 @@
 <?php 
-require_once '../../const.php';
 
-$pdo = Conexao::conexao();
+    require_once '../../const.php';
 
-if (isset($_GET['id_fornecedor'])) {
-    $idFornecedor = $_GET['id_fornecedor'];
+    $pdo = Conexao::conexao();
 
-    if ($idFornecedor) {
-        // Listar modelos de lentes de um fornecedor específico
-        $sql = $pdo->prepare('SELECT * FROM lente_contato_modelos WHERE id_fornecedor = :id_fornecedor AND deleted_at IS NULL ORDER BY modelo');
-        $sql->bindParam(':id_fornecedor', $idFornecedor);
-        $sql->execute();
-        $modelos = $sql->fetchAll(PDO::FETCH_OBJ);
+    if (isset($_GET['id_fornecedor'])) {
+        $idFornecedor = $_GET['id_fornecedor'];
 
-        foreach ($modelos as $modelo) {
-            echo '<option value="' . $modelo->id_lente_contato_modelo . '">' . $modelo->modelo .' ('.$modelo->codigo_simah.')</option>';
+        if ($idFornecedor) {
+            // Listar modelos de lentes de um fornecedor específico
+            $sql = $pdo->prepare('SELECT * FROM lente_contato_modelos WHERE id_fornecedor = :id_fornecedor AND deleted_at IS NULL ORDER BY modelo');
+            $sql->bindParam(':id_fornecedor', $idFornecedor);
+            $sql->execute();
+            $modelos = $sql->fetchAll(PDO::FETCH_OBJ);
+
+            foreach ($modelos as $modelo) {
+                echo '<option value="' . $modelo->id_lente_contato_modelo . '">' . $modelo->modelo .' ('.$modelo->codigo_simah.')</option>';
+            }
         }
     }
-}
+    
 ?>

@@ -293,13 +293,19 @@
                                 <hr style="margin-top: -0.2%;">
                             </div>
 
-                            <div class="col-2 offset-1 mb-1">
+                            <div class="col-3 offset-1 mb-1">
                                 <label for="cadastrar_sinal_entrada" class="form-label">Sinal / Entrada</label>
-                                <input type="number" name="sinal_entrada" id="cadastrar_sinal_entrada" class="form-control" max="9999999">
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="sinal_entrada" id="cadastrar_sinal_entrada">
+                                </div>
                             </div>
                             <div class="col-3 mb-1">
                                 <label for="cadastrar_valor" class="form-label">Valor do Financiamento *</label>
-                                <input type="number" name="valor" id="cadastrar_valor" class="form-control" required max="9999999">
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="valor" id="cadastrar_valor" required>
+                                </div>
                             </div>
                             <div class="col-3 mb-1">
                                 <div class="mt-3">
@@ -491,12 +497,12 @@
                             </div>
 
                             <div class="col-2 offset-1 mb-1">
-                                <label for="editar_tel_residencial" class="form-label">Telefone Residencial</label>
-                                <input type="text" name="tel_res" id="editar_tel_residencial" class="form-control">
+                                <label for="editar_telefone_residencial" class="form-label">Telefone Residencial</label>
+                                <input type="text" name="tel_res" id="editar_telefone_residencial" class="form-control">
                             </div>
                             <div class="col-2 mb-1">
-                                <label for="editar_tel_comercial" class="form-label">Telefone Comercial</label>
-                                <input type="text" name="tel_com" id="editar_tel_comercial" class="form-control">
+                                <label for="editar_telefone_comercial" class="form-label">Telefone Comercial</label>
+                                <input type="text" name="tel_com" id="editar_telefone_comercial" class="form-control">
                             </div>
                             <div class="col-2 mb-1">
                                 <label for="editar_celular1" class="form-label">Celular 1</label>
@@ -935,6 +941,54 @@
                     return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 }
 
+                function ajustarData(ano, mes, dia) {
+                    // Obtém o último dia do mês (mês é 0-indexado)
+                    let ultimoDia = new Date(ano, mes + 1, 0).getDate();
+                    if (dia > ultimoDia) {
+                        dia = ultimoDia;
+                    }
+                    return new Date(ano, mes, dia);
+                }
+
+                // Evento para atualizar datas das parcelas a partir da segunda
+                $('#parcelas_container').on('change', '#data_parcela2', function () {
+                    // Força a criação da data no horário local
+                    let novaData2 = new Date($(this).val() + 'T00:00:00');
+                    if (isNaN(novaData2.getTime())) return; // Se a data não for válida, sai
+
+                    // Extrai o dia escolhido na segunda parcela
+                    let novoDia = novaData2.getDate();
+
+                    // Obtém a quantidade total de parcelas
+                    let quantidade = parseInt($('#cadastrar_parcelas').val());
+
+                    // Para cada parcela a partir da terceira, atualiza a data
+                    // Começamos a partir da data da segunda parcela
+                    let dataReferencia = novaData2;
+                    for (let i = 3; i <= quantidade; i++) {
+                        // Incrementa um mês na data de referência
+                        let proximaData = new Date(dataReferencia);
+                        proximaData.setMonth(proximaData.getMonth() + 1);
+                        
+                        // Ajusta a data para manter o mesmo dia ou o último dia do mês, se necessário
+                        let ano = proximaData.getFullYear();
+                        let mes = proximaData.getMonth();
+                        proximaData = ajustarData(ano, mes, novoDia);
+
+                        // Formata a data no padrão YYYY-MM-DD
+                        let anoFormatado = proximaData.getFullYear();
+                        let mesFormatado = String(proximaData.getMonth() + 1).padStart(2, '0');
+                        let diaFormatado = String(proximaData.getDate()).padStart(2, '0');
+                        let dataFormatada = `${anoFormatado}-${mesFormatado}-${diaFormatado}`;
+
+                        // Atualiza o campo da parcela correspondente
+                        $(`#data_parcela${i}`).val(dataFormatada);
+
+                        // Atualiza a referência para a próxima iteração
+                        dataReferencia = proximaData;
+                    }
+                });
+
                 // Função para gerar os campos das parcelas com duas parcelas por linha e datas padrão incrementadas mensalmente
                 function gerarParcelas() {
                     const quantidade = parseInt($('#cadastrar_parcelas').val());
@@ -1263,20 +1317,22 @@
                                     valorPendenteTotal += Math.max(0, valorParcela - valorPago);
                                     valorTotal += valorParcela;
 
+                                    console.log(parcela.pago_em)
+                                    console.log(parcela.valor_pago)
+                                    console.log(parcela.valor)
+
                                     // Determina o status
                                     let statusBadge = '';
-                                    switch (parcela.status) {
-                                        case 1:
-                                            statusBadge = '<span class="badge badge-success">Pago</span>';
-                                            break;
-                                        case 2:
-                                            statusBadge = '<span class="badge badge-danger">Pagamento Incompleto</span>';
-                                            break;
-                                        case 3:
-                                            statusBadge = '<span class="badge badge-primary">Pago com Juros</span>';
-                                            break;
-                                        default:
-                                            statusBadge = '<span class="badge badge-warning">Pendente</span>';
+                                    if(parcela.pago_em != null & parcela.valor_pago == parcela.valor){
+                                        statusBadge = '<span class="badge badge-success">Pago</span>';
+                                    }else if(parcela.pago_em != null & parcela.valor_pago < parcela.valor){
+                                        statusBadge = '<span class="badge badge-danger">Pagamento Incompleto</span>';
+                                    }else if(parcela.pago_em != null & parcela.valor_pago > parcela.valor){
+                                        statusBadge = '<span class="badge badge-primary">Pago com Juros</span>';
+                                    }else if(parcela.pago_em == null){
+                                        statusBadge = '<span class="badge badge-warning">Pendente</span>';
+                                    }else{
+                                        statusBadge = '<span class="badge badge-dark">Erro</span>';
                                     }
 
                                     // Linha da tabela
@@ -1493,6 +1549,42 @@
                     $('#editar_celular1').val(celular1)
                     $('#editar_celular2').val(celular2)
                 });
+
+                $('#cadastrar_tel_residencial').on('input', function() {
+                    formatarTelefone($(this));
+                });
+
+                $('#cadastrar_tel_comercial').on('input', function() {
+                    formatarTelefone($(this));
+                });
+
+                $('#cadastrar_celular1').on('input', function() {
+                    formatarCelular($(this));
+                });
+
+                $('#cadastrar_celular2').on('input', function() {
+                    formatarCelular($(this));
+                });
+
+                // Funções de formatação e validação
+                function formatarCelular(campo) {
+                    let telefone = campo.val().replace(/\D/g, '');
+                    if (telefone.length === 11) {
+                        telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+                        telefone = telefone.replace(/(\d{5})(\d{4})$/, '$1-$2');
+                        campo.val(telefone);
+                    }
+                }
+
+                // Funções de formatação e validação
+                function formatarTelefone(campo) {
+                    let telefone = campo.val().replace(/\D/g, '');
+                    if (telefone.length === 10) {
+                        telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
+                        telefone = telefone.replace(/(\d{4})(\d{4})$/, '$1-$2');
+                        campo.val(telefone);
+                    }
+                }
             }
         });
     </script>

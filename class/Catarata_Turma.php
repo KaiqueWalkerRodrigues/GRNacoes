@@ -212,7 +212,7 @@ class Catarata_turma {
     }
 
     public function contarAgendamentos($id_turma){
-        $sql = $this->pdo->prepare("SELECT count(id_catarata_agendamento) AS qntd FROM catarata_agendamentos WHERE id_turma = :id_turma");
+        $sql = $this->pdo->prepare("SELECT count(id_catarata_agendamento) AS qntd FROM catarata_agendamentos WHERE id_turma = :id_turma AND deleted_at IS NULL");
         $sql->bindParam(':id_turma',$id_turma);
         $sql->execute();
 
@@ -222,7 +222,7 @@ class Catarata_turma {
     }
 
     public function listarAgendamentos($id_turma){
-        $sql = $this->pdo->prepare("SELECT * FROM catarata_agendamentos WHERE id_turma = :id_turma ORDER BY nome");
+        $sql = $this->pdo->prepare("SELECT * FROM catarata_agendamentos WHERE id_turma = :id_turma AND deleted_at IS NULL ORDER BY nome");
         $sql->bindParam(':id_turma',$id_turma);
         $sql->execute();
 

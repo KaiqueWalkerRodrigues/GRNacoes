@@ -32,7 +32,7 @@
                 </a>
                 
                 <div class="sidenav-menu-heading">Interfaces</div>
-                <?php if(verificarSetor([1,12,13,14])){ ?>
+                <?php if(verificarSetor([1,5,12,13,14])){ ?>
                     
                     <a class="nav-link collapsed" id="dash" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
                         <div class="nav-link-icon"><i class="fa-solid fa-chart-line"></i></div>
@@ -43,6 +43,7 @@
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação</a>
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/catarata">Catarata<span class="badge badge-primary ml-2">Novo!</span></a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/cobranca">Cobrança<span class="badge badge-primary ml-2">Novo!</span></a>
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/lente_contato">Lente de Contato<span class="badge badge-primary ml-2">Novo!</span></a>
                         </nav>
                     </div> 
@@ -114,6 +115,7 @@
                                 <nav class="sidenav-menu-nested nav">
                                     <a class="nav-link" id="cirurgias_catarata_agendas" href="<?php echo URL ?>/cirurgias/catarata/agendas">Agendas</a>
                                     <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento">Agendamento</a>
+                                    <?php if($_SESSION['id_usuario'] == 35 OR verificarSetor([1,12,14,15])){ ?>
                                     <a class="nav-link" id="cirurgias_catarata_agendamento" href="<?php echo URL ?>/cirurgias/catarata/agendamento_externo">Agendamento Exter</a>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" id="cirurgias_catarata_configuracoes" data-target="#cirurgias_catarata_configuracoes" aria-expanded="false" aria-controls="cirurgias_catarata_configuracoes">Configurações
                                         <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -131,6 +133,7 @@
                                             <a class="nav-link" id="cirurgias_catarata_relatorios_lentes" href="<?php echo URL ?>/cirurgias/catarata/relatorios/lentes">Vendas</a>
                                         </nav>
                                     </div>
+                                    <?php } ?>
                                 </nav>
                             </div>
 
@@ -200,9 +203,9 @@
                     </a>
                     <div class="collapse" id="lente_contato" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <?php if(verificarSetor([1,3,5,12])){ ?>
                             <a class="nav-link" id="lente_contato_orcamentos" href="<?php echo URL ?>/lente_contato/orcamentos">Orçamentos</a>
                             <a class="nav-link" id="lente_contato_testes" href="<?php echo URL ?>/lente_contato/testes">Testes</a>
-                            <?php if(verificarSetor([1,3,5,12])){ ?>
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" id="lente_contato_configuracoes" data-target="#lente_contato_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
                                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>

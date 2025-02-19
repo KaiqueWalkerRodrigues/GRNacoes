@@ -1,8 +1,8 @@
 <?php 
     $Lc_fornecedor = new Lente_contato_fornecedor();
-    $Lc_orcamento = new Lente_contato_Orcamento();
-    $Lc_modelo = new Lente_contato_Modelo();
-    $Medico = new Medico();
+    $Lc_orcamento   = new Lente_contato_Orcamento();
+    $Lc_modelo      = new Lente_contato_Modelo();
+    $Medico         = new Medico();
 
     if (isset($_POST['btnCadastrar'])) {
         $Lc_orcamento->cadastrar($_POST);
@@ -16,7 +16,6 @@
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -28,20 +27,20 @@
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js" crossorigin="anonymous"></script>
-    <!-- Inclua o jQuery aqui -->
+    <!-- Inclua o jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
 </head>
-
 <body class="nav-fixed">
-        <!-- Tela de Carregamento -->
+    <!-- Tela de Carregamento -->
     <div id="preloader">
         <div class="spinner"></div>
     </div>
-    <?php include_once('resources/topbar.php') ?>
+    <?php include_once('resources/topbar.php'); ?>
     <div id="layoutSidenav">
         <?php include_once('resources/sidebar.php'); ?>
         <div id="layoutSidenav_content">
             <main>
+                <!-- Cabeçalho da Página -->
                 <div class="page-header pb-10 page-header-dark bg-primary">
                     <div class="container-fluid">
                         <div class="page-header-content">
@@ -64,10 +63,20 @@
                                         <?php } ?>
                                     </select>
                                 </div>
+                                <div class="col-md-3">
+                                    <label for="filtroStatus" class="form-label text-light">Filtrar por Status:</label>
+                                    <select id="filtroStatus" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Pago">Pago</option>
+                                        <option value="Entregue">Entregue</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- Tabela de Orçamentos -->
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
                         <div class="card-header">Orçamentos
@@ -82,19 +91,38 @@
                                         <tr>
                                             <th>#</th>
                                             <th class="d-none">Mes</th>
+                                            <th>Empresa</th>
                                             <th>Paciente</th>
-                                            <th>Lente</th>
+                                            <th>Status</th>
+                                            <th>Lentes</th>
                                             <th>Data/Hora</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Lc_orcamento->listar() as $orcamento){ ?>
+                                        <?php 
+                                            if(verificarSetor([1,3,5,12])){
+                                                $orcamentos = $Lc_orcamento->listarAdmin($_SESSION['id_empresa']);
+                                            } else {
+                                                $orcamentos = $Lc_orcamento->listar($_SESSION['id_empresa']);
+                                            }
+                                            foreach($orcamentos as $orcamento){
+                                        ?>
                                         <tr>
                                             <td><?php echo $orcamento->id_lente_contato_orcamento ?></td>
                                             <td class="d-none"><?php echo Helper::formatarDataSemHorario($orcamento->created_at) ?></td>
+                                            <td><?php echo Helper::mostrar_empresa($orcamento->id_empresa) ?></td>
                                             <td><?php echo $orcamento->nome ?></td>
-                                            <td><?php echo $Lc_modelo->mostrar($orcamento->id_modelo)->modelo ?></td>
+                                            <td class="text-center">
+                                                <?php if($orcamento->status == 2) { ?>
+                                                    <b class="badge badge-success badge-pill">Entregue</b>
+                                                <?php } elseif($orcamento->status == 1){ ?>
+                                                    <b class="badge badge-secondary badge-pill">Pago</b>
+                                                <?php } else { ?>
+                                                    <b class="badge badge-warning badge-pill">Pendente</b>
+                                                <?php } ?>
+                                            </td>
+                                            <td><b>Direita:</b> <?php if($orcamento->id_modelo_direito != Null){ echo $Lc_modelo->mostrar($orcamento->id_modelo_direito)->modelo; } ?> <br> <b>Esquerda:</b> <?php if($orcamento->id_modelo_esquerdo != Null){echo $Lc_modelo->mostrar($orcamento->id_modelo_esquerdo)->modelo; } ?></td>
                                             <td><?php echo Helper::formatarData($orcamento->created_at) ?></td>
                                             <td class="text-center">
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalEditarOrcamento"
@@ -106,12 +134,14 @@
                                                         data-olhos="<?php echo $orcamento->olhos ?>"
                                                         data-olho_esquerdo="<?php echo $orcamento->olho_esquerdo ?>"
                                                         data-olho_direito="<?php echo $orcamento->olho_direito ?>"
-                                                        data-id_lente="<?php echo $orcamento->id_modelo ?>"
+                                                        data-lente_esquerda="<?php echo $orcamento->id_modelo_esquerdo ?>"
+                                                        data-lente_direita="<?php echo $orcamento->id_modelo_direito ?>"
+                                                        data-qnt_esquerda="<?php echo $orcamento->qnt_esquerda ?>"
+                                                        data-qnt_direita="<?php echo $orcamento->qnt_direita ?>"
                                                         data-valor="<?php echo $orcamento->valor ?>"
                                                         data-forma_pgto1="<?php echo $orcamento->id_forma_pagamento1 ?>"
                                                         data-forma_pgto2="<?php echo $orcamento->id_forma_pagamento2 ?>"
-                                                        data-pagamento="<?php echo $orcamento->pagamento ?>"
-                                                        data-id_fornecedor="<?php echo $orcamento->id_fornecedor ?>">
+                                                        data-status="<?php echo $orcamento->status ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalDeletarOrcamento"
@@ -129,7 +159,7 @@
                     </div>
                 </div>
             </main>
-            <?php include_once('resources/footer.php') ?>
+            <?php include_once('resources/footer.php'); ?>
         </div>
     </div>
 
@@ -140,33 +170,35 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Cadastrar Novo Orçamento</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <!-- Dados do Usuário e Empresa -->
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
+                        
                         <div class="row">
+                            <!-- Ficha Paciente -->
                             <div class="offset-1 col-10">
                                 <b class="text-dark">Ficha Paciente:</b>
                                 <hr style="margin-top: -0.2%;">
                             </div>
-                            <br>
                             <div class="col-4 offset-1 mb-2">
-                                <label for="nome" class="form-label">Nome do Paciente *</label>
+                                <label for="cadastrar_nome" class="form-label">Nome do Paciente *</label>
                                 <input type="text" id="cadastrar_nome" name="nome" class="form-control" required>
                             </div>
                             <div class="col-3">
-                                <label for="cpf" class="form-label">CPF *</label>
+                                <label for="cadastrar_cpf" class="form-label">CPF *</label>
                                 <input type="text" id="cadastrar_cpf" name="cpf" class="form-control" required>
                             </div>
                             <div class="col-3">
-                                <label for="contato" class="form-label">Contato *</label>
+                                <label for="cadastrar_contato" class="form-label">Contato *</label>
                                 <input type="text" id="cadastrar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_medico" class="form-label">Médico Solicitante</label>
+                                <label for="cadastrar_id_medico" class="form-label">Médico Solicitante</label>
                                 <select id="cadastrar_id_medico" name="id_medico" class="form-control">
                                     <option value="0">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
@@ -174,89 +206,131 @@
                                     <?php } ?>
                                 </select>
                             </div>
-
+                            
+                            <!-- Ficha Lente -->
                             <div class="offset-1 col-10 mt-4">
                                 <b class="text-dark">Ficha Lente:</b>
                                 <hr style="margin-top: -0.2%;">
                             </div>
-                            <div class="col-2 offset-1">
-                                <label for="olhos" class="form-label">Olho(s) *</label>
+                            <!-- Seleção de Olho(s) -->
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="cadastrar_olhos" class="form-label">Olho(s) *</label>
                                 <select name="olhos" id="cadastrar_olhos" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="0">Ambos os Olhos</option>
-                                    <option value="1">Olho Esquerdo</option>
-                                    <option value="2">Olho Direito</option>
+                                    <option value="2">Somente Olho Direito</option>
+                                    <option value="1">Somente Olho Esquerdo</option>
                                 </select>
                             </div>
-                            <div class="col-4 d-none" id="campo_olho_esquerdo">
-                                <label for="olho_esquerdo" class="form-label">Olho Esquerdo</label>
-                                <input type="text" name="olho_esquerdo" id="cadastrar_olho_esquerdo" class="form-control">
-                            </div>
-                            <div class="col-4 d-none" id="campo_olho_direito">
-                                <label for="olho_direito" class="form-label">Olho Direito</label>
-                                <input type="text" name="olho_direito" id="cadastrar_olho_direito" class="form-control">
+                            <div class="col-1 mt-1 d-none" id="cadastrar_copiar">
+                                <br>
+                                <button id="cadastrar_copiar_botao" class="btn btn-icon btn-secondary" type="button">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-3 offset-1">
-                                <label for="id_fornecedor" class="form-label">Fornecedor *</label>
-                                <select name="id_fornecedor" id="cadastrar_id_fornecedor" class="form-control" required>
+                        <!-- Grupo para Olho Direito -->
+                        <div class="row d-none" id="grupo_olho_direito">
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="cadastrar_fornecedor_direito" class="form-label">Fornecedor Direito *</label>
+                                <select name="fornecedor_direito" id="cadastrar_fornecedor_direito" class="form-control">
                                     <option value="">Selecione...</option>
                                     <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
                                         <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
-                            <div class="col-3 d-none" id="campo_id_lente">
-                                <label for="id_lente" class="form-label">Modelo Lente *</label>
-                                <select name="id_lente" id="cadastrar_id_lente" class="form-control" required>
+                            <div class="col-4 mb-2">
+                                <label for="cadastrar_lente_direita" class="form-label">Lente Direita</label>
+                                <select name="lente_direita" id="cadastrar_lente_direita" class="form-control">
                                     <option value="">Selecione...</option>
+                                    <!-- Opções carregadas via AJAX conforme o fornecedor selecionado -->
                                 </select>
                             </div>
+                            <div class="col-3 mb-2">
+                                <label for="cadastrar_olho_direito" class="form-label">Olho Direito</label>
+                                <input type="text" name="olho_direito" id="cadastrar_olho_direito" class="form-control">
+                            </div>
+                            <div class="col-1 mb-2">
+                                <label for="cadastrar_qnt_direita" class="form-label">Quantidade</label>
+                                <input type="number" name="qnt_direita" id="cadastrar_qnt_direita" class="form-control" min="1" value="1">
+                            </div>
                         </div>
+                        <!-- Grupo para Olho Esquerdo -->
+                        <div class="row d-none" id="grupo_olho_esquerdo">
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="cadastrar_fornecedor_esquerdo" class="form-label">Fornecedor Esquerdo</label>
+                                <select name="fornecedor_esquerdo" id="cadastrar_fornecedor_esquerdo" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                        <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <label for="cadastrar_lente_esquerda" class="form-label">Lente Esquerda</label>
+                                <select name="lente_esquerda" id="cadastrar_lente_esquerda" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <!-- Opções carregadas via AJAX conforme o fornecedor selecionado -->
+                                </select>
+                            </div>
+                            <div class="col-3 mb-2">
+                                <label for="cadastrar_olho_esquerdo" class="form-label">Olho Esquerdo</label>
+                                <input type="text" name="olho_esquerdo" id="cadastrar_olho_esquerdo" class="form-control">
+                            </div>
+                            <div class="col-1 mb-2">
+                                <label for="cadastrar_qnt_esquerda" class="form-label">Quantidade</label>
+                                <input type="number" name="qnt_esquerda" id="cadastrar_qnt_esquerda" class="form-control" min="1" value="1">
+                            </div>
+                        </div>
+                        
                         <div class="row">
+                            <!-- Campo para o Valor Total (calculado com base nos valores das lentes e quantidades) -->
                             <div class="col-4 offset-1 text-center mt-1">
-                                <label for="valor" class="form-label">Valor Total *</label>
+                                <label for="cadastrar_valor" class="form-label">Valor Total *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
                                     <input type="number" class="form-control" step="0.01" name="valor" id="cadastrar_valor" required>
                                 </div>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="forma_pgto1" class="form-label">Forma Pagamento 1 *</label>
-                                <select name="forma_pgto1" id="cadastrar_forma_pgto1" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">Credito</option>
-                                    <option value="2">Debito</option>
+                                <label for="cadastrar_forma_pgto1" class="form-label">Forma Pagamento 1</label>
+                                <select name="forma_pgto1" id="cadastrar_forma_pgto1" class="form-control">
+                                    <option value="0">Selecione...</option>
+                                    <option value="1">Crédito</option>
+                                    <option value="2">Débito</option>
                                     <option value="3">Boleto</option>
                                     <option value="4">Pix</option>
+                                    <option value="5">Dinheiro</option>
                                 </select>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="forma_pgto2" class="form-label">Forma Pagamento 2</label>
+                                <label for="cadastrar_forma_pgto2" class="form-label">Forma Pagamento 2</label>
                                 <select name="forma_pgto2" id="cadastrar_forma_pgto2" class="form-control">
                                     <option value="0">Selecione...</option>
-                                    <option value="1">Credito</option>
-                                    <option value="2">Debito</option>
+                                    <option value="1">Crédito</option>
+                                    <option value="2">Débito</option>
                                     <option value="3">Boleto</option>
                                     <option value="4">Pix</option>
+                                    <option value="5">Dinheiro</option>
                                 </select>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="pagamento" class="form-label">Pagamento *</label>
-                                <select name="pagamento" id="cadastrar_pagamento" class="form-control" required>
+                                <label for="cadastrar_status" class="form-label">Status *</label>
+                                <select name="status" id="cadastrar_status" class="form-control" required>
                                     <option value="0">Pendente</option>
-                                    <option value="1">Concluído</option>
+                                    <option value="1">Pago</option>
+                                    <option value="2">Entregue</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div><!-- Fim do modal-body -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
                         <button type="submit" name="btnCadastrar" class="btn btn-success">Cadastrar</button>
                     </div>
-                </div>
-            </div>
+                </div><!-- Fim do modal-content -->
+            </div><!-- Fim do modal-dialog -->
         </form>
     </div>
 
@@ -265,35 +339,40 @@
         <form action="?" method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
+                    <!-- Cabeçalho do Modal -->
                     <div class="modal-header">
                         <h5 class="modal-title">Editar Orçamento</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    <!-- Corpo do Modal -->
                     <div class="modal-body">
+                        <!-- Dados Ocultos -->
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <input type="hidden" name="id_empresa" value="<?php echo $_SESSION['id_empresa'] ?>">
                         <input type="hidden" name="id_orcamento" id="editar_id_orcamento">
+                        
                         <div class="row">
+                            <!-- Ficha Paciente -->
                             <div class="offset-1 col-10">
                                 <b class="text-dark">Ficha Paciente:</b>
                                 <hr style="margin-top: -0.2%;">
                             </div>
-                            <br>
                             <div class="col-4 offset-1 mb-2">
-                                <label for="nome" class="form-label">Nome do Paciente *</label>
+                                <label for="editar_nome" class="form-label">Nome do Paciente *</label>
                                 <input type="text" id="editar_nome" name="nome" class="form-control" required>
                             </div>
                             <div class="col-3">
-                                <label for="cpf" class="form-label">CPF *</label>
+                                <label for="editar_cpf" class="form-label">CPF *</label>
                                 <input type="text" id="editar_cpf" name="cpf" class="form-control" required>
                             </div>
                             <div class="col-3">
-                                <label for="contato" class="form-label">Contato *</label>
+                                <label for="editar_contato" class="form-label">Contato *</label>
                                 <input type="text" id="editar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_medico" class="form-label">Médico Solicitante</label>
+                                <label for="editar_id_medico" class="form-label">Médico Solicitante</label>
                                 <select id="editar_id_medico" name="id_medico" class="form-control">
                                     <option value="0">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
@@ -301,89 +380,125 @@
                                     <?php } ?>
                                 </select>
                             </div>
-
+                            
+                            <!-- Ficha Lente -->
                             <div class="offset-1 col-10 mt-4">
                                 <b class="text-dark">Ficha Lente:</b>
                                 <hr style="margin-top: -0.2%;">
                             </div>
-                            <div class="col-2 offset-1">
-                                <label for="olhos" class="form-label">Olho(s) *</label>
+                            <!-- Seleção de Olho(s) -->
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="editar_olhos" class="form-label">Olho(s) *</label>
                                 <select name="olhos" id="editar_olhos" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <option value="0">Ambos os Olhos</option>
-                                    <option value="1">Olho Esquerdo</option>
-                                    <option value="2">Olho Direito</option>
+                                    <option value="2">Somente Olho Direito</option>
+                                    <option value="1">Somente Olho Esquerdo</option>
                                 </select>
                             </div>
-                            <div class="col-4 d-none" id="editar_campo_olho_esquerdo">
-                                <label for="olho_esquerdo" class="form-label">Olho Esquerdo</label>
-                                <input type="text" name="olho_esquerdo" id="editar_olho_esquerdo" class="form-control">
-                            </div>
-                            <div class="col-4 d-none" id="editar_campo_olho_direito">
-                                <label for="olho_direito" class="form-label">Olho Direito</label>
-                                <input type="text" name="olho_direito" id="editar_olho_direito" class="form-control">
-                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-3 offset-1">
-                                <label for="id_fornecedor" class="form-label">Fornecedor *</label>
-                                <select name="id_fornecedor" id="editar_id_fornecedor" class="form-control" required>
+                        <!-- Grupo para Olho Direito -->
+                        <div class="row d-none" id="editar_grupo_olho_direito">
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="editar_fornecedor_direito" class="form-label">Fornecedor Direito *</label>
+                                <select name="fornecedor_direito" id="editar_fornecedor_direito" class="form-control">
                                     <option value="">Selecione...</option>
                                     <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
                                         <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
-                            <div class="col-3 d-none" id="editar_campo_id_lente">
-                                <label for="id_lente" class="form-label">Modelo Lente *</label>
-                                <select name="id_lente" id="editar_id_lente" class="form-control" required>
+                            <div class="col-4 mb-2">
+                                <label for="editar_lente_direita" class="form-label">Lente Direita</label>
+                                <select name="lente_direita" id="editar_lente_direita" class="form-control">
                                     <option value="">Selecione...</option>
+                                    <!-- Opções carregadas via AJAX -->
                                 </select>
                             </div>
+                            <div class="col-3 mb-2">
+                                <label for="editar_olho_direito" class="form-label">Olho Direito</label>
+                                <input type="text" name="olho_direito" id="editar_olho_direito" class="form-control">
+                            </div>
+                            <div class="col-1 mb-2">
+                                <label for="editar_qnt_direita" class="form-label">Quantidade</label>
+                                <input type="number" name="qnt_direita" id="editar_qnt_direita" class="form-control" min="1" value="1">
+                            </div>
                         </div>
+                        <!-- Grupo para Olho Esquerdo -->
+                        <div class="row d-none" id="editar_grupo_olho_esquerdo">
+                            <div class="col-3 offset-1 mb-2">
+                                <label for="editar_fornecedor_esquerdo" class="form-label">Fornecedor Esquerdo</label>
+                                <select name="fornecedor_esquerdo" id="editar_fornecedor_esquerdo" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Lc_fornecedor->listar() as $fornecedor){ ?>
+                                        <option value="<?php echo $fornecedor->id_lente_contato_fornecedor ?>"><?php echo $fornecedor->fornecedor ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <label for="editar_lente_esquerda" class="form-label">Lente Esquerda</label>
+                                <select name="lente_esquerda" id="editar_lente_esquerda" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <!-- Opções carregadas via AJAX -->
+                                </select>
+                            </div>
+                            <div class="col-3 mb-2">
+                                <label for="editar_olho_esquerdo" class="form-label">Olho Esquerdo</label>
+                                <input type="text" name="olho_esquerdo" id="editar_olho_esquerdo" class="form-control">
+                            </div>
+                            <div class="col-1 mb-2">
+                                <label for="editar_qnt_esquerda" class="form-label">Quantidade</label>
+                                <input type="number" name="qnt_esquerda" id="editar_qnt_esquerda" class="form-control" min="1" value="1">
+                            </div>
+                        </div>
+                        
                         <div class="row">
+                            <!-- Campo para o Valor Total -->
                             <div class="col-4 offset-1 text-center mt-1">
-                                <label for="valor" class="form-label">Valor Total *</label>
+                                <label for="editar_valor" class="form-label">Valor Total *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
                                     <input type="number" class="form-control" step="0.01" name="valor" id="editar_valor" required>
                                 </div>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="forma_pgto1" class="form-label">Forma Pagamento 1 *</label>
-                                <select name="forma_pgto1" id="editar_forma_pgto1" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">Credito</option>
-                                    <option value="2">Debito</option>
+                                <label for="editar_forma_pgto1" class="form-label">Forma Pagamento 1</label>
+                                <select name="forma_pgto1" id="editar_forma_pgto1" class="form-control">
+                                    <option value="0">Selecione...</option>
+                                    <option value="1">Crédito</option>
+                                    <option value="2">Débito</option>
                                     <option value="3">Boleto</option>
                                     <option value="4">Pix</option>
+                                    <option value="5">Dinheiro</option>
                                 </select>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="forma_pgto2" class="form-label">Forma Pagamento 2</label>
+                                <label for="editar_forma_pgto2" class="form-label">Forma Pagamento 2</label>
                                 <select name="forma_pgto2" id="editar_forma_pgto2" class="form-control">
                                     <option value="0">Selecione...</option>
-                                    <option value="1">Credito</option>
-                                    <option value="2">Debito</option>
+                                    <option value="1">Crédito</option>
+                                    <option value="2">Débito</option>
                                     <option value="3">Boleto</option>
                                     <option value="4">Pix</option>
                                 </select>
                             </div>
                             <div class="col-2 mt-2">
-                                <label for="pagamento" class="form-label">Pagamento *</label>
-                                <select name="pagamento" id="editar_pagamento" class="form-control" required>
+                                <label for="editar_status" class="form-label">Status *</label>
+                                <select name="status" id="editar_status" class="form-control" required>
                                     <option value="0">Pendente</option>
-                                    <option value="1">Concluído</option>
+                                    <option value="1">Pago</option>
+                                    <option value="2">Entregue</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div><!-- Fim do modal-body -->
+                    <!-- Rodapé do Modal -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
                         <button type="submit" name="btnEditar" class="btn btn-success">Editar</button>
                     </div>
-                </div>
-            </div>
+                </div><!-- Fim do modal-content -->
+            </div><!-- Fim do modal-dialog -->
         </form>
     </div>
 
@@ -414,6 +529,7 @@
         </form>
     </div>
 
+    <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script>
         $(window).on('load', function () {
@@ -421,71 +537,190 @@
         });
 
         $(document).ready(function () {
-            $('#lent').addClass('active')
-            $('#lente_contato_orcamentos').addClass('active')
+            $('#lent').addClass('active');
+            $('#lente_contato_orcamentos').addClass('active');
 
             $('#preloader').fadeOut('slow', function() { $(this).remove(); });
 
+            // Formatação de CPF e Celular (Cadastro)
             $('#cadastrar_cpf').on('input', function() {
                 formatarCPF($(this));
             });
-
             $('#cadastrar_contato').on('input', function() {
                 formatarCelular($(this));
             });
 
-            // Evento para o formulário de cadastro
-            $('#cadastrar_id_lente, #cadastrar_olhos').on('change', function () {
-                var id_modelo = $('#cadastrar_id_lente').val();
-                var olhos = $('#cadastrar_olhos').val();
-                if (id_modelo && olhos) {
-                    buscarValorLente(id_modelo, olhos, '#cadastrar_valor');
-                }
-            });
-
-            // Evento para o formulário de edição
-            $('#editar_id_lente, #editar_olhos').on('change', function () {
-                var id_modelo = $('#editar_id_lente').val();
-                var olhos = $('#editar_olhos').val();
-                if (id_modelo && olhos) {
-                    buscarValorLente(id_modelo, olhos, '#editar_valor');
-                }
-            });
-
-            // Disparar o evento de change ao abrir o modal de edição
-            $('#modalEditarOrcamento').on('show.bs.modal', function (event) {
-                var id_modelo = $('#editar_id_lente').val();
-                var olhos = $('#editar_olhos').val();
-                if (id_modelo && olhos) {
-                    buscarValorLente(id_modelo, olhos, '#editar_valor');
-                }
-            });
-
-            function buscarValorLente(id_modelo, olhos, campoValor) {
-            $.ajax({
-                    url: '/GRNacoes/views/ajax/get_valor_lente_contato_modelo.php',
-                    type: 'GET',
-                    data: {
-                        id_modelo: id_modelo,
-                        olhos: olhos
-                    },
-                    success: function (response) {
-                        var data = JSON.parse(response);
-                        if (data.valor_total) {
-                            $(campoValor).val(data.valor_total);
-                        } else {
-                            alert(data.error || 'Erro ao buscar o valor da lente.');
+            // Ao alterar o select de fornecedor para o olho esquerdo (cadastro)
+            $('#cadastrar_fornecedor_esquerdo').on('change', function () {
+                var idFornecedor = $(this).val();
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: { id_fornecedor: idFornecedor },
+                        success: function (response) {
+                            $('#cadastrar_lente_esquerda').html(response);
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX para o fornecedor esquerdo.');
                         }
-                    },
-                    error: function () {
-                        alert('Erro na requisição AJAX.');
-                    }
+                    });
+                } else {
+                    $('#cadastrar_lente_esquerda').html('<option value="">Selecione...</option>');
+                }
+            });
+
+            // Ao alterar o select de fornecedor para o olho direito (cadastro)
+            $('#cadastrar_fornecedor_direito').on('change', function () {
+                var idFornecedor = $(this).val();
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: { id_fornecedor: idFornecedor },
+                        success: function (response) {
+                            $('#cadastrar_lente_direita').html(response);
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX para o fornecedor direito.');
+                        }
+                    });
+                } else {
+                    $('#cadastrar_lente_direita').html('<option value="">Selecione...</option>');
+                }
+            });
+
+           // Função para buscar o valor da lente no banco de dados via AJAX
+            function getPrice(id_modelo, olhos) {
+                return $.ajax({
+                    url: '/GRNacoes/views/ajax/get_lente_contato_modelo_valor.php', // Ajuste o caminho se necessário
+                    type: 'GET',
+                    data: { id_modelo: id_modelo, olhos: olhos },
+                    dataType: 'json'
                 });
             }
 
-            function formatarCelular(campo) {
-                let telefone = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+            // Função para atualizar o valor total automaticamente
+            function atualizarValorTotal() {
+                var promises = [];
 
+                // Se o grupo do olho ESQUERDO estiver visível (ou seja, o select está ativo)
+                if (!$('#grupo_olho_esquerdo').hasClass('d-none')) {
+                    var idModeloEsq = $('#cadastrar_lente_esquerda').val();
+                    var qntEsq = parseFloat($('#cadastrar_qnt_esquerda').val()) || 0;
+                    if (idModeloEsq && qntEsq > 0) {
+                        // Usamos olhos=1 para obter o valor unitário para o olho esquerdo
+                        var promessaEsq = getPrice(idModeloEsq, 1).then(function(response) {
+                            console.log('a')
+                            if (response.valor_total !== undefined) {
+                                return parseFloat(response.valor_total) * qntEsq;
+                            }
+                            return 0;
+                        });
+                        promises.push(promessaEsq);
+                    } else {
+                        // Se não houver lente ou quantidade, resolve com zero
+                        promises.push($.Deferred().resolve(0));
+                    }
+                } else {
+                    promises.push($.Deferred().resolve(0));
+                }
+
+                // Se o grupo do olho DIREITO estiver visível
+                if (!$('#grupo_olho_direito').hasClass('d-none')) {
+                    var idModeloDir = $('#cadastrar_lente_direita').val();
+                    var qntDir = parseFloat($('#cadastrar_qnt_direita').val()) || 0;
+                    if (idModeloDir && qntDir > 0) {
+                        // Usamos olhos=1 para o olho direito
+                        var promessaDir = getPrice(idModeloDir, 1).then(function(response) {
+                            if (response.valor_total !== undefined) {
+                                return parseFloat(response.valor_total) * qntDir;
+                            }
+                            return 0;
+                        });
+                        promises.push(promessaDir);
+                    } else {
+                        promises.push($.Deferred().resolve(0));
+                    }
+                } else {
+                    promises.push($.Deferred().resolve(0));
+                }
+
+                // Quando todas as chamadas AJAX forem concluídas, soma os valores e atualiza o campo total
+                $.when.apply($, promises).done(function() {
+                    var total = 0;
+                    // Se houver apenas uma promessa, arguments não é um array
+                    if (promises.length === 1) {
+                        total = arguments[0];
+                    } else {
+                        for (var i = 0; i < arguments.length; i++) {
+                            total += arguments[i];
+                        }
+                    }
+                    $('#cadastrar_valor').val(total.toFixed(2));
+                });
+            }
+
+            // Vincula a função aos eventos de mudança dos selects e inputs de quantidade
+            $('#cadastrar_lente_esquerda, #cadastrar_lente_direita, #cadastrar_qnt_esquerda, #cadastrar_qnt_direita').on('change', atualizarValorTotal);
+
+
+            // Exibir/ocultar grupos conforme o campo "olhos" (Cadastro)
+            $('#cadastrar_olhos').on('change', function() {
+                let valor = $(this).val();
+                if (valor === '0') { // Ambos os olhos
+                    $('#grupo_olho_esquerdo').removeClass('d-none');
+                    $('#grupo_olho_direito').removeClass('d-none');
+                    $('#cadastrar_copiar').removeClass('d-none')
+                } else if (valor === '1') { // Somente olho esquerdo
+                    $('#grupo_olho_esquerdo').removeClass('d-none');
+                    $('#grupo_olho_direito').addClass('d-none');
+                    $('#cadastrar_fornecedor_direito, #cadastrar_lente_direita').val('');
+                    $('#cadastrar_qnt_direita').val('1');
+                } else if (valor === '2') { // Somente olho direito
+                    $('#grupo_olho_direito').removeClass('d-none');
+                    $('#grupo_olho_esquerdo').addClass('d-none');
+                    $('#cadastrar_fornecedor_esquerdo, #cadastrar_lente_esquerda').val('');
+                    $('#cadastrar_qnt_esquerda').val('1');
+                } else {
+                    $('#grupo_olho_esquerdo, #grupo_olho_direito').addClass('d-none');
+                }
+            });
+            $('#cadastrar_olhos').trigger('change');
+
+            $('#cadastrar_copiar_botao').click(function (e) { 
+                e.preventDefault(); // previne ação padrão, se necessário
+                let fornecedor_direito = $('#cadastrar_fornecedor_direito').val();
+                let lente_direita = $('#cadastrar_lente_direita').val();
+
+                // Define o fornecedor esquerdo igual ao direito
+                $('#cadastrar_fornecedor_esquerdo').val(fornecedor_direito);
+                var idFornecedor = $('#cadastrar_fornecedor_esquerdo').val();
+
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: { id_fornecedor: idFornecedor },
+                        success: function (response) {
+                            // Insere as novas opções
+                            $('#cadastrar_lente_esquerda').html(response);
+                            // Agora, define o valor desejado para selecionar a opção correta
+                            $('#cadastrar_lente_esquerda').val(lente_direita);
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX para o fornecedor esquerdo.');
+                        }
+                    });
+                } else {
+                    $('#cadastrar_lente_esquerda').html('<option value="">Selecione...</option>');
+                }
+            });
+
+
+            // Funções de formatação e validação
+            function formatarCelular(campo) {
+                let telefone = campo.val().replace(/\D/g, '');
                 if (telefone.length === 10) {
                     telefone = telefone.replace(/(\d{2})(\d)/, '($1) $2');
                     telefone = telefone.replace(/(\d{4})(\d{4})$/, '$1-$2');
@@ -497,17 +732,14 @@
                     campo.val(telefone);
                 }
             }
-
             function formatarCPF(campo) {
-                let cpf = campo.val().replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-
+                let cpf = campo.val().replace(/\D/g, '');
                 if (cpf.length === 11) {
                     cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
                     cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
                     cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
                     campo.val(cpf);
                 }
-
                 if (!validarCPF(cpf)) {
                     campo.addClass('is-invalid');
                     if (campo.next('.invalid-feedback').length === 0) {
@@ -515,14 +747,12 @@
                     }
                 } else {
                     campo.removeClass('is-invalid').addClass('is-valid');
-                    campo.next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
+                    campo.next('.invalid-feedback').remove();
                 }
             }
-
             function validarCPF(cpf) {
-                cpf = cpf.replace(/[^\d]+/g,''); // Remove caracteres não numéricos
+                cpf = cpf.replace(/[^\d]+/g,'');
                 if (cpf == '') return false;
-                // Elimina CPFs conhecidos que são inválidos
                 if (cpf.length != 11 || 
                     cpf == "00000000000" || 
                     cpf == "11111111111" || 
@@ -535,65 +765,113 @@
                     cpf == "88888888888" || 
                     cpf == "99999999999")
                     return false;
-                // Validação do primeiro dígito
                 let add = 0;
-                for (let i=0; i < 9; i ++)
+                for (let i = 0; i < 9; i++)
                     add += parseInt(cpf.charAt(i)) * (10 - i);
                 let rev = 11 - (add % 11);
-                if (rev == 10 || rev == 11) 
-                    rev = 0;
-                if (rev != parseInt(cpf.charAt(9))) 
-                    return false;
-                // Validação do segundo dígito
+                if (rev == 10 || rev == 11) rev = 0;
+                if (rev != parseInt(cpf.charAt(9))) return false;
                 add = 0;
-                for (let i = 0; i < 10; i ++)
+                for (let i = 0; i < 10; i++)
                     add += parseInt(cpf.charAt(i)) * (11 - i);
                 rev = 11 - (add % 11);
-                if (rev == 10 || rev == 11) 
-                    rev = 0;
-                if (rev != parseInt(cpf.charAt(10)))
-                    return false;
+                if (rev == 10 || rev == 11) rev = 0;
+                if (rev != parseInt(cpf.charAt(10))) return false;
                 return true;
             }
 
-            // Ao alterar a seleção de olhos:
-            $('#cadastrar_olhos').on('change', function() {
-                let valor = $(this).val();
+            // Funções para o Modal de Edição
 
-                if(valor === '0' || valor === '1') {
-                    $('#campo_olho_esquerdo').removeClass('d-none');
+            // Ao alterar o select de fornecedor para o olho esquerdo (edição)
+            $('#editar_fornecedor_esquerdo').on('change', function () {
+                var idFornecedor = $(this).val();
+                // Recupera o modelo previamente armazenado (caso exista)
+                var selectedModel = $(this).data('selectedModel') || null;
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: { id_fornecedor: idFornecedor },
+                        success: function (response) {
+                            $('#editar_lente_esquerda').html(response);
+                            // Se houver um modelo pré-selecionado, define-o
+                            if (selectedModel) {
+                                $('#editar_lente_esquerda').val(selectedModel);
+                            }
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX para o fornecedor esquerdo (edição).');
+                        }
+                    });
                 } else {
-                    $('#campo_olho_esquerdo').addClass('d-none');
-                    $('#cadastrar_olho_esquerdo').val('');
-                }
-
-                if(valor === '0' || valor === '2') {
-                    $('#campo_olho_direito').removeClass('d-none');
-                } else {
-                    $('#campo_olho_direito').addClass('d-none');
-                    $('#cadastrar_olho_direito').val('');
+                    $('#editar_lente_esquerda').html('<option value="">Selecione...</option>');
                 }
             });
 
-            // Opcional: dispara o change para configurar o estado inicial
-            $('#cadastrar_olhos').trigger('change');
+            // Ao alterar o select de fornecedor para o olho direito (edição)
+            $('#editar_fornecedor_direito').on('change', function () {
+                var idFornecedor = $(this).val();
+                var selectedModel = $(this).data('selectedModel') || null;
+                if (idFornecedor) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
+                        type: 'GET',
+                        data: { id_fornecedor: idFornecedor },
+                        success: function (response) {
+                            $('#editar_lente_direita').html(response);
+                            if (selectedModel) {
+                                $('#editar_lente_direita').val(selectedModel);
+                            }
+                        },
+                        error: function () {
+                            alert('Erro na requisição AJAX para o fornecedor direito (edição).');
+                        }
+                    });
+                } else {
+                    $('#editar_lente_direita').html('<option value="">Selecione...</option>');
+                }
+            });
+
+
+            $('#editar_olhos').on('change', function(){
+                var valor = $(this).val();
+                if (valor === '0') { // Ambos os Olhos
+                    $('#editar_grupo_olho_esquerdo').removeClass('d-none');
+                    $('#editar_grupo_olho_direito').removeClass('d-none');
+                    $('#editar_copiar').removeClass('d-none');
+                } else if (valor === '1') { // Somente Olho Esquerdo
+                    $('#editar_grupo_olho_esquerdo').removeClass('d-none');
+                    $('#editar_grupo_olho_direito').addClass('d-none');
+                    $('#editar_copiar').addClass('d-none');
+                } else if (valor === '2') { // Somente Olho Direito
+                    $('#editar_grupo_olho_esquerdo').addClass('d-none');
+                    $('#editar_grupo_olho_direito').removeClass('d-none');
+                    $('#editar_copiar').addClass('d-none');
+                } else {
+                    $('#editar_grupo_olho_esquerdo, #editar_grupo_olho_direito, #editar_copiar').addClass('d-none');
+                }
+            });
 
             $('#modalEditarOrcamento').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Botão que acionou a modal
-                var id_orcamento = button.data('id_orcamento');
-                var nome = button.data('nome');
-                var cpf = button.data('cpf');
-                var contato = button.data('contato');
-                var id_medico = button.data('id_medico');
-                var olhos = button.data('olhos');
-                var olho_esquerdo = button.data('olho_esquerdo');
-                var olho_direito = button.data('olho_direito');
-                var id_lente = button.data('id_lente');
-                var valor = button.data('valor');
-                var forma_pgto1 = button.data('forma_pgto1');
-                var forma_pgto2 = button.data('forma_pgto2');
-                var pagamento = button.data('pagamento');
-                var id_fornecedor = button.data('id_fornecedor');
+                var button                = $(event.relatedTarget);
+                var id_orcamento          = button.data('id_orcamento');
+                var nome                  = button.data('nome');
+                var cpf                   = button.data('cpf');
+                var contato               = button.data('contato');
+                var id_medico             = button.data('id_medico');
+                var olhos                 = button.data('olhos');
+                var olho_esquerdo         = button.data('olho_esquerdo');
+                var olho_direito          = button.data('olho_direito');
+                var fornecedor_esquerdo   = button.data('fornecedor_esquerdo');
+                var fornecedor_direito    = button.data('fornecedor_direito');
+                var lente_esquerda        = button.data('lente_esquerda');  // id_modelo da lente do olho esquerdo
+                var lente_direita         = button.data('lente_direita');   // id_modelo da lente do olho direito
+                var qnt_esquerda          = button.data('qnt_esquerda');
+                var qnt_direita           = button.data('qnt_direita');
+                var valor                 = button.data('valor');
+                var forma_pgto1           = button.data('forma_pgto1');
+                var forma_pgto2           = button.data('forma_pgto2');
+                var status                = button.data('status');
 
                 $('#editar_id_orcamento').val(id_orcamento);
                 $('#editar_nome').val(nome);
@@ -603,21 +881,23 @@
                 $('#editar_olhos').val(olhos);
                 $('#editar_olho_esquerdo').val(olho_esquerdo);
                 $('#editar_olho_direito').val(olho_direito);
-                $('#editar_id_lente').val(id_lente);
+                $('#editar_fornecedor_esquerdo').val(fornecedor_esquerdo);
+                $('#editar_fornecedor_direito').val(fornecedor_direito);
+                $('#editar_lente_esquerda').val(lente_esquerda);
+                $('#editar_lente_direita').val(lente_direita);
+                $('#editar_qnt_esquerda').val(qnt_esquerda ? qnt_esquerda : '1');
+                $('#editar_qnt_direita').val(qnt_direita ? qnt_direita : '1');
                 $('#editar_valor').val(valor);
                 $('#editar_forma_pgto1').val(forma_pgto1);
                 $('#editar_forma_pgto2').val(forma_pgto2);
-                $('#editar_pagamento').val(pagamento);
-                $('#editar_id_fornecedor').val(id_fornecedor);
+                $('#editar_status').val(status);
 
-                // Disparar o evento de change para carregar os modelos de lente
-                $('#editar_id_fornecedor').trigger('change');
+                // Dispara o evento change ao carregar o modal para garantir que os campos sejam exibidos conforme o valor pré-selecionado
+                $('#editar_olhos').trigger('change');
 
-                // Formatar CPF e Celular ao abrir o modal
+                // Formatação de CPF e Celular no modal de edição
                 formatarCPF($('#editar_cpf'));
                 formatarCelular($('#editar_contato'));
-
-                // Validar CPF ao abrir o modal
                 if (!validarCPF($('#editar_cpf').val().replace(/\D/g, ''))) {
                     $('#editar_cpf').addClass('is-invalid');
                     if ($('#editar_cpf').next('.invalid-feedback').length === 0) {
@@ -625,25 +905,70 @@
                     }
                 } else {
                     $('#editar_cpf').removeClass('is-invalid').addClass('is-valid');
-                    $('#editar_cpf').next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
+                    $('#editar_cpf').next('.invalid-feedback').remove();
                 }
 
-                // Mostrar/ocultar campos de olho esquerdo e direito
-                if (olhos === 0 || olhos === 1) {
-                    $('#editar_campo_olho_esquerdo').removeClass('d-none');
-                } else {
-                    $('#editar_campo_olho_esquerdo').addClass('d-none');
+                // Requisição AJAX para o olho esquerdo
+                if (lente_esquerda) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_lente_contato_fornecedor_modelo.php',
+                        type: 'GET',
+                        data: { id_modelo: lente_esquerda },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.id_fornecedor) {
+                                // Define o fornecedor, armazena o modelo e dispara o evento change
+                                $('#editar_fornecedor_esquerdo')
+                                    .val(response.id_fornecedor)
+                                    .data('selectedModel', lente_esquerda)
+                                    .trigger('change');
+                            } else if (response.error) {
+                                console.error('Erro: ' + response.error);
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Erro na requisição AJAX para o olho esquerdo: ' + textStatus);
+                        }
+                    });
                 }
-                if (olhos === 0 || olhos === 2) {
-                    $('#editar_campo_olho_direito').removeClass('d-none');
-                } else {
-                    $('#editar_campo_olho_direito').addClass('d-none');
+
+                // Requisição AJAX para o olho direito
+                if (lente_direita) {
+                    $.ajax({
+                        url: '/GRNacoes/views/ajax/get_lente_contato_fornecedor_modelo.php',
+                        type: 'GET',
+                        data: { id_modelo: lente_direita },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.id_fornecedor) {
+                                $('#editar_fornecedor_direito')
+                                    .val(response.id_fornecedor)
+                                    .data('selectedModel', lente_direita)
+                                    .trigger('change');
+                            } else if (response.error) {
+                                console.error('Erro: ' + response.error);
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Erro na requisição AJAX para o olho direito: ' + textStatus);
+                        }
+                    });
                 }
+            });
+
+
+
+            // Validação no modal de edição
+            $('#editar_cpf').on('input', function() {
+                formatarCPF($(this));
+            });
+            $('#editar_contato').on('input', function() {
+                formatarCelular($(this));
             });
 
             // Preencher modal de exclusão
             $('#modalDeletarOrcamento').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Botão que acionou a modal
+                var button = $(event.relatedTarget);
                 var id_orcamento = button.data('id_orcamento');
                 var nome = button.data('nome');
 
@@ -652,157 +977,43 @@
             });
 
             function filtrarTabela() {
-                var filtroMes = $('#filtroMes').val(); // Valor do filtro de mês (formato YYYY-MM)
-                var filtroLente = $('#filtroLente').val(); // Valor do filtro de lente (nome da lente)
+                var filtroMes    = $('#filtroMes').val();
+                var filtroLente  = $('#filtroLente').val();
+                var filtroStatus = $('#filtroStatus').val();
 
                 $('#tabelaOrcamentos tbody tr').each(function () {
-                    var dataOrcamento = $(this).find('td:eq(1)').text().trim(); // Coluna da data (formato DD/MM/YYYY)
-                    var nomeLente = $(this).find('td:eq(3)').text().trim(); // Nome da lente na coluna 2
+                    // Obtem a data do orçamento (coluna oculta)
+                    var dataOrcamento = $(this).find('td:eq(1)').text().trim();
+                    var partesData    = dataOrcamento.split('/');
+                    var mesOrcamento  = (partesData.length === 3) ? partesData[2] + '-' + partesData[1] : '';
 
-                    // Converter a data do orçamento para o formato YYYY-MM
-                    var partesData = dataOrcamento.split('/');
-                    var mesOrcamento = partesData[2] + '-' + partesData[1]; // Formato YYYY-MM
+                    // Obtem o status a partir do elemento <b> dentro da célula (coluna 4)
+                    var statusOrcamento = $(this).find('td:eq(4) b').text().trim();
+                    // Obtem o nome da lente da coluna 5
+                    var nomeLente = $(this).find('td:eq(5)').text().trim();
 
-                    // Aplicar filtro de mês
                     var exibirMes = true;
                     if (filtroMes) {
-                        exibirMes = (mesOrcamento === filtroMes.substring(0, 7)); // Comparar YYYY-MM
+                        exibirMes = (mesOrcamento === filtroMes.substring(0, 7));
                     }
-
-                    // Aplicar filtro de lente
                     var exibirLente = true;
                     if (filtroLente) {
-                        exibirLente = (nomeLente === filtroLente); // Comparar nomes das lentes
+                        exibirLente = (nomeLente === filtroLente);
+                    }
+                    var exibirStatus = true;
+                    if (filtroStatus) {
+                        exibirStatus = (statusOrcamento === filtroStatus);
                     }
 
-                    // Mostrar ou ocultar a linha da tabela
-                    if (exibirMes && exibirLente) {
+                    if (exibirMes && exibirLente && exibirStatus) {
                         $(this).show();
                     } else {
                         $(this).hide();
                     }
                 });
             }
-
-            // Aplicar filtros ao alterar os valores
-            $('#filtroMes, #filtroLente').on('change', function () {
+            $('#filtroMes, #filtroLente, #filtroStatus').on('change', function () {
                 filtrarTabela();
-            });
-
-            // Ao abrir o modal de edição
-            $('#modalEditarOrcamento').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Botão que acionou a modal
-                var id_orcamento = button.data('id_orcamento');
-                var nome = button.data('nome');
-                var cpf = button.data('cpf');
-                var contato = button.data('contato');
-                var id_medico = button.data('id_medico');
-                var olhos = button.data('olhos');
-                var olho_esquerdo = button.data('olho_esquerdo');
-                var olho_direito = button.data('olho_direito');
-                var id_lente = button.data('id_lente');
-                var valor = button.data('valor');
-                var forma_pgto1 = button.data('forma_pgto1');
-                var forma_pgto2 = button.data('forma_pgto2');
-                var pagamento = button.data('pagamento');
-
-                $('#editar_id_orcamento').val(id_orcamento);
-                $('#editar_nome').val(nome);
-                $('#editar_cpf').val(cpf);
-                $('#editar_contato').val(contato);
-                $('#editar_id_medico').val(id_medico);
-                $('#editar_olhos').val(olhos);
-                $('#editar_olho_esquerdo').val(olho_esquerdo);
-                $('#editar_olho_direito').val(olho_direito);
-                $('#editar_id_lente').val(id_lente);
-                $('#editar_valor').val(valor);
-                $('#editar_forma_pgto1').val(forma_pgto1);
-                $('#editar_forma_pgto2').val(forma_pgto2);
-                $('#editar_pagamento').val(pagamento);
-
-                // Formatar CPF e Celular ao abrir o modal
-                formatarCPF($('#editar_cpf'));
-                formatarCelular($('#editar_contato'));
-
-                // Validar CPF ao abrir o modal
-                if (!validarCPF($('#editar_cpf').val().replace(/\D/g, ''))) {
-                    $('#editar_cpf').addClass('is-invalid');
-                    if ($('#editar_cpf').next('.invalid-feedback').length === 0) {
-                        $('<div class="invalid-feedback">CPF Inválido. Tente novamente.</div>').insertAfter($('#editar_cpf'));
-                    }
-                } else {
-                    $('#editar_cpf').removeClass('is-invalid').addClass('is-valid');
-                    $('#editar_cpf').next('.invalid-feedback').remove(); // Remove a mensagem de erro, se existir
-                }
-
-                // Mostrar/ocultar campos de olho esquerdo e direito
-                if (olhos === 0 || olhos === 1) {
-                    $('#editar_campo_olho_esquerdo').removeClass('d-none');
-                } else {
-                    $('#editar_campo_olho_esquerdo').addClass('d-none');
-                }
-                if (olhos === 0 || olhos === 2) {
-                    $('#editar_campo_olho_direito').removeClass('d-none');
-                } else {
-                    $('#editar_campo_olho_direito').addClass('d-none');
-                }
-            });
-
-            // Adicionar validação ao CPF no formulário de edição
-            $('#editar_cpf').on('input', function() {
-                formatarCPF($(this));
-            });
-
-            // Adicionar formatação ao celular no formulário de edição
-            $('#editar_contato').on('input', function() {
-                formatarCelular($(this));
-            });
-
-            $('#cadastrar_id_fornecedor').on('change', function () {
-                var idFornecedor = $(this).val();
-                if (idFornecedor) {
-                    $.ajax({
-                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
-                        type: 'GET',
-                        data: {
-                            id_fornecedor: idFornecedor
-                        },
-                        success: function (response) {
-                            $('#cadastrar_id_lente').html(response);
-                            $('#cadastrar_id_lente').parent().removeClass('d-none');
-                        },
-                        error: function () {
-                            alert('Erro na requisição AJAX.');
-                        }
-                    });
-                } else {
-                    $('#cadastrar_id_lente').html('<option value="">Selecione...</option>');
-                    $('#cadastrar_id_lente').parent().addClass('d-none');
-                }
-            });
-
-            // Evento para o formulário de edição
-            $('#editar_id_fornecedor').on('change', function () {
-                var idFornecedor = $(this).val();
-                if (idFornecedor) {
-                    $.ajax({
-                        url: '/GRNacoes/views/ajax/get_modelos_por_fornecedor.php',
-                        type: 'GET',
-                        data: {
-                            id_fornecedor: idFornecedor
-                        },
-                        success: function (response) {
-                            $('#editar_id_lente').html(response);
-                            $('#editar_id_lente').parent().removeClass('d-none');
-                        },
-                        error: function () {
-                            alert('Erro na requisição AJAX.');
-                        }
-                    });
-                } else {
-                    $('#editar_id_lente').html('<option value="">Selecione...</option>');
-                    $('#editar_id_lente').parent().addClass('d-none');
-                }
             });
         });
     </script>
@@ -812,5 +1023,4 @@
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-lente_contato_orcamentos.js"></script>
 </body>
-
 </html>

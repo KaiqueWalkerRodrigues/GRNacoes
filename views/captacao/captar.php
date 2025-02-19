@@ -113,9 +113,7 @@
                                     <thead>
                                         <tr>
                                             <th>Hórario</th>
-                                            <?php if(verificarSetor([1,12])){ ?>
-                                                <th>Empresa</th>
-                                            <?php } ?>
+                                            <th>Empresa</th>
                                             <th>Captador</th>
                                             <th>Paciente</th>
                                             <th>Captado</th>
@@ -128,26 +126,24 @@
                                         <?php foreach($capHoje as $cap) { ?>
                                             <tr class="text-center">
                                                 <td><?php echo Helper::formatarHorario($cap->created_at) ?></td>
-                                                <?php if(verificarSetor([1,12])){ ?>
-                                                    <td><?php echo Helper::mostrar_empresa($cap->id_empresa) ?></td>
-                                                <?php } ?>
+                                                <td><?php echo Helper::mostrar_empresa($cap->id_empresa) ?></td>
                                                 <td><?php echo $Usuario->mostrar($cap->id_captador)->nome; ?></td>
                                                 <td><?php echo $cap->nome_paciente; ?></td>
                                                 <td><?php echo Helper::captado($cap->captado); ?></td>
                                                 <td><?php echo Helper::motivo($cap->id_motivo) ?></td>
                                                 <td><?php echo $cap->nome_medico; ?></td>
-                                                <?php if($cap->id_captador == $_SESSION['id_usuario'] OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 13){ ?>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditar"
-                                                                data-id="<?php echo $cap->id_captado; ?>"
-                                                                data-nome="<?php echo $cap->nome_paciente; ?>"
-                                                                data-captado="<?php echo $cap->captado; ?>"
-                                                                data-medico="<?php echo $cap->id_medico; ?>"
-                                                                data-observacao="<?php echo $cap->observacao; ?>"
-                                                                ><i class="fa-solid fa-gear"></i></button>
-                                                        <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalExcluir" data-id="<?php echo $cap->id_captado; ?>"><i class="fa-solid fa-trash"></i></button>
-                                                    </td>
-                                                <?php } ?>
+                                                <td class="text-center">
+                                                    <?php if($cap->id_captador == $_SESSION['id_usuario'] OR $_SESSION['id_setor'] == 1 OR $_SESSION['id_setor'] == 13){ ?>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditar"
+                                                            data-id="<?php echo $cap->id_captado; ?>"
+                                                            data-nome="<?php echo $cap->nome_paciente; ?>"
+                                                            data-captado="<?php echo $cap->captado; ?>"
+                                                            data-medico="<?php echo $cap->id_medico; ?>"
+                                                            data-observacao="<?php echo $cap->observacao; ?>"
+                                                            ><i class="fa-solid fa-gear"></i></button>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalExcluir" data-id="<?php echo $cap->id_captado; ?>"><i class="fa-solid fa-trash"></i></button>
+                                                    <?php } ?>
+                                                </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>

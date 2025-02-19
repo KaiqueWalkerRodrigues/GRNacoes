@@ -57,8 +57,8 @@ class Lente_contato_Modelo {
         $codigo_simah = strtoupper(trim($dados['codigo_simah']));
         $modelo = ucwords(strtolower(trim($dados['modelo'])));
         $unidade = strtoupper(trim($dados['unidade']));
-        $valor_custo = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_custo'])));
-        $valor_venda = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_venda'])));
+        $valor_custo = floatval(str_replace(',', '.', $_POST['valor_custo']));
+        $valor_venda = floatval(str_replace(',', '.', $_POST['valor_venda']));
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
@@ -134,8 +134,8 @@ class Lente_contato_Modelo {
         $codigo_simah = strtoupper(trim($dados['codigo_simah']));
         $modelo = ucwords(strtolower(trim($dados['modelo'])));
         $unidade = strtoupper(trim($dados['unidade']));
-        $valor_custo = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_custo'])));
-        $valor_venda = floatval(str_replace(',', '.', str_replace('.', '', $dados['valor_venda'])));
+        $valor_custo = floatval(str_replace(',', '.', $_POST['valor_custo']));
+        $valor_venda = floatval(str_replace(',', '.', $_POST['valor_venda']));
         $updated_at = date("Y-m-d H:i:s"); 
         $usuario_logado = $dados['usuario_logado'];
 
