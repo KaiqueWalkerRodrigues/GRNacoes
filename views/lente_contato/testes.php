@@ -12,7 +12,7 @@
         $Lc_orcamento->editarTeste($_POST);
     }
     if (isset($_POST['btnDeletar'])) {
-        $Lc_orcamento->deletar($_POST['id_teste'], $_POST['usuario_logado']);
+        $Lc_orcamento->deletarTeste($_POST['id_teste'], $_POST['usuario_logado']);
     }
 ?>
 <!DOCTYPE html>
@@ -530,7 +530,7 @@
                 var id_lente_esquerda   = button.data('id_lente_esquerda');
                 var olho_esquerdo       = button.data('olho_esquerdo');
                 var qnt_esquerda        = button.data('qnt_esquerda');
-                
+            
                 // Preenche os campos do paciente
                 $('#editar_id_teste').val(id_teste);
                 $('#editar_nome').val(nome);
@@ -580,9 +580,9 @@
 
                 // Preenche o select de olhos e dispara o evento change para exibir o grupo correto
                 $('#editar_olhos').val(olhos).trigger('change');
-                
+                console.log(olhos)
                 // Se for para exibir o grupo do olho direito (Ambos ou Somente Direito)
-                if(olhos === "0" || olhos === "2"){
+                if(olhos === 0 || olhos === 2){
                     $('#editar_fornecedor_direito').val(fornecedor_direito).trigger('change');
                     // Aguarda a resposta do AJAX para definir a lente
                     setTimeout(function(){
@@ -593,7 +593,7 @@
                 }
                 
                 // Se for para exibir o grupo do olho esquerdo (Ambos ou Somente Esquerdo)
-                if(olhos === "0" || olhos === "1"){
+                if(olhos === 0 || olhos === 1){
                     $('#editar_fornecedor_esquerdo').val(fornecedor_esquerdo).trigger('change');
                     setTimeout(function(){
                         $('#editar_lente_esquerda').val(id_lente_esquerda);

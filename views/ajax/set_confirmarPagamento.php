@@ -5,11 +5,12 @@ $Financeiro_Contrato = new Financeiro_Contrato();
 
 if (isset($_POST['id_parcela'], $_POST['usuario_logado'], $_POST['valor_pago'])) {
     $id_parcela = $_POST['id_parcela'];
+    $pago_em = $_POST['pago_em'];
     $usuario_logado = $_POST['usuario_logado'];
     $valor_pago = (float)$_POST['valor_pago'];
 
     try {
-        $id_contrato = $Financeiro_Contrato->confirmarPagamento($id_parcela, $usuario_logado, $valor_pago);
+        $id_contrato = $Financeiro_Contrato->confirmarPagamento($id_parcela, $usuario_logado, $valor_pago, $pago_em);
 
         echo json_encode([
             'success' => true,

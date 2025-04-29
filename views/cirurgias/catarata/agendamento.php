@@ -156,8 +156,8 @@
                                 <input type="text" id="cadastrar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_solicitante" class="form-label">Médico Solicitante *</label>
-                                <select id="cadastrar_id_solicitante" name="id_solicitante" class="form-control" required>
+                                <label for="id_solicitante" class="form-label">Médico Solicitante</label>
+                                <select id="cadastrar_id_solicitante" name="id_solicitante" class="form-control">
                                     <option value="">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
@@ -306,8 +306,8 @@
                                 <input type="text" id="editar_contato" name="contato" class="form-control" required>
                             </div>
                             <div class="col-4 offset-1">
-                                <label for="id_solicitante" class="form-label">Médico Solicitante *</label>
-                                <select id="editar_id_solicitante" name="id_solicitante" class="form-control" required>
+                                <label for="id_solicitante" class="form-label">Médico Solicitante</label>
+                                <select id="editar_id_solicitante" name="id_solicitante" class="form-control">
                                     <option value="">Selecione...</option>
                                     <?php foreach($Medico->listar() as $medico){ ?>
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>

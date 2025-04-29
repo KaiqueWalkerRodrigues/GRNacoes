@@ -121,6 +121,9 @@ class Lente_contato_Orcamento {
         $forma_pgto2 = (isset($dados['forma_pgto2']) && intval($dados['forma_pgto2']) > 0)
                             ? intval($dados['forma_pgto2'])
                             : null;
+
+        $cv_pgto1 = isset($dados['cv_pgto1']) ? trim($dados['cv_pgto1']) : null;
+        $cv_pgto2 = isset($dados['cv_pgto2']) ? trim($dados['cv_pgto2']) : null;
                             
         $status = isset($dados['status']) ? intval($dados['status']) : 0;
         
@@ -138,7 +141,7 @@ class Lente_contato_Orcamento {
             (
                 nome, cpf, contato, id_medico, olhos, valor,
                 id_modelo_esquerdo, id_modelo_direito, qnt_esquerda, qnt_direita,
-                id_forma_pagamento1, id_forma_pagamento2, status,
+                id_forma_pagamento1, id_forma_pagamento2, cv_pgto1, cv_pgto2, status,
                 olho_esquerdo, olho_direito, id_contatologa, id_empresa,
                 created_at, updated_at, deleted_at
             )
@@ -146,7 +149,7 @@ class Lente_contato_Orcamento {
             (
                 :nome, :cpf, :contato, :id_medico, :olhos, :valor,
                 :id_modelo_esquerdo, :id_modelo_direito, :qnt_esquerda, :qnt_direita,
-                :forma_pgto1, :forma_pgto2, :status,
+                :forma_pgto1, :forma_pgto2, :cv_pgto1, :cv_pgto2, :status,
                 :olho_esquerdo, :olho_direito, :id_contatologa, :id_empresa,
                 :created_at, :updated_at, :deleted_at
             )
@@ -167,6 +170,8 @@ class Lente_contato_Orcamento {
         
         $sql->bindParam(':forma_pgto1', $forma_pgto1);
         $sql->bindParam(':forma_pgto2', $forma_pgto2);
+        $sql->bindParam(':cv_pgto1', $cv_pgto1);
+        $sql->bindParam(':cv_pgto2', $cv_pgto2);
         $sql->bindParam(':status', $status);
         
         $sql->bindParam(':olho_esquerdo', $olho_esquerdo);
@@ -364,6 +369,9 @@ class Lente_contato_Orcamento {
         $forma_pgto2 = (isset($dados['forma_pgto2']) && intval($dados['forma_pgto2']) > 0)
                             ? intval($dados['forma_pgto2'])
                             : null;
+
+        $cv_pgto1  = isset($dados['cv_pgto1'])  ? trim($dados['cv_pgto1'])  : null;
+        $cv_pgto2  = isset($dados['cv_pgto2'])  ? trim($dados['cv_pgto2'])  : null;
                             
         $status = isset($dados['status']) ? intval($dados['status']) : 0;
         
@@ -392,6 +400,8 @@ class Lente_contato_Orcamento {
                 qnt_direita = :qnt_direita,
                 id_forma_pagamento1 = :forma_pgto1,
                 id_forma_pagamento2 = :forma_pgto2,
+                cv_pgto1 = :cv_pgto1,
+                cv_pgto2 = :cv_pgto2,
                 status = :status,
                 olho_esquerdo = :olho_esquerdo,
                 olho_direito = :olho_direito,
@@ -414,6 +424,8 @@ class Lente_contato_Orcamento {
         $sql->bindParam(':qnt_direita', $qnt_direita);
         $sql->bindParam(':forma_pgto1', $forma_pgto1);
         $sql->bindParam(':forma_pgto2', $forma_pgto2);
+        $sql->bindParam(':cv_pgto1', $cv_pgto1);
+        $sql->bindParam(':cv_pgto2', $cv_pgto2);
         $sql->bindParam(':status', $status);
         $sql->bindParam(':olho_esquerdo', $olho_esquerdo);
         $sql->bindParam(':olho_direito', $olho_direito);
@@ -597,6 +609,54 @@ class Lente_contato_Orcamento {
             <script>
                 alert('Não foi possível Deletar o Orçamento!');
                 window.location.href = '" . URL . "/lente_contato/orcamentos';
+            </script>";
+            exit;
+        }
+    }
+
+    /**
+     * Deleta um teste (soft delete)
+     *
+     * @param integer $id_orcamento
+     * @param integer $usuario_logado
+     * @return void
+     */
+    public function deletarTeste(int $id_orcamento, $usuario_logado){
+        // Consulta para obter o nome do orçamento
+        $consulta_orcamento = $this->pdo->prepare('SELECT nome FROM lente_contato_orcamentos WHERE id_lente_contato_orcamento = :id_orcamento');
+        $consulta_orcamento->bindParam(':id_orcamento', $id_orcamento);
+        $consulta_orcamento->execute();
+        $resultado_orcamento = $consulta_orcamento->fetch(PDO::FETCH_ASSOC);
+
+        // Verifica se o orçamento foi encontrado
+        if ($resultado_orcamento) {
+            $nome_orcamento = $resultado_orcamento['nome'];
+        } else {
+            // Se o orçamento não for encontrado, use um nome genérico
+            $nome_orcamento = "Orçamento Desconhecido";
+        }
+
+        // Atualiza o registro com a data de exclusão
+        $sql = $this->pdo->prepare('UPDATE lente_contato_orcamentos SET deleted_at = :deleted_at WHERE id_lente_contato_orcamento = :id_orcamento');
+        $agora = date("Y-m-d H:i:s");
+        $sql->bindParam(':deleted_at', $agora);
+        $sql->bindParam(':id_orcamento', $id_orcamento);
+
+        if ($sql->execute()) {
+            $descricao = "Deletou o Orçamento $nome_orcamento ($id_orcamento)";
+            $this->addLog("Deletar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Orçamento Deletado com Sucesso!');
+                window.location.href = '" . URL . "/lente_contato/testes';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Deletar o Orçamento!');
+                window.location.href = '" . URL . "/lente_contato/testes';
             </script>";
             exit;
         }

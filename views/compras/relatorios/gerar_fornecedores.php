@@ -264,7 +264,7 @@ if($empresa == 0 OR $empresa == 1){
                 
                 $col = 'B';
                 for($i = 1; $i < 12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(1,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(1,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -368,7 +368,7 @@ if($empresa == 0 OR $empresa == 1){
                 
                 $col = 'B';
                 for($i = 1; $i <=12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(3,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(3,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -469,7 +469,7 @@ if($empresa == 0 OR $empresa == 1){
                 
                 $col = 'B';
                 for($i = 1; $i <=12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(5,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(5,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -575,7 +575,7 @@ if($empresa == 0 OR $empresa == 2){
                 
                 $col = 'B';
                 for($i = 1; $i <=12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(2,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(2,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -679,7 +679,7 @@ if($empresa == 0 OR $empresa == 2){
                 
                 $col = 'B';
                 for($i = 1; $i <=12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(4,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(4,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -781,7 +781,7 @@ if($empresa == 0 OR $empresa == 2){
                 
                 $col = 'B';
                 for($i = 1; $i <=12; $i++){
-                    $total_f_mes = $Compra_nota->totalFornecedorMes(6,$f->id_compra_fornecedor,$i);
+                    $total_f_mes = $Compra_nota->totalFornecedorMes(6,$f->id_compra_fornecedor,$i,$ano);
                     if($total_f_mes > 0){$activeWorksheet->setCellValue($col.$row_categoria,$total_f_mes);}
                     $activeWorksheet->getCell($col.$row_categoria)->getStyle()->getNumberFormat()->setFormatCode($real);
                     $col = chr(ord($col) + 1);
@@ -953,7 +953,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
@@ -973,7 +973,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
@@ -1094,7 +1094,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
@@ -1114,7 +1114,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
@@ -1235,7 +1235,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
@@ -1255,7 +1255,7 @@ if($empresa == 0 OR $empresa == 2){
             
                         $col = 'B';
                         for ($i = 1; $i <= 12; $i++) {
-                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i);
+                            $total_f_mes = $Compra_nota->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }

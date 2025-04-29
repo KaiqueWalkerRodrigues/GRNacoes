@@ -246,7 +246,7 @@
                             </div>
                             <div class="col-3">
                                 <label for="data" class="form-label">Data da Nota *</label>
-                                <input type="date" id="cadastrar_data" name="data" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                                <input type="date" id="cadastrar_data" name="data" class="form-control" required>
                             </div>
                         </div>
                         <div class="row">

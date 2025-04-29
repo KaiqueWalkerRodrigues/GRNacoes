@@ -157,7 +157,7 @@ class Compra_Nota {
 
             echo "<script>
                     alert('Nota de compra cadastrada com sucesso!');
-                    window.location.href = '" . URL . "/compras/new_notas';
+                    window.location.href = '" . URL . "/compras/notas';
                 </script>";
             exit;
 
@@ -167,14 +167,14 @@ class Compra_Nota {
             if ($e->getCode() == 23000 && strpos($e->getMessage(), '1062 Duplicate entry') !== false) {
                 echo "<script>
                         alert('A nota de compra já foi cadastrada!');
-                        window.location.href = '" . URL . "/compras/new_notas';
+                        window.location.href = '" . URL . "/compras/notas';
                     </script>";
                 exit;
             }
 
             echo "<script>
                     alert('Não foi possível cadastrar a nota de compra! Erro: " . addslashes($e->getMessage()) . "');
-                    window.location.href = '" . URL . "/compras/new_notas';
+                    window.location.href = '" . URL . "/compras/notas';
                 </script>";
             exit;
         }
@@ -570,25 +570,27 @@ class Compra_Nota {
         return $resultado ? $resultado->total : 0;
     }
 
-    public function totalFornecedorMes($id_empresa,$id_fornecedor,$mes){
+    public function totalFornecedorMes($id_empresa, $id_fornecedor, $mes, $ano){
         $sql = $this->pdo->prepare('SELECT sum(valor) AS total
-        FROM compras_notas 
-        WHERE id_fornecedor = :id_fornecedor
-        AND id_empresa = :id_empresa
-        AND MONTH(data) = :mes
-        AND deleted_at IS NULL
+            FROM compras_notas 
+            WHERE id_fornecedor = :id_fornecedor
+            AND id_empresa = :id_empresa
+            AND MONTH(data) = :mes
+            AND YEAR(data) = :ano
+            AND deleted_at IS NULL
         ');
-
-        $sql->bindParam(':id_fornecedor',$id_fornecedor);
-        $sql->bindParam(':id_empresa',$id_empresa);
-        $sql->bindParam(':mes',$mes);
-
+    
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+    
         $sql->execute();
-
+    
         $resultado = $sql->fetch(PDO::FETCH_OBJ);
-
+    
         return $resultado ? $resultado->total : 0;
-    }
+    }    
 
     public function totalQntdCategoria($id_empresa, $id_categoria, $mes, $ano)
     {
@@ -632,25 +634,60 @@ class Compra_Nota {
         return $resultado['total'];
     }
 
-    public function totalQntdFornecedorMes($id_empresa,$id_fornecedor,$mes){
-        $sql = $this->pdo->prepare('SELECT sum(quantidade) AS total
-        FROM compras_notas 
-        WHERE id_fornecedor = :id_fornecedor
-        AND id_empresa = :id_empresa
-        AND MONTH(data) = :mes
-        AND deleted_at IS NULL
+    public function totalQntdFornecedorMes($id_empresa, $id_fornecedor, $mes, $ano) {
+        // Consulta na tabela compras_notas
+        $sql = $this->pdo->prepare('SELECT SUM(quantidade) AS total
+            FROM compras_notas 
+            WHERE id_fornecedor = :id_fornecedor
+            AND id_empresa = :id_empresa
+            AND MONTH(data) = :mes
+            AND YEAR(data) = :ano
+            AND deleted_at IS NULL
         ');
-
-        $sql->bindParam(':id_fornecedor',$id_fornecedor);
-        $sql->bindParam(':id_empresa',$id_empresa);
-        $sql->bindParam(':mes',$mes);
-
+    
+        $sql->bindParam(':id_fornecedor', $id_fornecedor);
+        $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':mes', $mes);
+        $sql->bindParam(':ano', $ano);
+    
         $sql->execute();
-
+    
         $resultado = $sql->fetch(PDO::FETCH_OBJ);
-
-        return $resultado ? $resultado->total : 0;
+        $total = ($resultado && $resultado->total) ? $resultado->total : 0;
+    
+        // Se o total for null ou 0, tenta buscar na tabela compras_notas_itens
+        if (empty($total) || $total == 0) {
+            // Busca os IDs das notas que correspondem aos filtros
+            $sqlNotas = $this->pdo->prepare('SELECT id_compra_nota FROM compras_notas 
+                WHERE id_fornecedor = :id_fornecedor
+                AND id_empresa = :id_empresa
+                AND MONTH(data) = :mes
+                AND YEAR(data) = :ano
+                AND deleted_at IS NULL
+            ');
+            $sqlNotas->bindParam(':id_fornecedor', $id_fornecedor);
+            $sqlNotas->bindParam(':id_empresa', $id_empresa);
+            $sqlNotas->bindParam(':mes', $mes);
+            $sqlNotas->bindParam(':ano', $ano);
+            $sqlNotas->execute();
+    
+            $idsNotas = $sqlNotas->fetchAll(PDO::FETCH_COLUMN);
+    
+            if (!empty($idsNotas)) {
+                // Prepara a cláusula IN dinamicamente
+                $inQuery = implode(',', array_fill(0, count($idsNotas), '?'));
+    
+                $sqlItens = $this->pdo->prepare("SELECT SUM(quantidade) AS total FROM compras_notas_itens WHERE id_nota IN ($inQuery)");
+                $sqlItens->execute($idsNotas);
+    
+                $resultadoItens = $sqlItens->fetch(PDO::FETCH_OBJ);
+                $total = ($resultadoItens && $resultadoItens->total) ? $resultadoItens->total : 0;
+            }
+        }
+    
+        return $total;
     }
+        
 
     public function totalQntdMes($id_empresa, $mes, $ano)
     {

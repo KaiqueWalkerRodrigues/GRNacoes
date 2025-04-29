@@ -120,7 +120,7 @@
                             </div>
                             <div class="col-5">
                                 <label for="id_categoria" class="form-label">Categoria *</label>
-                                <select name="id_categoria" id="cadastrar_id_categoria" class="form-control">
+                                <select name="id_categoria" id="cadastrar_id_categoria" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Compra_Categoria->listar() as $cc){ ?>
                                         <option value="<?php echo $cc->id_compra_categoria ?>"><?php echo $cc->categoria ?></option>
@@ -159,7 +159,7 @@
                             </div>
                             <div class="col-5">
                                 <label for="editar_id_categoria" class="form-label">Categoria *</label>
-                                <select name="id_categoria" id="editar_id_categoria" class="form-control">
+                                <select name="id_categoria" id="editar_id_categoria" class="form-control" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($Compra_Categoria->listar() as $cc){ ?>
                                         <option value="<?php echo $cc->id_compra_categoria ?>"><?php echo $cc->categoria ?></option>

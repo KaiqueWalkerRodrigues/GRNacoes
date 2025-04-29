@@ -389,7 +389,7 @@ class Financeiro_Boleto {
     }
 
     public function totalComissaoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite){
-        $comissao = $this->totalNaoConvertidoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite)*0.01;
+        $comissao = $this->totalNaoConvertidoPorVendedor($id_campanha,$id_vendedor,$id_empresa,$data_limite)*0.02;
 
         return $comissao ? $comissao : 0;
     }

@@ -601,9 +601,17 @@
                     <form id="formConfirmarPagamento">
                         <input type="hidden" id="confirmarPagamentoIdParcela" name="id_parcela">
                         <input type="hidden" id="confirmarPagamentoUsuarioLogado" name="usuario_logado" value="<?php echo $_SESSION['id_usuario']; ?>">
-                        <div class="form-group">
-                            <label for="valor_pago">Valor Pago</label>
-                            <input type="number" step="0.01" class="form-control" id="valor_pago" name="valor_pago" required>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="valor_pago">Valor Pago *</label>
+                                    <input type="number" step="0.01" class="form-control" id="valor_pago" name="valor_pago" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label for="pago_em" class="form-label">Pago em *</label>
+                                <input type="date" name="pago_em" id="pago_em" class="form-control" value="<?php echo date("Y-m-d") ?>">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -859,7 +867,7 @@
 
                     if (cep.length !== 8) {
                         alert('CEP inválido. O CEP deve conter 8 dígitos.');
-                        isCEPValid = false;
+                    isCEPValid = false;
                         atualizarbtnCadastrar();
                         return;
                     }
@@ -1340,10 +1348,10 @@
                                         <tr data-id_parcela="${parcela.id_financeiro_contrato_parcela}">
                                             <td class='text-center'>${parcela.parcela}</td>
                                             <td class='text-center'>${parcela.data}</td>
-                                            <td class='text-center'>R$ ${valorPago > 0 ? formatarValor(valorPago) : formatarValor(valorParcela)}</td>
+                                            <td class='text-center'>R$ ${valorPago > 0 ? formatarValor(valorPago)+" / R$ "+formatarValor(valorParcela) : formatarValor(valorParcela)}</td>
                                             <td class='text-center'>${statusBadge}</td>
                                             <td class='text-center'>
-                                                ${parcela.status === 0 || parcela.status === 2 ? "<button class='confirmarPagamento btn btn-sm btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : ""}
+                                                ${parcela.pago_em == null || parcela.valor_pago < parcela.valor ? "<button class='confirmarPagamento btn btn-sm btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : ""}
                                             </td>
                                         </tr>
                                     `;

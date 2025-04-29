@@ -33,7 +33,7 @@
                                         <label for="empresaSelect" class="form-label text-light">Empresa</label>
                                         <select id="empresaSelect" class="form-control">
                                             <?php 
-                                                if (verificarSetor([1,12,14])) { ?>
+                                                if (verificarSetor([1,5,12,14])) { ?>
                                                     <option value="0">Todas</option>
                                                     <option value="1">Clínica Parque</option>
                                                     <option value="3">Clínica Mauá</option>

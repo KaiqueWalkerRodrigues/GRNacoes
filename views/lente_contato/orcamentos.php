@@ -13,6 +13,26 @@
     if (isset($_POST['btnDeletar'])) {
         $Lc_orcamento->deletar($_POST['id_orcamento'], $_POST['usuario_logado']);
     }
+
+    function forma_pgto($id){
+        switch ($id) {
+            case 1:
+                return "Crédito";
+            break;
+            case 2:
+                return "Débito";
+            break;
+            case 3:
+                return "Boleto";
+            break;
+            case 4:
+                return "Pix";
+            break;
+            case 5:
+                return "Dinheiro";
+            break;
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -125,6 +145,22 @@
                                             <td><b>Direita:</b> <?php if($orcamento->id_modelo_direito != Null){ echo $Lc_modelo->mostrar($orcamento->id_modelo_direito)->modelo; } ?> <br> <b>Esquerda:</b> <?php if($orcamento->id_modelo_esquerdo != Null){echo $Lc_modelo->mostrar($orcamento->id_modelo_esquerdo)->modelo; } ?></td>
                                             <td><?php echo Helper::formatarData($orcamento->created_at) ?></td>
                                             <td class="text-center">
+                                                <?php 
+                                                    if(isset($orcamento->cv_pgto1) || isset($orcamento->cv_pgto2)){
+                                                ?>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalCvOrcamento"
+                                                            data-id_orcamento="<?php echo $orcamento->id_lente_contato_orcamento ?>"
+                                                            data-nome="<?php echo $orcamento->nome ?>"
+                                                            data-valor="<?php echo $orcamento->valor ?>"
+                                                            data-cv_pgto1="<?php echo $orcamento->cv_pgto1 ?>"
+                                                            data-cv_pgto2="<?php echo $orcamento->cv_pgto2 ?>"
+                                                            data-forma_pgto1="<?php echo forma_pgto($orcamento->id_forma_pagamento1) ?>"
+                                                            data-forma_pgto2="<?php echo forma_pgto($orcamento->id_forma_pagamento2) ?>">
+                                                        <i class="fa-solid fa-credit-card"></i>
+                                                    </button>
+                                                <?php
+                                                    }
+                                                ?>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalEditarOrcamento"
                                                         data-id_orcamento="<?php echo $orcamento->id_lente_contato_orcamento ?>"
                                                         data-nome="<?php echo $orcamento->nome ?>"
@@ -141,6 +177,8 @@
                                                         data-valor="<?php echo $orcamento->valor ?>"
                                                         data-forma_pgto1="<?php echo $orcamento->id_forma_pagamento1 ?>"
                                                         data-forma_pgto2="<?php echo $orcamento->id_forma_pagamento2 ?>"
+                                                        data-cv_pgto1="<?php echo $orcamento->cv_pgto1 ?>"
+                                                        data-cv_pgto2="<?php echo $orcamento->cv_pgto2 ?>"
                                                         data-status="<?php echo $orcamento->status ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
@@ -324,6 +362,18 @@
                                 </select>
                             </div>
                         </div>
+                        <!-- Row para CV da Forma de Pagamento 1 -->
+                        <div class="row d-none" id="cv_forma_pgto">
+                            <div class="d-none col-3 offset-1" id="cv_forma_pgto1">
+                                <label for="cv_input_pgto1">CV - Forma de Pagamento 1 *</label>
+                                <input type="text" id="cv_input_pgto1" name="cv_pgto1" class="form-control">
+                            </div>
+
+                            <div class="d-none col-3 offset-1" id="cv_forma_pgto2">
+                                <label for="cv_input_pgto2">CV - Forma de Pagamento 2 *</label>
+                                <input type="text" id="cv_input_pgto2" name="cv_pgto2" class="form-control">
+                            </div>
+                        </div>
                     </div><!-- Fim do modal-body -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
@@ -491,6 +541,18 @@
                                 </select>
                             </div>
                         </div>
+                        <!-- Row para CV no Modal Editar -->
+                        <div class="row d-none" id="cv_forma_pgto_edt">
+                            <div class="d-none col-3 offset-1" id="cv_forma_pgto1_edt">
+                                <label for="editar_cv_pgto1">CV - Forma de Pagamento 1 *</label>
+                                <input type="text" id="editar_cv_pgto1" name="cv_pgto1" class="form-control">
+                            </div>
+                            <div class="d-none col-3 offset-1" id="cv_forma_pgto2_edt">
+                                <label for="editar_cv_pgto2">CV - Forma de Pagamento 2 *</label>
+                                <input type="text" id="editar_cv_pgto2" name="cv_pgto2" class="form-control">
+                            </div>
+                        </div>
+
                     </div><!-- Fim do modal-body -->
                     <!-- Rodapé do Modal -->
                     <div class="modal-footer">
@@ -527,6 +589,32 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <!-- Modal CV Orçamento -->
+    <div class="modal fade" id="modalCvOrcamento" tabindex="-1" role="dialog" aria-labelledby="modalCvOrcamentoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cv de Pagamento de <span class="modalCvOrcamentoLabel"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-10 offset-1">
+                            <b>Valor: </b><span id="cv_valor"></span><br>
+                            <span><b>CV Forma de Pagamento 1 </b><span id="forma_pgto1_cv"></span>: <span id="cv_cv_pgto1"></span></span><br>
+                            <span><b>CV Forma de Pagamento 2 </b><span id="forma_pgto2_cv"></span>: <span id="cv_cv_pgto2"></span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- SCRIPTS -->
@@ -871,6 +959,8 @@
                 var valor                 = button.data('valor');
                 var forma_pgto1           = button.data('forma_pgto1');
                 var forma_pgto2           = button.data('forma_pgto2');
+                var cv_pgto1              = button.data('cv_pgto1');
+                var cv_pgto2              = button.data('cv_pgto2');
                 var status                = button.data('status');
 
                 $('#editar_id_orcamento').val(id_orcamento);
@@ -890,7 +980,12 @@
                 $('#editar_valor').val(valor);
                 $('#editar_forma_pgto1').val(forma_pgto1);
                 $('#editar_forma_pgto2').val(forma_pgto2);
+                $('#editar_cv_pgto1').val(cv_pgto1);
+                $('#editar_cv_pgto2').val(cv_pgto2);
                 $('#editar_status').val(status);
+
+                $('#editar_forma_pgto1').trigger('change');
+                $('#editar_forma_pgto2').trigger('change');
 
                 // Dispara o evento change ao carregar o modal para garantir que os campos sejam exibidos conforme o valor pré-selecionado
                 $('#editar_olhos').trigger('change');
@@ -956,8 +1051,6 @@
                 }
             });
 
-
-
             // Validação no modal de edição
             $('#editar_cpf').on('input', function() {
                 formatarCPF($(this));
@@ -974,6 +1067,26 @@
 
                 $('#deletar_id_orcamento').val(id_orcamento);
                 $('.modalDeletarOrcamentoLabel').text(nome);
+            });
+
+            $('#modalCvOrcamento').on('shown.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var nome = button.data('nome');
+                // Converte o valor para número e formata no padrão de moeda brasileiro
+                var valor = parseFloat(button.data('valor')) || 0;
+                var valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                
+                var forma_pgto1 = button.data('forma_pgto1');
+                var forma_pgto2 = button.data('forma_pgto2');
+                var cv_pgto1 = button.data('cv_pgto1');
+                var cv_pgto2 = button.data('cv_pgto2');
+
+                $('.modalCvOrcamentoLabel').text(nome);
+                $('#cv_valor').text(valorFormatado);
+                $('#cv_cv_pgto1').text(cv_pgto1);
+                $('#cv_cv_pgto2').text(cv_pgto2);
+                $('#forma_pgto1_cv').text('(' + forma_pgto1 + ')');
+                $('#forma_pgto2_cv').text('(' + forma_pgto2 + ')');
             });
 
             function filtrarTabela() {
@@ -1015,6 +1128,72 @@
             $('#filtroMes, #filtroLente, #filtroStatus').on('change', function () {
                 filtrarTabela();
             });
+
+            $('#cadastrar_forma_pgto1').on('change', function(){
+                var valor = $(this).val();
+                if(valor === '1' || valor === '2'){
+                    // Exibe a row, adiciona o atributo required no input
+                    $('#cv_forma_pgto').removeClass('d-none');
+                    $('#cv_forma_pgto1').removeClass('d-none');
+                    $('#cv_input_pgto1').attr('required', true);
+                } else {
+                    // Oculta a row, limpa o valor e remove o atributo required
+                    $('#cv_forma_pgto').addClass('d-none');
+                    $('#cv_forma_pgto1').addClass('d-none');
+                    $('#cv_input_pgto1').val('');
+                    $('#cv_input_pgto1').removeAttr('required');
+                }
+            });
+
+            $('#cadastrar_forma_pgto2').on('change', function(){
+                var valor = $(this).val();
+                if(valor === '1' || valor === '2'){
+                    $('#cv_forma_pgto').removeClass('d-none');
+                    $('#cv_forma_pgto2').removeClass('d-none');
+                    $('#cv_input_pgto').attr('required', true);
+                } else {
+                    $('#cv_forma_pgto').addClass('d-none');
+                    $('#cv_forma_pgto2').addClass('d-none');
+                    $('#cv_input_pgto2').val('');
+                    $('#cv_input_pgto2').removeAttr('required');
+                }
+            });
+
+            $('#editar_forma_pgto1').on('change', function(){
+                var valor = $(this).val();
+                if(valor === '1' || valor === '2'){
+                    // Exibe a row geral e a coluna do CV
+                    $('#cv_forma_pgto_edt').removeClass('d-none');
+                    $('#cv_forma_pgto1_edt').removeClass('d-none');
+                    // $('#cv_input_pgto1_edt').attr('required', true);
+                } else {
+                    // Oculta a coluna do CV e limpa seu valor e atributo required
+                    $('#cv_forma_pgto1_edt').addClass('d-none');
+                    $('#cv_input_pgto1_edt').val('');
+                    $('#cv_input_pgto1_edt').removeAttr('required');
+                    // Se nenhum dos dois campos estiver visível, oculta a row geral
+                    if($('#cv_forma_pgto2_edt').hasClass('d-none')){
+                        $('#cv_forma_pgto_edt').addClass('d-none');
+                    }
+                }
+            });
+
+            $('#editar_forma_pgto2').on('change', function(){
+                var valor = $(this).val();
+                if(valor === '1' || valor === '2'){
+                    $('#cv_forma_pgto_edt').removeClass('d-none');
+                    $('#cv_forma_pgto2_edt').removeClass('d-none');
+                    // $('#cv_input_pgto2_edt').attr('required', true);
+                } else {
+                    $('#cv_forma_pgto2_edt').addClass('d-none');
+                    $('#cv_input_pgto2_edt').val('');
+                    $('#cv_input_pgto2_edt').removeAttr('required');
+                    if($('#cv_forma_pgto1_edt').hasClass('d-none')){
+                        $('#cv_forma_pgto_edt').addClass('d-none');
+                    }
+                }
+            });
+
         });
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
