@@ -85,28 +85,28 @@
                                             <th class="d-none">Mês</th>
                                             <th>Empresa</th>
                                             <th>Paciente</th>
-                                            <th>Status</th>
+                                            <!-- <th>Status</th> -->
                                             <th>Lentes</th>
                                             <th>Data/Hora</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach($Lc_orcamento->listarTeste() as $teste){ ?>
+                                        <?php foreach($Lc_orcamento->listarTeste($_SESSION['id_empresa']) as $teste){ ?>
                                         <tr>
                                             <td><?php echo $teste->id_lente_contato_orcamento ?></td>
                                             <td class="d-none"><?php echo Helper::formatarDataSemHorario($teste->created_at) ?></td>
                                             <td><?php echo Helper::mostrar_empresa($teste->id_empresa) ?></td>
                                             <td><?php echo $teste->nome ?></td>
-                                            <td class="text-center">
-                                                <?php if($teste->status == 2) { ?>
+                                            <!-- <td class="text-center">
+                                                <?php //if($teste->status == 2) { ?>
                                                     <b class="badge badge-success badge-pill">Entregue</b>
-                                                <?php } elseif($teste->status == 1){ ?>
+                                                <?php //} elseif($teste->status == 1){ ?>
                                                     <b class="badge badge-secondary badge-pill">Pago</b>
-                                                <?php } else { ?>
+                                                <?php //} else { ?>
                                                     <b class="badge badge-warning badge-pill">Pendente</b>
-                                                <?php } ?>
-                                            </td>
+                                                <?php //} ?>
+                                            </td> -->
                                             <td><b>Direita:</b> <?php if($teste->id_modelo_direito != Null){ echo $Lc_modelo->mostrar($teste->id_modelo_direito)->modelo; } ?> <br> <b>Esquerda:</b> <?php if($teste->id_modelo_esquerdo != Null){echo $Lc_modelo->mostrar($teste->id_modelo_esquerdo)->modelo; } ?></td>
                                             <td><?php echo Helper::formatarData($teste->created_at) ?></td>
                                             <td class="text-center">
@@ -122,6 +122,7 @@
                                                     data-id_lente_direita="<?php echo ($teste->id_modelo_direito ? $teste->id_modelo_direito : ''); ?>"
                                                     data-olho_direito="<?php echo $teste->olho_direito ?>"
                                                     data-qnt_direita="<?php echo $teste->qnt_direita ?>"
+                                                    data-observacao="<?php echo $teste->observacao ?>"
                                                     data-fornecedor_esquerdo="<?php echo ($teste->id_modelo_esquerdo ? $Lc_modelo->mostrar($teste->id_modelo_esquerdo)->id_fornecedor : ''); ?>"
                                                     data-id_lente_esquerda="<?php echo ($teste->id_modelo_esquerdo ? $teste->id_modelo_esquerdo : ''); ?>"
                                                     data-olho_esquerdo="<?php echo $teste->olho_esquerdo ?>"
@@ -270,6 +271,10 @@
                                 <input type="number" name="qnt_esquerda" id="cadastrar_qnt_esquerda" class="form-control" min="1" value="1">
                             </div>
                         </div>
+                        <div class="col-10 mt-2 offset-1">
+                            <label for="cadastrar_observacao" class="form-label">Observacao</label>
+                            <textarea class="form-control" name="observacao" id="cadastrar_observacao"></textarea>
+                        </div>
                     </div><!-- Fim do modal-body -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
@@ -408,6 +413,10 @@
                                 <input type="number" name="qnt_esquerda" id="editar_qnt_esquerda" class="form-control" min="1" value="1">
                             </div>
                         </div>
+                        <div class="col-10 mt-2 offset-1">
+                            <label for="editar_observacao" class="form-label">Observacao</label>
+                            <textarea class="form-control" name="observacao" id="editar_observacao"></textarea>
+                        </div>
                     </div><!-- Fim do modal-body -->
                     
                     <!-- Rodapé -->
@@ -518,6 +527,7 @@
                 
                 // Dados da ficha de lente
                 var olhos = button.data('olhos'); // 0 = Ambos, 1 = Somente Esquerdo, 2 = Somente Direito
+                var observacao = button.data('observacao');
                 
                 // Dados para olho direito
                 var fornecedor_direito = button.data('fornecedor_direito');
@@ -537,6 +547,7 @@
                 $('#editar_cpf').val(cpf);
                 $('#editar_contato').val(contato);
                 $('#editar_id_medico').val(id_medico);
+                $('#editar_observacao').val(observacao);
                 $('#editar_fornecedor_direito').val(fornecedor_direito)
                 $('#editar_fornecedor_esquerdo').val(fornecedor_esquerdo)
 

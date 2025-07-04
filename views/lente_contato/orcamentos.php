@@ -179,6 +179,7 @@
                                                         data-forma_pgto2="<?php echo $orcamento->id_forma_pagamento2 ?>"
                                                         data-cv_pgto1="<?php echo $orcamento->cv_pgto1 ?>"
                                                         data-cv_pgto2="<?php echo $orcamento->cv_pgto2 ?>"
+                                                        data-observacao="<?php echo $orcamento->observacao ?>"
                                                         data-status="<?php echo $orcamento->status ?>">
                                                     <i class="fa-solid fa-gear"></i>
                                                 </button>
@@ -361,6 +362,10 @@
                                     <option value="2">Entregue</option>
                                 </select>
                             </div>
+                            <div class="col-10 mt-2 offset-1">
+                                <label for="cadastrar_observacao" class="form-label">Observacao</label>
+                                <textarea class="form-control" name="observacao" id="cadastrar_observacao"></textarea>
+                            </div>
                         </div>
                         <!-- Row para CV da Forma de Pagamento 1 -->
                         <div class="row d-none" id="cv_forma_pgto">
@@ -539,6 +544,10 @@
                                     <option value="1">Pago</option>
                                     <option value="2">Entregue</option>
                                 </select>
+                            </div>
+                            <div class="col-10 mt-2 offset-1">
+                                <label for="editar_observacao" class="form-label">Observacao</label>
+                                <textarea class="form-control" name="observacao" id="editar_observacao"></textarea>
                             </div>
                         </div>
                         <!-- Row para CV no Modal Editar -->
@@ -962,6 +971,7 @@
                 var cv_pgto1              = button.data('cv_pgto1');
                 var cv_pgto2              = button.data('cv_pgto2');
                 var status                = button.data('status');
+                var observacao                = button.data('observacao');
 
                 $('#editar_id_orcamento').val(id_orcamento);
                 $('#editar_nome').val(nome);
@@ -983,6 +993,7 @@
                 $('#editar_cv_pgto1').val(cv_pgto1);
                 $('#editar_cv_pgto2').val(cv_pgto2);
                 $('#editar_status').val(status);
+                $('#editar_observacao').val(observacao);
 
                 $('#editar_forma_pgto1').trigger('change');
                 $('#editar_forma_pgto2').trigger('change');

@@ -66,10 +66,11 @@ class Lente_contato_Orcamento {
      * @return array
      * @example $variavel = $Obj->listar()
      */
-    public function listarTeste(){
+    public function listarTeste($id_empresa){
         $sql = $this->pdo->prepare('
-            SELECT * FROM lente_contato_orcamentos WHERE deleted_at IS NULL AND valor IS NULL
+            SELECT * FROM lente_contato_orcamentos WHERE id_empresa = :id_empresa AND deleted_at IS NULL AND valor IS NULL
         ');        
+        $sql->bindParam(":id_empresa",$id_empresa);
         $sql->execute();
 
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -95,6 +96,8 @@ class Lente_contato_Orcamento {
                         : null;
                         
         $olhos = intval($dados['olhos']);
+
+        $observacao = $dados['observacao'];
         
         // Dados adicionais do paciente
         $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
@@ -142,7 +145,7 @@ class Lente_contato_Orcamento {
                 nome, cpf, contato, id_medico, olhos, valor,
                 id_modelo_esquerdo, id_modelo_direito, qnt_esquerda, qnt_direita,
                 id_forma_pagamento1, id_forma_pagamento2, cv_pgto1, cv_pgto2, status,
-                olho_esquerdo, olho_direito, id_contatologa, id_empresa,
+                olho_esquerdo, olho_direito, id_contatologa, id_empresa, observacao,
                 created_at, updated_at, deleted_at
             )
             VALUES
@@ -150,7 +153,7 @@ class Lente_contato_Orcamento {
                 :nome, :cpf, :contato, :id_medico, :olhos, :valor,
                 :id_modelo_esquerdo, :id_modelo_direito, :qnt_esquerda, :qnt_direita,
                 :forma_pgto1, :forma_pgto2, :cv_pgto1, :cv_pgto2, :status,
-                :olho_esquerdo, :olho_direito, :id_contatologa, :id_empresa,
+                :olho_esquerdo, :olho_direito, :id_contatologa, :id_empresa, :observacao,
                 :created_at, :updated_at, :deleted_at
             )
         ');
@@ -179,6 +182,7 @@ class Lente_contato_Orcamento {
         
         $sql->bindParam(':id_contatologa', $id_contatologa);
         $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':observacao', $observacao);
         $sql->bindParam(':created_at', $agora);
         $sql->bindParam(':updated_at', $agora);
         $sql->bindParam(':deleted_at', $deleted_at);
@@ -222,6 +226,7 @@ class Lente_contato_Orcamento {
                         : null;
         
         $olhos = intval($dados['olhos']);
+        $observacao = $dados['observacao'];
         
         // Dados adicionais do paciente
         $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
@@ -237,6 +242,9 @@ class Lente_contato_Orcamento {
         
         $id_empresa     = intval($dados['id_empresa']);
         $id_contatologa = intval($dados['usuario_logado']);
+        $qnt_direita = $dados['qnt_direita'];
+        $qnt_esquerda = $dados['qnt_esquerda'];
+
         $agora = date("Y-m-d H:i:s");
 
         // Verificar o valor de $olhos para ignorar um dos lados, se necessário
@@ -256,9 +264,9 @@ class Lente_contato_Orcamento {
         // Preparar a consulta SQL para inserir o novo Teste de Lente
         $sql = $this->pdo->prepare('
             INSERT INTO lente_contato_orcamentos 
-            (nome, cpf, contato, id_medico, olhos, olho_esquerdo, olho_direito, id_modelo_direito, id_modelo_esquerdo, qnt_esquerda, qnt_direita, id_empresa, id_contatologa, created_at, updated_at)
+            (nome, cpf, contato, id_medico, olhos, olho_esquerdo, olho_direito, id_modelo_direito, id_modelo_esquerdo, qnt_esquerda, qnt_direita, id_empresa, id_contatologa, observacao, created_at, updated_at)
             VALUES
-            (:nome, :cpf, :contato, :id_medico, :olhos, :olho_esquerdo, :olho_direito, :id_modelo_direito, :id_modelo_esquerdo, :qnt_esquerda, :qnt_direita, :id_empresa, :id_contatologa, :created_at, :updated_at)
+            (:nome, :cpf, :contato, :id_medico, :olhos, :olho_esquerdo, :olho_direito, :id_modelo_direito, :id_modelo_esquerdo, :qnt_esquerda, :qnt_direita, :id_empresa, :id_contatologa, :observacao, :created_at, :updated_at)
         ');
         
         $sql->bindParam(':nome', $nome);
@@ -274,6 +282,7 @@ class Lente_contato_Orcamento {
         $sql->bindParam(':qnt_direita', $qnt_direita);
         $sql->bindParam(':id_empresa', $id_empresa);
         $sql->bindParam(':id_contatologa', $id_contatologa);
+        $sql->bindParam(':observacao', $observacao);
         $sql->bindParam(':created_at', $agora);
         $sql->bindParam(':updated_at', $agora);
         
@@ -345,6 +354,8 @@ class Lente_contato_Orcamento {
                         
         $olhos = intval($dados['olhos']);
         $valor = floatval($dados['valor']);
+
+        $observacao = $dados['observacao'];
         
         // Dados adicionais do paciente
         $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
@@ -406,6 +417,7 @@ class Lente_contato_Orcamento {
                 olho_esquerdo = :olho_esquerdo,
                 olho_direito = :olho_direito,
                 id_contatologa = :id_contatologa,
+                observacao = :observacao,
                 id_empresa = :id_empresa,
                 updated_at = :updated_at
             WHERE id_lente_contato_orcamento = :id_lente_contato_orcamento
@@ -431,6 +443,7 @@ class Lente_contato_Orcamento {
         $sql->bindParam(':olho_direito', $olho_direito);
         $sql->bindParam(':id_contatologa', $id_contatologa);
         $sql->bindParam(':id_empresa', $id_empresa);
+        $sql->bindParam(':observacao', $observacao);
         $sql->bindParam(':updated_at', $agora);
         $sql->bindParam(':id_lente_contato_orcamento', $id_orcamento);
         
@@ -470,6 +483,7 @@ class Lente_contato_Orcamento {
             $olhos = $this->sanitizeNumber($dados['olhos']);
             $olho_esquerdo = isset($dados['olho_esquerdo']) ? trim($dados['olho_esquerdo']) : null;
             $olho_direito = isset($dados['olho_direito']) ? trim($dados['olho_direito']) : null;
+            $observacao = isset($dados['observacao']) ? trim($dados['observacao']) : null;
             $id_modelo_direito = $this->sanitizeNumber($dados['id_lente_direita']);
             $id_modelo_esquerdo = $this->sanitizeNumber($dados['id_lente_esquerda']);
             $qnt_direita = $this->sanitizeNumber($dados['qnt_direita']);
@@ -504,6 +518,7 @@ class Lente_contato_Orcamento {
                     id_modelo_esquerdo = :id_modelo_esquerdo,
                     qnt_direita = :qnt_direita,
                     qnt_esquerda = :qnt_esquerda,
+                    observacao = :observacao,
                     updated_at = :updated_at
                 WHERE 
                     id_lente_contato_orcamento = :id_orcamento
@@ -517,6 +532,7 @@ class Lente_contato_Orcamento {
             $sql->bindValue(':olhos', $olhos, PDO::PARAM_INT);
             $sql->bindValue(':olho_esquerdo', $olho_esquerdo);
             $sql->bindValue(':olho_direito', $olho_direito);
+            $sql->bindValue(':observacao', $observacao);
             $sql->bindValue(':id_modelo_direito', $id_modelo_direito, PDO::PARAM_INT);
             $sql->bindValue(':id_modelo_esquerdo', $id_modelo_esquerdo, PDO::PARAM_INT);
             $sql->bindValue(':qnt_direita', $qnt_direita, PDO::PARAM_INT);
