@@ -70,6 +70,21 @@
                     Chats
                 </a>
 
+                <?php if(verificarSetor([1,5,12,14])){ ?>
+
+                    <a class="nav-link collapsed" id="arqu" href="javascript:void(0);" data-toggle="collapse" data-target="#arquivo" aria-expanded="false" aria-controls="arquivo">
+                        <div class="nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        Arquivos
+                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="arquivo" data-parent="#accordionSidenav">
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link" id="arquivos_arquivo_morto" href="<?php echo URL ?>/arquivos/arquivos_mortos">Arquivos Mortos</a>
+                        </nav>
+                    </div>
+                
+                <?php } ?>
+
                 <?php if(verificarSetor([1,8,12,13,14])){ ?>
 
                     <a class="nav-link collapsed" id="capt" href="javascript:void(0);" data-toggle="collapse" data-target="#captacao" aria-expanded="false" aria-controls="captacao">

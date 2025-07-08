@@ -169,6 +169,13 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'arquivos/arquivos_mortos':
+        $file = 'arquivos/arquivos_mortos.php';
+        $pageTitle .= "Arquivos Mortos";
+        $requiredSectors = [1,5,12,14];
+        $requiredLogin = true;
+        break;
+
     case 'compras/pedidos':
         $file = 'compras/pedidos.php';
         $pageTitle .= "Pedidos de Compra";
