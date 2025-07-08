@@ -32,4 +32,6 @@
     include_once('Lente_Contato_Orcamento.php');
 
     include_once('Tecnologia_Socket.php');
+    
+    include_once('Arquivo_Morto.php');
 
