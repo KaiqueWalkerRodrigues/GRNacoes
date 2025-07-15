@@ -42,9 +42,9 @@
 
 <body class="nav-fixed">
         <!-- Tela de Carregamento -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div class="spinner"></div>
-    </div>
+    </div> -->
     <?php include_once('resources/topbar.php') ?>
     <div id="layoutSidenav">
         <?php include_once('resources/sidebar.php') ?>
@@ -138,7 +138,7 @@
                                             <td class="text-center"><strong><?php echo $caixa->numero_caixa ?></strong></td>
                                             <td class="text-center"><span class="badge badge-primary"><?php echo $caixa->nome_local ?></span></td>
                                             <td class="text-center">
-                                                <?php echo count($Arquivo_Morto->listarItens($caixa->id_caixa)) ?>
+                                                <?php foreach($Arquivo_Morto->listarItens($caixa->id_caixa) as $item){ echo $item->tipo_documento.";";} ?>
                                             </td>
                                             <td><?php echo $caixa->observacoes ? substr($caixa->observacoes, 0, 50) . '...' : '-' ?></td>
                                             <td class="text-center"><?php echo date('d/m/Y', strtotime($caixa->created_at)) ?></td>
@@ -578,53 +578,56 @@
                 }, 100);
             });
 
-            // Função para carregar itens (simulada - em produção seria via AJAX)
             function carregarItens(id_caixa) {
-                // Aqui você faria uma requisição AJAX para buscar os itens
-                // Por enquanto, vamos simular com dados estáticos
-                let itensHtml = '';
-                
-                // Simulação de dados - em produção, isso viria do servidor
-                <?php 
-                // Gerar JavaScript com dados dos itens para cada caixa
-                foreach($Arquivo_Morto->listar() as $caixa) {
-                    $itens = $Arquivo_Morto->listarItens($caixa->id_caixa);
-                    echo "if(id_caixa == {$caixa->id_caixa}) {\n";
-                    foreach($itens as $item) {
-                        $data_documento = $item->data_documento ? date('d/m/Y', strtotime($item->data_documento)) : '-';
-                        $data_arquivamento = $item->data_arquivamento ? date('d/m/Y', strtotime($item->data_arquivamento)) : '-';
-                        echo "itensHtml += '<tr>';";
-                        echo "itensHtml += '<td>{$item->tipo_documento}</td>';";
-                        echo "itensHtml += '<td><strong>{$item->nome_documento}</strong></td>';";
-                        echo "itensHtml += '<td>{$item->departamento}</td>';";
-                        echo "itensHtml += '<td class=\"text-center\">{$data_documento}</td>';";
-                        echo "itensHtml += '<td class=\"text-center\">{$data_arquivamento}</td>';";
-                        echo "itensHtml += '<td>';";
-                        echo "itensHtml += '<button class=\"btn btn-datatable btn-icon btn-transparent-dark btn-editar-item\" data-toggle=\"modal\" data-target=\"#modalEditarItem\"';";
-                        echo "itensHtml += ' data-iditem=\"{$item->id_item}\"';";
-                        echo "itensHtml += ' data-tipodocumento=\"{$item->tipo_documento}\"';";
-                        echo "itensHtml += ' data-nomedocumento=\"{$item->nome_documento}\"';";
-                        echo "itensHtml += ' data-departamento=\"{$item->departamento}\"';";
-                        echo "itensHtml += ' data-datadocumento=\"{$item->data_documento}\"';";
-                        echo "itensHtml += ' data-dataarquivamento=\"{$item->data_arquivamento}\"';";
-                        echo "itensHtml += ' data-observacoesitem=\"{$item->observacoes_item}\"';";
-                        echo "itensHtml += '><i class=\"fa-solid fa-gear\"></i></button>';";
-                        echo "itensHtml += '<button class=\"btn btn-datatable btn-icon btn-transparent-dark btn-deletar-item\" data-toggle=\"modal\" data-target=\"#modalDeletarItem\"';";
-                        echo "itensHtml += ' data-iditem=\"{$item->id_item}\"';";
-                        echo "itensHtml += ' data-nomedocumento=\"{$item->nome_documento}\"';";
-                        echo "itensHtml += '><i class=\"fa-solid fa-trash\"></i></button>';";
-                        echo "itensHtml += '</td>';";
-                        echo "itensHtml += '</tr>';";
+                $.ajax({
+                    url: '/GRNacoes/views/ajax/get_itens_caixa.php',
+                    method: 'GET',
+                    data: { id_caixa: id_caixa },
+                    dataType: 'json',
+                    success: function(itens) {
+                        let itensHtml = '';
+
+                        if (itens.length > 0) {
+                            itens.forEach(function(item) {
+                                const data_documento = item.data_documento ? new Date(item.data_documento).toLocaleDateString('pt-BR') : '-';
+                                const data_arquivamento = item.data_arquivamento ? new Date(item.data_arquivamento).toLocaleDateString('pt-BR') : '-';
+
+                                itensHtml += '<tr>';
+                                itensHtml += `<td>${item.tipo_documento}</td>`;
+                                itensHtml += `<td><strong>${item.nome_documento}</strong></td>`;
+                                itensHtml += `<td>${item.departamento}</td>`;
+                                itensHtml += `<td class="text-center">${data_documento}</td>`;
+                                itensHtml += `<td class="text-center">${data_arquivamento}</td>`;
+                                itensHtml += `<td>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark btn-editar-item" data-toggle="modal" data-target="#modalEditarItem"
+                                        data-iditem="${item.id_item}"
+                                        data-tipodocumento="${item.tipo_documento}"
+                                        data-nomedocumento="${item.nome_documento}"
+                                        data-departamento="${item.departamento}"
+                                        data-datadocumento="${item.data_documento}"
+                                        data-dataarquivamento="${item.data_arquivamento}"
+                                        data-observacoesitem="${item.observacoes_item || ''}">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </button>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark btn-deletar-item" data-toggle="modal" data-target="#modalDeletarItem"
+                                        data-iditem="${item.id_item}"
+                                        data-nomedocumento="${item.nome_documento}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>`;
+                                itensHtml += '</tr>';
+                            });
+                        } else {
+                            itensHtml = '<tr><td colspan="6" class="text-center">Nenhum item cadastrado nesta caixa.</td></tr>';
+                        }
+
+                        $('#corpoTabelaItens').html(itensHtml);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar itens:', error);
+                        $('#corpoTabelaItens').html('<tr><td colspan="6" class="text-center text-danger">Erro ao carregar itens da caixa.</td></tr>');
                     }
-                    echo "}\n";
-                }
-                ?>
-                
-                if(itensHtml === '') {
-                    itensHtml = '<tr><td colspan="6" class="text-center">Nenhum item cadastrado nesta caixa.</td></tr>';
-                }
-                
-                $('#corpoTabelaItens').html(itensHtml);
+                });
             }
         });
     </script>
