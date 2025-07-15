@@ -50,7 +50,7 @@
                 <div class="container-fluid mt-n10">
                     <div class="card mb-4">
                         <div class="card-header">Categorias
-                            <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2" type="button" data-toggle="modal" data-target="#modalCadastrarCargo">
+                            <button class="btn btn-datatable btn-icon btn-sm btn-success ml-2" type="button" data-toggle="modal" data-target="#modalCadastrarCategoria">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>

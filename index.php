@@ -345,8 +345,8 @@ switch ($route) {
         break;
 
     //Ajax
-    case 'ajax/get_compras_itens_nota':
-        $file = 'ajax/get_compras_itens_nota.php';
+    case 'ajax/buscar_itens':
+        $file = 'ajax/buscar_itens.php';
         $pageTitle .= "Teste de ajax";
         $requiredSectors = [1];
         $requiredLogin = true;
