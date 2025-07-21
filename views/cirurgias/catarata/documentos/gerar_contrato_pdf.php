@@ -62,7 +62,49 @@ $html = "
         <div class='text-end'>
             <div style='font-size: 18px;margin-right:5%;'><b>CÓDIGO:</b>&nbsp;<span style='font-size: 16px;'>".strtoupper($id_paciente)."</span></div>
         </div>
-        <div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <img class='top-right' style='width: 30%; margin-top: -10%;margin-bottom:-13%' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCNtSDda9Etg_U4vKgnN09xeZoTn5QIa7j_Q&s' alt='Logo'>
+    <div class='p-3'>
+        <div class='text-center'>
+            <b style='font-size: 22px;'>VALE INDICAÇÃO</b>
+        </div>
+        <br>
+        <div class='text-start'>
+            <b style='font-size: 18px;'>NOME DO PACIENTE:</b>&nbsp;<span style='font-size: 16px;'>".strtoupper($nome_paciente)."</span>
+        </div>
+        <div class='text-start mt-3'>
+            <b style='font-size: 18px;'>INDICAÇÃO:</b><span></span>
+        </div>
+        <br>
+        <div class='text-end'>
+            <div style='font-size: 18px;margin-right:5%;'><b>CÓDIGO:</b>&nbsp;<span style='font-size: 16px;'>".strtoupper($id_paciente)."</span></div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <img class='top-right' style='width: 30%; margin-top: -10%;margin-bottom:-13%' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCNtSDda9Etg_U4vKgnN09xeZoTn5QIa7j_Q&s' alt='Logo'>
+    <div class='p-3'>
+        <div class='text-center'>
+            <b style='font-size: 22px;'>VALE INDICAÇÃO</b>
+        </div>
+        <br>
+        <div class='text-start'>
+            <b style='font-size: 18px;'>NOME DO PACIENTE:</b>&nbsp;<span style='font-size: 16px;'>".strtoupper($nome_paciente)."</span>
+        </div>
+        <div class='text-start mt-3'>
+            <b style='font-size: 18px;'>INDICAÇÃO:</b><span></span>
+        </div>
+        <br>
+        <div class='text-end'>
+            <div style='font-size: 18px;margin-right:5%;'><b>CÓDIGO:</b>&nbsp;<span style='font-size: 16px;'>".strtoupper($id_paciente)."</span></div>
         </div>
     </div>
 </body>
