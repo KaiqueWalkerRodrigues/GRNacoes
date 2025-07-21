@@ -266,6 +266,9 @@ class Helper{
       case 4:
         return "<b class='badge badge-warning badge-pill'>Garantia</b>";
       break;
+      case 5:
+        return "<b class='badge badge-secondary badge-pill'>Catarata</b>";
+      break;
     }
   }
 

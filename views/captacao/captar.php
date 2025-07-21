@@ -74,6 +74,7 @@
                                         <option value="2">Lente de Contato - Sim</option>
                                         <option value="3">Lente de Contato - Não</option>
                                         <option value="4">Garantia</option>
+                                        <option value="5">Catarata</option>
                                     </select>
                                 </div>
                                 <div class="col-3" id="motivoContainer" style="display:none;">
