@@ -299,6 +299,12 @@ switch ($route) {
         $requiredSectors = [1,12,13,15];
         $requiredLogin = true;
         break;
+    case 'cirurgias/catarata/documentos/gerar_contrato_pdf':
+        $file = 'cirurgias/catarata/documentos/gerar_contrato_pdf.php';
+        $pageTitle .= "Gerar Contrato PDF";
+        $requiredSectors = [1,12,13,15];
+        $requiredLogin = true;
+        break;
     case 'cirurgias/catarata/agendamento_externo':
         $file = 'cirurgias/catarata/agendamento_externo.php';
         $pageTitle .= "Agendamento Externo Catarata";
