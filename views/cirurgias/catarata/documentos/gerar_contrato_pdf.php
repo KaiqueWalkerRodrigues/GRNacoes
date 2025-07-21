@@ -118,8 +118,8 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
 
-// Enviar o PDF como download
+// Enviar o PDF para ser exibido no navegador
 header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="vale_indicacao.pdf"');
+header('Content-Disposition: inline; filename="vale_indicacao.pdf"');
 echo $dompdf->output();
 exit;
