@@ -429,6 +429,31 @@
         </form>
     </div>
 
+    <!-- Modal Excluir -->
+    <div class="modal fade" id="modalExcluir" tabindex="1" role="dialog" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Excluir o chamado: "<span class="excluir_titulo"></span>" ?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_chamado" id="excluir_id_chamado">
+                        <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <p>Deseja Excluir o chamado: <span class="excluir_titulo"></span> ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger" name="btnExcluir">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script>
         $(window).on('load', function () {
@@ -470,6 +495,14 @@
                 let titulo = button.data('titulo')
                 $('#concluir_id_chamado').val(id_chamado)
                 $('.concluir_titulo').text(titulo)
+            })
+
+            $('#modalExcluir').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                let titulo = button.data('titulo')
+                $('#excluir_id_chamado').val(id_chamado)
+                $('.excluir_titulo').text(titulo)
             })
 
             $('#modalRecusar').on('show.bs.modal', function (event) {

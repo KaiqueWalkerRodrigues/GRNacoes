@@ -126,6 +126,7 @@
         var id_destinatario_avatar = $('#id_destinatario_avatar').val();
 
         $(document).ready(function () {
+            var ultimaContagemMensagens = 0;
 
             window.onload = function() {
                 setTimeout(function() {
@@ -135,21 +136,51 @@
                 }, 50);
             };
 
-            function mostrarMensagens() {
-                    $.ajax({
-                        type: "get",
-                        url: "/GRNacoes/views/ajax/get_mensagens_chamados.php",
-                        data: { id_chamado: id, id_usuario: id_usuario, id_avatar: id_avatar, id_destinatario_avatar: id_destinatario_avatar },
-                        success: function (result) {
-                            $('#mensagens').html(result);
-                        },
-                        error: function(){
-                            $('#mensagens').html("Error");
+            function verificarNovasMensagens() {
+                $.ajax({
+                    type: "get",
+                    url: "/GRNacoes/views/ajax/get_count_mensagens.php",
+                    data: { id_chamado: id },
+                    success: function (result) {
+                        var contagemAtual = parseInt(result);
+                        
+                        // Se a contagem mudou ou é a primeira vez, atualiza as mensagens
+                        if (contagemAtual !== ultimaContagemMensagens) {
+                            ultimaContagemMensagens = contagemAtual;
+                            mostrarMensagens();
                         }
-                    });
-                }
+                    },
+                    error: function(){
+                        console.log("Erro ao verificar contagem de mensagens");
+                    }
+                });
+            }
 
-            setInterval(mostrarMensagens, 500);
+            function mostrarMensagens() {
+                $.ajax({
+                    type: "get",
+                    url: "/GRNacoes/views/ajax/get_mensagens_chamados.php",
+                    data: { id_chamado: id, id_usuario: id_usuario, id_avatar: id_avatar, id_destinatario_avatar: id_destinatario_avatar },
+                    success: function (result) {
+                        $('#mensagens').html(result);
+                        
+                        // Scroll automático para a última mensagem
+                        setTimeout(function() {
+                            var container = document.body;
+                            container.scrollTop = container.scrollHeight;
+                        }, 100);
+                    },
+                    error: function(){
+                        $('#mensagens').html("Error");
+                    }
+                });
+            }
+
+            // Carrega mensagens inicialmente
+            verificarNovasMensagens();
+            
+            // Verifica a cada 1 segundo se há novas mensagens
+            setInterval(verificarNovasMensagens, 1000);
 
             $('#mensagem').keydown(function (e) {
                 if (e.keyCode == 13 && !e.shiftKey) { 
@@ -162,6 +193,11 @@
                 if ($('#mensagem').val().trim() === '') {
                     e.preventDefault(); 
                     alert("A mensagem não pode estar vazia.");
+                } else {
+                    // Após enviar a mensagem, verifica imediatamente por novas mensagens
+                    setTimeout(function() {
+                        verificarNovasMensagens();
+                    }, 500);
                 }
             });
 

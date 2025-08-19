@@ -1,5 +1,8 @@
 <?php 
+   session_start();
+   
    require '../../const.php';
+
 
    $pdo = Conexao::conexao();
 
