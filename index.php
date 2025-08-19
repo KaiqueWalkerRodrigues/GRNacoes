@@ -168,6 +168,12 @@ switch ($route) {
         $requiredSectors = null;
         $requiredLogin = true;
         break;
+    case 'chamados/test':
+        $file = 'chamados/test.php';
+        $pageTitle .= "teste";
+        $requiredSectors = null;
+        $requiredLogin = true;
+        break;
 
     case 'arquivos/arquivos_mortos':
         $file = 'arquivos/arquivos_mortos.php';

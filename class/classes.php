@@ -12,6 +12,7 @@
     include_once('Mensagem.php');
     include_once('Setor.php');
     include_once('Usuario.php');
+    include_once('Notificacao_Chamado.php');
 
     include_once('Catarata_Agenda.php');
     include_once('Catarata_Agendamento.php');
