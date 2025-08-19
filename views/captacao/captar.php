@@ -354,6 +354,44 @@
                             ?>
                         </div>
 
+                        <div class="card bg-secondary text-white p-2 text-end">
+                            <?php 
+                            if(verificarSetor([1,12,14])){
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8) as $usuario) {
+                            ?>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCataratas(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            ?>
+                            <?php
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(13) as $usuario) {
+                            ?>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCataratas(date('Y-m-d'), $usuario->id_usuario); ?></span></span>
+                            <?php 
+                                }
+                            ?>
+                            <span><b>Cataratas: </b><span><?php echo $Captacao->contarTotalCataratas(date('Y-m-d')); ?></span></span>
+                            <?php
+                            } else {
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(8, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCataratas(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                            <?php 
+                                }
+                            ?>
+                            <?php 
+                                foreach($Usuario->listarAtivosDoSetorDaEmpresa(13, $_SESSION['id_empresa']) as $usuario) {
+                            ?>
+                                    <span><?php echo Helper::encurtarNome($usuario->nome) ?>: <span><?php echo $Captacao->contarCataratas(date('Y-m-d'), $usuario->id_usuario, $_SESSION['id_empresa']); ?></span></span>
+                            <?php 
+                                }
+                            ?>
+                            <span><b>Cataratas: </b><span><?php echo $Captacao->contarTotalCataratas(date('Y-m-d'), $_SESSION['id_empresa']); ?></span></span>
+                            <?php
+                            } 
+                            ?>
+                        </div>
+
                     </div>
                 </div>
             </main>
@@ -385,6 +423,7 @@
                                 <select name="captado" id="editar_captado" class="form-control">
                                     <option value="1">Sim</option>
                                     <option value="0">Não</option>
+                                    <option value="2">Catarata</option>
                                     <option value="3">Lente de Contato - Sim</option>
                                     <option value="4">Lente de Contato - Não</option>
                                     <option value="5">Garantia</option>

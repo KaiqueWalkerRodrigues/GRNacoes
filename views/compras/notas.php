@@ -1,9 +1,8 @@
 <?php 
     $Compra_Nota = new Compra_Nota();
-
     $Compra_Fornecedor = new Compra_Fornecedor();
-
     $Compra_Categoria = new Compra_Categoria();
+    $Compra_Nota_Item = new Compra_Nota_Item();
 
     if (isset($_POST['btnCadastrar'])) {
         $Compra_Nota->cadastrar($_POST);
@@ -139,7 +138,7 @@
                                     <tbody>
                                         <?php foreach($Compra_Nota->listar() as $cn){ ?>
                                         <tr>
-                                            <td class="d-none"><?php echo $cn->created_at?></td>
+                                            <td class="d-none"><?php echo $cn->created_at.","; foreach($Compra_Nota_Item->listarDaNota($cn->id_compra_nota) as $item){ echo $item->item.","; }?></td>                                          
                                             <td class="text-center"><?php echo $cn->n_nota ?></td>
                                             <td><?php echo 'R$ ' . number_format($cn->valor, 2, ',', '.'); ?></td>
                                             <td><?php $dt = new DateTime($cn->data); $mesAbreviado = Helper::traduzirMes($dt->format('M')); $anoAbreviado = $dt->format('y'); $dataFormatada = $mesAbreviado . '/' . $anoAbreviado; echo $dataFormatada?></td>

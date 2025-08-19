@@ -354,6 +354,7 @@
                                 <select name="captado" id="editar_captado" class="form-control">
                                     <option value="1">Sim</option>
                                     <option value="0">Não</option>
+                                    <option value="2">Catarata</option>
                                     <option value="3">Lente de Contato - Sim</option>
                                     <option value="4">Lente de Contato - Não</option>
                                     <option value="5">Garantia</option>

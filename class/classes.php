@@ -21,6 +21,7 @@
     include_once('Compra_Cetegoria.php');
     include_once('Compra_Fornecedor.php');
     include_once('Compra_Nota.php');
+    include_once('Compra_Nota_Item.php');
     include_once('Compra_Pedido.php');
     
     include_once('Financeiro_Boleto.php');

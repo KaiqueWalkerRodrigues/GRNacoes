@@ -396,7 +396,7 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
                     AND captados.id_captador = :id_captador 
-                    AND (captado = 2 OR captado = 3) 
+                    AND (captado = 3 OR captado = 4) 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -420,7 +420,31 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
                     AND captados.id_captador = :id_captador 
-                    AND captado = 4 
+                    AND captado = 5 
+                    AND deleted_at IS NULL";
+            
+            if ($id_empresa) {
+                $query .= " AND captados.id_empresa = :id_empresa";
+            }
+
+            $sql = $this->pdo->prepare($query);
+            $sql->bindValue(':data', $data);
+            $sql->bindValue(':id_captador', $id_captador);
+            
+            if ($id_empresa) {
+                $sql->bindValue(':id_empresa', $id_empresa);
+            }
+
+            $sql->execute();
+            $result = $sql->fetch(PDO::FETCH_OBJ);
+            return $result->total;
+        }
+
+        public function contarCataratas($data, $id_captador, $id_empresa = null) {
+            $query = "SELECT COUNT(*) as total FROM captados 
+                    WHERE DATE(captados.created_at) = :data 
+                    AND captados.id_captador = :id_captador 
+                    AND captado = 2 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -533,7 +557,7 @@ class Captacao {
         public function contarTotalLentes($data, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
-                    AND (captado = 2 OR captado = 3) 
+                    AND (captado = 3 OR captado = 4) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -555,7 +579,29 @@ class Captacao {
         public function contarTotalGarantias($data, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
-                    AND captado = 4 
+                    AND captado = 5 
+                    AND deleted_at IS NULL";
+            
+            if (!is_null($id_empresa)) {
+                $query .= " AND captados.id_empresa = :id_empresa";
+            }
+
+            $sql = $this->pdo->prepare($query);
+            $sql->bindValue(':data', $data);
+            
+            if (!is_null($id_empresa)) {
+                $sql->bindValue(':id_empresa', $id_empresa);
+            }
+
+            $sql->execute();
+            $result = $sql->fetch(PDO::FETCH_OBJ);
+            return $result->total;
+        }
+
+        public function contarTotalCataratas($data, $id_empresa = null) {
+            $query = "SELECT COUNT(*) as total FROM captados 
+                    WHERE DATE(captados.created_at) = :data 
+                    AND captado = 2
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -675,7 +721,7 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
                     AND captados.id_captador = :id_captador 
-                    AND (captado = 2 OR captado = 3) 
+                    AND (captado = 3 OR captado = 4) 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -700,7 +746,32 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
                     AND captados.id_captador = :id_captador 
-                    AND captado = 4 
+                    AND captado = 5 
+                    AND deleted_at IS NULL";
+            
+            if ($id_empresa) {
+                $query .= " AND captados.id_empresa = :id_empresa";
+            }
+
+            $sql = $this->pdo->prepare($query);
+            $sql->bindValue(':inicio', $inicio);
+            $sql->bindValue(':fim', $fim);
+            $sql->bindValue(':id_captador', $id_captador);
+            
+            if ($id_empresa) {
+                $sql->bindValue(':id_empresa', $id_empresa);
+            }
+
+            $sql->execute();
+            $result = $sql->fetch(PDO::FETCH_OBJ);
+            return $result->total;
+        }
+
+        public function contarCataratasDoPeriodo($inicio, $fim, $id_captador, $id_empresa = null) {
+            $query = "SELECT COUNT(*) as total FROM captados 
+                    WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
+                    AND captados.id_captador = :id_captador 
+                    AND captado = 2
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -818,7 +889,7 @@ class Captacao {
         public function contarTotalLentesDoPeriodo($inicio, $fim, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
-                    AND (captado = 2 OR captado = 3) 
+                    AND (captado = 3 OR captado = 4) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -841,7 +912,30 @@ class Captacao {
         public function contarTotalGarantiasDoPeriodo($inicio, $fim, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
-                    AND captado = 4 
+                    AND captado = 5 
+                    AND deleted_at IS NULL";
+            
+            if (!is_null($id_empresa)) {
+                $query .= " AND captados.id_empresa = :id_empresa";
+            }
+
+            $sql = $this->pdo->prepare($query);
+            $sql->bindValue(':inicio', $inicio);
+            $sql->bindValue(':fim', $fim);
+            
+            if (!is_null($id_empresa)) {
+                $sql->bindValue(':id_empresa', $id_empresa);
+            }
+
+            $sql->execute();
+            $result = $sql->fetch(PDO::FETCH_OBJ);
+            return $result->total;
+        }
+
+        public function contarTotalCataratasDoPeriodo($inicio, $fim, $id_empresa = null) {
+            $query = "SELECT COUNT(*) as total FROM captados 
+                    WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
+                    AND captado = 2 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {

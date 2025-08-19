@@ -258,16 +258,16 @@ class Helper{
         return "<b class='badge badge-danger badge-pill'>Não</b>";
       break;
       case 2:
-        return "<b class='badge badge-primary badge-pill'>Lente de Contato - Sim</b>";
+        return "<b class='badge badge-secondary badge-pill'>Catarata</b>";
       break;
       case 3:
-        return "<b class='badge badge-primary badge-pill'>Lente de Contato Não</b>";
+        return "<b class='badge badge-primary badge-pill'>Lente de Contato - Sim</b>";
       break;
       case 4:
-        return "<b class='badge badge-warning badge-pill'>Garantia</b>";
+        return "<b class='badge badge-primary badge-pill'>Lente de Contato Não</b>";
       break;
       case 5:
-        return "<b class='badge badge-secondary badge-pill'>Catarata</b>";
+        return "<b class='badge badge-warning badge-pill'>Garantia</b>";
       break;
     }
   }

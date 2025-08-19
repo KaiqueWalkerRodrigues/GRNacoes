@@ -87,7 +87,7 @@
                                                 <td><?php echo Helper::formatarHorario($Catarata_Turma->mostrar($agendamento->id_turma)->horario) ?></td>
                                                 <td class="text-center"><?php if($agendamento->dioptria_esquerda != 0 OR $agendamento->dioptria_direita != 0){ echo "<b class='text-success'>Completo</b>"; }else{ echo "<b class='text-warning'>Incompleto</b>"; } ?></td>
                                                 <td class="text-center">
-                                                     <a class="btn btn-datatable btn-icon btn-transparent-dark 2" href="documentos/gerar_contrato_pdf?id_paciente=<?php echo $agendamento->id_catarata_agendamento ?>&nome_paciente=<?php echo $agendamento->nome ?>">
+                                                     <a class="btn btn-datatable btn-icon btn-transparent-dark 2" target="_blank" href="documentos/gerar_vale_indicacao?id_paciente=<?php echo $agendamento->id_catarata_agendamento ?>&nome_paciente=<?php echo $agendamento->nome ?>">
                                                         <i class="fa-solid fa-address-card"></i>
                                                     </a>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark 2" type="button" data-toggle="modal" data-target="#modalEditarAgendamento"
