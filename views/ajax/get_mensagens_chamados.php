@@ -1,124 +1,137 @@
 <?php 
-   session_start();
-   
-   require '../../const.php';
+session_start();
 
+require '../../const.php';
 
-   $pdo = Conexao::conexao();
+$pdo = Conexao::conexao();
 
-   $id_chamado = $_GET['id_chamado'];
-   $id_usuario = $_GET['id_usuario']; // Usuário logado
-   $id_avatar = $_GET['id_avatar'];
-   $id_destinatario_avatar = $_GET['id_destinatario_avatar'];
+$id_chamado = $_GET['id_chamado'];
+$id_usuario_logado = $_GET['id_usuario']; // Usuário logado
 
-   $Chamado = new Chamado();
-   $Usuario = new Usuario();
+$Chamado = new Chamado();
 
-   // Obtem informações do chamado
-   $chamado = $Chamado->mostrar($id_chamado);
+// Obtem informações do chamado
+$chamado = $Chamado->mostrar($id_chamado);
 
-   // ID do usuário que criou o chamado
-   $id_usuario_dono_chamado = $chamado->id_usuario;
+// ID do usuário que criou o chamado
+$id_usuario_dono_chamado = $chamado->id_usuario;
 
-   // Setor do usuário logado
-   $setor_logado = $_SESSION['id_setor'];
+// Setor do usuário logado
+$setor_logado = $_SESSION['id_setor'] ?? null;
 
-   // Consultar as mensagens
-   $sql = $pdo->prepare("
-       SELECT m.*, 
-       DATE_FORMAT(m.created_at, '%H:%i') as hora_envio, 
-       DATE_FORMAT(m.created_at, '%d/%m/%Y') as data_envio 
-       FROM mensagens m
-       INNER JOIN chamados_mensagens cm ON cm.id_mensagem = m.id_mensagem
-       WHERE cm.id_chamado = :id_chamado AND m.deleted_at IS NULL
-       ORDER BY m.created_at ASC
-   ");
-   $sql->bindParam(':id_chamado', $id_chamado, PDO::PARAM_INT);
-   $sql->execute();
+/**
+ * Agora buscamos:
+ * - dados da mensagem (m.*)
+ * - nome do remetente, setor e avatar (u.nome, u.id_setor, u.id_avatar)
+ * - hora e data formatadas
+ */
+$sql = $pdo->prepare("
+    SELECT 
+        m.*,
+        u.id_avatar AS avatar_mandante,
+        DATE_FORMAT(m.created_at, '%H:%i') AS hora_envio, 
+        DATE_FORMAT(m.created_at, '%d/%m/%Y') AS data_envio
+    FROM mensagens m
+    INNER JOIN chamados_mensagens cm 
+        ON cm.id_mensagem = m.id_mensagem
+    INNER JOIN usuarios u 
+        ON u.id_usuario = m.id_usuario
+    WHERE cm.id_chamado = :id_chamado
+      AND m.deleted_at IS NULL
+    ORDER BY m.created_at ASC
+");
 
-   if ($sql->rowCount() > 0) {
-       $mensagens = $sql->fetchAll();
-       $dia_anterior = '';
+$sql->bindParam(':id_chamado', $id_chamado, PDO::PARAM_INT);
+$sql->execute();
 
-       foreach ($mensagens as $value) {
-           $data_envio = $value['data_envio'];
-           $hora_envio = $value['hora_envio'];
+if ($sql->rowCount() > 0) {
+    $mensagens = $sql->fetchAll(PDO::FETCH_ASSOC);
+    $dia_anterior = '';
 
-           // Verificar se a data é hoje, ontem ou uma data antiga
-           $data_hoje = date('d/m/Y');
-           $data_ontem = date('d/m/Y', strtotime('-1 day'));
+    foreach ($mensagens as $value) {
+        $data_envio = $value['data_envio'];
+        $hora_envio = $value['hora_envio'];
 
-           if ($data_envio == $data_hoje) {
-               $data_display = 'Hoje';
-           } elseif ($data_envio == $data_ontem) {
-               $data_display = 'Ontem';
-           } else {
-               $data_display = $data_envio;
-           }
+        // Hoje / Ontem / Data
+        $data_hoje  = date('d/m/Y');
+        $data_ontem = date('d/m/Y', strtotime('-1 day'));
 
-           // Inserir separador de dia se o dia mudou
-           if ($data_display != $dia_anterior) {
-               echo '<div style="text-align: center; margin: 10px 0; color: #000000;">'.$data_display.'</div>';
-               $dia_anterior = $data_display;
-           }
+        if ($data_envio === $data_hoje) {
+            $data_display = 'Hoje';
+        } elseif ($data_envio === $data_ontem) {
+            $data_display = 'Ontem';
+        } else {
+            $data_display = $data_envio;
+        }
 
-           // Informações do remetente da mensagem
-           $id_usuario_remetente = $value['id_usuario'];
-           
-           // Nome do remetente
-           $mandante = $Usuario->mostrar($id_usuario_remetente);
-           $nomeCompleto = $mandante->nome;
-           $partesNome = explode(' ', $nomeCompleto);
-           $primeiroNome = $partesNome[0];
-           $ultimoNome = array_pop($partesNome);
+        // Separador de dia
+        if ($data_display !== $dia_anterior) {
+            echo '<div style="text-align: center; margin: 10px 0; color: #000000;">'.$data_display.'</div>';
+            $dia_anterior = $data_display;
+        }
 
-           // Setor do remetente
-           $setor_mandante = $_SESSION['id_setor'];
+        // Remetente
+        $id_usuario_remetente = (int)$value['id_usuario'];
+        $nomeCompleto         = $value['nome_remetente'] ?? '';
+        $partesNome           = preg_split('/\s+/', trim($nomeCompleto));
+        $primeiroNome         = $partesNome[0] ?? '';
+        $ultimoNome           = count($partesNome) > 1 ? end($partesNome) : '';
 
-           // Verifica se o usuário logado é o remetente da mensagem
-           $is_usuario_logado = $id_usuario_remetente == $id_usuario;
+        // Setor e avatar do remetente vindos do SELECT (corrige o bug de usar o setor da sessão)
+        $setor_mandante       = $value['setor_mandante'] ?? null;
+        $id_avatar_mandante   = $value['avatar_mandante'] ?? 1; // fallback 1
 
-           // Verifica se o remetente é o dono do chamado e se o setor é o mesmo, mas com ID diferente
-           $is_dono_chamado_mesmo_setor = $id_usuario_remetente == $id_usuario_dono_chamado && $setor_mandante == $setor_logado && $id_usuario_remetente != $id_usuario;
+        // Regras de exibição (mantidas)
+        $is_usuario_logado = ($id_usuario_remetente === (int)$id_usuario_logado);
+        $is_dono_chamado_mesmo_setor = (
+            $id_usuario_remetente === (int)$id_usuario_dono_chamado &&
+            $setor_mandante === $setor_logado &&
+            !$is_usuario_logado
+        );
 
-           // Lógica para definir o lado e a cor das mensagens
-           if ($is_usuario_logado) {
-               $class = 'eu'; // Classe azul para o usuário logado
-           } elseif ($setor_mandante == $setor_logado && !$is_dono_chamado_mesmo_setor) {
-               $class = 'eu'; // Mesma classe para quem é do mesmo setor
-           } else {
-               $class = 'outro'; // Classe cinza para qualquer outro usuário
-           }
+        if ($is_usuario_logado) {
+            $class = 'eu'; // azul
+        } elseif ($setor_mandante === $setor_logado && !$is_dono_chamado_mesmo_setor) {
+            $class = 'eu'; // mesma cor para quem é do mesmo setor
+        } else {
+            $class = 'outro'; // cinza
+        }
 
-           // Exibir a mensagem com os detalhes apropriados
-           echo '
-            <div class="icon-container row '.$class.'">
-                '.($class == 'eu' ? '
-                    <div style="width: 95%;">
-                        <div class="card p-2 mb-2 position-relative">'
-                            .nl2br(htmlspecialchars($value['mensagem'])).'
-                            <span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px;">'
-                            .$primeiroNome.' '.$ultimoNome.' - '.$hora_envio.'
-                            </span>
-                        </div>
+        // Mostre sempre o avatar do REMETENTE da mensagem
+        $img_avatar = URL_RESOURCES.'/assets/img/avatars/'.$id_avatar_mandante.'.png';
+
+        // HTML
+        if ($class === 'eu') {
+            echo '
+            <div class="icon-container row eu">
+                <div style="width: 95%;">
+                    <div class="card p-2 mb-2 position-relative">'.
+                        nl2br(htmlspecialchars($value['mensagem'])).
+                        '<span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px;">'.
+                            $primeiroNome.' '.$ultimoNome.' - '.$hora_envio.
+                        '</span>
                     </div>
-                    <div style="width: 5%;">
-                        <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$id_avatar.'.png" alt="">
-                    </div>
-                ' : '
-                    <div style="width: 5%;">
-                        <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$id_destinatario_avatar.'.png" alt="">
-                    </div>
-                    <div style="width: 95%;">
-                        <div class="card p-2 mb-2 position-relative">'
-                            .nl2br(htmlspecialchars($value['mensagem'])).'
-                            <span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px;">'
-                            .$primeiroNome.' '.$ultimoNome.' - '.$hora_envio.'
-                            </span>
-                        </div>
-                    </div>
-                ').'
+                </div>
+                <div style="width: 5%;">
+                    <img class="btn-icon btn-md mb-2" src="'.$img_avatar.'" alt="">
+                </div>
             </div>';
-       }
-   }
+        } else {
+            echo '
+            <div class="icon-container row outro">
+                <div style="width: 5%;">
+                    <img class="btn-icon btn-md mb-2" src="'.$img_avatar.'" alt="">
+                </div>
+                <div style="width: 95%;">
+                    <div class="card p-2 mb-2 position-relative">'.
+                        nl2br(htmlspecialchars($value['mensagem'])).
+                        '<span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px;">'.
+                            $primeiroNome.' '.$ultimoNome.' - '.$hora_envio.
+                        '</span>
+                    </div>
+                </div>
+            </div>';
+        }
+    }
+}
 ?>

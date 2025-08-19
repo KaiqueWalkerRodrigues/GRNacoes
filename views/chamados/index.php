@@ -82,7 +82,7 @@
                                     <thead>
                                         <tr>
                                             <th class="d-none">created_at</th>
-                                            <th>Protocolo</th>
+                                            <th>Nº</th>
                                             <th>Urgência</th>
                                             <th>Título</th>
                                             <th>Usuário</th>

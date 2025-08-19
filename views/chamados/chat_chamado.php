@@ -96,11 +96,6 @@
                                 </div>
                                 <div class="row ml-3 align-items-center" style="width: 10%">
                                     <div class="col-6">
-                                        <button class="btn btn-lg btn-icon btn-dark" id="anexarImagem" name="anexarImagem" type="button">
-                                            <i class="fa-light fa-paperclip-vertical"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
                                         <button class="btn btn-lg btn-icon btn-success" id="enviarMensagem" name="enviarMensagem">
                                             <i class="fa-solid fa-paper-plane"></i>
                                         </button>
