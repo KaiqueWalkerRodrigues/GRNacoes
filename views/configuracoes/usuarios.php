@@ -15,6 +15,9 @@
     if (isset($_POST['btnReativar'])) {
         $Usuario->reativar($_POST);
     }
+    if (isset($_POST['btnAprovar'])) {
+        $Usuario->aprovar($_POST['id_usuario'],$_POST['usuario_logado'],$_POST['nome']);
+    }
     if (isset($_POST['btnEditarSetores'])) {
         // Verifica se o input oculto está definido e não está vazio
         if (isset($_POST['setores_selecionados']) && !empty($_POST['setores_selecionados'])) {
@@ -69,8 +72,11 @@
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                                 |
-                                <button class="btn btn-datatable btn-dark ml-2" type="button" data-toggle="modal" data-target="#modalUsuariosDesativados    ">
+                                <button class="btn btn-datatable btn-dark ml-2" type="button" data-toggle="modal" data-target="#modalUsuariosDesativados">
                                     Desativados
+                                </button>
+                                <button class="btn btn-datatable btn-warning ml-2" type="button" data-toggle="modal" data-target="#modalUsuariosSolicitacoes">
+                                    Solicitações
                                 </button>
                             </div>
                             <div class="card-body">
@@ -132,6 +138,95 @@
                 <?php include_once('resources/footer.php') ?>
             </div>
         </div>
+
+        <!-- Modal Usuários com Solicitações -->
+        <div class="modal fade" id="modalUsuariosSolicitacoes" tabindex="1" role="dialog" aria-labelledby="modalUsuariosSolicitacoesLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Solicitações de Usuários</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="datatable table-responsive">
+                            <table class="table table-bordered table-hover" id="dataTableSolicitacoes" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Cargo</th>
+                                        <th>Setor</th>
+                                        <th>Empresa</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    // Você precisa ter este método na classe Usuario.
+                                    // Ele deve retornar a lista de usuários que estão com "solicitação pendente".
+                                    foreach($Usuario->listarSolicitacoes() as $usuarioSolicitado){ ?>
+                                        <tr>
+                                            <td><?php echo $usuarioSolicitado->nome; ?></td>
+                                            <td><?php echo $Cargo->mostrar($usuarioSolicitado->id_cargo)->cargo; ?></td>
+                                            <td><?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($usuarioSolicitado->id_usuario)->id_setor)->setor; ?></td>
+                                            <td><?php echo Helper::mostrar_empresa($usuarioSolicitado->empresa); ?></td>
+                                            <td class="text-center">
+                                                <!-- Aprovar (envia POST para btnAprovar) -->
+                                                <form action="?" method="post" style="display:inline;">
+                                                    <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario']; ?>">
+                                                    <input type="hidden" name="id_usuario" value="<?php echo $usuarioSolicitado->id_usuario; ?>">
+                                                    <input type="hidden" name="nome" value="<?php echo $usuarioSolicitado->nome; ?>">
+                                                    <button class="btn btn-datatable btn-icon btn-success" type="submit" name="btnAprovar" title="Aprovar">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
+                                                </form>
+                                                <!-- Editar (reaproveita o modalEditarUsuario) -->
+                                                <button 
+                                                    class="btn btn-datatable btn-icon btn-transparent-dark" 
+                                                    type="button" data-toggle="modal" data-target="#modalEditarUsuario"
+                                                    data-nome="<?php echo $usuarioSolicitado->nome; ?>"
+                                                    data-idusuario="<?php echo $usuarioSolicitado->id_usuario; ?>"
+                                                    data-usuario="<?php echo $usuarioSolicitado->usuario; ?>"
+                                                    data-senha="<?php echo $usuarioSolicitado->senha; ?>"
+                                                    data-contrato="<?php echo $usuarioSolicitado->contrato; ?>"
+                                                    data-celular="<?php echo $usuarioSolicitado->celular; ?>"
+                                                    data-cpf="<?php echo $usuarioSolicitado->cpf; ?>"
+                                                    data-data_nascimento="<?php echo $usuarioSolicitado->data_nascimento; ?>"
+                                                    data-email="<?php echo $usuarioSolicitado->email; ?>"
+                                                    data-empresa="<?php echo $usuarioSolicitado->empresa; ?>"
+                                                    data-n_folha="<?php echo $usuarioSolicitado->n_folha; ?>"
+                                                    data-idsetor="<?php echo $Usuario->mostrarSetorPrincipal($usuarioSolicitado->id_usuario)->id_setor; ?>"
+                                                    data-idcargo="<?php echo $usuarioSolicitado->id_cargo; ?>"
+                                                    data-data_admissao="<?php echo $usuarioSolicitado->data_admissao; ?>"
+                                                    data-ativo="<?php echo $usuarioSolicitado->ativo; ?>"
+                                                >
+                                                    <i class="fa-solid fa-gear"></i>
+                                                </button>
+
+                                                <!-- Deletar (reaproveita o modalDeletarUsuario) -->
+                                                <button 
+                                                    class="btn btn-datatable btn-icon btn-transparent-dark" 
+                                                    type="button" data-toggle="modal" data-target="#modalDeletarUsuario"
+                                                    data-idusuario="<?php echo $usuarioSolicitado->id_usuario; ?>"
+                                                    data-nome="<?php echo $usuarioSolicitado->nome; ?>"
+                                                >
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>                
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Modal Usuários Desativados -->
         <div class="modal fade" id="modalUsuariosDesativados" tabindex="1" role="dialog" aria-labelledby="modalUsuariosDesativadosLabel" aria-hidden="true">
@@ -421,6 +516,7 @@
                                     <select name="ativo" id="editar_ativo" class="form-control">
                                         <option value="1">Ativo</option>
                                         <option value="0">Desativo</option>
+                                        <option value="2">Solicitação</option>
                                     </select>
                                 </div>
                             </div>
@@ -861,6 +957,18 @@
                             $('#setores').append('<h1 class="text-danger">ERRO</h1>');
                         }
                     });
+                });
+
+                // Inicializa a tabela de Solicitações ao abrir o modal (evita problemas de render dentro do modal)
+                $('#modalUsuariosSolicitacoes').on('shown.bs.modal', function () {
+                    if (!$.fn.DataTable.isDataTable('#dataTableSolicitacoes')) {
+                        $('#dataTableSolicitacoes').DataTable({
+                            // Opcional: copie as mesmas opções que você usa na tabela principal
+                            pageLength: 10,
+                            ordering: true,
+                            responsive: true
+                        });
+                    }
                 });
             });
         </script>

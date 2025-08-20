@@ -61,6 +61,13 @@ class Usuario {
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
 
+    //Listar todos as Solicitacões de Cadastro
+    public function listarSolicitacoes(){
+        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 2 ORDER BY nome ASC');        
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
     //Listar todos os Usuários Ativos, Não Deletados e Ordenados pelo Nome.
     public function listarAtivos(){
         $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE deleted_at IS NULL AND ativo = 1 ORDER BY nome ASC');        
@@ -204,6 +211,66 @@ class Usuario {
             <script>
                 alert('Não foi possível Cadastrar o Usuário!');
                 window.location.href = '" . URL . "/configuracoes/usuarios';
+            </script>";
+            exit;
+        }
+    }
+
+    public function cadastrarSolicitacao(Array $dados){
+        $sql = $this->pdo->prepare('INSERT INTO usuarios 
+                                    (nome,ativo,usuario,senha,contrato,celular,cpf,
+                                    data_nascimento,email,empresa,id_cargo,n_folha,
+                                    data_admissao,created_at,updated_at)
+                                    VALUES
+                                    (:nome,:ativo,:usuario,:senha,:contrato,:celular,:cpf,
+                                    :data_nascimento,:email,:empresa,:id_cargo,:n_folha,
+                                    :data_admissao,:created_at,:updated_at)
+                                ');
+
+        $nome  = ucwords(strtolower(trim($dados['nome'])));
+        $ativo  = 2;
+        $usuario  = trim($dados['usuario']);
+        $senha  = password_hash($dados['senha'], PASSWORD_DEFAULT);
+        $contrato  = $dados['contrato'];
+        $celular  = preg_replace('/[^0-9]/', '', $dados['celular']); 
+        $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']);
+        $data_nascimento  = $dados['data_nascimento'];
+        $email  = $dados['email'];
+        $empresa  = ucwords(strtolower(trim($dados['empresa'])));
+        $id_setor  = $dados['id_setor'];
+        $id_cargo  = $dados['id_cargo'];
+        $n_folha  = $dados['n_folha'];
+        $data_admissao  = $dados['data_admissao'];
+
+        $agora = date("Y-m-d H:i:s");
+
+        $created_at = $agora;
+        $updated_at = $agora;
+
+        $sql->bindParam(':nome',$nome);
+        $sql->bindParam(':ativo',$ativo);              
+        $sql->bindParam(':usuario',$usuario);              
+        $sql->bindParam(':senha',$senha);              
+        $sql->bindParam(':contrato',$contrato);              
+        $sql->bindParam(':celular',$celular);              
+        $sql->bindParam(':cpf',$cpf);              
+        $sql->bindParam(':data_nascimento',$data_nascimento);              
+        $sql->bindParam(':email',$email);              
+        $sql->bindParam(':empresa',$empresa);                            
+        $sql->bindParam(':id_cargo',$id_cargo);              
+        $sql->bindParam(':n_folha',$n_folha);              
+        $sql->bindParam(':data_admissao',$data_admissao);              
+        $sql->bindParam(':created_at',$created_at);          
+        $sql->bindParam(':updated_at',$updated_at);       
+
+        if ($sql->execute()) {
+            $id_usuario = $this->pdo->lastInsertId();
+
+            $this->adicionarSetor($id_usuario,$id_setor,1);
+
+            echo "
+            <script>
+                window.location.href = '" . URL . "/';
             </script>";
             exit;
         }
@@ -557,50 +624,87 @@ class Usuario {
         }
     }
 
-    public function logar($usuario, $senha){
-        $sql = $this->pdo->prepare('SELECT * FROM usuarios WHERE usuario = :usuario AND deleted_at IS NULL AND ativo = 1');
-        $sql->bindParam(':usuario', $usuario);
-        $sql->execute();
-    
-        $user = $sql->fetch(PDO::FETCH_OBJ);
+    public function logar($usuario, $senha)
+    {
+        try {
+            // 1) Buscar o usuário ativo pelo "usuario"
+            $stmt = $this->pdo->prepare(
+                'SELECT id_usuario, nome, senha, id_avatar, empresa
+                FROM usuarios
+                WHERE usuario = :usuario
+                AND deleted_at IS NULL
+                AND ativo = 1
+                LIMIT 1'
+            );
+            $stmt->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+            $stmt->execute();
 
-        $id_usuario = $user->id_usuario;
-    
-        // Verifica se o usuário existe e se a senha fornecida corresponde à senha armazenada
-        if ($user && password_verify($senha, $user->senha)) {
-            session_start();
-            $_SESSION['logado'] = true;
-            $_SESSION['nome'] = $user->nome;
+            $user = $stmt->fetch(PDO::FETCH_OBJ);
+
+            // 2) Se não achou usuário OU senha incorreta => falha sem warnings
+            if (!$user || !password_verify($senha, $user->senha)) {
+                echo '<script>alert("Usuário ou Senha Incorreta")</script>';
+                return false;
+            }
+
+            // (Opcional) Rehash caso o custo do hash tenha mudado
+            if (password_needs_rehash($user->senha, PASSWORD_DEFAULT)) {
+                $novoHash = password_hash($senha, PASSWORD_DEFAULT);
+                $upd = $this->pdo->prepare('UPDATE usuarios SET senha = :senha WHERE id_usuario = :id');
+                $upd->bindValue(':senha', $novoHash, PDO::PARAM_STR);
+                $upd->bindValue(':id', $user->id_usuario, PDO::PARAM_INT);
+                $upd->execute();
+            }
+
+            // 3) Sessão
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+            session_regenerate_id(true);
+
+            $_SESSION['logado']     = true;
+            $_SESSION['nome']       = $user->nome;
             $_SESSION['id_usuario'] = $user->id_usuario;
-            $_SESSION['id_avatar'] = $user->id_avatar;
+            $_SESSION['id_avatar']  = $user->id_avatar;
             $_SESSION['id_empresa'] = $user->empresa;
 
-            //Buscando Setor Principal
-            {
-                $sql=$this->pdo->query("SELECT * FROM usuarios_setores WHERE id_usuario = $id_usuario AND deleted_at IS NULL ORDER BY principal DESC LIMIT 1");
-                $sql->execute();
+            // 4) Setor principal
+            $stmt = $this->pdo->prepare(
+                'SELECT id_setor
+                FROM usuarios_setores
+                WHERE id_usuario = :id_usuario
+                    AND deleted_at IS NULL
+                ORDER BY principal DESC
+                LIMIT 1'
+            );
+            $stmt->bindValue(':id_usuario', $user->id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $principal = $stmt->fetch(PDO::FETCH_OBJ);
+            $_SESSION['id_setor'] = $principal ? $principal->id_setor : null;
 
-                $resultado = $sql->fetch(PDO::FETCH_OBJ);
+            // 5) Todos os setores
+            $stmt = $this->pdo->prepare(
+                'SELECT id_setor
+                FROM usuarios_setores
+                WHERE id_usuario = :id_usuario
+                    AND deleted_at IS NULL
+                ORDER BY principal DESC'
+            );
+            $stmt->bindValue(':id_usuario', $user->id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $_SESSION['id_setores'] = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
 
-                $_SESSION['id_setor'] = $resultado->id_setor;
-            }
-            
-            //Buscando todos Setores
-            {
-                $sql=$this->pdo->query("SELECT id_setor FROM usuarios_setores WHERE id_usuario = $id_usuario AND deleted_at IS NULL ORDER BY principal DESC");
-                $sql->execute();
-
-                $_SESSION['id_setores'] = $sql->fetchAll(PDO::FETCH_COLUMN);
-            }
-    
+            // 6) Redirecionar
             header('Location: ' . URL . '/');
-            exit();
-        } else {
-            echo '<script>alert("Usuário ou Senha Incorreta")</script>';
+            exit;
+        } catch (Throwable $e) {
+            // Logue o erro no servidor (não exibir detalhes ao usuário)
+            error_log('Erro no login: ' . $e->getMessage());
+            echo '<script>alert("Falha ao processar o login. Tente novamente.")</script>';
             return false;
-            exit();
         }
     }
+
     
     public function mostrarSetorPrincipal($id_usuario){
         $sql=$this->pdo->prepare("SELECT * FROM usuarios_setores WHERE id_usuario = :id_usuario AND deleted_at IS NULL AND principal = 1 LIMIT 1");
@@ -635,6 +739,31 @@ class Usuario {
         $sql->bindParam(':id_cargo', $id_cargo);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function Aprovar($id_usuario,$usuario_logado,$nome){
+        $sql = $this->pdo->prepare('UPDATE usuarios SET ativo = 1 WHERE id_usuario = :id_usuario');
+        $sql->bindParam(':id_usuario',$id_usuario);
+
+        if ($sql->execute()) {
+            $id_usuario = $this->pdo->lastInsertId();
+            $descricao = "Aprovou o usuário: $nome ($id_usuario)";
+            $this->addLog('Cadastrar', $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Usuário Aprovado com Sucesso!');
+                window.location.href = '" . URL . "/configuracoes/usuarios';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Aprovar o Usuário!');
+                window.location.href = '" . URL . "/configuracoes/usuarios';
+            </script>";
+            exit;
+        }
     }
     
  }

@@ -362,6 +362,13 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'solicitacao_cadastro':
+        $file = 'solicitacao_cadastro.php';
+        $pageTitle .= "Solicitação de Cadastro";
+        $requiredSectors = [];
+        $requiredLogin = false;
+        break;
+
     //Ajax
     case 'ajax/buscar_itens':
         $file = 'ajax/buscar_itens.php';

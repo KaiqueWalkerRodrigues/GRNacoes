@@ -76,7 +76,7 @@ class Notificacao_Chamado {
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function contarNaoLidas(?int $id_setor = null, ?int $id_usuario_destino = null, int $usuario_visualizador): int
+    public function contarNaoLidas(int $usuario_visualizador, ?int $id_setor = null, ?int $id_usuario_destino = null): int
     {
         // Base
         $sql = "SELECT COUNT(DISTINCT n.id_notificacao_chamado) AS total
