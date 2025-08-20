@@ -46,7 +46,7 @@ try {
                    ON s.id_setor = us.id_setor
             WHERE u.id_usuario IN ($inClause)
             GROUP BY u.id_usuario
-            ORDER BY MAX(us.principal) DESC
+            ORDER BY u.nome ASC
         ");
 
         foreach ($ids as $i => $id) {
@@ -61,7 +61,7 @@ try {
 
     // 3) Montar saída com avatar/nome/setor
     $avatarBasePath = URL_RESOURCES . '/img/avatars';            // ex.: /img/avatars/3.png
-    $defaultAvatar  = URL_RESOURCES . '/img/avatar-default.png'; // garanta este arquivo
+    $defaultAvatar  = URL_RESOURCES . '/img/avatars/0.png'; // garanta este arquivo
 
     $saida = [];
     foreach ($usuarios as $u) {
