@@ -37,16 +37,17 @@ try {
         // Ajuste nomes de colunas/tabelas se necessário
         $sql = $Usuario->pdo->prepare("
             SELECT u.id_usuario,
-                   s.setor AS setor_nome
+                s.setor AS setor_nome
             FROM usuarios u
             LEFT JOIN usuarios_setores us
-                   ON us.id_usuario = u.id_usuario
-                  AND us.deleted_at IS NULL
+                ON us.id_usuario = u.id_usuario
+                AND us.deleted_at IS NULL
+                AND us.principal = 1
             LEFT JOIN setores s
-                   ON s.id_setor = us.id_setor
+                ON s.id_setor = us.id_setor
             WHERE u.id_usuario IN ($inClause)
-            GROUP BY u.id_usuario
             ORDER BY u.nome ASC
+
         ");
 
         foreach ($ids as $i => $id) {
