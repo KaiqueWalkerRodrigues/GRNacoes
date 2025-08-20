@@ -26,7 +26,7 @@
         <!-- Chats -->
         <li class="nav-item dropdown no-caret mr-3 dropdown-notifications">
           <a class="btn btn-transparent-dark dropdown-toggle position-relative"
-            id="navbarDropdownChats"
+            id="chats"
             href="<?php echo URL ?>/chats">
             <i class="fa-solid fa-comments"></i>
             <!-- bolinha verde dentro do ícone -->

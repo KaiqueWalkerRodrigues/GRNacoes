@@ -74,7 +74,7 @@
            $ultimoNome = count($partesNome) > 1 ? array_pop($partesNome) : '';
 
            // Setor do remetente (mantido conforme sua lógica atual)
-           $setor_mandante = $_SESSION['id_setor'];
+           $setor_mandante = $Usuario->mostrarSetorPrincipal($id_usuario_remetente)->id_setor;
 
            // Verificações de lado/cor (mantidas)
            $is_usuario_logado = $id_usuario_remetente == $id_usuario;

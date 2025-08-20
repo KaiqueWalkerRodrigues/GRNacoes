@@ -97,8 +97,14 @@
                                                     data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
-                                                <a href="<?php echo URL ?>/chamados/chat_chamado?id=<?php echo $chamado->id_chamado ?>" class="btn btn-datatable btn-icon btn-transparent-dark">
+                                                <a href="<?php echo URL ?>/chamados/chat_chamado?id=<?php echo $chamado->id_chamado ?>"
+                                                class="btn btn-datatable btn-icon btn-transparent-dark position-relative chat-link"
+                                                data-id_chamado="<?php echo $chamado->id_chamado ?>">
                                                     <i class="fa-solid fa-comment"></i>
+                                                    <span class="chat-badge badge badge-pill"
+                                                        style="position:absolute; top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
+                                                        0
+                                                    </span>
                                                 </a>
                                                 <?php if($chamado->status == 1){ ?>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalExcluir"
@@ -312,6 +318,45 @@
                 $('#visualizar_deleted_at').val(deleted_at);
                 $('#visualizar_started_at').val(started_at);
                 $('#visualizar_finished_at').val(finished_at);
+            });
+
+            // mesmo endpoint usado em chamados.php
+            const ENDPOINT_COUNT_NAO_LIDAS = "<?php echo URL ?>/views/ajax/get_count_chamados_mensagens_nao_lidas.php";
+
+            function atualizarBadgesChatVisiveis(){
+            // percorre apenas as linhas visíveis (compatível com DataTables)
+            $('#dataTable tbody tr:visible').each(function(){
+                const $link = $(this).find('a.chat-link');
+                if($link.length === 0) return;
+
+                const idChamado = $link.data('id_chamado');
+                if(!idChamado) return;
+
+                $.getJSON(ENDPOINT_COUNT_NAO_LIDAS, { id_chamado: idChamado })
+                .done(function(res){
+                    const $badge = $link.find('.chat-badge');
+                    if(res && res.ok && Number(res.nao_lidas) > 0){
+                    const qtd = Number(res.nao_lidas);
+                    $badge.text(qtd > 99 ? '99+' : qtd).show();
+                    }else{
+                    $badge.text('0').hide();
+                    }
+                })
+                .fail(function(){
+                    // silencioso para evitar flicker
+                });
+            });
+            }
+
+            // roda uma vez ao carregar
+            atualizarBadgesChatVisiveis();
+
+            // atualiza a cada 1s
+            setInterval(atualizarBadgesChatVisiveis, 1000);
+
+            // se usar DataTables, atualiza após busca/paginação
+            $('#dataTable').on('draw.dt search.dt page.dt', function(){
+            setTimeout(atualizarBadgesChatVisiveis, 150);
             });
         });
     </script>

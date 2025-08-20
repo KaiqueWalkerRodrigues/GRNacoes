@@ -36,6 +36,29 @@ class Mensagem {
         return $dados;
     }
 
+    public function listarPorChamado(int $id_chamado, int $id_usuario) {
+        $sql = $this->pdo->prepare('
+            SELECT m.*,
+                CASE WHEN ml.id_mensagem IS NULL THEN 0 ELSE 1 END AS lida
+            FROM mensagens m
+            INNER JOIN chamados_mensagens cm ON cm.id_mensagem = m.id_mensagem
+            LEFT JOIN mensagens_lidas ml 
+                ON ml.id_mensagem = m.id_mensagem 
+                AND ml.id_usuario  = :id_usuario
+            WHERE cm.id_chamado = :id_chamado
+            AND m.deleted_at IS NULL
+            ORDER BY m.created_at ASC
+        ');
+        $sql->bindParam(':id_chamado', $id_chamado, PDO::PARAM_INT);
+        $sql->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $sql->execute();
+
+        // Marca como lidas todas as mensagens exibidas
+        $this->marcarComoLidaChamado($id_usuario, $id_chamado);
+
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function mostrar(int $id_mensagem) {
         $sql = $this->pdo->prepare('
             SELECT * 
@@ -217,6 +240,24 @@ class Mensagem {
         $sql->execute();
         $row = $sql->fetch(PDO::FETCH_ASSOC);
         return (int)($row['qtd'] ?? 0);
+    }
+
+    public function marcarComoLidaChamado(int $id_usuario, int $id_chamado): void {
+        $sql = $this->pdo->prepare('
+            INSERT INTO mensagens_lidas (id_usuario, id_mensagem, lida_em)
+            SELECT :id_usuario, m.id_mensagem, NOW()
+            FROM mensagens m
+            INNER JOIN chamados_mensagens cm ON cm.id_mensagem = m.id_mensagem
+            LEFT JOIN mensagens_lidas ml 
+                ON ml.id_mensagem = m.id_mensagem 
+            AND ml.id_usuario  = :id_usuario
+            WHERE cm.id_chamado = :id_chamado
+            AND m.deleted_at IS NULL
+            AND ml.id_mensagem IS NULL
+        ');
+        $sql->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $sql->bindParam(':id_chamado', $id_chamado, PDO::PARAM_INT);
+        $sql->execute();
     }
 
 }

@@ -93,7 +93,7 @@ class Setor {
     	$dados = $sql->fetch(PDO::FETCH_OBJ);
     	return $dados;
     }
-
+    
     //Editar informações um Setor
     public function editar(array $dados)
     {

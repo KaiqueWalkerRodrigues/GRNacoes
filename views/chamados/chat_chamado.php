@@ -3,12 +3,16 @@
     $Mensagem = new Mensagem();
     $Usuario = new Usuario();
 
-    $id_chamado = $_GET['id'];
-    $id_usuario = $_SESSION['id_usuario'];
+    $id_chamado = (int)$_GET['id'];
+    $id_usuario = (int)$_SESSION['id_usuario'];
 
     $chamado = $Chamado->mostrar($id_chamado);
-    $id_destinatario = $Usuario->mostrar($chamado->id_usuario)->id_usuario;
+    $id_destinatario = (int)$Usuario->mostrar($chamado->id_usuario)->id_usuario;
+
+    // Marcar como lidas ao abrir a tela (opcional)
+    $Mensagem->marcarComoLidaChamado($id_usuario, $id_chamado);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -69,7 +73,7 @@
                         <div class="card p-3 mt-2 d-flex align-items-center" style="margin-top: -15px; position: fixed; z-index: 1000;width: 80%";>
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <span>Procolo: <b class="text-dark"> <?php echo $chamado->id_chamado ?></b> | Chamado: <b class="text-dark"> <?php echo $chamado->titulo ?></b></span>
+                                    <span>ID: <b class="text-dark"> #<?php echo $chamado->id_chamado ?></b> | Chamado: <b class="text-dark"> <?php echo $chamado->titulo ?></b></span>
                                 </div>
                             </div>
                         </div>
@@ -185,16 +189,29 @@
             });
 
             $('#chatForm').on('submit', function (e) {
+                e.preventDefault(); // impede o reload
+
+                let formData = $(this).serialize();
+
                 if ($('#mensagem').val().trim() === '') {
-                    e.preventDefault(); 
                     alert("A mensagem não pode estar vazia.");
-                } else {
-                    // Após enviar a mensagem, verifica imediatamente por novas mensagens
-                    setTimeout(function() {
-                        verificarNovasMensagens();
-                    }, 500);
+                    return;
                 }
+
+                $.ajax({
+                    type: "post",
+                    url: "<?php echo URL ?>/class/Mensagens.php",
+                    data: formData,
+                    success: function (response) {
+                        $('#mensagem').val('');
+                        mostrarMensagens();
+                    },
+                    error: function () {
+                        alert("Erro ao enviar mensagem.");
+                    }
+                });
             });
+
 
         });
     });

@@ -42,9 +42,9 @@
                     <div class="collapse" id="collapseDashboards" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                             <a class="nav-link" href="<?php echo URL ?>/dashboards/captacao">Captação</a>
-                            <a class="nav-link" href="<?php echo URL ?>/dashboards/catarata">Catarata<span class="badge badge-primary ml-2">Novo!</span></a>
-                            <a class="nav-link" href="<?php echo URL ?>/dashboards/cobranca">Cobrança<span class="badge badge-primary ml-2">Novo!</span></a>
-                            <a class="nav-link" href="<?php echo URL ?>/dashboards/lente_contato">Lente de Contato<span class="badge badge-primary ml-2">Novo!</span></a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/catarata">Catarata</a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/cobranca">Cobrança</a>
+                            <a class="nav-link" href="<?php echo URL ?>/dashboards/lente_contato">Lente de Contato</a>
                         </nav>
                     </div> 
 
@@ -110,7 +110,7 @@
 
                     <a class="nav-link collapsed" id="ciru" href="javascript:void(0);" data-toggle="collapse" data-target="#cirurgias" aria-expanded="false" aria-controls="cirurgias">
                         <div class="nav-link-icon"><i class="fa-solid fa-eye"></i></div>
-                        Cirurgias<span class="badge badge-primary ml-2">Novo!</span>
+                        Cirurgias
                         <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
 
@@ -235,7 +235,7 @@
                 
                     <a class="nav-link collapsed" id="tec" href="javascript:void(0);" data-toggle="collapse" data-target="#tecnologia" aria-expanded="false" aria-controls="financeiro">
                         <div class="nav-link-icon"><i class="fa-solid fa-microchip"></i></div>
-                        Tecnologia<span class="badge badge-primary ml-2">Novo!</span>
+                        Tecnologia
                         <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
                     <div class="collapse" id="tecnologia" data-parent="#accordionSidenav">
