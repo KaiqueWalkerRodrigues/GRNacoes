@@ -362,7 +362,7 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
-    case 'solicitacao_cadastro':
+    case 'solicitacao':
         $file = 'solicitacao_cadastro.php';
         $pageTitle .= "Solicitação de Cadastro";
         $requiredSectors = [];
