@@ -25,6 +25,41 @@ class Chamado {
         $sql->execute();
     }
 
+    private function notificar($tipo,$id_chamado,$id_setor = null,$id_usuario = null,$status = null){
+        $agora = date("Y-m-d H:i:s");
+
+        $sql = $this->pdo->prepare('INSERT INTO notificacoes_chamados
+                                    (id_chamado,id_usuario,id_setor,texto,tipo,created_at,updated_at)
+                                    VALUES
+                                    (:id_chamado,:id_usuario,:id_setor,:texto,:tipo,:created_at,:updated_at)
+        ');
+
+        switch($tipo){
+            case 0:
+                $texto = "(#{$id_chamado}) Novo Chamado Aberto";
+            break;
+            case 1:
+                $texto = "(#{$id_chamado}) Nova Mensagem";
+            break;
+            case 2:
+                $texto = "(#{$id_chamado}) Alterado para {$status}";
+            break;
+            case 3:
+                $texto = "(#{$id_chamado}) Foi Encaminhado";
+            break;
+        }
+
+        $sql->bindParam(':id_chamado', $id_chamado); 
+        $sql->bindParam(':id_usuario', $id_usuario); 
+        $sql->bindParam(':id_setor', $id_setor);  
+        $sql->bindParam(':texto', $texto);  
+        $sql->bindParam(':tipo', $tipo); 
+        $sql->bindParam(':created_at', $agora); 
+        $sql->bindParam(':updated_at', $agora); 
+
+        $sql->execute();
+    }
+
     public function listar(){
         $sql = $this->pdo->prepare('SELECT * FROM chamados ORDER BY created_at DESC');        
         $sql->execute();
@@ -84,6 +119,8 @@ class Chamado {
 
         if ($sql->execute()) {
             $id_chamado = $this->pdo->lastInsertId();
+
+            $this->notificar(0,$id_chamado,$id_setor,null,null);
 
             // Log do chamado criado
             $descricao= "Cadastrou o chamado: $titulo ($id_chamado)";
@@ -204,7 +241,7 @@ class Chamado {
     public function encaminhar(int $id_chamado, int $id_setor_novo, int $id_usuario)
     {
         // Consultar informações do chamado atual
-        $consulta_chamado = $this->pdo->prepare('SELECT titulo, id_setor FROM chamados WHERE id_chamado = :id_chamado');
+        $consulta_chamado = $this->pdo->prepare('SELECT titulo, id_setor, id_usuario FROM chamados WHERE id_chamado = :id_chamado');
         $consulta_chamado->bindParam(':id_chamado', $id_chamado);
         $consulta_chamado->execute();
         $resultado_chamado = $consulta_chamado->fetch(PDO::FETCH_ASSOC);
@@ -212,6 +249,7 @@ class Chamado {
         if ($resultado_chamado) {
             $nome_chamado = $resultado_chamado['titulo'];
             $id_setor_antigo = $resultado_chamado['id_setor'];
+            $id_criador = $resultado_chamado['id_setor'];
         } else {
             $nome_chamado = "Chamado Desconhecido";
             $id_setor_antigo = "Desconhecido";
@@ -225,6 +263,8 @@ class Chamado {
         $sql->bindParam(':id_chamado', $id_chamado);
 
         if ($sql->execute()) {
+            $this->notificar(3,$id_chamado,null,$id_criador,null);
+
             $descricao = "Encaminhou o chamado ($id_chamado) do setor ($id_setor_antigo) para o setor ($id_setor_novo)";
             $this->addLog('Encaminhar',$descricao,$id_usuario);
 
@@ -245,13 +285,14 @@ class Chamado {
     public function concluir(int $id_chamado, int $id_usuario)
     {
         // Consultar informações do chamado atual
-        $consulta_chamado = $this->pdo->prepare('SELECT titulo FROM chamados WHERE id_chamado = :id_chamado');
+        $consulta_chamado = $this->pdo->prepare('SELECT titulo,id_usuario FROM chamados WHERE id_chamado = :id_chamado');
         $consulta_chamado->bindParam(':id_chamado', $id_chamado);
         $consulta_chamado->execute();
         $resultado_chamado = $consulta_chamado->fetch(PDO::FETCH_ASSOC);
 
         if ($resultado_chamado) {
             $nome_chamado = $resultado_chamado['titulo'];
+            $id_criador = $resultado_chamado['id_usuario'];
         } else {
             $nome_chamado = "Chamado Desconhecido";
         }
@@ -266,6 +307,8 @@ class Chamado {
         $sql->bindParam(':id_chamado', $id_chamado);
 
         if ($sql->execute()) {
+            $this->notificar(2,$id_chamado,null,$id_criador,Helper::statusChamado($status));
+
             $descricao = "Concluiu o chamado ($id_chamado): $nome_chamado";
             $this->addLog('Concluir',$descricao,$id_usuario);
 
@@ -286,13 +329,14 @@ class Chamado {
     public function recusar(int $id_chamado, int $id_usuario)
     {
         // Consultar informações do chamado atual
-        $consulta_chamado = $this->pdo->prepare('SELECT titulo FROM chamados WHERE id_chamado = :id_chamado');
+        $consulta_chamado = $this->pdo->prepare('SELECT titulo,id_usuario FROM chamados WHERE id_chamado = :id_chamado');
         $consulta_chamado->bindParam(':id_chamado', $id_chamado);
         $consulta_chamado->execute();
         $resultado_chamado = $consulta_chamado->fetch(PDO::FETCH_ASSOC);
 
         if ($resultado_chamado) {
             $nome_chamado = $resultado_chamado['titulo'];
+            $id_criador = $resultado_chamado['id_usuario'];
         } else {
             $nome_chamado = "Chamado Desconhecido";
         }
@@ -307,6 +351,8 @@ class Chamado {
         $sql->bindParam(':id_chamado', $id_chamado);
 
         if ($sql->execute()) {
+            $this->notificar(2,$id_chamado,null,$id_criador,Helper::statusChamado($status));
+
             $descricao = "Recusou o chamado ($id_chamado): $nome_chamado";
             $this->addLog('Recusar',$descricao,$id_usuario);
 
@@ -327,13 +373,14 @@ class Chamado {
     public function reabrir(int $id_chamado, int $id_usuario)
     {
         // Consultar informações do chamado atual
-        $consulta_chamado = $this->pdo->prepare('SELECT titulo FROM chamados WHERE id_chamado = :id_chamado');
+        $consulta_chamado = $this->pdo->prepare('SELECT titulo,id_usuario FROM chamados WHERE id_chamado = :id_chamado');
         $consulta_chamado->bindParam(':id_chamado', $id_chamado);
         $consulta_chamado->execute();
         $resultado_chamado = $consulta_chamado->fetch(PDO::FETCH_ASSOC);
 
         if ($resultado_chamado) {
             $nome_chamado = $resultado_chamado['titulo'];
+            $id_criador = $resultado_chamado['id_usuario'];
         } else {
             $nome_chamado = "Chamado Desconhecido";
         }
@@ -347,6 +394,8 @@ class Chamado {
         $sql->bindParam(':id_chamado', $id_chamado);
 
         if ($sql->execute()) {
+            $this->notificar(2,$id_chamado,null,$id_criador,Helper::statusChamado($status));
+
             $descricao = "Reabriu o chamado ($id_chamado): $nome_chamado";
             $this->addLog('Reabrir',$descricao,$id_usuario);
 
@@ -367,13 +416,14 @@ class Chamado {
     public function iniciar(int $id_chamado, int $id_usuario)
     {
         // Consultar informações do chamado atual
-        $consulta_chamado = $this->pdo->prepare('SELECT titulo FROM chamados WHERE id_chamado = :id_chamado');
+        $consulta_chamado = $this->pdo->prepare('SELECT titulo,id_usuario FROM chamados WHERE id_chamado = :id_chamado');
         $consulta_chamado->bindParam(':id_chamado', $id_chamado);
         $consulta_chamado->execute();
         $resultado_chamado = $consulta_chamado->fetch(PDO::FETCH_ASSOC);
 
         if ($resultado_chamado) {
             $nome_chamado = $resultado_chamado['titulo'];
+            $id_criador = $resultado_chamado['id_usuario'];
         } else {
             $nome_chamado = "Chamado Desconhecido";
         }
@@ -388,6 +438,8 @@ class Chamado {
         $sql->bindParam(':id_chamado', $id_chamado);
 
         if ($sql->execute()) {
+            $this->notificar(2,$id_chamado,null,$id_criador,Helper::statusChamado($status));
+
             $descricao = "Iniciou o chamado ($id_chamado): $nome_chamado";
             $this->addLog('Iniciar',$descricao,$id_usuario);
 

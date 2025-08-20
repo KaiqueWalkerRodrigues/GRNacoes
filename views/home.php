@@ -109,39 +109,31 @@
                                 </div>
                             </div>
                             <div class="col-12 mt-3 text-center">
-                                <!-- Sistema Versão -->
                                 <h1 style="font-size: 1.6rem;">Versão: <span id="sistema-versao"></span></h1>
-                                <div class="row">
-                                    <!-- Coluna Pendente -->
+                                <!-- <div class="row">
                                     <div class="col-4">
                                         <div class="card p-2">
                                             <h5 class="card-title text-warning">Pendente</h5>
                                             <ul id="todo-list" class="list-group">
-                                                <!-- As tarefas a fazer serão inseridas aqui -->
                                             </ul>
                                         </div>
                                     </div>
-
-                                    <!-- Coluna Desenvolvimento -->
                                     <div class="col-4">
                                         <div class="card p-2">
                                             <h5 class="card-title text-primary">Desenvolvimento</h5>
                                             <ul id="inprogress-list" class="list-group">
-                                                <!-- Tarefas em andamento serão inseridas aqui -->
                                             </ul>
                                         </div>
                                     </div>
 
-                                    <!-- Coluna Concluído -->
                                     <div class="col-4">
                                         <div class="card p-2">
                                             <h5 class="card-title text-success">Concluído</h5>
                                             <ul id="done-list" class="list-group">
-                                                <!-- Tarefas concluídas serão inseridas aqui -->
                                             </ul>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 

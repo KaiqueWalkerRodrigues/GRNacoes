@@ -134,7 +134,7 @@
             function verificarNovasMensagens() {
                 $.ajax({
                     type: "get",
-                    url: "/GRNacoes/views/ajax/get_count_mensagens.php",
+                    url: "/GRNacoes/views/ajax/get_count_chamados_mensagens.php",
                     data: { id_chamado: id },
                     success: function (result) {
                         var contagemAtual = parseInt(result);

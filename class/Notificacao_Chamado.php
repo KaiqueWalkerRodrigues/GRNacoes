@@ -63,7 +63,7 @@ class Notificacao_Chamado {
             $sql .= " WHERE " . implode(" AND ", $where);
         }
 
-        $sql .= " ORDER BY n.created_at DESC LIMIT {$limit}";
+        $sql .= " ORDER BY n.updated_at DESC LIMIT {$limit}";
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -75,6 +75,47 @@ class Notificacao_Chamado {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    public function contarNaoLidas(?int $id_setor = null, ?int $id_usuario_destino = null, int $usuario_visualizador): int
+    {
+        // Base
+        $sql = "SELECT COUNT(DISTINCT n.id_notificacao_chamado) AS total
+                FROM notificacoes_chamados n
+                LEFT JOIN notificacoes_chamados_usuarios nu
+                ON nu.id_notificacao = n.id_notificacao_chamado
+                AND nu.id_usuario = :usuario_visualizador";
+
+        $where  = ["n.deleted_at IS NULL", "nu.id_notificacao IS NULL"];
+        $params = [':usuario_visualizador' => (int)$usuario_visualizador];
+
+        // Mesma lógica de destino do listar()
+        if (!empty($id_usuario_destino) && !empty($id_setor)) {
+            $where[] = "(n.id_usuario = :id_usuario_destino OR n.id_setor = :id_setor_destino)";
+            $params[':id_usuario_destino'] = (int)$id_usuario_destino;
+            $params[':id_setor_destino']   = (int)$id_setor;
+        } elseif (!empty($id_usuario_destino)) {
+            $where[] = "n.id_usuario = :id_usuario_destino";
+            $params[':id_usuario_destino'] = (int)$id_usuario_destino;
+        } elseif (!empty($id_setor)) {
+            $where[] = "n.id_setor = :id_setor_destino";
+            $params[':id_setor_destino']   = (int)$id_setor;
+        }
+
+        if ($where) {
+            $sql .= " WHERE " . implode(" AND ", $where);
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $k => $v) {
+            $type = is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($k, $v, $type);
+        }
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int)($row['total'] ?? 0);
+    }
+
 
     public function cadastrar(array $dados)
     {
@@ -143,14 +184,14 @@ class Notificacao_Chamado {
             echo "
             <script>
                 alert('Notificação cadastrada com sucesso!');
-                window.location.href = '" . URL . "/chamados/notificacoes';
+                window.location.href = '" . URL . "/chamados/test';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível cadastrar a Notificação!');
-                window.location.href = '" . URL . "/chamados/notificacoes';
+                window.location.href = '" . URL . "/chamados/test';
             </script>";
             exit;
         }
