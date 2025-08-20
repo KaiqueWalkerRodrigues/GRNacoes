@@ -71,7 +71,7 @@
 
                 <!-- Rodapé fixo -->
                 <a class="text-dark dropdown-item dropdown-notifications-footer flex-shrink-0"
-                    href="<?php echo URL; ?>/chamados/notificacoes">
+                    href="#">
                     Ler Todas Notificações
                 </a>
             </div>
