@@ -65,15 +65,14 @@
                 $icone_leitura = '<i class="fa-solid fa-check" style="color: #FFFFFF;"></i>'; // Check branco para recebida, mas não lida
             }
 
-            // Exibir a mensagem com o ícone de visualização
             if($id_usuario == $value['id_usuario']){
                 echo '
-                    <div class="icon-container row '.$class.'">
+                    <div class="icon-container row '.$class.'" data-id-msg="'.$value['id_mensagem'].'">
                         <div style="width: 95%">
                             <div class="card p-2 mb-2 position-relative">'
                                 .nl2br(htmlspecialchars($value['mensagem'])).'
-                                <span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px; color: #ffffff;">'
-                                .$hora_envio.' '.$icone_leitura.'
+                                <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px; color:#ffffff;">'
+                                    .$hora_envio.' <span id="status-'.$value['id_mensagem'].'">' . $icone_leitura . '</span>
                                 </span>
                             </div>
                         </div>
@@ -83,14 +82,14 @@
                     </div>';
             } else {
                 echo '
-                    <div class="icon-container row '.$class.'">
+                    <div class="icon-container row '.$class.'" data-id-msg="'.$value['id_mensagem'].'">
                         <div style="width: 5%">
                             <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$id_avatar_destinatario.'.png" alt="">
                         </div>
                         <div style="width: 95%">
                             <div class="card p-2 mb-2 position-relative">'
                                 .nl2br(htmlspecialchars($value['mensagem'])).'
-                                <span class="hora-enviada" style="font-size: 10px; position: absolute; bottom: 5px; right: 10px; color: #ffffff;">'.$hora_envio.'</span>
+                                <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px; color:#ffffff;">'.$hora_envio.'</span>
                             </div>
                         </div>
                     </div>';

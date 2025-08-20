@@ -23,6 +23,20 @@
     <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 mr-lg-2" id="sidebarToggle" href="#"><i data-feather="menu"></i></button>
     
     <ul class="navbar-nav align-items-center ml-auto">
+        <!-- Chats -->
+        <li class="nav-item dropdown no-caret mr-3 dropdown-notifications">
+          <a class="btn btn-transparent-dark dropdown-toggle position-relative"
+            id="navbarDropdownChats"
+            href="<?php echo URL ?>/chats">
+            <i class="fa-solid fa-comments"></i>
+            <!-- bolinha verde dentro do ícone -->
+            <span id="chat-badge"
+                  class="badge badge-pill position-absolute"
+                  style="top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
+              0
+            </span>
+          </a>
+        
         <!-- Notificações -->
         <li class="nav-item dropdown no-caret mr-3 dropdown-notifications">
             <a class="btn btn-transparent-dark dropdown-toggle position-relative" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -242,5 +256,29 @@
 
   // Carrega ao entrar e faz polling
   carregarNotificacoes();
-  setInterval(carregarNotificacoes, 10000);
+  setInterval(carregarNotificacoes, 1000);
+
+  function atualizarBadgeChatsTopbar() {
+    fetch("<?php echo URL; ?>/views/ajax/get_total_nao_lidas.php", { cache: "no-store" })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || data.ok !== true) return;
+        const qtd = parseInt(data.total_nao_lidas || 0, 10);
+        const badge = document.getElementById('chat-badge');
+
+        if (!badge) return;
+
+        if (qtd > 0) {
+          badge.textContent = (qtd > 99) ? '99+' : String(qtd);
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      })
+      .catch(() => {/* silencioso */});
+  }
+
+  // dispara agora e faz polling
+  atualizarBadgeChatsTopbar();
+  setInterval(atualizarBadgeChatsTopbar, 1000);
 </script>

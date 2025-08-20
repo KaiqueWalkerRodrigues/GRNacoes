@@ -238,17 +238,66 @@
             });
 
             $('#chatForm').on('submit', function (e) {
-                if ($('#mensagem').val().trim() === '') {
-                    e.preventDefault();
+                e.preventDefault(); // impede reload
+
+                var mensagem = $('#mensagem').val().trim();
+                if (mensagem === '') {
                     alert("A mensagem não pode estar vazia.");
                     return;
                 }
-                // Dica: após enviar, você pode limpar e forçar uma checagem
-                setTimeout(function(){
-                    $('#mensagem').val('');
-                    checarContagem();
-                }, 50);
+
+                $.ajax({
+                    type: "post",
+                    url: "<?php echo URL ?>/class/Mensagens.php",
+                    data: $(this).serialize(), // envia todos os campos hidden + mensagem
+                    success: function(res) {
+                        $('#mensagem').val('').focus(); // limpa e mantém foco
+                        checarContagem();               // força atualizar mensagens
+                    },
+                    error: function() {
+                        alert("Erro ao enviar mensagem!");
+                    }
+                });
             });
+
+
+            // ícone pronto para aplicar quando estiver "lida"
+            function iconeLida() {
+                return '<i class="fa-solid fa-check" style="color:#00ffb3;"></i>';
+            }
+
+            // Atualiza somente os ícones das minhas mensagens que já foram lidas
+            function checarLeituras() {
+                var id = $('#id_conversa').val();
+                var id_usuario = $('#id_usuario').val();
+
+                $.ajax({
+                    type: "get",
+                    url: "/GRNacoes/views/ajax/get_mensagens_lidas.php",
+                    data: { id_conversa: id, id_usuario: id_usuario },
+                    success: function(res) {
+                        try {
+                            var data = (typeof res === 'string') ? JSON.parse(res) : res;
+                            if (data && data.ok && Array.isArray(data.ids_lidas)) {
+                                data.ids_lidas.forEach(function(idMsg){
+                                    // Só atualiza se existir o span do status
+                                    var $status = $('#status-' + idMsg);
+                                    if ($status.length) {
+                                        // Troca para o check verde (se ainda não estiver)
+                                        if ($status.html().indexOf('fa-check') === -1 || $status.find('i').css('color') !== 'rgb(0, 255, 179)') {
+                                            $status.html(iconeLida());
+                                        }
+                                    }
+                                });
+                            }
+                        } catch(e) {}
+                    }
+                });
+            }
+
+            // Dispare o poll de leitura a cada 1s
+            setInterval(checarLeituras, 1000);
+            checarLeituras();
         });
     </script>
 

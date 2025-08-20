@@ -1,3 +1,30 @@
+<style>
+    .time-unread {
+    gap: 8px;                   /* espaço entre o badge e a hora */
+    min-width: 80px;            /* opcional: ajuda a alinhar a coluna direita */
+    }
+
+    .badge-unread {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;             /* cresce para 2+ dígitos (vira “pílula”) */
+    border-radius: 999px;       /* círculo/pílula */
+    background: #25D366;        /* verde WhatsApp */
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 20px;
+    }
+
+    .last-time {
+    font-size: 12px;
+    color: gray;
+    }
+</style>
+
 <?php 
 
 require_once '../../const.php';
@@ -20,6 +47,10 @@ $chats = $Chats->listar($id_usuario);
 <div id="chats-list">
     <?php foreach($chats as $chat): ?>
         <?php 
+
+        $qtdNaoLidas = $Mensagem->contarNaoLidasPorConversa((int)$chat->id_conversa, (int)$id_usuario);
+        $mostrarBadge = $qtdNaoLidas > 0;
+        $badgeTexto = $qtdNaoLidas > 99 ? '99+' : (string)$qtdNaoLidas;
         // Recuperar destinatário
         $destinatario = $Usuario->mostrar($Chats->destinatario($chat->id_conversa, $id_usuario)->id_usuario); 
         
@@ -66,10 +97,18 @@ $chats = $Chats->listar($id_usuario);
                     </div>
                     <div class="col-2 text-center">
                         <br>
-                        <span style="color: gray;"><?php echo $dataEnvio ?></span>
+                        <div class="time-unread d-inline-flex align-items-center justify-content-end">
+                            <?php if ($mostrarBadge): ?>
+                                <span class="badge-unread" aria-label="<?php echo $badgeTexto; ?> mensagens não lidas">
+                                    <?php echo $badgeTexto; ?>
+                                </span>
+                            <?php endif; ?>
+                            <span class="last-time"><?php echo $dataEnvio; ?></span>
+                        </div>
                     </div>
                 </div>
             </a>
         </div>
+        
     <?php endforeach; ?>
 </div>

@@ -197,6 +197,28 @@ class Mensagem {
     
         return $sql->fetch(PDO::FETCH_OBJ);
     }
+
+    function contarNaoLidasPorConversa(int $idConversa, int $idUsuario): int {
+        $pdo = Conexao::conexao();
+        $sql = $pdo->prepare("
+            SELECT COUNT(*) AS qtd
+            FROM conversas_mensagens cm
+            INNER JOIN mensagens m ON m.id_mensagem = cm.id_mensagem
+            LEFT JOIN mensagens_lidas ml
+                ON ml.id_mensagem = m.id_mensagem
+                AND ml.id_usuario  = :id_usuario       -- leitura por MIM
+            WHERE cm.id_conversa = :id_conversa
+            AND m.deleted_at IS NULL
+            AND m.id_usuario <> :id_usuario            -- mensagens de OUTROS
+            AND ml.id_mensagem IS NULL                 -- ainda não li
+        ");
+        $sql->bindValue(':id_conversa', $idConversa, PDO::PARAM_INT);
+        $sql->bindValue(':id_usuario',  $idUsuario,  PDO::PARAM_INT);
+        $sql->execute();
+        $row = $sql->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['qtd'] ?? 0);
+    }
+
 }
 
 include_once('Conexao.php');

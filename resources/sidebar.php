@@ -65,11 +65,6 @@
                     </nav>
                 </div>
 
-                <a class="nav-link" id="chats" href="<?php echo URL ?>/chats">
-                    <div class="nav-link-icon"><i class="fa-brands fa-rocketchat"></i></div>
-                    Chats
-                </a>
-
                 <?php if(verificarSetor([1,5,12,14])){ ?>
 
                     <a class="nav-link collapsed" id="arqu" href="javascript:void(0);" data-toggle="collapse" data-target="#arquivo" aria-expanded="false" aria-controls="arquivo">
@@ -485,7 +480,5 @@
 
         dataInicio.addEventListener('change', validarDatas);
         dataFim.addEventListener('change', validarDatas);
-    });
-    $(document).ready(function () {
     });
 </script>
