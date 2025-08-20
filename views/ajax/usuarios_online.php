@@ -47,7 +47,6 @@ try {
                 ON s.id_setor = us.id_setor
             WHERE u.id_usuario IN ($inClause)
             ORDER BY u.nome ASC
-
         ");
 
         foreach ($ids as $i => $id) {
