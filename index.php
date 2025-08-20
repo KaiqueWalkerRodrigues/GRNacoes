@@ -145,7 +145,7 @@ switch ($route) {
         break;
 
     case 'chamados':
-        $file = 'chamados/index.php';
+        $file = 'chamados/chamados.php';
         $pageTitle .= "Chamados";
         $requiredSectors = null;
         $requiredLogin = true;
