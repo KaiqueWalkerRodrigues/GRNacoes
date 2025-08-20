@@ -92,6 +92,25 @@
             width: 10px; height: 10px; border-radius: 50%;
             display: inline-block; margin-right: 6px; background: #28a745;
         }
+        /* mostra ~5 itens e ativa rolagem no card de online */
+        .user-card .user-list{
+            max-height: 270px;     /* altura suficiente para ~5 usuários */
+            overflow-y: auto;
+            padding-right: 6px;    /* respiro para a barra de rolagem */
+        }
+
+        /* (opcional) scrollbar mais discreta no WebKit */
+        .user-card .user-list::-webkit-scrollbar{
+            width: 8px;
+        }
+        .user-card .user-list::-webkit-scrollbar-track{
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        .user-card .user-list::-webkit-scrollbar-thumb{
+            background: #c9ced6;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
