@@ -765,5 +765,27 @@ class Usuario {
             exit;
         }
     }
-    
+
+    public function listarOnlines(int $minutos = 1)
+    {
+        // Garante intervalo mínimo de 1 minuto
+        $minutos = max(1, $minutos);
+
+        // Calcula o timestamp-limite (agora - X minutos)
+        $limite = date('Y-m-d H:i:s', time() - ($minutos * 60));
+
+        $sql = $this->pdo->prepare("
+            SELECT id_usuario, nome, usuario, id_avatar, empresa, online_at
+            FROM usuarios
+            WHERE deleted_at IS NULL
+            AND ativo = 1
+            AND online_at IS NOT NULL
+            AND online_at >= :limite
+            ORDER BY online_at DESC
+        ");
+        $sql->bindValue(':limite', $limite, PDO::PARAM_STR);
+        $sql->execute();
+
+        return $sql->fetchAll(PDO::FETCH_OBJ);
+    }
  }

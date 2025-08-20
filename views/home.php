@@ -87,6 +87,11 @@
         .list-group-item {
             font-size: 0.9rem;
         }
+
+        .user-status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            display: inline-block; margin-right: 6px; background: #28a745;
+        }
     </style>
 </head>
 
@@ -106,6 +111,14 @@
                                 <div class="card time-card">
                                     <p id="current-time"></p>
                                     <small id="current-date"></small>
+                                </div>
+                            </div>
+                            <!-- NOVO: Card de usuários online -->
+                            <div class="col-md-6 offset-md-3 col-sm-12">
+                                <div class="card user-card">
+                                    <h5 class="mb-3">Usuários online</h5>
+                                    <div id="online-users" class="user-list"></div>
+                                    <small class="text-muted d-block mt-2" id="online-updated-at"></small>
                                 </div>
                             </div>
                             <div class="col-12 mt-3 text-center">
@@ -189,6 +202,70 @@
                 $('#current-time').text(now.format('HH:mm:ss'));
                 $('#current-date').text(formattedDate);
             }
+
+            // === ONLINE USERS POLLING ===
+            const ONLINE_ENDPOINT = '/GRNacoes/views/ajax/usuarios_online.php'; // ajuste conforme suas rotas
+            let onlineReq = null; // para abortar requisição anterior e evitar fila
+
+            function renderOnlineUsers(list) {
+                if (!Array.isArray(list) || list.length === 0) {
+                    $('#online-users').html('<div class="text-muted">Ninguém online agora.</div>');
+                    return;
+                }
+
+                const html = list.map(u => {
+                    const safeAvatar = u.avatar || '<?php echo URL_RESOURCES; ?>/img/avatar-default.png';
+                    const safeNome   = u.nome   || 'Sem nome';
+                    const safeSetor  = u.setor  || '—';
+
+                    return `
+                        <div class="user">
+                            <img class="user-img" src="${safeAvatar}" alt="${safeNome}" onerror="this.src='<?php echo URL_RESOURCES; ?>/img/avatar-default.png'">
+                            <div class="user-info">
+                                <p class="user-name mb-0">${safeNome}</p>
+                                <small class="status"><span class="user-status-dot"></span>${safeSetor}</small>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                $('#online-users').html(html);
+            }
+
+            function fetchOnlineUsers() {
+                // Aborta a requisição anterior se ainda estiver em andamento
+                if (onlineReq && onlineReq.readyState !== 4) {
+                    onlineReq.abort();
+            }
+
+                onlineReq = $.ajax({
+                    url: ONLINE_ENDPOINT,
+                    method: 'GET',
+                    cache: false,
+                    dataType: 'json',
+                    timeout: 8000
+                })
+                .done(function(res) {
+                    if (res && Array.isArray(res.data)) {
+                        renderOnlineUsers(res.data);
+                        const ts = res.server_time ? moment(res.server_time).format('HH:mm:ss') : moment().format('HH:mm:ss');
+                    } else {
+                        renderOnlineUsers([]);
+                    }
+                })
+                .fail(function(xhr, status) {
+                    if (status !== 'abort') {
+                        // Mostra uma mensagem discreta sem quebrar a UI
+                        $('#online-updated-at').text('Falha ao atualizar lista de online...');
+                    }
+                });
+            }
+
+            // Dispara a cada 1 segundo como solicitado
+            setInterval(fetchOnlineUsers, 1000);
+            // Faz a primeira carga imediatamente
+            fetchOnlineUsers();
+
         });
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
