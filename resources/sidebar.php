@@ -172,11 +172,12 @@
                                     <a class="nav-link" id="compras_configuracoes_fornecedores" href="<?php echo URL ?>/compras/configuracoes/fornecedores">Gerenciar Fornecedores</a>
                                 </nav>
                             </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#compras_relatorios" aria-expanded="false" aria-controls="compras_relatorios">Relatórios
+                            <a class="nav-link collapsed" id="compras_relatorios" href="#" data-toggle="collapse" data-target="#compras_relatorios" aria-expanded="false" aria-controls="compras_relatorios">Relatórios
                                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="compras_relatorios" data-parent="#accordionSidenavLayout">
                                 <nav class="sidenav-menu-nested nav">
+                                    <a class="nav-link" id="compras_relatorios_estoque_venda" href="<?php echo URL ?>/compras/relatorios/estoque_venda">Estoque e Venda</a>
                                     <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorCategoria">Categorias</a>
                                     <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#modalRelatorioPorFornecedor">Fornecedores</a>
                                 </nav>

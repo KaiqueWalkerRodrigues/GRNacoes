@@ -26,9 +26,9 @@ try {
     $total_unread = null;
     if ($unread && !empty($usuario_visualizador)) {
         $total_unread = $Notificacao_Chamado->contarNaoLidas(
-            (int)$usuario_visualizador, // 1º: quem está visualizando
-            $id_setor ?: null,          // 2º: setor (se houver)
-            $id_usuario ?: null         // 3º: destino específico (se houver)
+            (int)$usuario_visualizador,
+            $id_setor ?: null,
+            $id_usuario ?: null
         );
     }
 

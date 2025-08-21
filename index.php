@@ -206,6 +206,12 @@ switch ($route) {
         $requiredSectors = [1,3,12];
         $requiredLogin = true;
         break;
+    case 'compras/relatorios/estoque_venda':
+        $file = 'compras/relatorios/estoque_venda.php';
+        $pageTitle .= "Estoque e Venda";
+        $requiredSectors = [1,3,12];
+        $requiredLogin = true;
+        break;
     case 'compras/relatorios/categorias':
         $file = 'compras/relatorios/gerar_categorias.php';
         $pageTitle .= "Relatorio Por Categoria";
