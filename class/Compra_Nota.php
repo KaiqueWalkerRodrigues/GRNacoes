@@ -687,7 +687,6 @@ class Compra_Nota {
     
         return $total;
     }
-        
 
     public function totalQntdMes($id_empresa, $mes, $ano)
     {
@@ -708,5 +707,56 @@ class Compra_Nota {
 
         return $resultado['total'];
     }
+
+    public function totalQntdFornecedorMesEstoque($id_empresa, $id_fornecedor, $mes, $ano)
+    {
+        $sql = $this->pdo->prepare('
+            SELECT COALESCE(SUM(estoque), 0) AS total
+            FROM compras_estoque_venda
+            WHERE id_empresa   = :id_empresa
+            AND id_fornecedor= :id_fornecedor
+            AND mes          = :mes
+            AND ano          = :ano
+            AND deleted_at IS NULL
+        ');
+
+        $sql->bindValue(':id_empresa',    (int)$id_empresa,    PDO::PARAM_INT);
+        $sql->bindValue(':id_fornecedor', (int)$id_fornecedor, PDO::PARAM_INT);
+        $sql->bindValue(':mes',           (int)$mes,           PDO::PARAM_INT);
+        $sql->bindValue(':ano',           (int)$ano,           PDO::PARAM_INT);
+
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+        $total = ($resultado && $resultado->total !== null) ? (int)$resultado->total : 0;
+
+        return $total;
+    }
+
+    public function totalQntdFornecedorMesVenda($id_empresa, $id_fornecedor, $mes, $ano)
+    {
+        $sql = $this->pdo->prepare('
+            SELECT COALESCE(SUM(venda), 0) AS total
+            FROM compras_estoque_venda
+            WHERE id_empresa   = :id_empresa
+            AND id_fornecedor= :id_fornecedor
+            AND mes          = :mes
+            AND ano          = :ano
+            AND deleted_at IS NULL
+        ');
+
+        $sql->bindValue(':id_empresa',    (int)$id_empresa,    PDO::PARAM_INT);
+        $sql->bindValue(':id_fornecedor', (int)$id_fornecedor, PDO::PARAM_INT);
+        $sql->bindValue(':mes',           (int)$mes,           PDO::PARAM_INT);
+        $sql->bindValue(':ano',           (int)$ano,           PDO::PARAM_INT);
+
+        $sql->execute();
+
+        $resultado = $sql->fetch(PDO::FETCH_OBJ);
+        $total = ($resultado && $resultado->total !== null) ? (int)$resultado->total : 0;
+
+        return $total;
+    }
+
 }
 ?>

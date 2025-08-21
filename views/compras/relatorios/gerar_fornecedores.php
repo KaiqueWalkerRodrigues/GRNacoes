@@ -933,7 +933,6 @@ if($empresa == 0 OR $empresa == 2){
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
         }
-        
 
         $row_categoria++;
 
@@ -946,6 +945,8 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->setCellValue('A' . $row_categoria, $cca . ':');
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
+
+                $row_um = $row_categoria;
         
                 if($cc->id_compra_categoria == 5){
                     foreach ($Compra_Fornecedor->listarTudoPorCategoria(2, $cc->id_compra_categoria, $ano) as $f){
@@ -956,13 +957,31 @@ if($empresa == 0 OR $empresa == 2){
                             $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
                             }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMesVenda(2, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMesEstoque(2, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -976,13 +995,31 @@ if($empresa == 0 OR $empresa == 2){
                             $total_f_mes = $Compra_nota->totalQntdFornecedorMes(2, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
                             }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMesVenda(2, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMesEstoque(2, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -995,11 +1032,16 @@ if($empresa == 0 OR $empresa == 2){
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
                 for ($i = 1; $i <= 12; $i++) {
-                    $valor_total = $Compra_nota->totalQntdCategoria(2, $cc->id_compra_categoria, $i, $ano);
-                    $newSheet->setCellValue($col . $row_categoria, $valor_total);
+
+                    // $valor_total = $Compra_nota->totalQntdCategoria(2, $cc->id_compra_categoria, $i, $ano);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
                     $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
                 }
         
@@ -1009,20 +1051,44 @@ if($empresa == 0 OR $empresa == 2){
 
         $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
         $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_amarelo);
-        $mes = 1;
+
         $col_mes = 'B';
 
+        $linha_inicio = 1; // pode ser 1 sem problema: só casa com linhas "TOTAL *:"
+        $linha_fim    = $row_categoria - 1;
+
         for ($i = 1; $i <= 12; $i++) {
-            $total = $Compra_nota->totalQntdMes(2, $mes, $ano);
-            $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+            $criterios_range = '$A$' . $linha_inicio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $linha_inicio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
             $col_mes = getNextColumn($col_mes);
+
+            $criterios_range = '$A$' . $linha_inicio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $linha_inicio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
+
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
+            $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
             $col_mes = getNextColumn($col_mes);
+
+            $criterios_range = '$A$' . $linha_inicio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $linha_inicio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
+
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
+            $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
             $col_mes = getNextColumn($col_mes);
-            $mes++;
         }
 
         $newSheet->getStyle('A'.$row_titulo.':AK' . $row_categoria)->applyFromArray($border_black);
@@ -1033,7 +1099,7 @@ if($empresa == 0 OR $empresa == 2){
             ÓTICA PRESTIGIO
         */
 
-        $row_titulo = $row_categoria;
+        $row_inicio_prestigio =  $row_categoria;
 
         $newSheet->mergeCells('A' . $row_categoria . ':AK' . $row_categoria);
         $newSheet->setCellValue('A' . $row_categoria, 'RELATORIO QUANTIDADE ÓTICA PRESTIGIO - ' . $ano);
@@ -1063,18 +1129,20 @@ if($empresa == 0 OR $empresa == 2){
         
         for ($i = 0; $i < 12; $i++) {
             $newSheet->setCellValue($coluna . $row_categoria, "COM");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_compra);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_venda);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "EST");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_estoque);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
         }
-        
 
         $row_categoria++;
 
@@ -1087,6 +1155,8 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->setCellValue('A' . $row_categoria, $cca . ':');
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
+
+                $row_um = $row_categoria;
         
                 if($cc->id_compra_categoria == 5){
                     foreach ($Compra_Fornecedor->listarTudoPorCategoria(4, $cc->id_compra_categoria, $ano) as $f){
@@ -1097,13 +1167,31 @@ if($empresa == 0 OR $empresa == 2){
                             $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
                             }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMesVenda(4, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMesEstoque(4, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1117,13 +1205,31 @@ if($empresa == 0 OR $empresa == 2){
                             $total_f_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
                             }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMes(4, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1136,11 +1242,16 @@ if($empresa == 0 OR $empresa == 2){
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
                 for ($i = 1; $i <= 12; $i++) {
-                    $valor_total = $Compra_nota->totalQntdCategoria(4, $cc->id_compra_categoria, $i, $ano);
-                    $newSheet->setCellValue($col . $row_categoria, $valor_total);
+
+                    // $valor_total = $Compra_nota->totalQntdCategoria(4, $cc->id_compra_categoria, $i, $ano);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
                     $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
                 }
         
@@ -1150,21 +1261,41 @@ if($empresa == 0 OR $empresa == 2){
 
         $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
         $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_amarelo);
-        $mes = 1;
+
         $col_mes = 'B';
 
+        $linha_fim    = $row_categoria - 1;
+
         for ($i = 1; $i <= 12; $i++) {
-            $total = $Compra_nota->totalQntdMes(4, $mes, $ano);
-            $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+            $criterios_range = '$A$' . $row_inicio_prestigio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_prestigio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
             $col_mes = getNextColumn($col_mes);
+
+            $criterios_range = '$A$' . $row_inicio_prestigio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_prestigio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $col_mes = getNextColumn($col_mes);
+
+            $criterios_range = '$A$' . $row_inicio_prestigio . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_prestigio . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $col_mes = getNextColumn($col_mes);
-            $mes++;
         }
+
 
         $newSheet->getStyle('A'.$row_titulo.':AK' . $row_categoria)->applyFromArray($border_black);
         $row_categoria++;
@@ -1174,7 +1305,7 @@ if($empresa == 0 OR $empresa == 2){
             ÓTICA DAILY
         */
 
-        $row_titulo = $row_categoria;
+        $row_inicio_daily = $row_categoria;
 
         $newSheet->mergeCells('A' . $row_categoria . ':AK' . $row_categoria);
         $newSheet->setCellValue('A' . $row_categoria, 'RELATORIO QUANTIDADE ÓTICA DAILY - ' . $ano);
@@ -1204,18 +1335,20 @@ if($empresa == 0 OR $empresa == 2){
         
         for ($i = 0; $i < 12; $i++) {
             $newSheet->setCellValue($coluna . $row_categoria, "COM");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_compra);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "VEN");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_venda);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
             
             $newSheet->setCellValue($coluna . $row_categoria, "EST");
+            $newSheet->getStyle($coluna . $row_categoria)->applyFromArray($estilo_estoque);
             $newSheet->getStyle($coluna . $row_categoria)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $coluna = getNextColumn($coluna);
         }
-        
 
         $row_categoria++;
 
@@ -1228,6 +1361,8 @@ if($empresa == 0 OR $empresa == 2){
                 $newSheet->setCellValue('A' . $row_categoria, $cca . ':');
                 $newSheet->getStyle('A' . $row_categoria . ':AK' . $row_categoria)->applyFromArray($grey);
                 $row_categoria++;
+
+                $row_um = $row_categoria;
         
                 if($cc->id_compra_categoria == 5){
                     foreach ($Compra_Fornecedor->listarTudoPorCategoria(6, $cc->id_compra_categoria, $ano) as $f){
@@ -1238,13 +1373,31 @@ if($empresa == 0 OR $empresa == 2){
                             $total_f_mes = $Compra_nota->totalQntdFornecedorMes(6, $f->id_compra_fornecedor, $i, $ano);
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
                             }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMesVenda(6, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+                            
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMesEstoque(6, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1259,12 +1412,33 @@ if($empresa == 0 OR $empresa == 2){
                             if ($total_f_mes > 0) {
                                 $newSheet->setCellValue($col . $row_categoria, $total_f_mes);
                             }
+                            else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_compra);
                             $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_v_mes = $Compra_nota->totalQntdFornecedorMesVenda(6, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_v_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_v_mes);
+                            }
+                            else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_venda);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
+
+                            $total_e_mes = $Compra_nota->totalQntdFornecedorMesEstoque(6, $f->id_compra_fornecedor, $i, $ano);
+                            if ($total_e_mes > 0) {
+                                $newSheet->setCellValue($col . $row_categoria, $total_e_mes);
+                            }
+                            else{
+                                $newSheet->setCellValue($col . $row_categoria, 0);
+                            }
                             $newSheet->getStyle($col . $row_categoria)->applyFromArray($estilo_estoque);
+                            $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                             $col = getNextColumn($col);
                         }
                         $row_categoria++;
@@ -1277,11 +1451,16 @@ if($empresa == 0 OR $empresa == 2){
                 $col = 'B';
                 // Lista todos os valores de categorias por mês
                 for ($i = 1; $i <= 12; $i++) {
-                    $valor_total = $Compra_nota->totalQntdCategoria(6, $cc->id_compra_categoria, $i, $ano);
-                    $newSheet->setCellValue($col . $row_categoria, $valor_total);
+
+                    // $valor_total = $Compra_nota->totalQntdCategoria(6, $cc->id_compra_categoria, $i, $ano);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
                     $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
+                    $newSheet->setCellValue($col . $row_categoria, '=SUM('.$col.$row_um.':'.$col.($row_categoria-1).')');
+                    $newSheet->getCell($col . $row_categoria)->getStyle()->getNumberFormat();
                     $col = getNextColumn($col);
                 }
         
@@ -1291,37 +1470,59 @@ if($empresa == 0 OR $empresa == 2){
 
         $newSheet->setCellValue('A' . $row_categoria, 'TOTAL:');
         $newSheet->getStyle('A' . $row_categoria)->applyFromArray($total_amarelo);
-        $mes = 1;
+
         $col_mes = 'B';
 
+        $linha_fim    = $row_categoria - 1;
+
         for ($i = 1; $i <= 12; $i++) {
-            $total = $Compra_nota->totalQntdMes(6, $mes, $ano);
-            $newSheet->setCellValue($col_mes . $row_categoria, $total); 
+            $criterios_range = '$A$' . $row_inicio_daily . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_daily . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $newSheet->getCell($col_mes . $row_categoria)->getStyle()->getNumberFormat();
             $col_mes = getNextColumn($col_mes);
+            
+            $criterios_range = '$A$' . $row_inicio_daily . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_daily . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $col_mes = getNextColumn($col_mes);
+             
+            $criterios_range = '$A$' . $row_inicio_daily . ':$A$' . $linha_fim;
+            $soma_range      = $col_mes . '$' . $row_inicio_daily . ':' . $col_mes . $linha_fim;
+
+            $formula = '=SUMIF(' . $criterios_range . ',"TOTAL *:",' . $soma_range . ')';
+
+            $newSheet->setCellValue($col_mes . $row_categoria, $formula);
             $newSheet->getStyle($col_mes . $row_categoria)->applyFromArray($total_amarelo);
             $col_mes = getNextColumn($col_mes);
-            $mes++;
         }
+
 
         $newSheet->getStyle('A'.$row_titulo.':AK' . $row_categoria)->applyFromArray($border_black);
         $row_categoria++;
         $row_categoria++;
 
-        $newSheet->getColumnDimension('A')->setAutoSize(true);
     }
-
+    
     {
+        $newSheet->getColumnDimension('A')->setAutoSize(true);
         $newSheet->getStyle('B')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('C')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('D')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('E')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('F')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('G')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('H')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('I')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $newSheet->getStyle('J')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('K')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('L')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $newSheet->getStyle('M')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
