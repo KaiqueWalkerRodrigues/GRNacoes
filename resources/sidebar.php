@@ -198,7 +198,7 @@
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
                             <a class="nav-link" id="financeiro_campanhas" href="<?php echo URL ?>/financeiro/campanhas">Campanhas</a>
                             <a class="nav-link" id="financeiro_contratos" href="<?php echo URL ?>/financeiro/contratos">Contratos</a>
-                            <a class="nav-link" id="financeiro_pendencias" href="<?php echo URL ?>/financeiro/pendencias">Pendencias</a>
+                            <a class="nav-link" id="financeiro_faturas_atrasadas" href="<?php echo URL ?>/financeiro/faturas_atrasadas">Faturas Atrasadas</a>
                         </nav>
                     </div>
                 

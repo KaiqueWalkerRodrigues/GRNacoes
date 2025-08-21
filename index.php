@@ -231,9 +231,9 @@ switch ($route) {
         $requiredSectors = [1,5,12,14];
         $requiredLogin = true;
         break;
-    case 'financeiro/pendencias':
-        $file = 'financeiro/pendencias.php';
-        $pageTitle .= "Pendencias";
+    case 'financeiro/faturas_atrasadas':
+        $file = 'financeiro/faturas_atrasadas.php';
+        $pageTitle .= "Faturas Atrasadas";
         $requiredSectors = [1,5,12,14];
         $requiredLogin = true;
         break;

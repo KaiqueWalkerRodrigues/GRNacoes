@@ -222,6 +222,37 @@ class Financeiro_Contrato {
         return $dados;
     }      
 
+    public function listarComAtraso() {
+        $sql = $this->pdo->prepare("
+            SELECT 
+                fc.*, 
+                COALESCE(SUM(fp.valor), 0) AS valor_total_original, -- Soma das parcelas originais
+                COALESCE(SUM(fp.valor_pago), 0) AS valor_pago_total, -- Soma das parcelas pagas (com juros, se aplicável)
+                COALESCE(SUM(fp.valor_pago) + SUM(fp.valor) - SUM(fp.valor_pago), 0) AS valor_total_atualizado -- Total atualizado (pagos + pendentes)
+            FROM 
+                financeiro_contratos AS fc
+            LEFT JOIN 
+                financeiro_contratos_parcelas AS fp 
+            ON 
+                fc.id_financeiro_contrato = fp.id_contrato
+            WHERE 
+                fc.deleted_at IS NULL
+            AND
+                fp.data < current_date() 
+            AND
+                pago_em IS NULL
+            GROUP BY 
+                fc.id_financeiro_contrato
+            ORDER BY 
+                fc.n_contrato DESC
+        ");
+        $sql->execute();
+        
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }      
+
     public function mostrar($id_financeiro_contrato){
         $sql = $this->pdo->prepare('SELECT * FROM financeiro_contratos WHERE id_financeiro_contrato = :id_financeiro_contrato ORDER BY n_contrato DESC');
         $sql->bindParam(':id_financeiro_contrato',$id_financeiro_contrato);

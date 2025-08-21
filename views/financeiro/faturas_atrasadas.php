@@ -35,20 +35,20 @@
 
 <body class="nav-fixed">
         <!-- Tela de Carregamento -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div class="spinner"></div>
-    </div>
+    </div> -->
     <?php include_once('resources/topbar.php') ?>
     <div id="layoutSidenav">
         <?php include_once('resources/sidebar.php') ?>
         <div id="layoutSidenav_content">
             <main>
-                <div class="page-header pb-10 page-header-dark bg-primary">
+                <div class="page-header pb-10 page-header-dark bg-dark">
                     <div class="container-fluid">
                         <div class="page-header-content">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"><i class="fa-solid fa-rectangle-history"></i></div>
-                                <span>Contratos</span>
+                                <span>Contratos Com Faturas Atrasdas</span>
                             </h1>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($Financeiro_Contrato->listar() as $contrato) { ?>
+                                        <?php foreach ($Financeiro_Contrato->listarComAtraso() as $contrato) { ?>
                                         <tr>
                                             <td><?php echo $contrato->n_contrato; ?></td>
                                             <td><?php echo Helper::mostrar_empresa($contrato->id_empresa); ?></td>
@@ -132,230 +132,6 @@
             </main>
             <?php include_once('resources/footer.php') ?>
         </div>
-    </div>
-
-    <!-- Modal Cadastrar Contrato -->
-    <div class="modal fade" id="modalCadastrarContrato" tabindex="1" role="dialog" aria-labelledby="modalCadastrarContratosLabel" aria-hidden="true">
-        <form action="?" method="post">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Cadastrar Novo Contrato</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-
-                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario']?> ">
-
-                            <div class="offset-1 col-10">
-                                <b class="text-dark">Dados Contrato:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-3 offset-1 mb-1">
-                                <label for="cadastrar_id_empresa" class="form-label">Empresa *</label>
-                                <select name="id_empresa" id="cadastrar_id_empresa" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">Clínica Parque</option>
-                                    <option value="3">Clínica Mauá</option>
-                                    <option value="5">Clínica Jardim</option>
-                                </select>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_n_contrato" class="form-label">N° Contrato *</label>
-                                <input type="number" name="n_contrato" id="cadastrar_n_contrato" class="form-control" required>
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_data" class="form-label">Data *</label>
-                                <input type="date" name="data" id="cadastrar_data" class="form-control" value="<?php echo date('Y-m-d') ?>" required>
-                            </div>
-
-                            <div class="offset-1 col-10">
-                                <b class="text-dark">Testamunhas:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-3 offset-1 mb-1">
-                                <label for="cadastrar_id_testemunha1" class="form-label">Testemunha 1 *</label>
-                                <select name="id_testemunha1" id="cadastrar_id_testemunha1" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                </select>
-                            </div>
-
-                            <!-- <div class="col-3 mb-1">
-                                <label for="cadastrar_id_testemunha2" class="form-label">Testemunha 2 *</label>
-                                <select name="id_testemunha2" id="cadastrar_id_testemunha2" class="form-control">
-                                    <option value="">Selecione...</option>
-                                </select>
-                            </div> -->
-
-                            <div class="offset-1 col-10 mt-4">
-                                <b class="text-dark">Dados Paciente:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-4 offset-1 mb-1">
-                                <label for="cadastrar_nome" class="form-label">Nome Paciente *</label>
-                                <input type="text" name="nome" id="cadastrar_nome" class="form-control" required>
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_data_nascimento" class="form-label">Data Nascimento*</label>
-                                <input type="date" name="data_nascimento" id="cadastrar_data_nascimento" class="form-control" required>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_cpf" class="form-label">CPF *</label>
-                                <input type="text" name="cpf" id="cadastrar_cpf" class="form-control" required>
-                            </div>
-                            <div class="col-2 offset-1 mb-1">
-                                <label for="cadastrar_cep" class="form-label">CEP *</label>
-                                <input type="text" name="cep" id="cadastrar_cep" class="form-control" required>
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_numero" class="form-label">Numero *</label>
-                                <input type="number" name="numero" id="cadastrar_numero" class="form-control" required>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_endereco" class="form-label">Endereço *</label>
-                                <input type="text" name="endereco" id="cadastrar_endereco" class="form-control" required>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_complemento" class="form-label">Complemento</label>
-                                <input type="text" name="complemento" id="cadastrar_complemento" class="form-control">
-                            </div>
-                            <div class="col-3 offset-1 mb-1">
-                                <label for="cadastrar_bairro" class="form-label">Bairro *</label>
-                                <input type="text" name="bairro" id="cadastrar_bairro" class="form-control" required>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_cidade" class="form-label">Cidade *</label>
-                                <input type="text" name="cidade" id="cadastrar_cidade" class="form-control" required>
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_uf" class="form-label">UF *</label>
-                                <select name="uf" id="cadastrar_uf" class="form-control">
-                                    <option value="SP">SP</option>
-                                    <option value="AC">AC</option>
-                                    <option value="AL">AL</option>
-                                    <option value="AM">AM</option>
-                                    <option value="AP">AP</option>
-                                    <option value="BA">BA</option>
-                                    <option value="CE">CE</option>
-                                    <option value="DF">DF</option>
-                                    <option value="ES">ES</option>
-                                    <option value="GO">GO</option>
-                                    <option value="MA">MA</option>
-                                    <option value="MG">MG</option>
-                                    <option value="MS">MS</option>
-                                    <option value="MT">MT</option>
-                                    <option value="PA">PA</option>
-                                    <option value="PB">PB</option>
-                                    <option value="PE">PE</option>
-                                    <option value="PI">PI</option>
-                                    <option value="PR">PR</option>
-                                    <option value="RJ">RJ</option>
-                                    <option value="RN">RN</option>
-                                    <option value="RO">RO</option>
-                                    <option value="RR">RR</option>
-                                    <option value="RS">RS</option>
-                                    <option value="SC">SC</option>
-                                    <option value="SE">SE</option>
-                                    <option value="TO">TO</option>
-                                </select>
-                            </div>
-
-                            <div class="offset-1 col-10 mt-4">
-                                <b class="text-dark">Contato Paciente:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-2 offset-1 mb-1">
-                                <label for="cadastrar_tel_residencial" class="form-label">Telefone Residencial</label>
-                                <input type="text" name="tel_res" id="cadastrar_tel_residencial" class="form-control">
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_tel_comercial" class="form-label">Telefone Comercial</label>
-                                <input type="text" name="tel_com" id="cadastrar_tel_comercial" class="form-control">
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_celular1" class="form-label">Celular 1</label>
-                                <input type="text" name="celular1" id="cadastrar_celular1" class="form-control">
-                            </div>
-                            <div class="col-2 mb-1">
-                                <label for="cadastrar_celular2" class="form-label">Celular 2</label>
-                                <input type="text" name="celular2" id="cadastrar_celular2" class="form-control">
-                            </div>
-
-                            <div class="offset-1 col-10 mt-4">
-                                <b class="text-dark">Dados Pagamento:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-3 offset-1 mb-1">
-                                <label for="cadastrar_sinal_entrada" class="form-label">Sinal / Entrada</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="sinal_entrada" id="cadastrar_sinal_entrada">
-                                </div>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <label for="cadastrar_valor" class="form-label">Valor do Financiamento *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="number" class="form-control" step="0.01" lang="pt-br" name="valor" id="cadastrar_valor" required>
-                                </div>
-                            </div>
-                            <div class="col-3 mb-1">
-                                <div class="mt-3">
-                                    <br>
-                                    <b><span id="valor_extenso"></span></b>
-                                </div>
-                            </div>
-
-                            <div class="offset-1 col-10 mt-4">
-                                <b class="text-dark">Dados Parcelas:</b>
-                                <hr style="margin-top: -0.2%;">
-                            </div>
-
-                            <div class="col-3 offset-1">
-                                <label for="cadastrar_parcelas" class="form-label">Parcelas *</label>
-                                <select name="parcelas" id="cadastrar_parcelas" class="form-control">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                </select>
-
-                            </div>
-
-                            <!-- Contêiner para as Parcelas -->
-                            <div class="col-12 mt-3" id="parcelas_container">
-                                <!-- Os campos de parcelas serão adicionados aqui dinamicamente -->
-                            </div>
-
-                            <!-- Mensagem de Validação do Saldo -->
-                            <div class="col-10 offset-1 mt-1">
-                                <b id="saldo_mensagem" class="text-danger"></b>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" name="btnCadastrar" class="btn btn-success" disabled>Cadastrar</button>
-                    </div>
-                </div>
-            </div>
-        </form>
     </div>
 
     <!-- Modal Editar Contrato -->
@@ -632,7 +408,7 @@
 
         $(document).ready(function () {
             $('#fina').addClass('active')
-            $('#financeiro_contratos').addClass('active')
+            $('#financeiro_faturas_atrasadas').addClass('active')
 
             var usuario_logado = $('#parcelas_usuario_logado').val();
 
@@ -1316,7 +1092,7 @@
 
                                 // Itera pelas parcelas e adiciona à tabela
                                 response.parcelas.forEach(parcela => {
-                                    let data_original = parcela.data;
+                                    let data_original = parcela.data
                                     parcela.data = formatarData(parcela.data);
                                     let valorParcela = parseFloat(parcela.valor);
                                     let valorPago = parseFloat(parcela.valor_pago || 0);
