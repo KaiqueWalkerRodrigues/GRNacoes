@@ -23,22 +23,20 @@ try {
         $usuario_visualizador ?: null
     );
 
-    // Total de não lidas (sem LIMIT) para o badge
     $total_unread = null;
     if ($unread && !empty($usuario_visualizador)) {
         $total_unread = $Notificacao_Chamado->contarNaoLidas(
-            $id_setor ?: null,
-            $id_usuario ?: null,
-            (int)$usuario_visualizador
+            (int)$usuario_visualizador, // 1º: quem está visualizando
+            $id_setor ?: null,          // 2º: setor (se houver)
+            $id_usuario ?: null         // 3º: destino específico (se houver)
         );
     }
 
     echo json_encode([
         'ok' => true,
         'data' => $lista,
-        'total_unread' => $total_unread // <- AQUI!
+        'total_unread' => $total_unread,
     ]);
-    exit;
 
 } catch (Throwable $e) {
     http_response_code(500);

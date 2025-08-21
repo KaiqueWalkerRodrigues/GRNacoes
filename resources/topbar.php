@@ -148,13 +148,21 @@
     const badge = document.getElementById('notif-badge');
 
     try {
-      // Endpoint com unread=1 (lista limitada) e total_unread (contador real)
-      const url = `${URL_BASE}/views/ajax/get_notificacoes_chamados.php?unread=1&limit=5`;
-      const resp = await fetch(url, { cache: "no-store" });
+      const params = new URLSearchParams({
+        unread: '1',
+        limit: '5',
+        id_usuario: String(ID_USUARIO || 0),
+        id_setor: String(ID_SETOR || 0),
+      });
 
+      const url = `${URL_BASE}/views/ajax/get_notificacoes_chamados.php?` + params.toString();
+      const resp = await fetch(url, { cache: "no-store" });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
       const data = await resp.json();
+
+      console.log(data)
+
       if (!data.ok) {
         container.innerHTML = `<div class="px-3 py-2 text-danger small">Erro ao carregar.</div>`;
         badge.style.display = "none";
@@ -162,23 +170,23 @@
       }
 
       const lista = Array.isArray(data.data) ? data.data : [];
-      const totalBadge = (typeof data.total_unread === 'number')
-        ? data.total_unread
-        : lista.length;
 
-      // Render da lista (limitada)
+      // Coerção para número (se vier "5" como string ou null)
+      let totalBadge = Number(data.total_unread);
+      if (!Number.isFinite(totalBadge)) totalBadge = lista.length;
+
+      // Render lista...
       if (lista.length === 0) {
         container.innerHTML = `<div class="px-3 py-2 text-muted small">Sem novas notificações.</div>`;
       } else {
-        const frags = lista.map(n => {
+        container.innerHTML = lista.map(n => {
           const href = montarLinkNotificacao(n);
           const texto = n.texto ?? '(sem texto)';
           const quando = n.created_at ? new Date(n.created_at.replace(' ', 'T')) : null;
           const tempo = quando ? quando.toLocaleString() : '';
           return `
             <a class="dropdown-item dropdown-notifications-item notif-item"
-              href="${href}"
-              data-id="${n.id_notificacao_chamado}">
+              href="${href}" data-id="${n.id_notificacao_chamado}">
               <div class="dropdown-notifications-item-content notif-textos">
                 <div class="dropdown-notifications-item-content-text">${texto}</div>
                 <div class="dropdown-notifications-item-content-details small text-muted">${tempo}</div>
@@ -186,12 +194,11 @@
             </a>
           `;
         }).join('');
-        container.innerHTML = frags;
       }
 
-      // Atualiza o badge com o TOTAL de não lidas (sem limitar a 5)
+      // Atualiza badge
       if (totalBadge > 0) {
-        badge.textContent = totalBadge;
+        badge.textContent = (totalBadge > 99) ? '99+' : String(totalBadge);
         badge.style.display = "inline-block";
       } else {
         badge.style.display = "none";
@@ -201,7 +208,7 @@
       console.error('carregarNotificacoes()', e);
       container.innerHTML = `<div class="px-3 py-2 text-danger small">Erro: ${e.message}</div>`;
       badge.style.display = "none";
-    }
+      }
   }
 
   async function marcarTodasComoLidas() {
