@@ -93,9 +93,12 @@
         .contacts-list::-webkit-scrollbar-track, .chat-messages::-webkit-scrollbar-track { background:#f1f1f1; }
         .contacts-list::-webkit-scrollbar-thumb, .chat-messages::-webkit-scrollbar-thumb { background:#c1c1c1; border-radius:3px; }
         .contacts-list::-webkit-scrollbar-thumb:hover, .chat-messages::-webkit-scrollbar-thumb:hover { background:#a8a8a8; }
+        .contact-avatar-wrap { position: relative; margin-right: 12px; }
+        .online-dot { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; background: #25d366; border: 2px solid #fff; border-radius: 50%; display: none; }
+        .online-dot.show { display: block; }
     </style>
 </head>
-<body class="nav-fixed">
+<body class="nav-fixed">    
 <?php include_once('resources/topbar.php') ?>
 <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
@@ -244,7 +247,23 @@
 
     // ===== Sidebar: lista de chats =====
     function loadChats() {
-        $.ajax({ url: '/GRNacoes/views/ajax/get_chats_whatsapp.php', method: 'GET', data: { current_chat: currentChatId }, success: data => { $('#lista_chats').html(data); } });
+        $.ajax({
+            url: '/GRNacoes/views/ajax/get_chats_whatsapp.php',
+            method: 'GET',
+            data: { current_chat: currentChatId },
+            success: function (data) {
+                $('#lista_chats').html(data);
+                
+                $('#lista_chats [data-destinatario-id]').each(function () {
+                    const uid = $(this).data('destinatario-id');
+                    $.get('/GRNacoes/views/ajax/check_online.php', { id_destinatario: uid }, function (result) {
+                        const data = (typeof result === 'string') ? JSON.parse(result) : result;
+                        $('#online-' + uid).toggleClass('show', data.ok && data.is_online === true);
+                    });
+                });
+
+            }
+        });
     }
 
     // ===== Online =====
@@ -375,7 +394,10 @@
             return `
                 <a href="javascript:void(0)" class="contact-item ${isActive}" onclick="${clickAction}" data-chat-id="${user.id_conversa || ''}">
                     <div style="display:flex; align-items:center;">
-                        <img class="contact-avatar" src="${URL_RESOURCES}/assets/img/avatars/${user.id_avatar}.png" alt="">
+                        <div class="contact-avatar-wrap">
+                            <img class="contact-avatar" src="${URL_RESOURCES}/assets/img/avatars/${user.id_avatar}.png" alt="">
+                            <span class="online-dot" id="online-${user.id_usuario}"></span>
+                        </div>
                         <div class="contact-info">
                             <div class="contact-name">${user.nome}</div>
                             <div class="contact-last-message">${iconeLeitura}${lastMessage}</div>
@@ -389,6 +411,13 @@
         }).join('');
 
         $('#lista_chats').html(html);
+        $('#lista_chats [data-destinatario-id]').each(function () {
+            const uid = $(this).data('destinatario-id');
+            $.get('/GRNacoes/views/ajax/check_online.php', { id_destinatario: uid }, function (result) {
+                const data = (typeof result === 'string') ? JSON.parse(result) : result;
+                $('#online-' + uid).toggleClass('show', data.ok && data.is_online === true);
+            });
+        });
     }
 
     // ===== Ações globais (expostas no window) =====
