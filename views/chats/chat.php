@@ -269,8 +269,28 @@
     // ===== Online =====
     function verificarOnline() {
         if (!currentDestinatarioId) return;
-        $.ajax({ type: 'get', url: '/GRNacoes/views/ajax/check_online.php', data: { id_destinatario: currentDestinatarioId }, success: r => { $('#online').html(r); } });
+
+        $.get('/GRNacoes/views/ajax/check_online.php', { id_destinatario: currentDestinatarioId }, function (res) {
+            try {
+                const data = (typeof res === 'string') ? JSON.parse(res) : res;
+
+                if (data.ok) {
+                    if (data.is_online) {
+                        $('#online').text('online');
+                    } else {
+                        // Usa o campo "visto_ha" do JSON
+                        $('#online').text('Última vez online há ' + data.visto_ha);
+                    }
+                } else {
+                    $('#online').text('');
+                }
+            } catch (e) {
+                console.error('Erro ao processar check_online:', e, res);
+                $('#online').text('');
+            }
+        });
     }
+
 
     // ===== Mensagens =====
     function mostrarMensagens() {
