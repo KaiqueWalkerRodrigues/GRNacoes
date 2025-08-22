@@ -56,12 +56,7 @@ class Conversa {
         $sql->execute();
     
         $conversa_existente = $sql->fetch(PDO::FETCH_ASSOC);
-    
-        if ($conversa_existente) {
-            // Se já existe uma conversa, retorna o id da conversa existente
-            header("Location:/GRNacoes/chat?id=" . $conversa_existente['id_conversa']."&id_destinatario=".$dados['id_destinatario']);
-            exit;
-        }
+
     
         // Criar uma nova conversa
         $sql = $this->pdo->prepare('INSERT INTO conversas 

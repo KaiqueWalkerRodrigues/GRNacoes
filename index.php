@@ -75,12 +75,6 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
-    case 'chats':
-        $file = 'chats/chats.php';
-        $pageTitle .= "Chats";
-        $requiredSectors = null;
-        $requiredLogin = true;
-        break;
     case 'chat':
         $file = 'chats/chat.php';
         $pageTitle .= "Chats";
@@ -376,9 +370,17 @@ switch ($route) {
         break;
 
     //Ajax
-    case 'ajax/buscar_itens':
-        $file = 'ajax/buscar_itens.php';
-        $pageTitle .= "Teste de ajax";
+    // case 'ajax/buscar_itens':
+    //     $file = 'ajax/buscar_itens.php';
+    //     $pageTitle .= "Teste de ajax";
+    //     $requiredSectors = [1];
+    //     $requiredLogin = true;
+    //     break;
+
+    //Teste
+    case 'test':
+        $file = 'chats/test.php';
+        $pageTitle .= "Teste";
         $requiredSectors = [1];
         $requiredLogin = true;
         break;
