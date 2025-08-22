@@ -146,7 +146,7 @@
                     <?php else: ?>
                         <div class="empty-chat">
                             <div class="empty-chat-icon"><i class="fas fa-comments"></i></div>
-                            <h3>WhatsApp Web</h3>
+                            <h3>Chats</h3>
                             <p>Selecione um chat para começar ou clique em "+" para iniciar uma nova conversa.</p>
                         </div>
                     <?php endif; ?>
