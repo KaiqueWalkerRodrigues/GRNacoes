@@ -147,7 +147,7 @@
                         <div class="empty-chat">
                             <div class="empty-chat-icon"><i class="fas fa-comments"></i></div>
                             <h3>Chats</h3>
-                            <p>Selecione um chat para começar ou clique em "+" para iniciar uma nova conversa.</p>
+                            <p>Selecione um chat para começar ou busque por outro colaborador para iniciar novo chat.</p>
                         </div>
                     <?php endif; ?>
                 </section>
