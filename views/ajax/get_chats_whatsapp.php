@@ -49,7 +49,7 @@ $chats = $Chats->listar($id_usuario);
         // Mostrar ícone apenas se a última mensagem foi enviada por mim
         if ($ultimaMensagem->id_usuario == $id_usuario) {
             $iconeLeitura = $ultimaMensagem->status_leitura == 'lida' 
-                ? '<i class="fa-solid fa-check" style="color: #00ffb3; margin-right: 4px;"></i>' 
+                ? '<i class="fa-solid fa-check" style="color: #53bdeb; margin-right: 4px;"></i>' 
                 : '<i class="fa-solid fa-check" style="color: #808080; margin-right: 4px;"></i>';
         } else {
             $iconeLeitura = ''; // não mostra nada
