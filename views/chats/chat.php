@@ -96,6 +96,191 @@
         .contact-avatar-wrap { position: relative; margin-right: 12px; }
         .online-dot { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; background: #25d366; border: 2px solid #fff; border-radius: 50%; display: none; }
         .online-dot.show { display: block; }
+        
+        /* Dropdown de anexos */
+        .attachment-dropdown-container { position: relative; }
+        .attachment-dropdown { 
+            position: absolute; 
+            bottom: 55px; 
+            left: 0; 
+            background: #fff; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12); 
+            padding: 8px 0; 
+            min-width: 180px; 
+            opacity: 0; 
+            visibility: hidden; 
+            transform: translateY(10px); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 1000;
+            border: 1px solid #e9ecef;
+        }
+        .attachment-dropdown.show { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0); 
+        }
+        .dropdown-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 16px; 
+            cursor: pointer; 
+            transition: background-color 0.2s; 
+            color: #111b21;
+        }
+        .dropdown-item:hover { 
+            background: #f5f5f5; 
+        }
+        .dropdown-item i { 
+            width: 20px; 
+            margin-right: 12px; 
+            color: #007bff; 
+        }
+        .dropdown-item span { 
+            font-size: 14px; 
+            font-weight: 500; 
+        }
+              /* Estilos para os novos ícones do dropdown */
+        .attachment-dropdown {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Espaçamento entre os itens */
+        }
+
+        .attachment-dropdown .dropdown-item {
+            flex-direction: row;
+            padding: 12px 16px;
+            text-align: left;
+            flex: none;
+            border-radius: 0;
+        }
+
+        .attachment-dropdown .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+            margin-right: 12px;
+            font-size: 16px;
+            color: #fff;
+            margin-left: 0;
+        }
+
+        .icon-circle.document { background-color: #7f66ff; } /* Roxo */
+        .icon-circle.gallery { background-color: #e01b6a; } /* Rosa (usado para Imagem) */
+        .icon-circle.video { background-color: #dc3545; } /* Vermelho */
+
+        .attachment-dropdown .dropdown-item i {
+            margin-right: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #007bff;
+            font-weight: 500;
+            z-index: 999;
+        }
+        .drag-drop-area.active {
+            display: flex;
+        }
+        .drag-drop-area i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+        .drag-drop-area p {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        /* Preview de arquivos */
+        .file-preview-container {
+            display: none;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #fff;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .file-preview-item:last-child {
+            margin-bottom: 0;
+        }
+        .file-preview-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+        }
+        .file-preview-icon.image { background: #28a745; }
+        .file-preview-icon.video { background: #dc3545; }
+        .file-preview-icon.document { background: #6c757d; }
+        .file-preview-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .file-preview-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #111b21;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-preview-size {
+            font-size: 11px;
+            color: #667781;
+        }
+        .file-preview-remove {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .file-preview-remove:hover {
+            background: #f8d7da;
+        }
+        .drag-drop-area {
+            display: none;              /* escondida por padrão */
+            position: absolute;
+            left: 20px; right: 20px;    /* bordas internas da área de input */
+            bottom: 70px;               /* acima do footer */
+            top: 20px;
+            background: rgba(255,255,255,0.9);
+            border: 2px dashed #7f66ff;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 999;
+        }
+        .drag-drop-area.active {
+            display: flex !important;   /* força aparecimento mesmo com d-none */
+        }
+
     </style>
 </head>
 <body class="nav-fixed">    
@@ -130,16 +315,38 @@
                         <div class="chat-messages" id="mensagens"></div>
 
                         <footer class="chat-input-area">
-                            <form id="chatForm" class="chat-input-container">
+                            <div class="file-preview-container" id="filePreviewContainer"></div>
+                            <form id="chatForm" class="chat-input-container" method="post" action="<?= URL ?>/class/Mensagens.php" enctype="multipart/form-data">
                                 <input type="hidden" name="id_conversa" id="id_conversa" value="<?= (int)$chat_selecionado ?>">
                                 <input type="hidden" name="id_destinatario" id="id_destinatario" value="<?= (int)$id_destinatario ?>">
                                 <input type="hidden" name="id_usuario" id="id_usuario" value="<?= $id_usuario_sessao ?>">
                                 <input type="hidden" name="id_avatar" id="id_avatar" value="<?= htmlspecialchars($id_avatar_sessao) ?>">
                                 <input type="hidden" name="id_avatar_destinatario" id="id_avatar_destinatario" value="<?= htmlspecialchars($destinatario->id_avatar) ?>">
 
-                                <button type="button" class="attachment-button" title="Anexar" onclick="alert('Funcionalidade de anexo em desenvolvimento!')">
-                                    <i class="fas fa-paperclip"></i>
-                                </button>
+                                <div class="attachment-dropdown-container">
+                                    <button type="button" class="attachment-button" id="attachmentBtn" title="Anexar">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                   <div class="attachment-dropdown" id="attachmentDropdown">
+                                        <div class="dropdown-item" data-type="document">
+                                            <div class="icon-circle document"><i class="fas fa-file-alt"></i></div>
+                                            <span>Documento</span>
+                                        </div>
+                                        <div class="dropdown-item" data-type="image">
+                                            <div class="icon-circle gallery"><i class="fas fa-image"></i></div>
+                                            <span>Imagem</span>
+                                        </div>
+                                        <div class="dropdown-item" data-type="video">
+                                            <div class="icon-circle video"><i class="fas fa-video"></i></div>
+                                            <span>Vídeo</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="file" id="fileInput" name="attachments[]" style="display: none;" multiple>
+                                <div class="drag-drop-area d-none" id="dragDropArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Arraste arquivos aqui ou clique no botão de anexo</p>
+                                </div>
                                 <textarea name="mensagem" id="mensagem" class="chat-input" placeholder="Digite uma mensagem..." rows="1"></textarea>
                                 <button type="submit" class="send-button" title="Enviar">
                                     <i class="fas fa-paper-plane"></i>
@@ -217,13 +424,36 @@
         $('#chatForm').off('submit').on('submit', function (e) {
             e.preventDefault();
             const mensagem = $('#mensagem').val().trim();
-            if (!mensagem) return;
+            
+            // Verificar se há mensagem ou arquivos
+            if (!mensagem && selectedFiles.length === 0) return;
+            
+            // Criar FormData para envio
+            const formData = new FormData();
+            
+            // Adicionar dados do formulário
+            formData.append('id_conversa', $('#id_conversa').val());
+            formData.append('id_destinatario', $('#id_destinatario').val());
+            formData.append('id_usuario', $('#id_usuario').val());
+            formData.append('id_avatar', $('#id_avatar').val());
+            formData.append('id_avatar_destinatario', $('#id_avatar_destinatario').val());
+            formData.append('mensagem', mensagem);
+            
+            // Adicionar arquivos
+            selectedFiles.forEach((file, index) => {
+                formData.append('attachments[]', file);
+            });
+            
             $.ajax({
                 type: 'post',
                 url: URL_BASE + '/class/Mensagens.php',
-                data: $(this).serialize(),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function () {
                     $('#mensagem').val('').focus().css('height','auto');
+                    selectedFiles = [];
+                    updateFilePreview();
                     checarContagem();
                     loadChats();
                 },
@@ -354,7 +584,233 @@
         });
     }
 
-    // ===== Busca de usuários =====
+    // ===== Anexos e Dropdown =====
+    let selectedFiles = [];
+    let currentFileType = null;
+
+    // Toggle dropdown
+    $('#attachmentBtn').on('click', function(e) {
+        e.stopPropagation();
+        $('#attachmentDropdown').toggleClass('show');
+    });
+
+    $('#attachmentDropdown').on('click', '.dropdown-item', function () {
+        const type = $(this).data('type'); // 'document' | 'image' | 'video'
+        triggerFileInput(type);
+    });
+
+    // Fechar dropdown ao clicar fora
+    $(document).on('click', function() {
+        $('#attachmentDropdown').removeClass('show');
+    });
+
+    window.triggerFileInput = function(type) {
+    currentFileType = type;
+    const fileInput = $('#fileInput')[0];
+
+    switch(type) {
+        case 'document':
+            fileInput.accept = '.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv';
+            break;
+        case 'image':
+            fileInput.accept = 'image/*';
+            break;
+        case 'video':
+            fileInput.accept = 'video/*';
+            break;
+        default:
+            fileInput.accept = '*/*';
+    }
+
+    // Permite múltiplos
+    fileInput.multiple = true;
+
+    // Abre o seletor e fecha o dropdown
+    $('#attachmentDropdown').removeClass('show');
+    fileInput.click();
+};
+
+
+    // Manipular seleção de arquivos
+    $('#fileInput').on('change', function() {
+        const files = Array.from(this.files);
+        addFilesToPreview(files);
+        this.value = ''; // Limpar input para permitir selecionar o mesmo arquivo novamente
+    });
+
+    // =============== Drag and Drop (só para arquivos) ===============
+    const chatInputArea = $('.chat-input-area')[0];
+    const $dragDropArea = $('#dragDropArea');
+
+    function isFileDrag(e) {
+        const dt = (e.originalEvent && e.originalEvent.dataTransfer) || e.dataTransfer;
+        if (!dt) return false;
+        // Em Windows/Chrome/Edge/Firefox, 'Files' indica que há arquivos
+        const types = Array.from(dt.types || []);
+        return types.includes('Files');
+    }
+
+    function showDropArea() {
+        // remove d-none e ativa
+        $dragDropArea.removeClass('d-none').addClass('active');
+    }
+    function hideDropArea() {
+        $dragDropArea.removeClass('active').addClass('d-none');
+    }
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Vamos contar entradas/saídas para evitar sumir ao passar por filhos
+    let dragCounter = 0;
+
+    // Eventos globais: só bloqueia e mostra se for arquivos
+    $(window).on('dragenter', function(e) {
+        if (isFileDrag(e)) {
+            dragCounter++;
+            preventDefaults(e);
+            showDropArea();
+        }
+    });
+
+    $(window).on('dragover', function(e) {
+        if (isFileDrag(e)) {
+            preventDefaults(e);
+        }
+    });
+
+    $(window).on('dragleave', function(e) {
+        if (isFileDrag(e)) {
+            dragCounter--;
+            if (dragCounter <= 0) {
+                hideDropArea();
+                dragCounter = 0;
+            }
+        }
+    });
+
+    $(window).on('drop', function(e) {
+        if (isFileDrag(e)) {
+            preventDefaults(e);
+            hideDropArea();
+            dragCounter = 0;
+
+            const dt = e.originalEvent ? e.originalEvent.dataTransfer : e.dataTransfer;
+            const files = Array.from(dt.files || []);
+            if (files.length > 0) addFilesToPreview(files);
+        }
+    });
+
+    // Também permitir soltar diretamente sobre a área do input
+    chatInputArea.addEventListener('drop', function(e) {
+        if (isFileDrag(e)) {
+            preventDefaults(e);
+            hideDropArea();
+            dragCounter = 0;
+
+            const dt = e.dataTransfer;
+            const files = Array.from(dt.files || []);
+            if (files.length > 0) addFilesToPreview(files);
+        }
+    }, false);
+    // =============== Fim Drag and Drop ===============
+
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        $('#dragDropArea').addClass('active');
+    }
+
+    function unhighlight(e) {
+        $('#dragDropArea').removeClass('active');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = Array.from(dt.files);
+        addFilesToPreview(files);
+    }
+
+    // Adicionar arquivos ao preview
+    function addFilesToPreview(files) {
+        files.forEach(file => {
+            if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+                selectedFiles.push(file);
+            }
+        });
+        updateFilePreview();
+    }
+
+    // Atualizar preview de arquivos
+    function updateFilePreview() {
+        const container = $('#filePreviewContainer');
+        
+        if (selectedFiles.length === 0) {
+            container.hide().empty();
+            return;
+        }
+
+        container.show().empty();
+
+        selectedFiles.forEach((file, index) => {
+            const fileType = getFileType(file);
+            const fileSize = formatFileSize(file.size);
+            
+            const previewItem = $(`
+                <div class="file-preview-item">
+                    <div class="file-preview-icon ${fileType}">
+                        <i class="fas ${getFileIcon(fileType)}"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">${file.name}</div>
+                        <div class="file-preview-size">${fileSize}</div>
+                    </div>
+                    <button type="button" class="file-preview-remove" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `);
+            
+            container.append(previewItem);
+        });
+    }
+
+    // Remover arquivo
+    window.removeFile = function(index) {
+        selectedFiles.splice(index, 1);
+        updateFilePreview();
+    };
+
+    // Utilitários
+    function getFileType(file) {
+        if (file.type.startsWith('image/')) return 'image';
+        if (file.type.startsWith('video/')) return 'video';
+        return 'document';
+    }
+
+    function getFileIcon(type) {
+        switch(type) {
+            case 'image': return 'fa-image';
+            case 'video': return 'fa-video';
+            default: return 'fa-file-alt';
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // ===== Fim Anexos =====
     function bindSearchField() {
         let searchTimeout;
         $('#searchUserInput').on('input', function () {

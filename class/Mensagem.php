@@ -75,42 +75,56 @@ class Mensagem {
 
     public function cadastrar(array $dados)
     {
-        // Verifica se a mensagem não está vazia
-        if (empty(trim($dados['mensagem']))) {
-            return; // Não faz nada se a mensagem estiver vazia
+        // Permitir: texto, anexos ou ambos
+        $temTexto = strlen(trim($dados['mensagem'] ?? '')) > 0;
+
+        // Há anexos?
+        $temArquivos = isset($_FILES['attachments']) && !empty($_FILES['attachments']['name']);
+        if (is_array($temArquivos)) {
+            $temArquivos = array_filter($_FILES['attachments']['name'], function($n){ return $n !== null && $n !== ''; });
+            $temArquivos = count($temArquivos) > 0;
+        }
+
+        // Se não há texto nem arquivos, não faz nada
+        if (!$temTexto && !$temArquivos) {
+            return;
         }
 
         $agora = date("Y-m-d H:i:s");
 
-        // Inserir a mensagem na tabela 'mensagens'
-        $sql = $this->pdo->prepare('INSERT INTO mensagens 
-                                    (id_usuario, mensagem, created_at, updated_at)
-                                    VALUES
-                                    (:id_usuario, :mensagem, :created_at, :updated_at)
-                                ');
-
-        $sql->bindParam(':id_usuario', $dados['id_usuario']);
-        $sql->bindParam(':mensagem', $dados['mensagem']);
-        $sql->bindParam(':created_at', $agora);
-        $sql->bindParam(':updated_at', $agora);
+        // Insere mensagem (campo NOT NULL -> usa '' se vier vazia)
+        $sql = $this->pdo->prepare('
+            INSERT INTO mensagens (id_usuario, mensagem, created_at, updated_at)
+            VALUES (:id_usuario, :mensagem, :created_at, :updated_at)
+        ');
+        $sql->bindValue(':id_usuario', $dados['id_usuario'], PDO::PARAM_INT);
+        $sql->bindValue(':mensagem', $temTexto ? $dados['mensagem'] : '');
+        $sql->bindValue(':created_at', $agora);
+        $sql->bindValue(':updated_at', $agora);
 
         if ($sql->execute()) {
-            $id_mensagem = $this->pdo->lastInsertId();
+            $id_mensagem = (int)$this->pdo->lastInsertId();
 
-            // Inserir a relação na tabela 'conversas_mensagens'
-            $sql = $this->pdo->prepare('INSERT INTO conversas_mensagens 
-                                        (id_conversa, id_mensagem)
-                                        VALUES
-                                        (:id_conversa, :id_mensagem)
-                                    ');
-            $sql->bindParam(':id_conversa', $dados['id_conversa']);
-            $sql->bindParam(':id_mensagem', $id_mensagem);
-            $sql->execute();
+            // Vincula à conversa
+            if (!empty($dados['id_conversa'])) {
+                $sql2 = $this->pdo->prepare('
+                    INSERT INTO conversas_mensagens (id_conversa, id_mensagem)
+                    VALUES (:id_conversa, :id_mensagem)
+                ');
+                $sql2->bindValue(':id_conversa', $dados['id_conversa'], PDO::PARAM_INT);
+                $sql2->bindValue(':id_mensagem', $id_mensagem, PDO::PARAM_INT);
+                $sql2->execute();
+            }
 
-            $url = 'Location:'.URL.'/conversa?id='.$dados['id_conversa'];
-            return header($url);
+            // Salva anexos (se houver)
+            $this->salvarArquivos($id_mensagem, $_FILES['attachments'] ?? null);
+
+            // Redireciona de volta ao chat
+            header('Location:' . URL . '/chat?id=' . $dados['id_conversa'] . '&id_destinatario=' . $dados['id_destinatario']);
+            exit();
         }
     }
+
 
     public function cadastrarNoChamado(array $dados)
     {
@@ -150,6 +164,57 @@ class Mensagem {
             return header($url);
         }
     }
+
+    private function salvarArquivos(int $id_mensagem, ?array $files): void
+    {
+        if (!$files || !isset($files['name'])) return;
+
+        // Caminho fixo informado
+        $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/GRNacoes/resources/anexos/chats/';
+
+        if (!is_dir($uploadDir)) {
+            @mkdir($uploadDir, 0775, true);
+        }
+
+        $count      = is_array($files['name']) ? count($files['name']) : 0;
+        $maxBytes   = 20 * 1024 * 1024; // 20MB
+        $permitidos = [
+            'pdf','doc','docx','txt','rtf','odt','xls','xlsx','csv',
+            'png','jpg','jpeg','gif','webp','mp4','mov','avi','mkv'
+        ];
+
+        for ($i = 0; $i < $count; $i++) {
+            $nomeOriginal = $files['name'][$i] ?? null;
+            $tmp_name     = $files['tmp_name'][$i] ?? null;
+            $error        = $files['error'][$i] ?? UPLOAD_ERR_NO_FILE;
+            $size         = $files['size'][$i] ?? 0;
+
+            if (empty($nomeOriginal) || $error !== UPLOAD_ERR_OK) continue;
+            if ($size <= 0 || $size > $maxBytes) continue;
+
+            $ext = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
+            if (!in_array($ext, $permitidos, true)) continue;
+
+            // Gera nome único para o arquivo no disco (evita conflito + segurança)
+            $uniq          = bin2hex(random_bytes(8));
+            $arquivoSistema= $uniq . ($ext ? '.' . $ext : '');
+            $dest          = $uploadDir . $arquivoSistema;
+
+            if (@move_uploaded_file($tmp_name, $dest)) {
+                // Grava metadados (agora com nome original + nome salvo no disco)
+                $sql = $this->pdo->prepare('
+                    INSERT INTO mensagens_anexos (id_mensagem, nome_original, arquivo_sistema, created_at)
+                    VALUES (:id_mensagem, :nome_original, :arquivo_sistema, :created_at)
+                ');
+                $sql->bindValue(':id_mensagem', $id_mensagem, PDO::PARAM_INT);
+                $sql->bindValue(':nome_original', $nomeOriginal);
+                $sql->bindValue(':arquivo_sistema', $arquivoSistema);
+                $sql->bindValue(':created_at', date('Y-m-d H:i:s'));
+                $sql->execute();
+            }
+        }
+    }
+
 
     public function editar(array $dados)
     {
