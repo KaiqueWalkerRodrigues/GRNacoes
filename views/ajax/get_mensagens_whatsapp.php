@@ -95,7 +95,6 @@
         }
     }
 
-
     // ====== RENDER ======
     if($sql->rowCount() > 0) {
         $resultados = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -150,23 +149,28 @@
             // Renderiza anexos
             if (!empty($value['anexos'])) {
                 echo '<div class="message-media-grid" style="display:flex; flex-direction:column; gap:8px;">';
+                // Substitua o loop foreach inteiro por este:
                 foreach ($value['anexos'] as $anexo) {
                     $nome_original   = $anexo['nome_original'] ?? '';
                     $arquivo_sistema = $anexo['arquivo_sistema'] ?? '';
                     $urlArquivo      = buildFileUrl($arquivo_sistema);
                     $ext             = extLower($nome_original);
                     $preview         = '';
+                    $download        = '';
 
                     if (isImage($ext)) {
-                        // ALTERADO: Adicionado class e data attributes para o lightbox
                         $preview = '
-                            <a href="'.htmlspecialchars($urlArquivo).'" class="media-thumb image-lightbox" 
+                            <a 
+                            href="'.htmlspecialchars($urlArquivo).'" class="media-thumb image-lightbox" 
                             data-fancybox="chat-gallery"
                             data-caption="'.htmlspecialchars($nome_original).'"
+                            data-download-src="'.htmlspecialchars($urlArquivo).'"
+                            data-download-filename="'.htmlspecialchars($nome_original).'"
                             style="display: block; position: relative;">
                                 <img src="'.htmlspecialchars($urlArquivo).'" alt="'.htmlspecialchars($nome_original).'" style="max-width: 320px; max-height: 240px; border-radius: 10px; display:block;">
                             </a>';
-                    }elseif (isVideo($ext)) {
+
+                    } elseif (isVideo($ext)) {
                         $preview = '
                             <div class="video-container" style="max-width: 320px; max-height: 240px; border-radius: 10px; overflow: hidden;">
                                 <video controls style="width:100%; height:100%; display:block;">
@@ -174,39 +178,63 @@
                                     Seu navegador não suporta a reprodução de vídeo.
                                 </video>
                             </div>';
+                        // Para vídeos, mantemos o botão de download separado abaixo.
+                        $download = '
+                            <a href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'"
+                            class="download-link" style="font-size:12px; color:#667781; text-decoration:none; margin-top:6px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-download"></i> Baixar
+                            </a>';
+
                     } elseif (isAudio($ext)) {
                         $preview = '
                             <audio controls style="width: 280px; display:block;">
                                 <source src="'.htmlspecialchars($urlArquivo).'">
                                 Seu navegador não suporta a reprodução de áudio.
                             </audio>';
+                        // Para áudio, também mantemos o botão de download separado.
+                        $download = '
+                            <a href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'"
+                            class="download-link" style="font-size:12px; color:#667781; text-decoration:none; margin-top:6px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-download"></i> Baixar
+                            </a>';
+                            
                     } else {
-                        // ALTERADO: Lógica para ícones e links de arquivos
+                        // Lógica para outros arquivos (PDF, DOCX, etc.)
                         $iconClass = getFileIconClass($ext);
                         $isPdf = ($ext === 'pdf');
                         
-                        // PDFs abrem em nova aba, outros apenas baixam pelo link "Baixar"
-                        $linkTag = $isPdf 
-                            ? '<a href="'.htmlspecialchars($urlArquivo).'" target="_blank" rel="noopener noreferrer" class="file-chip"'
-                            : '<div class="file-chip"'; // Usa div se não for link clicável
+                        $downloadButtonHtml = '';
+                        // Adiciona o botão de download DENTRO do card se NÃO for PDF
+                        if (!$isPdf) {
+                            $downloadButtonHtml = '
+                                <a href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'"
+                                title="Baixar"
+                                style="color:#667781; text-decoration:none; padding: 4px 8px; border-radius: 50%; transition: background-color 0.2s;"
+                                onmouseover="this.style.backgroundColor=\'#e9ecef\'" onmouseout="this.style.backgroundColor=\'transparent\'">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>';
+                        }
 
-                        $endLinkTag = $isPdf ? '</a>' : '</div>';
+                        // Se for PDF, o card inteiro é um link. Se não, é uma div.
+                        $tag = $isPdf ? 'a' : 'div';
+                        $linkAttrs = $isPdf ? 'href="'.htmlspecialchars($urlArquivo).'" target="_blank" rel="noopener noreferrer"' : '';
 
                         $preview = '
-                            '.$linkTag.' style="display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; background:#f0f2f5; text-decoration:none;">
-                                <i class="'.$iconClass.'" style="font-size: 24px;"></i>
-                                <span style="color:#111b21;">'.htmlspecialchars($nome_original).'</span>
-                            '.$endLinkTag;
+                            <'.$tag.' '.$linkAttrs.' class="file-chip" style="display:flex; justify-content:space-between; align-items:center; width: 100%; max-width: 320px; gap:8px; padding:8px 12px; border-radius:8px; background:#f0f2f5; text-decoration:none;">
+                                <div style="display:flex; align-items:center; gap:10px; min-width: 0;">
+                                    <i class="'.$iconClass.'" style="font-size: 24px; flex-shrink: 0;"></i>
+                                    <span style="color:#111b21; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">'.htmlspecialchars($nome_original).'</span>
+                                </div>
+                                '.$downloadButtonHtml.'
+                            </'.$tag.'>';
+                        
+                        // Se for PDF, o download já é feito clicando no card, então o botão externo fica vazio.
+                        // Se for outro arquivo, o botão já está dentro do card, então o externo também fica vazio.
+                        $download = '';
                     }
 
-                    // Botão de download sempre usa 'nome_original'
-                    $download = '
-                        <a href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'"
-                           class="download-link" style="font-size:12px; color:#667781; text-decoration:none; margin-top:6px; display:inline-flex; align-items:center; gap:6px;">
-                            <i class="fa-solid fa-download"></i> Baixar
-                        </a>';
-
-                    echo '<div class="media-item" style="display:flex; flex-direction:column; gap:6px;">'.$preview.$download.'</div>';
+                    // Renderiza o item de mídia final
+                    echo '<div class="media-item" style="display:flex; flex-direction:column; align-items:flex-start; gap:6px;">'.$preview.$download.'</div>';
                 }
                 echo '</div>'; // Fim .message-media-grid
             }

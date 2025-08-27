@@ -33,7 +33,7 @@
     <title><?= htmlspecialchars($pageTitle ?? 'Chat') ?></title>
 
     <link href="<?= URL_RESOURCES ?>/css/styles.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.css" />
 
     <!-- Font Awesome 5 -->
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
@@ -369,7 +369,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.umd.js"></script>
 <script>
 (function () {
     'use strict';
@@ -397,21 +397,23 @@
     $(document).ready(function () {
         $('#chats').addClass('active');
 
-        // ADICIONAR AQUI A INICIALIZAÇÃO DA FANCYBOX
         Fancybox.bind('[data-fancybox="chat-gallery"]', {
-            // Opções customizadas aqui, se desejar.
-            // Por exemplo, para traduzir os botões:
-            l10n: {
-                CLOSE: "Fechar",
-                NEXT: "Próximo",
-                PREV: "Anterior",
-                MODAL: "Você pode fechar este conteúdo com a tecla ESC",
-                ERROR: "Algo deu errado, por favor tente novamente mais tarde",
-                IMAGE_ERROR: "Imagem não encontrada",
-                ELEMENT_NOT_FOUND: "Elemento HTML não encontrado",
-                AJAX_NOT_FOUND: "Erro ao carregar AJAX: Não encontrado",
-                AJAX_FORBIDDEN: "Erro ao carregar AJAX: Proibido",
-                IFRAME_ERROR: "Erro ao carregar a página",
+            Carousel: {
+                Toolbar: {
+                display: {
+                    left: ["counter"],
+                    middle: [
+                    "zoomIn",
+                    "zoomOut",
+                    "toggle1to1",
+                    "rotateCCW",
+                    "rotateCW",
+                    "flipX",
+                    "flipY",
+                    ],
+                    right: ["download", "close"],
+                },
+                },
             },
         });
         
@@ -421,7 +423,7 @@
         loadChats();
         setTimeout(scrollToBottom, 100);
         $('#searchUserInput').on('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
-        
+
         bindSearchField();
         if (currentChatId) { setupChatEvents(); startChatIntervals(); checarContagem(); verificarOnline(); }
         resumeAutoRefresh();
