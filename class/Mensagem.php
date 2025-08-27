@@ -177,7 +177,7 @@ class Mensagem {
         }
 
         $count      = is_array($files['name']) ? count($files['name']) : 0;
-        $maxBytes   = 20 * 1024 * 1024; // 20MB
+        $maxBytes   = 200 * 1024 * 1024; // 20MB
         $permitidos = [
             'pdf','doc','docx','txt','rtf','odt','xls','xlsx','csv',
             'png','jpg','jpeg','gif','webp','mp4','mov','avi','mkv'

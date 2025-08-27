@@ -217,7 +217,7 @@
 
                         // Se for PDF, o card inteiro é um link. Se não, é uma div.
                         $tag = $isPdf ? 'a' : 'div';
-                        $linkAttrs = $isPdf ? 'href="'.htmlspecialchars($urlArquivo).'" target="_blank" rel="noopener noreferrer"' : '';
+                        $linkAttrs = $isPdf ? 'href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'" target="_blank" rel="noopener noreferrer"' : '';
 
                         $preview = '
                             <'.$tag.' '.$linkAttrs.' class="file-chip" style="display:flex; justify-content:space-between; align-items:center; width: 100%; max-width: 320px; gap:8px; padding:8px 12px; border-radius:8px; background:#f0f2f5; text-decoration:none;">
