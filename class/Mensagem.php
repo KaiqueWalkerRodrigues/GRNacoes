@@ -117,7 +117,7 @@ class Mensagem {
             }
 
             // Salva anexos (se houver)
-            $this->salvarArquivos($id_mensagem, $_FILES['attachments'] ?? null);
+            $this->salvarArquivos($id_mensagem, '/GRNacoes/resources/anexos/chats/', $_FILES['attachments'] ?? null);
 
             // Redireciona de volta ao chat
             header('Location:' . URL . '/chat?id=' . $dados['id_conversa'] . '&id_destinatario=' . $dados['id_destinatario']);
@@ -125,52 +125,63 @@ class Mensagem {
         }
     }
 
-
     public function cadastrarNoChamado(array $dados)
     {
-        // Verifica se a mensagem não está vazia
-        if (empty(trim($dados['mensagem']))) {
-            return; // Não faz nada se a mensagem estiver vazia
+        // 1. VERIFICAR SE HÁ TEXTO OU ARQUIVOS (lógica copiada do método cadastrar)
+        // Permitir: texto, anexos ou ambos
+        $temTexto = strlen(trim($dados['mensagem'] ?? '')) > 0;
+
+        // Há anexos?
+        $temArquivos = isset($_FILES['attachments']) && !empty($_FILES['attachments']['name']);
+        if (is_array($temArquivos)) {
+            $temArquivos = array_filter($_FILES['attachments']['name'], function($n){ return $n !== null && $n !== ''; });
+            $temArquivos = count($temArquivos) > 0;
+        }
+
+        // Se não há texto nem arquivos, não faz nada
+        if (!$temTexto && !$temArquivos) {
+            return;
         }
 
         $agora = date("Y-m-d H:i:s");
 
-        // Inserir a mensagem na tabela 'mensagens'
-        $sql = $this->pdo->prepare('INSERT INTO mensagens 
-                                    (id_usuario, mensagem, created_at, updated_at)
-                                    VALUES
-                                    (:id_usuario, :mensagem, :created_at, :updated_at)
-                                ');
-
-        $sql->bindParam(':id_usuario', $dados['id_usuario']);
-        $sql->bindParam(':mensagem', $dados['mensagem']);
-        $sql->bindParam(':created_at', $agora);
-        $sql->bindParam(':updated_at', $agora);
+        // 2. INSERIR A MENSAGEM (com ou sem texto)
+        $sql = $this->pdo->prepare('
+            INSERT INTO mensagens (id_usuario, mensagem, created_at, updated_at)
+            VALUES (:id_usuario, :mensagem, :created_at, :updated_at)
+        ');
+        
+        $sql->bindValue(':id_usuario', $dados['id_usuario'], PDO::PARAM_INT);
+        // Permite mensagem vazia se houver anexo
+        $sql->bindValue(':mensagem', $temTexto ? $dados['mensagem'] : ''); 
+        $sql->bindValue(':created_at', $agora);
+        $sql->bindValue(':updated_at', $agora);
 
         if ($sql->execute()) {
-            $id_mensagem = $this->pdo->lastInsertId();
+            $id_mensagem = (int)$this->pdo->lastInsertId();
+
+            // 3. SALVAR ANEXOS (se houver) - A chamada que faltava
+            $this->salvarArquivos($id_mensagem, '/GRNacoes/resources/anexos/chamados/', $_FILES['attachments'] ?? null);
 
             // Inserir a relação na tabela 'chamados_mensagens'
-            $sql = $this->pdo->prepare('INSERT INTO chamados_mensagens 
-                                        (id_chamado, id_mensagem)
-                                        VALUES
-                                        (:id_chamado, :id_mensagem)
-                                    ');
-            $sql->bindParam(':id_chamado', $dados['id_chamado']);
-            $sql->bindParam(':id_mensagem', $id_mensagem);
-            $sql->execute();
+            $sqlRelacao = $this->pdo->prepare('
+                INSERT INTO chamados_mensagens (id_chamado, id_mensagem)
+                VALUES (:id_chamado, :id_mensagem)
+            ');
+            $sqlRelacao->bindValue(':id_chamado', $dados['id_chamado'], PDO::PARAM_INT);
+            $sqlRelacao->bindValue(':id_mensagem', $id_mensagem, PDO::PARAM_INT);
+            $sqlRelacao->execute();
 
+            // Redireciona de volta ao chat do chamado
             $url = 'Location:'.URL.'/chamados/?id='.$dados['id_chamado'];
-            return header($url);
+            header($url);
+            exit(); // Adicionado para garantir que o script pare após o redirecionamento
         }
     }
 
-    private function salvarArquivos(int $id_mensagem, ?array $files): void
+    private function salvarArquivos(int $id_mensagem, $uploadDir, ?array $files): void
     {
         if (!$files || !isset($files['name'])) return;
-
-        // Caminho fixo informado
-        $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/GRNacoes/resources/anexos/chats/';
 
         if (!is_dir($uploadDir)) {
             @mkdir($uploadDir, 0775, true);

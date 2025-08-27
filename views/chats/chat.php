@@ -578,7 +578,10 @@
                     success: function(html) {
                         const shouldScroll = autoScrollEnabled;
                         $('#mensagens').html(html);
-                        if (shouldScroll) scrollToBottom();
+                        if (shouldScroll) {
+                            // Atraso para garantir que o DOM foi renderizado antes de rolar
+                            setTimeout(scrollToBottom, 100); 
+                        }
                     },
                     complete: function() {
                         isLoadingMessages = false;
