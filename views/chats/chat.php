@@ -555,7 +555,7 @@
                 if (isUserSearching) return;
                 $.ajax({
                     url: `${URL_BASE}/views/ajax/get_chats_whatsapp.php`,
-                    method: 'GET',
+                    method: 'POST',
                     data: { current_chat: currentChatId },
                     success: function(html) {
                         $('#lista_chats').html(html);
