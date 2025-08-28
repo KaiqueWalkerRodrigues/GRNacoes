@@ -117,7 +117,7 @@ class Mensagem {
             }
 
             // Salva anexos (se houver)
-            $this->salvarArquivos($id_mensagem, '/GRNacoes/resources/anexos/chats/', $_FILES['attachments'] ?? null);
+            $this->salvarArquivos($id_mensagem, 1, $_FILES['attachments'] ?? null);
 
             // Redireciona de volta ao chat
             header('Location:' . URL . '/chat?id=' . $dados['id_conversa'] . '&id_destinatario=' . $dados['id_destinatario']);
@@ -138,11 +138,6 @@ class Mensagem {
             $temArquivos = count($temArquivos) > 0;
         }
 
-        // Se não há texto nem arquivos, não faz nada
-        if (!$temTexto && !$temArquivos) {
-            return;
-        }
-
         $agora = date("Y-m-d H:i:s");
 
         // 2. INSERIR A MENSAGEM (com ou sem texto)
@@ -161,7 +156,7 @@ class Mensagem {
             $id_mensagem = (int)$this->pdo->lastInsertId();
 
             // 3. SALVAR ANEXOS (se houver) - A chamada que faltava
-            $this->salvarArquivos($id_mensagem, '/GRNacoes/resources/anexos/chamados/', $_FILES['attachments'] ?? null);
+            $this->salvarArquivos($id_mensagem, 2, $_FILES['attachments'] ?? null);
 
             // Inserir a relação na tabela 'chamados_mensagens'
             $sqlRelacao = $this->pdo->prepare('
@@ -179,12 +174,17 @@ class Mensagem {
         }
     }
 
-    private function salvarArquivos(int $id_mensagem, $uploadDir, ?array $files): void
+    private function salvarArquivos(int $id_mensagem, $caminho, ?array $files): void
     {
         if (!$files || !isset($files['name'])) return;
 
-        if (!is_dir($uploadDir)) {
-            @mkdir($uploadDir, 0775, true);
+        switch($caminho){
+            case 1:
+                $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/GRNacoes/resources/anexos/chats/';
+            break;
+            case 2:
+                $uploadDir = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/GRNacoes/resources/anexos/chamados/';
+            break;
         }
 
         $count      = is_array($files['name']) ? count($files['name']) : 0;
@@ -225,7 +225,6 @@ class Mensagem {
             }
         }
     }
-
 
     public function editar(array $dados)
     {

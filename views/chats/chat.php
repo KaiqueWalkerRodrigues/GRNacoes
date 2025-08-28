@@ -318,30 +318,30 @@
                 currentDestinatarioId = destinatarioId;
                 idAvatarDestinatario = destinatarioAvatar;
 
-                // Atualiza campos hidden no formulário
-                $('#id_conversa').val(chatId);
-                $('#id_destinatario').val(destinatarioId);
-                $('#id_avatar_destinatario').val(destinatarioAvatar);
-
-                // Destaca o chat ativo na lista
-                $('.contact-item').removeClass('active');
-                $(`.contact-item[data-chat-id="${chatId}"]`).addClass('active');
-
-                // Se a área de chat estava vazia, recria a estrutura
+                // 1) Atualiza UI primeiro
                 if ($('.empty-chat').length > 0) {
                     rebuildChatArea(destinatarioNome, destinatarioAvatar);
                 } else {
                     updateChatHeader(destinatarioNome, destinatarioAvatar);
                 }
-                
-                lastMessageCount = null; // Força recarregamento das mensagens
+
+                // 2) SÓ AGORA setar os hidden
+                $('#id_conversa').val(chatId);
+                $('#id_destinatario').val(destinatarioId);
+                $('#id_avatar_destinatario').val(destinatarioAvatar);
+
+                // Destaca chat ativo
+                $('.contact-item').removeClass('active');
+                $(`.contact-item[data-chat-id="${chatId}"]`).addClass('active');
+
+                lastMessageCount = null;
                 checkMessageCount();
                 startChatIntervals();
 
-                // Atualiza a URL sem recarregar a página
                 const newUrl = `${location.protocol}//${location.host}${location.pathname}?id=${chatId}&id_destinatario=${destinatarioId}`;
                 history.pushState({ path: newUrl }, '', newUrl);
             };
+
 
             window.iniciarNovaConversa = function(destinatarioId, destinatarioNome, destinatarioAvatar) {
                 $.ajax({
