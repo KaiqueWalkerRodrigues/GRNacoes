@@ -49,10 +49,10 @@
             align-items: center;
             margin: 10px 0;
         }
-        .icon-container.eu { justify-content: flex-end; color: white; }
+        .icon-container.eu { justify-content: flex-end; color: black; }
         .icon-container.outro { justify-content: flex-start; color: black; }
-        .icon-container.eu .card { background-color: #98ace9; margin-left: 10px; }
-        .icon-container.outro .card { background-color: #FFFFFF; margin-right: 10px; }
+        .icon-container.eu .card { background-color: #d3ddfdff; margin-left: 10px; max-width: 70%; word-wrap: break-word; }
+        .icon-container.outro .card { background-color: #FFFFFF; margin-right: 10px; max-width: 70%; word-wrap: break-word; }
 
         /* ===== Barra de mensagem (layout) ===== */
         .chat-input-area{
@@ -71,7 +71,8 @@
             align-items:flex-end;
             gap:10px;
         }
-
+        .hora-enviada { font-size: 11px; color: #667781; text-align: right; display: flex; align-items: center; justify-content: flex-end;}
+        
         /* ===== Textarea ===== */
         .chat-textarea{
             flex:1;

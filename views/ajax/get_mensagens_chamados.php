@@ -151,12 +151,12 @@
             if (isImage($ext)) {
                 // Imagem dentro do balão
                 $conteudoBalao .= '<a href="'.htmlspecialchars($urlArquivo).'" data-fancybox="gallery" data-caption="'.htmlspecialchars($nome_original).'" style="display:inline-block;">
-                    <img src="'.htmlspecialchars($urlArquivo).'" alt="'.htmlspecialchars($nome_original).'" style="max-width:150px; max-height:150px; border-radius:8px; display:block;">
+                     <img src="'.htmlspecialchars($urlArquivo).'" alt="'.htmlspecialchars($nome_original).'" style="max-width: 320px; margin-bottom: 5px; max-height: 240px; border-radius: 10px; display:block;">
                 </a>';
             } else {
                 // Arquivo não-imagem dentro do balão
                 $iconClass = getFileIconClass($ext);
-                $conteudoBalao .= '<div class="card p-2" style="width:150px; text-align:center;">
+                $conteudoBalao .= '<div class="card p-2" style="width:180px; text-align:center; margin-bottom: 5px;">
                     <i class="'.$iconClass.'" style="font-size:24px;"></i>
                     <p style="font-size:12px; margin-top:8px; word-break:break-word;">'.htmlspecialchars($nome_original).'</p>
                     <a href="'.htmlspecialchars($urlArquivo).'" download="'.htmlspecialchars($nome_original).'" class="btn btn-sm btn-primary">Baixar</a>
@@ -168,32 +168,32 @@
 
     // HTML final da mensagem (agora o $conteudoBalao já inclui anexos)
     echo '
-    <div class="icon-container row '.$class.'">
-        '.($class == 'eu' ? '
-            <div style="min-width:9%; text-align:right;">
-                <div class="card p-3 mb-1 position-relative" style="overflow:hidden;">
-                    <span style="margin-bottom: 15px;">'.$conteudoBalao.'</span>
-                    <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px;">
-                        '.$primeiroNome.' '.$ultimoNome.' - '.$hora_envio.'
+    <div class="icon-container row ' . $class . '">
+        ' . ($class == 'eu' ? '
+            <div class="col-auto">
+                <div class="card p-2 mb-1 position-relative" style="overflow:hidden; max-width: 300px;">
+                    <span style="word-wrap: break-word;">' . $conteudoBalao . '</span>
+                    <span class="hora-enviada" style="font-size:10px; display:block; text-align:right;">
+                        ' . $primeiroNome . ' ' . $ultimoNome . ' - ' . $hora_envio . '
                     </span>
                 </div>
             </div>
-            <div style="width:5%;">
-                <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$avatar_remetente.'.png" alt="">
+            <div class="col-auto">
+                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/assets/img/avatars/' . $avatar_remetente . '.png" alt="">
             </div>
         ' : '
-            <div style="width:5%;">
-                <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$avatar_remetente.'.png" alt="">
+            <div class="col-auto">
+                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/assets/img/avatars/' . $avatar_remetente . '.png" alt="">
             </div>
-            <div style="min-width:5%; text-align:right;">
-                <div class="card p-2 mb-2 position-relative" style="overflow:hidden;">
-                    '.$conteudoBalao.'
-                    <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px;">
-                        '.$primeiroNome.' '.$ultimoNome.' - '.$hora_envio.'
+            <div class="col-auto">
+                <div class="card p-2 mb-2 position-relative" style="overflow:hidden; max-width: 300px;">
+                    <span style="word-wrap: break-word;">' . $conteudoBalao . '</span>
+                    <span class="hora-enviada" style="font-size:10px; display:block; text-align:right; color: grey;">
+                        ' . $primeiroNome . ' ' . $ultimoNome . ' - ' . $hora_envio . '
                     </span>
                 </div>
             </div>
-        ').'
+        ') . '
     </div>';
 }
 
