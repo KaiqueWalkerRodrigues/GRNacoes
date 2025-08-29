@@ -45,7 +45,8 @@ try {
                 AND us.principal = 1
             LEFT JOIN setores s
                 ON s.id_setor = us.id_setor
-            WHERE u.id_usuario IN ($inClause)
+            WHERE us.principal = 1
+            AND u.id_usuario IN ($inClause)
             ORDER BY u.nome ASC
         ");
 
