@@ -56,26 +56,38 @@
 
         /* ===== Barra de mensagem (layout) ===== */
         .chat-input-area{
-            margin-left: 13%;
+            /* margin-left: 13%;  <-- REMOVA essa linha */
             position: fixed;
             bottom: 0;
-            left: 0;
-            right: 0;
+            /* Vamos controlar left/width via CSS + JS */
+            left: var(--sidebar-w, 240px);
+            width: calc(100% - var(--sidebar-w, 240px));
             background: #f0f2f5;
             padding: 10px 20px;
             border-top: 1px solid #e9ecef;
-            z-index: 1000;
+            z-index: 1041; /* acima da sidebar/bootstrap */
         }
+
+        /* Quando a sidebar estiver recolhida (SB Admin adiciona essa classe ao body) */
+        body.sb-sidenav-toggled .chat-input-area{
+            left: 0;
+            width: 100%;
+        }
+
+        /* Garante que a textarea possa encolher sem quebrar layout */
         .chat-input-container{
             display:flex;
             align-items:flex-end;
             gap:10px;
+            /* evita quebra inesperada */
+            flex-wrap: nowrap;
         }
         .hora-enviada { font-size: 11px; color: #667781; text-align: right; display: flex; align-items: center; justify-content: flex-end;}
         
         /* ===== Textarea ===== */
         .chat-textarea{
-            flex:1;
+            flex: 1;
+            min-width: 0;  /* ESSENCIAL para permitir encolher */
             min-height:42px;
             max-height:180px;
             resize:none;
@@ -173,8 +185,12 @@
             border:none; background:transparent; color:#dc3545; font-size:16px; cursor:pointer;
         }
 
-        /* Remove estilos antigos que forçavam posição/tamanho */
-        #msg { display:none; }
+        /* Remove estilos antigos que forçavam posição/tamanho
+        #msg { display:none; } */
+
+        @media (max-width: 1366px){
+            .chat-textarea{ max-height: 120px; }
+        }
     </style>
 </head>
 
@@ -492,6 +508,75 @@
             });
         });
     });
+    /**
+     * Ajusta a variável CSS --sidebar-w com a largura atual da sidebar.
+     * Funciona com SB Admin (classe body.sb-sidenav-toggled ao recolher).
+     */
+    (function () {
+    // Procura a sidebar pelo seletor mais comum do SB Admin
+    function getSidebarEl() {
+        return document.querySelector('#layoutSidenav_nav') || document.querySelector('.sb-sidenav');
+    }
+
+    function getSidebarWidth() {
+        const el = getSidebarEl();
+        if (!el) return 0;
+
+        // getBoundingClientRect() lida melhor com transforms/zoom
+        const rect = el.getBoundingClientRect();
+        let w = Math.round(rect.width);
+
+        // Fallback: se width vier 0, tenta computed style
+        if (!w) {
+        const cs = window.getComputedStyle(el);
+        w = parseInt(cs.width, 10) || 0;
+        }
+        return w;
+    }
+
+    function setVar(valPx) {
+        document.documentElement.style.setProperty('--sidebar-w', valPx + 'px');
+    }
+
+    // Debounce simples para evitar excesso de cálculo em resize
+    let rafId = null;
+    function scheduleReposition() {
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+        rafId = null;
+        setVar(getSidebarWidth());
+        });
+    }
+
+    // Recalcula em eventos relevantes
+    function bindListeners() {
+        window.addEventListener('resize', scheduleReposition);
+        window.addEventListener('orientationchange', scheduleReposition);
+        document.addEventListener('DOMContentLoaded', scheduleReposition);
+
+        // Observa mudanças na classe do body (SB Admin alterna sb-sidenav-toggled)
+        const moBody = new MutationObserver(scheduleReposition);
+        moBody.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+        // Observa a própria sidebar caso mude estilo/classe dinamicamente
+        const sidebar = getSidebarEl();
+        if (sidebar) {
+        const moSidebar = new MutationObserver(scheduleReposition);
+        moSidebar.observe(sidebar, { attributes: true, attributeFilter: ['class', 'style'] });
+        }
+
+        // Opcional: se usar botões de toggle do SB Admin, force o recálculo no clique
+        const togglers = ['#sidebarToggle', '#sidebarToggleTop']
+        .map(sel => document.querySelector(sel))
+        .filter(Boolean);
+        togglers.forEach(btn => btn.addEventListener('click', scheduleReposition));
+    }
+
+    // Inicializa imediatamente
+    bindListeners();
+    // E faz um ajuste inicial
+    scheduleReposition();
+    })();
     </script>
 
     <script>
