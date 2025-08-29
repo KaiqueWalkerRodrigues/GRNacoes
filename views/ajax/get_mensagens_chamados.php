@@ -11,6 +11,7 @@
 
    $Chamado = new Chamado();
    $Usuario = new Usuario();
+   $Setor = new Setor();
 
    // Obtem informações do chamado
    $chamado = $Chamado->mostrar($id_chamado);
@@ -132,10 +133,9 @@
     $primeiroNome = $partesNome[0] ?? '';
     $ultimoNome = count($partesNome) > 1 ? array_pop($partesNome) : '';
 
-    $is_usuario_logado = $id_usuario_remetente == $id_usuario;
-    if($is_usuario_logado == true){
+    if($id_usuario_remetente == $id_usuario){
         $class = 'eu';
-    }elseif($id_usuario_remetente != $id_usuario_dono_chamado){
+    }elseif($id_usuario_remetente != $id_usuario_dono_chamado AND $Usuario->mostrarSetorPrincipal($id_usuario_remetente)->id_setor == $setor_logado){
         $class = 'eu';
     }else{
         $class = 'outro';

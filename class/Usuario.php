@@ -704,7 +704,6 @@ class Usuario {
             return false;
         }
     }
-
     
     public function mostrarSetorPrincipal($id_usuario){
         $sql=$this->pdo->prepare("SELECT * FROM usuarios_setores WHERE id_usuario = :id_usuario AND deleted_at IS NULL AND principal = 1 LIMIT 1");
