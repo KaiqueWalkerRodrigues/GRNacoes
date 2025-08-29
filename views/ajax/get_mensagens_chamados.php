@@ -133,7 +133,13 @@
     $ultimoNome = count($partesNome) > 1 ? array_pop($partesNome) : '';
 
     $is_usuario_logado = $id_usuario_remetente == $id_usuario;
-    $class = $is_usuario_logado ? 'eu' : 'outro';
+    if($is_usuario_logado == true){
+        $class = 'eu';
+    }elseif($id_usuario_remetente != $id_usuario_dono_chamado){
+        $class = 'eu';
+    }else{
+        $class = 'outro';
+    }
     $avatar_remetente = (int)($value['avatar_remetente'] ?? 1);
 
     // ==== CONTEÚDO DO BALÃO (texto + anexos) ====
