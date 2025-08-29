@@ -170,9 +170,9 @@
     echo '
     <div class="icon-container row '.$class.'">
         '.($class == 'eu' ? '
-            <div style="width:95%;">
-                <div class="card p-2 mb-2 position-relative" style="overflow:hidden;">
-                    '.$conteudoBalao.'
+            <div style="min-width:9%; text-align:right;">
+                <div class="card p-3 mb-1 position-relative" style="overflow:hidden;">
+                    <span style="margin-bottom: 15px;">'.$conteudoBalao.'</span>
                     <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px;">
                         '.$primeiroNome.' '.$ultimoNome.' - '.$hora_envio.'
                     </span>
@@ -185,7 +185,7 @@
             <div style="width:5%;">
                 <img class="btn-icon btn-md mb-2" src="'.URL_RESOURCES.'/assets/img/avatars/'.$avatar_remetente.'.png" alt="">
             </div>
-            <div style="width:95%;">
+            <div style="min-width:5%; text-align:right;">
                 <div class="card p-2 mb-2 position-relative" style="overflow:hidden;">
                     '.$conteudoBalao.'
                     <span class="hora-enviada" style="font-size:10px; position:absolute; bottom:5px; right:10px;">

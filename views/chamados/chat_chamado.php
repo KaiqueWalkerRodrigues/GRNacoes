@@ -37,22 +37,20 @@
             /* Altura mínima descontando a header fixa (card) + padding aproximado */
             min-height: calc(100vh - 120px);
         }
-
         .chat-messages {
             flex: 1;
             overflow-y: auto; /* Permite rolagem interna */
             max-height: calc(100vh - 200px); /* Altura máxima ajustada para evitar que a barra de mensagens seja empurrada */
             padding: 8px 0;
         }
-
         /* Mensagens (cores já usadas por você) */
         .icon-container {
             display: flex;
             align-items: center;
             margin: 10px 0;
         }
-        .icon-container.eu { justify-content: flex-start; color: white; }
-        .icon-container.outro { justify-content: flex-end; color: black; }
+        .icon-container.eu { justify-content: flex-end; color: white; }
+        .icon-container.outro { justify-content: flex-start; color: black; }
         .icon-container.eu .card { background-color: #98ace9; margin-left: 10px; }
         .icon-container.outro .card { background-color: #FFFFFF; margin-right: 10px; }
 
