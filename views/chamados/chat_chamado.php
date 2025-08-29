@@ -23,8 +23,10 @@
     <title><?php echo $pageTitle ?></title>
     <link href="<?php echo URL_RESOURCES ?>/css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.css" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.umd.js"></script>
     <style>
         /* ===== Layout geral do chat ===== */
         /* Faz a coluna principal ocupar a altura da viewport e distribui:
@@ -489,6 +491,30 @@
                     alert("Erro ao enviar mensagem.");
                 }
             });
+        });
+    });
+    </script>
+
+    <script>
+    $(document).ready(function () {
+        Fancybox.bind('[data-fancybox="gallery"]', {
+            Carousel: {
+                Toolbar: {
+                    display: {
+                        left: ["counter"],
+                        middle: [
+                        "zoomIn",
+                        "zoomOut",
+                        "toggle1to1",
+                        "rotateCCW",
+                        "rotateCW",
+                        "flipX",
+                        "flipY",
+                        ],
+                        right: ["download", "close"],
+                    },
+                },
+            },
         });
     });
     </script>
