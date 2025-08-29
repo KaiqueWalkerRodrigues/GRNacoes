@@ -113,7 +113,10 @@
                                 style="width: 42px; height: 42px; cursor: pointer;">
                                 <i class="fa-solid fa-paperclip"></i>
                             </label>
-                            <input type="file" name="anexo" id="anexo" style="display: none;">
+                            <input type="file" name="attachments[]" id="anexo" style="display: none;" multiple>
+
+                            <!-- Pré-visualização dos arquivos -->
+                            <div id="filePreviewContainer" class="mt-2"></div>
 
                             <!-- Caixa de texto -->
                             <textarea 
@@ -210,34 +213,147 @@
                     }
                 });
 
-                $('#chatForm').on('submit', function (e) {
-                    e.preventDefault(); // impede o reload
+                // $('#chatForm').on('submit', function (e) {
+                //     e.preventDefault(); // impede o reload
 
-                    let formData = $(this).serialize();
+                //     let formData = $(this).serialize();
 
-                    if ($('#mensagem').val().trim() === '') {
-                        alert("A mensagem não pode estar vazia.");
-                        return;
-                    }
+                //     if ($('#mensagem').val().trim() === '') {
+                //         alert("A mensagem não pode estar vazia.");
+                //         return;
+                //     }
 
-                    $.ajax({
-                        type: "post",
-                        url: "<?php echo URL ?>/class/Mensagens.php",
-                        data: formData,
-                        success: function (response) {
-                            $('#mensagem').val('');
-                            mostrarMensagens();
-                        },
-                        error: function () {
-                            alert("Erro ao enviar mensagem.");
-                        }
-                    });
-                });
+                //     $.ajax({
+                //         type: "post",
+                //         url: "<?php echo URL ?>/class/Mensagens.php",
+                //         data: formData,
+                //         success: function (response) {
+                //             $('#mensagem').val('');
+                //             mostrarMensagens();
+                //         },
+                //         error: function () {
+                //             alert("Erro ao enviar mensagem.");
+                //         }
+                //     });
+                // });
 
 
             });
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        let selectedFiles = [];
+        const MAX_FILES = 5;
+        const MAX_TOTAL_SIZE = 200 * 1024 * 1024; // 200MB
+        const allowedExtensions = ['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt', 'xls', 'xlsx', 'csv', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'mov', 'avi', 'mkv'];
+
+        function isFileAllowed(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            return allowedExtensions.includes(ext);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+        }
+
+        function updateFilePreview() {
+            const container = $('#filePreviewContainer');
+            if (selectedFiles.length === 0) {
+                container.hide().empty();
+                return;
+            }
+
+            container.show().empty();
+            const totalSize = selectedFiles.reduce((s, f) => s + f.size, 0);
+
+            container.append(`<div class="small text-muted mb-2">Arquivos: ${selectedFiles.length}/${MAX_FILES} | Total: ${formatFileSize(totalSize)}</div>`);
+
+            selectedFiles.forEach((file, index) => {
+                const fileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'document';
+                const itemHtml = `
+                    <div class="file-preview-item d-flex align-items-center mb-2">
+                        <div class="file-preview-icon ${fileType} mr-2"><i class="fas fa-file-alt"></i></div>
+                        <div class="file-preview-info flex-grow-1">
+                            <div class="file-preview-name">${file.name}</div>
+                            <div class="file-preview-size">${formatFileSize(file.size)}</div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(${index})"><i class="fas fa-times"></i></button>
+                    </div>`;
+                container.append(itemHtml);
+            });
+        }
+
+        window.removeFile = function (index) {
+            selectedFiles.splice(index, 1);
+            updateFilePreview();
+        };
+
+        $('#anexo').on('change', function () {
+            const files = Array.from(this.files);
+            let currentTotalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+
+            files.forEach(file => {
+                if (!isFileAllowed(file)) {
+                    alert(`O tipo de arquivo "${file.name}" não é permitido.`);
+                    return;
+                }
+
+                if (selectedFiles.length >= MAX_FILES) {
+                    alert(`Limite de ${MAX_FILES} arquivos atingido.`);
+                    return;
+                }
+
+                if (currentTotalSize + file.size > MAX_TOTAL_SIZE) {
+                    alert(`O tamanho total dos arquivos excede 200MB. O arquivo "${file.name}" não foi adicionado.`);
+                    return;
+                }
+
+                if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    selectedFiles.push(file);
+                    currentTotalSize += file.size;
+                }
+            });
+
+            updateFilePreview();
+            this.value = ''; // Limpa o input para permitir re-seleção
+        });
+
+        $('#chatForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const mensagem = $('#mensagem').val().trim();
+            if (!mensagem && selectedFiles.length === 0) {
+                alert("A mensagem não pode estar vazia.");
+                return;
+            }
+
+            const formData = new FormData(this);
+            selectedFiles.forEach(file => formData.append('attachments[]', file));
+
+            $.ajax({
+                type: 'POST',
+                url: "<?php echo URL ?>/class/Mensagens.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    $('#mensagem').val('');
+                    selectedFiles = [];
+                    updateFilePreview();
+                    mostrarMensagens();
+                },
+                error: function () {
+                    alert("Erro ao enviar mensagem.");
+                }
+            });
+        });
+    });
+</script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="<?php echo URL_RESOURCES ?>/js/scripts.js"></script>
 </body>
