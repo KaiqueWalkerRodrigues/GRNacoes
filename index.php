@@ -74,6 +74,12 @@ switch ($route) {
         $requiredSectors = null;
         $requiredLogin = true;
         break;
+    case 'ajuda':
+        $file = 'ajuda/ajuda.php';
+        $pageTitle .= "Ajuda";
+        $requiredSectors = null;
+        $requiredLogin = true;
+        break;
 
     case 'chat':
         $file = 'chats/chat.php';
