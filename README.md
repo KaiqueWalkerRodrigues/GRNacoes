@@ -1,45 +1,36 @@
-# [Start Bootstrap - SB Admin Pro](https://shop.startbootstrap.com/products/sb-admin-pro/)
+# [GRNacoes - Sistema Administrativo Clínica de Olhos Nações e Ótica +Visão]()
 
-[SB Admin Pro](https://shop.startbootstrap.com/products/sb-admin-pro/) is a premium admin dashboard theme for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/).
+Sistema desenvolvido para a [Clínica de Olhos Nações](https://www.google.com/search?q=clinica+de+olhos+nações) e [Ótica +Visão](https://www.google.com/search?q=otica+%2Bvisao), por [Kaique](https://github.com/KaiqueWalkerRodrigues/).
 
-## Usage
+---
 
-### Basic Usage
+## 🚀 Como Utilizar/Testar
 
-After downloading, edit the HTML and CSS files included in the `dist` folder included with the download package.
+Após baixar os arquivos, siga os passos abaixo:
 
-### Development Using Source Files
+### 1. Instalando WampServer (ou XAMPP)
+Baixe o [WampServer](https://sourceforge.net/projects/wampserver/files/WampServer%203/WampServer%203.0.0/wampserver3.3.7_x64.exe/download) e prossiga com todas as etapas de instalação até finalizar e inicializar o servidor.
 
-In the root directory of the project, run `npm install` to install project dependencies, and then run `npm start` which will open up a preview of the template in your default browser, watch for changes to core template files, and live reload the browser when changes are saved.
+### 2. Movendo o projeto
+Mova a pasta do projeto `GRNacoes/` para o diretório: `\wamp64\www\`
 
-Modify the Pug and SCSS files within their respective folders to make changes to the theme.
+### 3. Importando o Backup
+No seu banco de dados de escolha (MySQL, PhpMyAdmin, MariaDB, ...), importe o arquivo de backup: `backup.sql`
 
-## Bugs and Issues
+### 4. Configurando o acesso ao banco de dados
+No diretório `class/` existe o arquivo: `Conexao_example.php`
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/StartBootstrap/pro-feedback/issues) here on GitHub.
+Edite-o conforme sua configuração de banco.  
+Se estiver utilizando MySQL/PhpMyAdmin (porta **3306**) com banco de dados chamado `GRNacoes`, a configuração padrão já deve funcionar.  
 
-Please reference that you're using `SB Admin Pro`
-along with details about the issue you're having.
+Após configurar, salve o arquivo renomeado como: `Conexao.php`
 
-## Custom Builds
+### 5. Acessando com usuário de teste
+No navegador, acesse: `http://localhost/GRNacoes`
 
-You can hire Start Bootstrap to create a custom build of any template, or create something from scratch using Bootstrap. For more information, visit the **[custom design services page](https://startbootstrap.com/bootstrap-design-services/)**.
+Use as credenciais de teste para login:
 
-## About
+- **Usuário:** `teste`  
+- **Senha:** `123456`
 
-Start Bootstrap develops free and premium Bootstrap templates and themes.
-
-* https://startbootstrap.com
-* https://twitter.com/SBootstrap
-
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**.
-
-* http://davidmiller.io
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
-
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
-
-## Copyright and License
-
-Copyright 2020 Blackrock Digital LLC. This theme is copyrighted, and a valid license must be purchased from the Start Bootstrap Shop in order to use. For more information, visit the [SB Admin Pro](https://shop.startbootstrap.com/products/sb-admin-pro/) product page on the Start Bootstrap Shop.
+---
