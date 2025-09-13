@@ -64,7 +64,9 @@
                                     <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th>Médico</th>
+                                                <th>#</th>
+                                                <th>Nome</th>
+                                                <th>Título</th>
                                                 <th>CRM</th>
                                                 <th>Ações</th>
                                             </tr>
@@ -72,11 +74,14 @@
                                         <tbody>
                                             <?php foreach($Medico->listarAtivos() as $medico){ ?>
                                             <tr>
+                                                <td><?php echo $medico->id_medico ?></td>
                                                 <td><?php echo $medico->nome ?></td>
+                                                <td><?php echo $medico->titulo ?></td>
                                                 <td><?php echo $medico->crm ?></td>
                                                 <td>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark mr-2" type="button" data-toggle="modal" data-target="#modalEditarMedico"
                                                         data-nome="<?php echo $medico->nome ?>" 
+                                                        data-titulo="<?php $titulo = explode(' ',$medico->titulo); echo $titulo[0]  ?>" 
                                                         data-crm="<?php echo $medico->crm ?>" 
                                                         data-ativo="<?php echo $medico->ativo ?>" 
                                                         data-idmedico="<?php echo $medico->id_medico ?>"
@@ -166,9 +171,17 @@
                             <div class="row">
                                 <div class="col-5 offset-1">
                                     <label for="nome" class="form-label">Nome *</label>
-                                    <input type="text" class="form-control" name="nome" required value="Dr">
+                                    <input type="text" class="form-control" name="nome">
                                 </div>
-                                <div class="col-5">
+                                <div class="col-2">
+                                    <label for="titulo" class="form-label">Prefixo *</label>
+                                    <select name="titulo" id="cadastrar_titulo" class="form-control" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Dr">Dr</option>
+                                        <option value="Dra">Dra</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
                                     <label for="crm" class="form-label">CRM *</label>
                                     <input type="text" class="form-control" name="crm" required>
                                 </div>
@@ -200,7 +213,15 @@
                                     <label for="editar_nome" class="form-label">Nome *</label>
                                     <input type="text" class="form-control" name="nome" id="editar_nome" required>
                                 </div>
-                                <div class="col-5">
+                                <div class="col-2">
+                                    <label for="editar_titulo" class="form-label">Prefixo *</label>
+                                    <select name="titulo" id="editar_titulo" class="form-control" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Dr">Dr</option>
+                                        <option value="Dra">Dra</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
                                     <label for="editar_crm" class="form-label">CRM *</label>
                                     <input type="text" class="form-control" name="crm" id="editar_crm" required>
                                 </div>
@@ -261,12 +282,14 @@
                     let button = $(event.relatedTarget);
                     let id_medico = button.data('idmedico');
                     let nome = button.data('nome');
+                    let titulo = button.data('titulo');
                     let crm = button.data('crm');
                     let ativo = button.data('ativo');
 
                     $('#editar_medico_nome').text(nome);
                     $('#editar_id_medico').val(id_medico);
                     $('#editar_nome').val(nome);
+                    $('#editar_titulo').val(titulo);
                     $('#editar_crm').val(crm);
                     $('#editar_ativo').val(ativo);
                 });

@@ -83,14 +83,16 @@ class Medico {
     public function cadastrar(Array $dados)
     {
         $nome  = ucwords(strtolower(trim($dados['nome'])));
+        $titulo  = trim($dados['titulo']);
+        $titulo .= " ".$dados['nome'];
         $crm = strtoupper(trim($dados['crm']));
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO medicos 
-                                    (nome, crm, ativo, created_at, updated_at)
+                                    (nome, titulo, crm, ativo, created_at, updated_at)
                                     VALUES
-                                    (:nome, :crm, :ativo, :created_at, :updated_at)
+                                    (:nome, :titulo, :crm, :ativo, :created_at, :updated_at)
                                 ');
 
         $created_at  = $agora;
@@ -98,6 +100,7 @@ class Medico {
         $ativo = 1;
 
         $sql->bindParam(':nome', $nome);
+        $sql->bindParam(':titulo', $titulo);
         $sql->bindParam(':crm', $crm);
         $sql->bindParam(':ativo', $ativo);
         $sql->bindParam(':created_at', $created_at);          
@@ -150,6 +153,7 @@ class Medico {
     {
         $sql = $this->pdo->prepare("UPDATE medicos SET
             nome = :nome,
+            titulo = :titulo,
             crm = :crm,
             ativo = :ativo,
             updated_at = :updated_at 
@@ -160,6 +164,8 @@ class Medico {
 
         $id_medico = $dados['id_medico'];
         $nome = ucwords(strtolower(trim($dados['nome'])));
+        $titulo = trim($dados['titulo']);
+        $titulo .= " ".$dados['nome'];
         $crm = strtoupper(trim($dados['crm']));
         $ativo = $dados['ativo'];
         $updated_at = $agora; 
@@ -167,6 +173,7 @@ class Medico {
 
         $sql->bindParam(':id_medico',$id_medico);
         $sql->bindParam(':nome',$nome);
+        $sql->bindParam(':titulo',$titulo);
         $sql->bindParam(':crm',$crm);
         $sql->bindParam(':ativo',$ativo);
         $sql->bindParam(':updated_at', $updated_at);       
