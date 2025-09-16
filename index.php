@@ -225,6 +225,19 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'faturamento/competencias':
+        $file = 'faturamento/competencias.php';
+        $pageTitle .= "Competências";
+        $requiredSectors = [1,5,12,14,18];
+        $requiredLogin = true;
+        break;
+    case 'faturamento/competencia':
+        $file = 'faturamento/competencia.php';
+        $pageTitle .= "Competência";
+        $requiredSectors = [1,5,12,14,18];
+        $requiredLogin = true;
+        break;
+
     case 'financeiro/campanhas':
         $file = 'financeiro/campanhas.php';
         $pageTitle .= "Campanhas";

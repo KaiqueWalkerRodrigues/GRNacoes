@@ -313,6 +313,23 @@ class Helper{
 
     }
   }
+
+  public static function statusNotaServico($status){
+    switch($status){
+      case 0:
+        return "<b class='badge badge-dark badge-pill'>Pendente</b>";
+      break;
+      case 1:
+        return "<b class='badge badge-success badge-pill'>OK</b>";
+      break;
+      case 2:
+        return "<b class='badge badge-danger badge-pill'>Glosa</b>";
+      break;
+      default:
+        return "";
+      break;
+    }
+  }
   
 }
 

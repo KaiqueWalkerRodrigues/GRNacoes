@@ -44,6 +44,21 @@ class Convenio {
     }      
 
     /**
+     * Listar todos convenios menos particular
+     * @return array
+     * @example $variavel = $Obj->listar()
+     */
+    public function listarMenosParticular(){
+        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE id_convenio != 1 AND deleted_at IS NULL ORDER BY convenio');        
+        $sql->execute();
+    
+        $dados = $sql->fetchAll(PDO::FETCH_OBJ);
+    
+        return $dados;
+    }  
+
+
+    /**
      * cadastra um novo Convenio
      * @param Array $dados    
      * @return int

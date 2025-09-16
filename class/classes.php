@@ -25,6 +25,9 @@
     include_once('Compra_Nota_Item.php');
     include_once('Compra_Pedido.php');
     
+    include_once('Faturamento_competencia.php');
+    include_once('Faturamento_nota_servico.php');
+
     include_once('Financeiro_Boleto.php');
     include_once('Financeiro_Campanha.php');
     include_once('Financeiro_Contrato.php');
