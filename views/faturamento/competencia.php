@@ -11,7 +11,7 @@
         $Faturamento_Nota_Servico->editar($_POST);
     }
     if (isset($_POST['btnDeletarNota'])) {
-        $Faturamento_Nota_Servico->deletar($_POST['id_faturamento_nota_servico'], $_POST['usuario_logado']);
+        $Faturamento_Nota_Servico->deletar($_POST['id_faturamento_nota_servico'], $_POST['usuario_logado'], $_POST['id_competencia']);
     }
 
     $id = $_GET['id'];
@@ -71,12 +71,12 @@
                                     <thead>
                                         <tr>
                                             <th>Convênio</th>
-                                            <th>Tipo</th>
+                                            <th>Pagamento Previsto</th>
                                             <th>BF/NF</th>
                                             <th>Valor Faturado</th>
                                             <th>Valor Imposto</th>
+                                            <th>Valor a Receber</th>
                                             <th>Valor Pago</th>
-                                            <th>Pagamento Previsto</th>
                                             <th>Status</th>
                                             <th>Ações</th>
                                         </tr>
@@ -86,41 +86,70 @@
                                         $total = 0; 
                                         $total_imposto = 0;
                                         $total_pago = 0;
+                                        $total_a_receber = 0;
                                         foreach($Faturamento_Nota_Servico->listar($competencia->id_faturamento_competencia) as $nota){
-                                            if($nota->id_competencia != $competencia->id_faturamento_competencia) continue;
+                                            $valor_a_receber = $nota->valor_faturado-$nota->valor_imposto;
                                             $total += $nota->valor_faturado;
                                             $total_imposto += $nota->valor_imposto;
                                             $total_pago += $nota->valor_pago;
+                                            $total_a_receber += $valor_a_receber;
                                             if($nota->valor_pago == $nota->valor_faturado){
                                                 $status = 1;
                                             }elseif(($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))){
                                                 $status = 2;
+                                                $valor_glosa = $valor_a_receber - $nota->valor_pago;
                                             }else{
                                                 $status = 0;
                                             } 
                                         ?>
                                         <tr class="text-center">
-                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio ?></td>
-                                            <td><?php switch($nota->tipo){ case 0: echo "Tudo"; break; case 1: echo "Consultas"; break; case 3: echo "Exames"; break; } ?></td>
+                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo "Consultas"; break; case 3: echo "Exames"; break; }?></td>
+                                            <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
                                             <td><?php echo $nota->bf_nf ?></td>
                                             <td>R$ <?php echo number_format($nota->valor_faturado, 2, ',', '.'); ?></td>
                                             <td>R$ <?php echo number_format($nota->valor_imposto, 2, ',', '.'); ?></td>
+                                            <td>R$ <?php echo number_format($valor_a_receber, 2, ',', '.'); ?></td>
                                             <td><?php if($nota->valor_pago > 0){ ?>R$ <?php echo number_format($nota->valor_pago, 2, ',', '.'); ?><?php }else{ echo "R$ 0,00"; } ?></td>
-                                            <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
-                                            <td><?php echo Helper::statusNotaServico($status) ?></td>
+                                            <td>
+                                                <?php 
+                                                    switch($status){
+                                                        case 0:
+                                                            echo "<b class='badge badge-dark badge-pill'>Pendente</b>";
+                                                        break;
+                                                        case 1:
+                                                            echo "<b class='badge badge-success badge-pill'>OK</b>";
+                                                        break;
+                                                        case 2:
+                                                            echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
+                                                        break;
+                                                    }
+                                                ?>
+                                             </td>
                                             <td>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarNotaServico"
                                                     data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
                                                     data-id_convenio="<?php echo $Convenio->mostrar($nota->id_convenio)->convenio ?>"
-                                                    data-tipo="<?php echo $nota->tipo ?>"
+                                                    data-tipo="<?php switch($nota->tipo){ case 0: echo "Tudo"; break; case 1: echo "Consultas"; break; case 3: echo "Exames"; break; } ?>"
                                                     data-bf_nf="<?php echo $nota->bf_nf ?>"
                                                     data-valor_faturado="<?php echo $nota->valor_faturado ?>"
                                                     data-valor_imposto="<?php echo $nota->valor_imposto ?>"
                                                     data-valor_pago="<?php if($nota->valor_pago > 0){ echo $nota->valor_pago; }else{ echo '0'; } ?>"
-                                                    data-data_pagamento_previsto="<?php echo $nota->data_pagamento_previsto ?>"
+                                                    data-data_pagamento_previsto="<?php echo Helper::formatarData($nota->data_pagamento_previsto) ?>"
                                                     data-data_pago="<?php echo $nota->data_pago ?>"
                                                     data-feedback="<?php echo $nota->feedback ?>"
-                                                    data-status="<?php echo Helper::statusNotaServico($status) ?>"
+                                                    data-status="<?php 
+                                                        switch($status){
+                                                            case 0:
+                                                                echo "<b class='badge badge-dark badge-pill'>Pendente</b>";
+                                                            break;
+                                                            case 1:
+                                                                echo "<b class='badge badge-success badge-pill'>OK</b>";
+                                                            break;
+                                                            case 2:
+                                                                echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
+                                                            break;
+                                                        }
+                                                    ?>"
                                                 >
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
@@ -132,7 +161,7 @@
                                                     data-valor_faturado="<?php echo $nota->valor_faturado ?>"
                                                     data-valor_imposto="<?php echo $nota->valor_imposto ?>"
                                                     data-valor_pago="<?php echo $nota->valor_pago ?>"
-                                                    data-data_pagamento_previsto="<?php ?>"
+                                                    data-data_pagamento_previsto="<?php echo $nota->data_pagamento_previsto ?>"
                                                     data-data_pago="<?php echo $nota->data_pago ?>"
                                                     data-feedback="<?php echo $nota->feedback ?>"
                                                 >
@@ -140,7 +169,8 @@
                                                 </button>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalDeletarNotaServico"
                                                     data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
-                                                    data-bf_nf="<?php echo $nota->bf_nf ?>">
+                                                    data-bf_nf="<?php echo $nota->bf_nf ?>"
+                                                    data-id_competencia="<?php echo $nota->id_competencia ?>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
@@ -154,8 +184,8 @@
                                             <th></th>
                                             <th class="text-center">R$ <span id="total_valor"><?php echo number_format($total, 2, ',', '.'); ?></span></th>
                                             <th class="text-center">R$ <span id="total_imposto"><?php echo number_format($total_imposto, 2, ',', '.'); ?></span></th>
+                                            <th class="text-center">R$ <span id="total_a_receber"><?php echo number_format($total_a_receber, 2, ',', '.'); ?></span></th>
                                             <th class="text-center">R$ <span id="total_pago"><?php echo number_format($total_pago, 2, ',', '.'); ?></span></th>
-                                            <th></th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -235,68 +265,70 @@
         </form>
     </div>
 
-    <!-- Modal Editar Nota de Serviço -->
     <div class="modal fade" id="modalEditarNotaServico" tabindex="1" role="dialog" aria-labelledby="modalEditarNotaServicoLabel" aria-hidden="true">
-        <form action="?" method="post">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Editar Nota de Serviço</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <form action="?id=<?php echo $id; ?>" method="post">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Nota de Serviço</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
                         <input type="hidden" name="id_faturamento_nota_servico" id="editar_id_faturamento_nota_servico">
-                        <input type="hidden" name="id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <div class="row">
-                            <div class="col-3">
-                                <label for="id_convenio" class="form-label">Convênio *</label>
-                                <input type="text" name="id_convenio" id="editar_id_convenio" class="form-control" required>
-                            </div>
-                            <div class="col-2">
-                                <label for="tipo" class="form-label">Tipo *</label>
-                                <input type="text" name="tipo" id="editar_tipo" class="form-control" required>
-                            </div>
-                            <div class="col-2">
-                                <label for="bf_nf" class="form-label">NF *</label>
-                                <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
-                            </div>
-                            <div class="col-2">
-                                <label for="valor_faturado" class="form-label">Valor Faturado *</label>
-                                <input type="number" step="0.01" name="valor_faturado" id="editar_valor_faturado" class="form-control" required>
-                            </div>
-                            <div class="col-2">
-                                <label for="valor_imposto" class="form-label">Valor Imposto</label>
-                                <input type="number" step="0.01" name="valor_imposto" id="editar_valor_imposto" class="form-control">
-                            </div>
-                            <div class="col-2">
-                                <label for="valor_pago" class="form-label">Valor Pago</label>
-                                <input type="number" step="0.01" name="valor_pago" id="editar_valor_pago" class="form-control">
-                            </div>
-                            <div class="col-2">
-                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
-                                <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
-                            </div>
-                            <div class="col-2">
-                                <label for="data_pago" class="form-label">Data Pago</label>
-                                <input type="date" name="data_pago" id="editar_data_pago" class="form-control">
-                            </div>
-                            <div class="col-4">
-                                <label for="feedback" class="form-label">Feedback</label>
-                                <input type="text" name="feedback" id="editar_feedback" class="form-control">
-                            </div>
+                        <input type="hidden" name="id_competencia" id="editar_id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
+                        <div class="col-4 offset-2">
+                            <label for="id_convenio" class="form-label">Convênio *</label>
+                            <select name="id_convenio" id="editar_id_convenio" class="form-control">
+                                <option value="">Selecione...</option>
+                                <?php foreach($Convenio->listarMenosParticular() as $convenio){ ?>
+                                    <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="tipo" class="form-label">Tipo *</label>
+                            <select name="tipo" id="editar_tipo" class="form-control">
+                                <option value="0">Tudo</option>
+                                <option value="1">Consultas</option>
+                                <option value="2">Exames</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="bf_nf" class="form-label">NF *</label>
+                            <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" name="btnEditarNota">Editar</button>
+                    <div class="row mt-2">
+                        <div class="col-2 offset-1">
+                            <label for="valor_faturado" class="form-label">Valor Faturado *</label>
+                            <input type="number" step="0.01" id="editar_valor_faturado" name="valor_faturado" class="form-control" required>
+                        </div>
+                        <div class="col-2">
+                            <label for="valor_imposto" class="form-label">Valor Imposto</label>
+                            <input type="number" step="0.01" id="editar_valor_imposto" name="valor_imposto" class="form-control">
+                        </div>
+                        <div class="col-3">
+                            <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
+                            <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
+                        </div>
+                        <div class="col-3">
+                            <label for="feedback" class="form-label">Data Feedback Feedback</label>
+                            <input type="date" name="feedback" id="editar_feedback" class="form-control">
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" name="btnEditarNota">Editar</button>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 
     <!-- Modal Visualizar Nota de Serviço -->
     <div class="modal fade" id="modalVisualizarNotaServico" tabindex="1" role="dialog" aria-labelledby="modalVisualizarNotaServicoLabel" aria-hidden="true">
@@ -355,6 +387,7 @@
                         <p>Deseja deletar a nota: <b id="deletar_bf_nf"></b>?</p>
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <input type="hidden" name="id_faturamento_nota_servico" id="deletar_id_faturamento_nota_servico">
+                        <input type="hidden" name="id_competencia" id="deletar_id_competencia">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
@@ -410,6 +443,7 @@
                 let button = $(event.relatedTarget);
                 $('#deletar_id_faturamento_nota_servico').val(button.data('id_faturamento_nota_servico'));
                 $('#deletar_bf_nf').text(button.data('bf_nf'));
+                $('#deletar_id_competencia').val(button.data('id_competencia'));
             });
 
             $('#cadastrar_valor_faturado').on('keyup change', function() {

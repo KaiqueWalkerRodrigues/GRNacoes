@@ -14,13 +14,13 @@ $(document).ready(function() {
             "emptyTable": "Nenhum dado disponível na tabela"
         },
         "columnDefs": [
-            { "width": "12%", "targets": 0 },
-            { "width": "11%", "targets": 1 },
+            { "width": "14%", "targets": 0 },
+            { "width": "14%", "targets": 1 },
             { "width": "11%", "targets": 2 },
             { "width": "11%", "targets": 3 },
             { "width": "11%", "targets": 4 },
             { "width": "11%", "targets": 5 },
-            { "width": "16%", "targets": 6 },
+            { "width": "11%", "targets": 6 },
             { "width": "11%", "targets": 7 },
             { "width": "9%", "targets": 8 }
         ]

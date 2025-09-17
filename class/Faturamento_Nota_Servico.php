@@ -120,8 +120,10 @@ class Faturamento_Nota_Servico {
         WHERE id_faturamento_nota_servico = :id_faturamento_nota_servico
         ");
 
+        $id_competencia = $dados['id_competencia'];
+
         $sql->bindParam(':id_faturamento_nota_servico', $dados['id_faturamento_nota_servico']);
-        $sql->bindParam(':id_competencia', $dados['id_competencia']);
+        $sql->bindParam(':id_competencia', $id_competencia);
         $sql->bindParam(':id_convenio', $dados['id_convenio']);
         $sql->bindParam(':tipo', $dados['tipo']);
         $sql->bindParam(':data_pagamento_previsto', $dados['data_pagamento_previsto']);
@@ -140,14 +142,14 @@ class Faturamento_Nota_Servico {
             echo "
             <script>
                 alert('Nota de serviço editada com sucesso!');
-                window.location.href = '" . URL . "/faturamento/nota_servico?id={$dados['id_faturamento_nota_servico']}';
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível editar a nota de serviço!');
-                window.location.href = '" . URL . "/faturamento/nota_servico?id={$dados['id_faturamento_nota_servico']}';
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
             </script>";
             exit;
         }
@@ -159,7 +161,7 @@ class Faturamento_Nota_Servico {
      * @param int $usuario_logado
      * @return void
      */
-    public function deletar(int $id_faturamento_nota_servico, $usuario_logado)
+    public function deletar(int $id_faturamento_nota_servico, $usuario_logado,$id_competencia)
     {
         $consulta = $this->pdo->prepare('SELECT bf_nf FROM faturamento_notas_servicos WHERE id_faturamento_nota_servico = :id_faturamento_nota_servico');
         $consulta->bindParam(':id_faturamento_nota_servico', $id_faturamento_nota_servico);
@@ -180,14 +182,14 @@ class Faturamento_Nota_Servico {
             echo "
             <script>
                 alert('Nota de serviço deletada com sucesso!');
-                window.location.href = '" . URL . "/faturamento/notas_servicos';
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
             </script>";
             exit;
         } else {
             echo "
             <script>
                 alert('Não foi possível deletar a nota de serviço!');
-                window.location.href = '" . URL . "/faturamento/notas_servicos';
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
             </script>";
             exit;
         }
