@@ -96,7 +96,7 @@
                                             $total_imposto += $nota->valor_imposto;
                                             $total_pago += $nota->valor_pago;
                                             $total_a_receber += $valor_a_receber;
-                                            if($nota->valor_pago == $nota->valor_faturado){
+                                            if($nota->valor_pago == $valor_a_receber){
                                                 $status = 1;
                                             }elseif(($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))){
                                                 if($nota->feedback != '0000-00-00'){

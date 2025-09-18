@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Accounting;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 
@@ -205,11 +206,11 @@ foreach($Faturamento_Nota_Servico->listar($id_competencia) as $nota){
 }
 $pagina1->setCellValue('A'.$row,'TOTAL');
 $pagina1->setCellValue('D'.$row,'=SUM(D'.$row_um.':D'.($row-1).')');
-$pagina1->setCellValue('D'.$row,'=SUM(E'.$row_um.':E'.($row-1).')');
-$pagina1->setCellValue('D'.$row,'=SUM(F'.$row_um.':F'.($row-1).')');
-$pagina1->setCellValue('D'.$row,'=SUM(G'.$row_um.':G'.($row-1).')');
-$pagina1->setCellValue('D'.$row,'=SUM(H'.$row_um.':H'.($row-1).')');
-$pagina1->setCellValue('D'.$row,'=SUM(J'.$row_um.':J'.($row-1).')');
+$pagina1->setCellValue('E'.$row,'=SUM(E'.$row_um.':E'.($row-1).')');
+$pagina1->setCellValue('F'.$row,'=SUM(F'.$row_um.':F'.($row-1).')');
+$pagina1->setCellValue('G'.$row,'=SUM(G'.$row_um.':G'.($row-1).')');
+$pagina1->setCellValue('H'.$row,'=SUM(H'.$row_um.':H'.($row-1).')');
+$pagina1->setCellValue('J'.$row,'=SUM(J'.$row_um.':J'.($row-1).')');
 
 $pagina1->getStyle('D'.$row.':H'.$row)->getNumberFormat()->setFormatCode($real);
  $pagina1->getStyle('D'.$row.':H'.$row)->getFont()->setColor(
@@ -238,6 +239,10 @@ $pagina1->getColumnDimension('I')->setAutoSize(true);
 $pagina1->getColumnDimension('J')->setAutoSize(true);
 $pagina1->getColumnDimension('K')->setAutoSize(true);
 $pagina1->getColumnDimension('L')->setAutoSize(true);
+
+$pagina1->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+$pagina1->getPageSetup()->setFitToWidth(1);
+$pagina1->getPageSetup()->setFitToHeight(0);
 
 // Define o caminho completo do diretório e nome do arquivo
 $directory = __DIR__.'/'; // Define o diretório relativo ao arquivo atual

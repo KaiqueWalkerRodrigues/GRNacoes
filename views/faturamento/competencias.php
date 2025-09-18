@@ -159,7 +159,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function () {
-            $('#faturamento').addClass('active')
+            $('#fatu').addClass('active')
             $('#faturamento_competencias').addClass('active')
 
             $('#modalEditarCompetencia').on('show.bs.modal', function (event) {

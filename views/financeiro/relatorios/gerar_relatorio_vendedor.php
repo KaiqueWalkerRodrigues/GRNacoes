@@ -18,6 +18,7 @@ $campanha = $Campanha->Mostrar($id_campanha);
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 
@@ -206,6 +207,10 @@ if ($id_vendedor > 0) {
         $sheet->setCellValue('G' . $row, 'R$ ' . number_format($total, 2, ',', '.'));
         // Aplicando a formatação do cabeçalho para os totais
         $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0);
     }
 } else {
     // Se nenhum vendedor específico foi selecionado, mostra todos os vendedores
@@ -341,6 +346,9 @@ if ($id_vendedor > 0) {
                 $sheet->getColumnDimension('G')->setAutoSize(true);
             }
         }
+        $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0);
     }
 }
 // Define o caminho completo do diretório e nome do arquivo

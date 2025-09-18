@@ -113,8 +113,6 @@ class Faturamento_Nota_Servico {
             bf_nf = :bf_nf,
             valor_faturado = :valor_faturado,
             valor_imposto = :valor_imposto,
-            valor_pago = :valor_pago,
-            data_pago = :data_pago,
             feedback = :feedback,
             updated_at = :updated_at
         WHERE id_faturamento_nota_servico = :id_faturamento_nota_servico
@@ -130,8 +128,6 @@ class Faturamento_Nota_Servico {
         $sql->bindParam(':bf_nf', $dados['bf_nf']);
         $sql->bindParam(':valor_faturado', $dados['valor_faturado']);
         $sql->bindParam(':valor_imposto', $dados['valor_imposto']);
-        $sql->bindParam(':valor_pago', $dados['valor_pago']);
-        $sql->bindParam(':data_pago', $dados['data_pago']);
         $sql->bindParam(':feedback', $dados['feedback']);
         $sql->bindParam(':updated_at', $agora);
 
