@@ -154,11 +154,12 @@ foreach($Faturamento_Nota_Servico->listar($id_competencia) as $nota){
     $pagina1->setCellValue('G'.$row,($nota->data_pagamento_previsto < $hoje OR $nota->valor_pago > 0 AND $nota->valor_pago < $nota->valor_faturado) ? $valor_glosa : 0);
     $pagina1->setCellValue('H'.$row, ($nota->valor_pago) ? $nota->valor_pago : 0);
     $pagina1->setCellValue('I'.$row,$data_pago_formatado);
-    $pagina1->setCellValue('J'.$row,($nota->data_pagamento_previsto < $hoje OR $nota->valor_pago > 0 AND $nota->valor_pago < $nota->valor_faturado) ? $valor_glosa : 'SEM GLOSA');
-    $pagina1->setCellValue('L'.$row,($nota->data_pagamento_previsto < $hoje OR $nota->valor_pago > 0 AND $nota->valor_pago < $nota->valor_faturado) ? $feedback_formatado : 'SEM GLOSA');
-    $pagina1->setCellValue('K'.$row,($nota->data_pagamento_previsto < $hoje OR $nota->valor_pago > 0 AND $nota->valor_pago < $nota->valor_faturado) ? 'RECURSAR' : 'SEM GLOSA');
+    $pagina1->setCellValue('J'.$row,($nota->data_pagamento_previsto < $hoje AND $nota->valor_pago >= 0 AND $nota->valor_pago < $valor_a_receber) ? $valor_glosa : 'SEM GLOSA');
+    $pagina1->setCellValue('L'.$row,($nota->data_pagamento_previsto < $hoje AND $nota->valor_pago >= 0 AND $nota->valor_pago < $valor_a_receber) ? (($nota->feedback != '0000-00-00') ? $feedback_formatado : '') : 'SEM GLOSA');
+    $pagina1->setCellValue('K'.$row,($nota->data_pagamento_previsto < $hoje AND $nota->valor_pago >= 0 AND $nota->valor_pago < $valor_a_receber) ? 'RECURSAR' : 'SEM GLOSA');
 
     $pagina1->getStyle('B'.$row.':C'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $pagina1->getStyle('I'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     $pagina1->getStyle('D'.$row.':H'.$row)->getNumberFormat()->setFormatCode($real);
 
     $pagina1->getStyle('A'.$row.':L'.$row)->applyFromArray($negrito);
