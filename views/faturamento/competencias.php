@@ -50,7 +50,7 @@
                                     <br>
                                     <b>Fim: <?php echo Helper::formatarData($competencia->periodo_fim) ?></b>
                                     <br>
-                                    <b>Mês Pagamento: <?php echo Helper::formatarData($competencia->mes_pagamento) ?></b>
+                                    <b>Mês Pagamento: <?php echo Helper::formatarDataParaMesAno($competencia->mes_pagamento) ?></b>
                                     <hr>
                                     <div class="col-12 text-center">
                                         <a class="btn btn-icon btn-primary" href="<?php echo URL ?>/faturamento/competencia?id=<?php echo $competencia->id_faturamento_competencia ?>"><i class="fa-solid fa-file-invoice"></i></a>

@@ -114,7 +114,7 @@
                                             } 
                                         ?>
                                         <tr class="text-center">
-                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo " (Consultas)"; break; case 3: echo " (Exames)"; break; }?></td>
+                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo " (Consultas)"; break; case 2: echo " (Exames)"; break; }?></td>
                                             <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
                                             <td><?php echo $nota->bf_nf ?></td>
                                             <td>R$ <?php echo number_format($nota->valor_faturado, 2, ',', '.'); ?></td>
@@ -161,6 +161,9 @@
                                                             break;
                                                             case 2:
                                                                 echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
+                                                            break;
+                                                            case 3:
+                                                                echo "<b class='badge badge-warning badge-pill'>R$ ".$valor_glosa."</b>";
                                                             break;
                                                         }
                                                     ?>"
@@ -239,7 +242,7 @@
                         <div class="row">
                             <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                             <input type="hidden" name="id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
-                            <div class="col-4 offset-2">
+                            <div class="col-4 offset-1">
                                 <label for="id_convenio" class="form-label">Convênio *</label>
                                 <select name="id_convenio" id="cadastrar_id_convenio" class="form-control">
                                     <option value="">Selecione...</option>
@@ -256,13 +259,17 @@
                                     <option value="2">Exames</option>
                                 </select>
                             </div>
-                            <div class="col-2">
-                                <label for="bf_nf" class="form-label">NF *</label>
-                                <input type="text" name="bf_nf" class="form-control" required>
+                            <div class="col-3">
+                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
+                                <input type="date" name="data_pagamento_previsto" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-2 offset-1">
+                                <label for="bf_nf" class="form-label">NF *</label>
+                                <input type="text" name="bf_nf" class="form-control" required>
+                            </div>
+                            <div class="col-2">
                                 <label for="valor_faturado" class="form-label">Valor Faturado *</label>
                                 <input type="number" step="0.01" id="cadastrar_valor_faturado" name="valor_faturado" class="form-control" required>
                             </div>
@@ -271,11 +278,7 @@
                                 <input type="number" step="0.01" id="cadastrar_valor_imposto" name="valor_imposto" class="form-control">
                             </div>
                             <div class="col-3">
-                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
-                                <input type="date" name="data_pagamento_previsto" class="form-control">
-                            </div>
-                            <div class="col-3">
-                                <label for="feedback" class="form-label">Data Feedback Feedback</label>
+                                <label for="feedback" class="form-label">Data Feedback</label>
                                 <input type="date" name="feedback" class="form-control">
                             </div>
                         </div>
@@ -305,7 +308,7 @@
                             <input type="hidden" name="id_faturamento_nota_servico" id="editar_id_faturamento_nota_servico">
                             <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                             <input type="hidden" name="id_competencia" id="editar_id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
-                            <div class="col-4 offset-2">
+                            <div class="col-4 offset-1">
                                 <label for="id_convenio" class="form-label">Convênio *</label>
                                 <select name="id_convenio" id="editar_id_convenio" class="form-control">
                                     <option value="">Selecione...</option>
@@ -322,13 +325,17 @@
                                     <option value="2">Exames</option>
                                 </select>
                             </div>
-                            <div class="col-2">
-                                <label for="bf_nf" class="form-label">NF *</label>
-                                <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
+                            <div class="col-3">
+                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
+                                <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
                             </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-2 offset-1">
+                                <label for="bf_nf" class="form-label">NF *</label>
+                                <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
+                            </div>
+                            <div class="col-2">
                                 <label for="valor_faturado" class="form-label">Valor Faturado *</label>
                                 <input type="number" step="0.01" id="editar_valor_faturado" name="valor_faturado" class="form-control" required>
                             </div>
@@ -337,11 +344,7 @@
                                 <input type="number" step="0.01" id="editar_valor_imposto" name="valor_imposto" class="form-control">
                             </div>
                             <div class="col-3">
-                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
-                                <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
-                            </div>
-                            <div class="col-3">
-                                <label for="feedback" class="form-label">Data Feedback Feedback</label>
+                                <label for="feedback" class="form-label">Data Feedback</label>
                                 <input type="date" name="feedback" id="editar_feedback" class="form-control">
                             </div>
                         </div>
