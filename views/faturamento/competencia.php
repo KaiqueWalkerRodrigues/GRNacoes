@@ -99,8 +99,13 @@
                                             if($nota->valor_pago == $nota->valor_faturado){
                                                 $status = 1;
                                             }elseif(($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))){
-                                                $status = 2;
-                                                $valor_glosa = $valor_a_receber - $nota->valor_pago;
+                                                if($nota->feedback != '0000-00-00'){
+                                                    $status = 3;
+                                                    $valor_glosa = $valor_a_receber - $nota->valor_pago;
+                                                }else{
+                                                    $status = 2;
+                                                    $valor_glosa = $valor_a_receber - $nota->valor_pago;
+                                                }
                                             }else{
                                                 $status = 0;
                                             } 
@@ -124,6 +129,9 @@
                                                         break;
                                                         case 2:
                                                             echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
+                                                        break;
+                                                        case 3:
+                                                            echo "<b class='badge badge-warning badge-pill'>R$ ".$valor_glosa."</b>";
                                                         break;
                                                     }
                                                 ?>

@@ -54,7 +54,7 @@
                                     <hr>
                                     <div class="col-12 text-center">
                                         <a class="btn btn-icon btn-primary" href="<?php echo URL ?>/faturamento/competencia?id=<?php echo $competencia->id_faturamento_competencia ?>"><i class="fa-solid fa-file-invoice"></i></a>
-                                        <button class="btn btn-icon btn-success" type="button"><i class="fa-solid fa-file-excel"></i></button>
+                                        <a href="<?php URL ?>relatorios/gerar_relatorio_competencia?id_competencia=<?php echo $competencia->id_faturamento_competencia ?>" class="btn btn-icon btn-success"><i class="fa-solid fa-file-excel"></i></a>
                                         <button class="btn btn-icon btn-dark" type="button" data-toggle="modal" data-target="#modalEditarCompetencia"
                                             data-id_faturamento_competencia="<?php echo $competencia->id_faturamento_competencia ?>"
                                             data-nome="<?php echo $competencia->nome ?>"

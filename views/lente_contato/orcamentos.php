@@ -249,7 +249,7 @@
                             </div>
                             <div class="col-3">
                                 <label for="cadastrar_barra_paciente" class="form-label">Barra Paciente</label>
-                                <input type="text" class="form-control" name="barra_paciente" id="cadastrar_barra_paciente" value="1/" required>
+                                <input type="text" class="form-control" name="barra_paciente" id="cadastrar_barra_paciente" value="<?php switch($_SESSION['id_empresa']){ case 1: echo "1/"; break; case 3: echo "2/"; break; case 5: echo "3/"; break; default: echo ""; break; } ?>" required>
                             </div>
                             
                             <!-- Ficha Lente -->

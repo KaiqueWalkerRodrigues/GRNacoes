@@ -237,6 +237,12 @@ switch ($route) {
         $requiredSectors = [1,5,12,14,18];
         $requiredLogin = true;
         break;
+    case 'faturamento/relatorios/gerar_relatorio_competencia':
+        $file = 'faturamento/relatorios/gerar_relatorio_competencia.php';
+        $pageTitle .= "Relatório Competencia";
+        $requiredSectors = [1,5,12,14,18];
+        $requiredLogin = true;
+        break;
 
     case 'financeiro/campanhas':
         $file = 'financeiro/campanhas.php';
