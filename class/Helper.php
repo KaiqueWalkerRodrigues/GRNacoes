@@ -227,6 +227,17 @@ class Helper{
       }
       return ''; // Retorna string vazia se a data for nula ou vazia
   }
+
+  //Converter a data para o Padrão d/m/Y ou d/m/Y H:i
+  public static function formatarDataParaMesAno($data) {
+      // Verifica se a data não é nula ou vazia
+      if (!empty($data)) {
+          $data_formatada = new DateTime($data);
+
+          return $data_formatada->format('m/Y');
+      }
+      return ''; // Retorna string vazia se a data for nula ou vazia
+  }
   
   //Converter a data para o Padrão d/m/Y ou d/m/Y H:i
   public static function formatarDataSemHorario($data) {

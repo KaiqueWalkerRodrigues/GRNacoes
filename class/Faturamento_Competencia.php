@@ -134,11 +134,13 @@ class Faturamento_Competencia {
         $mes_pagamento = $dados['mes_pagamento'];
         $usuario_logado = $dados['usuario_logado'];
 
+        $data_pagamento = $mes_pagamento.'-01';
+
         $sql->bindParam(':id_faturamento_competencia', $id_faturamento_competencia);
         $sql->bindParam(':nome', $nome);
         $sql->bindParam(':periodo_inicio', $periodo_inicio);
         $sql->bindParam(':periodo_fim', $periodo_fim);
-        $sql->bindParam(':mes_pagamento', $mes_pagamento);
+        $sql->bindParam(':mes_pagamento', $data_pagamento);
         $sql->bindParam(':updated_at', $agora);
 
         if ($sql->execute()) {

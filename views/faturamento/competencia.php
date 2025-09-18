@@ -11,6 +11,9 @@
         $Faturamento_Nota_Servico->editar($_POST);
     }
     if (isset($_POST['btnEditarPagamento'])) {
+        if (isset($_POST['valor_pago'])) {
+            $_POST['valor_pago'] = str_replace(',', '.', $_POST['valor_pago']);
+        }
         $Faturamento_Nota_Servico->editarPagamento($_POST);
     }
     if (isset($_POST['btnDeletarNota'])) {
@@ -53,7 +56,7 @@
                                     <br>
                                     <b>Fim: <?php echo Helper::formatarData($competencia->periodo_fim) ?></b>
                                     <br>
-                                    <b>Pagamento: <?php echo Helper::formatarData($competencia->mes_pagamento) ?></b>
+                                    <b>Pagamento: <?php echo Helper::formatarDataParaMesAno($competencia->mes_pagamento) ?></b>
                                 </div>
                             </div>
                         </div>
