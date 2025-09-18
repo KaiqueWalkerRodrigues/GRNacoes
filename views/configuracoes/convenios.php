@@ -110,8 +110,8 @@
                                 <input type="text" class="form-control" name="convenio" required>
                             </div>
                             <div class="col-5">
-                                <label for="razao_social" class="form-label">Razão Social *</label>
-                                <input type="text" class="form-control" name="razao_social" required>
+                                <label for="razao_social" class="form-label">Razão Social</label>
+                                <input type="text" class="form-control" name="razao_social">
                             </div>
                         </div>
                     </div>
@@ -142,8 +142,8 @@
                                 <input type="text" class="form-control" name="convenio" id="editar_convenio" required>
                             </div>
                             <div class="col-6">
-                                <label for="razao_social" class="form-label">Razão Social *</label>
-                                <input type="text" class="form-control" name="razao_social" id="editar_razao_social" required>
+                                <label for="razao_social" class="form-label">Razão Social</label>
+                                <input type="text" class="form-control" name="razao_social" id="editar_razao_social">
                             </div>
                         </div>
                     </div>

@@ -194,7 +194,7 @@
 
             // Função para popular as listas com tarefas
             function loadTrelloTasks() {
-                setVersion('1.3.0'); // Aqui você altera para a versão atual
+                setVersion('1.3.1');
                 
                 const todoTasks = [];
                 const inProgressTasks = [];
