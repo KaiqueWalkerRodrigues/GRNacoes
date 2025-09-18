@@ -10,6 +10,9 @@
     if (isset($_POST['btnEditarNota'])) {
         $Faturamento_Nota_Servico->editar($_POST);
     }
+    if (isset($_POST['btnEditarPagamento'])) {
+        $Faturamento_Nota_Servico->editarPagamento($_POST);
+    }
     if (isset($_POST['btnDeletarNota'])) {
         $Faturamento_Nota_Servico->deletar($_POST['id_faturamento_nota_servico'], $_POST['usuario_logado'], $_POST['id_competencia']);
     }
@@ -103,7 +106,7 @@
                                             } 
                                         ?>
                                         <tr class="text-center">
-                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo "Consultas"; break; case 3: echo "Exames"; break; }?></td>
+                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo " (Consultas)"; break; case 3: echo " (Exames)"; break; }?></td>
                                             <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
                                             <td><?php echo $nota->bf_nf ?></td>
                                             <td>R$ <?php echo number_format($nota->valor_faturado, 2, ',', '.'); ?></td>
@@ -153,6 +156,16 @@
                                                 >
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
+                                                <?php if(verificarSetor([1,12,14])){ ?>
+                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarPagamento"
+                                                    data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
+                                                    data-id_competencia="<?php echo $competencia->id_faturamento_competencia ?>"
+                                                    data-valor_pago="<?php echo $nota->valor_pago ?>"
+                                                    data-data_pago="<?php echo $nota->data_pago ?>"
+                                                >
+                                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                                </button>
+                                                <?php } ?>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarNotaServico"
                                                     data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
                                                     data-id_convenio="<?php echo $nota->id_convenio ?>"
@@ -171,7 +184,7 @@
                                                     data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
                                                     data-bf_nf="<?php echo $nota->bf_nf ?>"
                                                     data-id_competencia="<?php echo $nota->id_competencia ?>">
-                                                    <i class="fa-solid fa-trash"></i>
+                                                    <i class="fa-solid fa-power-off"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -265,70 +278,106 @@
         </form>
     </div>
 
+    <!-- Modal Editar Nota de Serviço -->
     <div class="modal fade" id="modalEditarNotaServico" tabindex="1" role="dialog" aria-labelledby="modalEditarNotaServicoLabel" aria-hidden="true">
-    <form action="?id=<?php echo $id; ?>" method="post">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Nota de Serviço</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <input type="hidden" name="id_faturamento_nota_servico" id="editar_id_faturamento_nota_servico">
-                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
-                        <input type="hidden" name="id_competencia" id="editar_id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
-                        <div class="col-4 offset-2">
-                            <label for="id_convenio" class="form-label">Convênio *</label>
-                            <select name="id_convenio" id="editar_id_convenio" class="form-control">
-                                <option value="">Selecione...</option>
-                                <?php foreach($Convenio->listarMenosParticular() as $convenio){ ?>
-                                    <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
-                                <?php } ?>
-                            </select>
+        <form action="?id=<?php echo $id; ?>" method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Nota de Serviço</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="id_faturamento_nota_servico" id="editar_id_faturamento_nota_servico">
+                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                            <input type="hidden" name="id_competencia" id="editar_id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
+                            <div class="col-4 offset-2">
+                                <label for="id_convenio" class="form-label">Convênio *</label>
+                                <select name="id_convenio" id="editar_id_convenio" class="form-control">
+                                    <option value="">Selecione...</option>
+                                    <?php foreach($Convenio->listarMenosParticular() as $convenio){ ?>
+                                        <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="tipo" class="form-label">Tipo *</label>
+                                <select name="tipo" id="editar_tipo" class="form-control">
+                                    <option value="0">Tudo</option>
+                                    <option value="1">Consultas</option>
+                                    <option value="2">Exames</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <label for="bf_nf" class="form-label">NF *</label>
+                                <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
+                            </div>
                         </div>
-                        <div class="col-2">
-                            <label for="tipo" class="form-label">Tipo *</label>
-                            <select name="tipo" id="editar_tipo" class="form-control">
-                                <option value="0">Tudo</option>
-                                <option value="1">Consultas</option>
-                                <option value="2">Exames</option>
-                            </select>
-                        </div>
-                        <div class="col-2">
-                            <label for="bf_nf" class="form-label">NF *</label>
-                            <input type="text" name="bf_nf" id="editar_bf_nf" class="form-control" required>
+                        <div class="row mt-2">
+                            <div class="col-2 offset-1">
+                                <label for="valor_faturado" class="form-label">Valor Faturado *</label>
+                                <input type="number" step="0.01" id="editar_valor_faturado" name="valor_faturado" class="form-control" required>
+                            </div>
+                            <div class="col-2">
+                                <label for="valor_imposto" class="form-label">Valor Imposto</label>
+                                <input type="number" step="0.01" id="editar_valor_imposto" name="valor_imposto" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
+                                <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="feedback" class="form-label">Data Feedback Feedback</label>
+                                <input type="date" name="feedback" id="editar_feedback" class="form-control">
+                            </div>
                         </div>
                     </div>
-                    <div class="row mt-2">
-                        <div class="col-2 offset-1">
-                            <label for="valor_faturado" class="form-label">Valor Faturado *</label>
-                            <input type="number" step="0.01" id="editar_valor_faturado" name="valor_faturado" class="form-control" required>
-                        </div>
-                        <div class="col-2">
-                            <label for="valor_imposto" class="form-label">Valor Imposto</label>
-                            <input type="number" step="0.01" id="editar_valor_imposto" name="valor_imposto" class="form-control">
-                        </div>
-                        <div class="col-3">
-                            <label for="data_pagamento_previsto" class="form-label">Data Pagamento Previsto</label>
-                            <input type="date" name="data_pagamento_previsto" id="editar_data_pagamento_previsto" class="form-control">
-                        </div>
-                        <div class="col-3">
-                            <label for="feedback" class="form-label">Data Feedback Feedback</label>
-                            <input type="date" name="feedback" id="editar_feedback" class="form-control">
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="btnEditarNota">Editar</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" name="btnEditarNota">Editar</button>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+
+    <!-- Modal Editar Pagamento Nota de Serviço -->
+    <div class="modal fade" id="modalEditarPagamento" tabindex="1" role="dialog" aria-labelledby="modalEditarPagamentoLabel" aria-hidden="true">
+        <form action="?id=<?php echo $id; ?>" method="post">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Pagamento da  Nota de Serviço</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_faturamento_nota_servico" id="editar_pagamento_id_faturamento_nota_servico">
+                        <input type="hidden" name="id_competencia" id="editar_pagamento_id_competencia" value="<?php echo $competencia->id_faturamento_competencia ?>">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="row">
+                            <div class="offset-1 col-5">
+                                <label for="editar_pagamento_valor_pago" class="form-label">Valor Pago *</label>
+                                <input type="text" name="valor_pago" id="editar_pagamento_valor_pago" class="form-control" required>
+                            </div>
+                            <div class="col-5">
+                                <label for="editar_pagamento_data_pago" class="form-label">Data Pagamento *</label>
+                                <input type="date" name="data_pago" id="editar_pagamento_data_pago" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success" name="btnEditarPagamento">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Modal Visualizar Nota de Serviço -->
     <div class="modal fade" id="modalVisualizarNotaServico" tabindex="1" role="dialog" aria-labelledby="modalVisualizarNotaServicoLabel" aria-hidden="true">
@@ -437,6 +486,14 @@
                 $('#editar_data_pago').val(button.data('data_pago'));
                 $('#editar_status').val(button.data('status'));
                 $('#editar_feedback').val(button.data('feedback'));
+            });
+
+            $('#modalEditarPagamento').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget);
+                $('#editar_pagamento_id_faturamento_nota_servico').val(button.data('id_faturamento_nota_servico'));
+                $('#editar_pagamento_id_competencia').val(button.data('id_competencia'));
+                $('#editar_pagamento_valor_pago').val(button.data('valor_pago'));
+                $('#editar_pagamento_data_pago').val(button.data('data_pago'));
             });
 
             $('#modalDeletarNotaServico').on('show.bs.modal', function (event) {

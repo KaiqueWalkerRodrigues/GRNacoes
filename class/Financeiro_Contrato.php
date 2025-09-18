@@ -62,8 +62,8 @@ class Financeiro_Contrato {
                 ':uf' => $dados['uf'],
                 ':telefone_residencial' => $dados['tel_res'],
                 ':telefone_comercial' => $dados['tel_com'],
-                ':celular1' => $dados['celular1'],
-                ':celular2' => $dados['celular2'],
+                ':celular1' => preg_replace('/\D/', '', $dados['celular1']),
+                ':celular2' => preg_replace('/\D/', '', $dados['celular2']),
                 ':sinal_entrada' => $dados['sinal_entrada'],
                 ':valor' => $dados['valor'],
                 ':created_at' => $agora,
@@ -167,8 +167,8 @@ class Financeiro_Contrato {
                 ':uf' => $dados['uf'],
                 ':tel_res' => $dados['tel_res'],
                 ':tel_com' => $dados['tel_com'],
-                ':celular1' => $dados['celular1'],
-                ':celular2' => $dados['celular2'],
+                ':celular1' => preg_replace('/\D/', '', $dados['celular1']),
+                ':celular2' => preg_replace('/\D/', '', $dados['celular2']),
                 ':updated_at' => $agora,
                 ':id_financeiro_contrato' => $dados['id_financeiro_contrato']
             ]);
@@ -193,7 +193,44 @@ class Financeiro_Contrato {
                   </script>";
         }
     }
+
+    public function editarParcela($dados) {
+        try {
+            $this->pdo->beginTransaction(); // Inicia uma transação
     
+            $agora = date('Y-m-d H:i:s');
+
+            // Atualiza os dados do contrato principal
+            $sql = $this->pdo->prepare('UPDATE financeiro_contratos_parcelas
+                                        SET data = :data,
+                                            updated_at = :updated_at
+                                        WHERE id_financeiro_contrato_parcela = :id_financeiro_contrato_parcela');
+            $sql->execute([
+                ':data' => $dados['data'],
+                ':updated_at' => $agora,
+                ':id_financeiro_contrato_parcela' => $dados['id_financeiro_contrato_parcela']
+            ]);
+            
+            // Remova ou atualize as parcelas, se necessário
+    
+            // Adiciona o log
+            $descricao = "Editou a parcela: {$dados['id_financeiro_contrato_parcela']}";
+            $this->addLog('Editar', $descricao, $dados['usuario_logado']);
+    
+            $this->pdo->commit();
+    
+            echo "<script>
+                    alert('Contrato editado com sucesso!');
+                    window.location.href = '" . URL . "/financeiro/contratos';
+                  </script>";
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            echo "<script>
+                    alert('Erro ao editar contrato: " . $e->getMessage() . "');
+                    window.location.href = '" . URL . "/financeiro/contratos';
+                  </script>";
+        }
+    }
     
     public function listar() {
         $sql = $this->pdo->prepare("

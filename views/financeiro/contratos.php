@@ -8,6 +8,9 @@
     if (isset($_POST['btnEditar'])) {
         $Financeiro_Contrato->editar($_POST);
     }
+    if (isset($_POST['btnEditarParcela'])) {
+        $Financeiro_Contrato->editarParcela($_POST);
+    }
     // if (isset($_POST['btnDeletar'])) {
     //     $Financeiro_Contrato->deletar($_POST['id_financeiro_contrato'],$_POST['usuario_logado']);
     // }
@@ -97,7 +100,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <a class="btn btn-datatable btn-icon btn-transparent-dark" href="documentos/gerar_contrato_pdf?id=<?php echo $contrato->id_financeiro_contrato ?>"><i class="fa-solid fa-file-pdf"></i></a>
-                                                <?php if (date('Y-m-d', strtotime($contrato->created_at)) == date('Y-m-d')) { ?>
+                                                <?php //if (date('Y-m-d', strtotime($contrato->created_at)) == date('Y-m-d')) { ?>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarContrato"
                                                         data-id_financeiro_contrato="<?php echo $contrato->id_financeiro_contrato ?>"
                                                         data-id_empresa="<?php echo $contrato->id_empresa; ?>"
@@ -119,7 +122,7 @@
                                                         data-celular1="<?php echo $contrato->celular1; ?>"
                                                         data-celular2="<?php echo $contrato->celular2; ?>"
                                                     ><i class="fa-solid fa-gear"></i></button>
-                                                <?php } ?>
+                                                <?php //} ?>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -517,6 +520,38 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
                         <button type="submit" id="btnEditar" name="btnEditar" class="btn btn-success" disabled>Editar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal Editar Parcela -->
+    <div class="modal fade" id="modalEditarParcela" tabindex="1" role="dialog" aria-labelledby="modalEditarParcelaLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Parcela: <span id="editarparcela_titulo_data"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="id_financeiro_contrato_parcela" id="editarParcela_id_financeiro_contrato_parcela">
+                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario']?> ">
+
+                            <div class="col-10 offset-1">
+                                <label for="editarParcela_data" class="form-label">Data da Parcela *</label>
+                                <input type="date" name="data" id="editarParcela_data" class="form-control">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="btnEditar" name="btnEditarParcela" class="btn btn-success">Editar</button>
                     </div>
                 </div>
             </div>
@@ -1354,7 +1389,8 @@
                                             <td class='text-center'>R$ ${valorPago > 0 ? formatarValor(valorPago)+" / R$ "+formatarValor(valorParcela) : formatarValor(valorParcela)}</td>
                                             <td class='text-center'>${statusBadge}</td>
                                             <td class='text-center'>
-                                                ${parcela.pago_em == null || parcela.valor_pago < parcela.valor ? "<button class='confirmarPagamento btn btn-sm btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : "Pago em ("+formatarData(parcela.pago_em)+")"}
+                                            ${parcela.pago_em == null || parcela.valor_pago < parcela.valor ? "<button class='confirmarPagamento btn btn-sm btn-datatable btn-icon btn-transparent-dark'><i class='fa-solid fa-check'></i></button>" : "Pago em ("+formatarData(parcela.pago_em)+")"}
+                                            <button class="btn btn-sm btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarParcela" data-data="${parcela.data}" data-id_financeiro_contrato_parcela="${parcela.id_financeiro_contrato_parcela}" type="button"><i class="fa-solid fa-gear"></i></button>
                                             </td>
                                         </tr>
                                     `;
@@ -1487,6 +1523,24 @@
                     atualizarbtnEditar();
                 });
 
+                $('#modalEditarParcela').on('show.bs.modal', function (event) {
+                    let button = $(event.relatedTarget);
+                    let data = button.data('data')
+                    let id_financeiro_contrato_parcela = button.data('id_financeiro_contrato_parcela')
+                    
+                     // O input type="date" exige o formato Y-m-d (AAAA-MM-DD). É preciso converter.
+                    const partesData = data.split('/');
+                    const dataYMD = `${partesData[2]}-${partesData[1]}-${partesData[0]}`;
+
+                    console.log(data)
+                    console.log(dataYMD)
+                    console.log(id_financeiro_contrato_parcela)
+
+                    $('#editarParcela_id_financeiro_contrato_parcela').val(id_financeiro_contrato_parcela)
+                    $('#editarparcela_titulo_data').text(data)
+                    $('#editarParcela_data').val(dataYMD)
+                });
+
                 $('#modalEditarContrato').on('show.bs.modal', function (event) {
                     let button = $(event.relatedTarget);
                     let id_financeiro_contrato = button.data('id_financeiro_contrato')
@@ -1574,6 +1628,14 @@
                 });
 
                 $('#cadastrar_celular2').on('input', function() {
+                    formatarCelular($(this));
+                });
+
+                $('#editar_celular1').on('input', function() {
+                    formatarCelular($(this));
+                });
+
+                $('#editar_celular2').on('input', function() {
                     formatarCelular($(this));
                 });
 

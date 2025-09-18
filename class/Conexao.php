@@ -26,7 +26,7 @@ class Conexao
             # Garante que o PDO lance exceções durante erros.
             self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             # Garante que os dados sejam armazenados com codificação UTF-8.
-            self::$db->exec('SET NAMES utf8');
+            self::$db->exec('SET NAMES utf8mb4');
         }
         catch (PDOException $e)
         {

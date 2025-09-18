@@ -152,6 +152,7 @@
                                                             data-id_orcamento="<?php echo $orcamento->id_lente_contato_orcamento ?>"
                                                             data-nome="<?php echo $orcamento->nome ?>"
                                                             data-valor="<?php echo $orcamento->valor ?>"
+                                                            data-barra_paciente="<?php echo $orcamento->barra_paciente ?>"
                                                             data-cv_pgto1="<?php echo $orcamento->cv_pgto1 ?>"
                                                             data-cv_pgto2="<?php echo $orcamento->cv_pgto2 ?>"
                                                             data-forma_pgto1="<?php echo forma_pgto($orcamento->id_forma_pagamento1) ?>"
@@ -168,6 +169,7 @@
                                                         data-contato="<?php echo $orcamento->contato ?>"
                                                         data-id_medico="<?php echo $orcamento->id_medico ?>"
                                                         data-olhos="<?php echo $orcamento->olhos ?>"
+                                                        data-barra_paciente="<?php echo $orcamento->barra_paciente ?>"
                                                         data-olho_esquerdo="<?php echo $orcamento->olho_esquerdo ?>"
                                                         data-olho_direito="<?php echo $orcamento->olho_direito ?>"
                                                         data-lente_esquerda="<?php echo $orcamento->id_modelo_esquerdo ?>"
@@ -244,6 +246,10 @@
                                         <option value="<?php echo $medico->id_medico ?>"><?php echo $medico->nome ?></option>
                                     <?php } ?>
                                 </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="cadastrar_barra_paciente" class="form-label">Barra Paciente</label>
+                                <input type="text" class="form-control" name="barra_paciente" id="cadastrar_barra_paciente" value="1/" required>
                             </div>
                             
                             <!-- Ficha Lente -->
@@ -435,6 +441,10 @@
                                     <?php } ?>
                                 </select>
                             </div>
+                            <div class="col-3">
+                                <label for="editar_barra_paciente" class="form-label">Barra Paciente</label>
+                                <input type="text" class="form-control" name="barra_paciente" id="editar_barra_paciente" required>
+                            </div>
                             
                             <!-- Ficha Lente -->
                             <div class="offset-1 col-10 mt-4">
@@ -613,6 +623,7 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="col-10 offset-1">
+                            <b>Barra Paciente: </b><span id="cv_barra_paciente"></span><br>
                             <b>Valor: </b><span id="cv_valor"></span><br>
                             <span><b>CV Forma de Pagamento 1 </b><span id="forma_pgto1_cv"></span>: <span id="cv_cv_pgto1"></span></span><br>
                             <span><b>CV Forma de Pagamento 2 </b><span id="forma_pgto2_cv"></span>: <span id="cv_cv_pgto2"></span></span>
@@ -957,6 +968,7 @@
                 var contato               = button.data('contato');
                 var id_medico             = button.data('id_medico');
                 var olhos                 = button.data('olhos');
+                var barra_paciente                 = button.data('barra_paciente');
                 var olho_esquerdo         = button.data('olho_esquerdo');
                 var olho_direito          = button.data('olho_direito');
                 var fornecedor_esquerdo   = button.data('fornecedor_esquerdo');
@@ -979,6 +991,7 @@
                 $('#editar_contato').val(contato);
                 $('#editar_id_medico').val(id_medico);
                 $('#editar_olhos').val(olhos);
+                $('#editar_barra_paciente').val(barra_paciente);
                 $('#editar_olho_esquerdo').val(olho_esquerdo);
                 $('#editar_olho_direito').val(olho_direito);
                 $('#editar_fornecedor_esquerdo').val(fornecedor_esquerdo);
@@ -1083,10 +1096,12 @@
             $('#modalCvOrcamento').on('shown.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
                 var nome = button.data('nome');
+                var cv_barra_paciente = button.data('barra_paciente');
                 // Converte o valor para número e formata no padrão de moeda brasileiro
                 var valor = parseFloat(button.data('valor')) || 0;
                 var valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 
+                var cv_barra_paciente = button.data('cv_barra_paciente');
                 var forma_pgto1 = button.data('forma_pgto1');
                 var forma_pgto2 = button.data('forma_pgto2');
                 var cv_pgto1 = button.data('cv_pgto1');
@@ -1094,6 +1109,7 @@
 
                 $('.modalCvOrcamentoLabel').text(nome);
                 $('#cv_valor').text(valorFormatado);
+                $('#cv_barra_paciente').text(cv_barra_paciente);
                 $('#cv_cv_pgto1').text(cv_pgto1);
                 $('#cv_cv_pgto2').text(cv_pgto2);
                 $('#forma_pgto1_cv').text('(' + forma_pgto1 + ')');

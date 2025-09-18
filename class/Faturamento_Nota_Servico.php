@@ -156,6 +156,48 @@ class Faturamento_Nota_Servico {
     }
 
     /**
+     * Editar uma nota de serviço
+     * @param array $dados
+     * @return void
+     */
+    public function editarPagamento(array $dados)
+    {
+        $agora = date("Y-m-d H:i:s");
+        $sql = $this->pdo->prepare("UPDATE faturamento_notas_servicos SET
+            valor_pago = :valor_pago,
+            data_pago = :data_pago,
+            updated_at = :updated_at
+        WHERE id_faturamento_nota_servico = :id_faturamento_nota_servico
+        ");
+
+        $id_competencia = $dados['id_competencia'];
+
+        $sql->bindParam(':id_faturamento_nota_servico', $dados['id_faturamento_nota_servico']);
+        $sql->bindParam(':valor_pago', $dados['valor_pago']);
+        $sql->bindParam(':data_pago', $dados['data_pago']);
+        $sql->bindParam(':updated_at', $agora);
+
+        if ($sql->execute()) {
+            $descricao = "Editou pagamento da nota de serviço ($dados[id_faturamento_nota_servico])";
+            $this->addLog("Editar", $descricao, $dados['usuario_logado']);
+
+            echo "
+            <script>
+                alert('Nota de serviço editada com sucesso!');
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível editar a nota de serviço!');
+                window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
+            </script>";
+            exit;
+        }
+    }
+
+    /**
      * Deletar uma nota de serviço
      * @param int $id_faturamento_nota_servico
      * @param int $usuario_logado
