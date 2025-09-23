@@ -333,6 +333,10 @@ if ($id_vendedor > 0) {
             // Aplicando a formatação do cabeçalho para os totais
             $sheet->getStyle('F' . $row . ':G' . $row)->applyFromArray($cabecalho)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+            $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
             $sheetIndex++;
             // AutoSize
             $sheet->getStyle('A1:G' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -346,9 +350,6 @@ if ($id_vendedor > 0) {
                 $sheet->getColumnDimension('G')->setAutoSize(true);
             }
         }
-        $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
-        $sheet->getPageSetup()->setFitToWidth(1);
-        $sheet->getPageSetup()->setFitToHeight(0);
     }
 }
 // Define o caminho completo do diretório e nome do arquivo
