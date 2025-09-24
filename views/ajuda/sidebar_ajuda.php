@@ -19,7 +19,8 @@
                 </a>
                 <div class="collapse" id="collapseDashboards" data-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" id="como-abrir-link" href="javascript:void(0);">Como Abrir</a>
+                        <a class="nav-link" id="como-abrir-chamado" href="javascript:void(0);">Como Abrir</a>
+                        <a class="nav-link" id="como-ver-chamado" href="javascript:void(0);">Como ver Chamados</a>
                     </nav>
                 </div>
             </div>

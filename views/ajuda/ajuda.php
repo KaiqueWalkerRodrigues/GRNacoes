@@ -17,18 +17,18 @@
 </head>
 
 <body class="nav-fixed">
-    <?php include_once('resources/topbar.php'); ?>
+    <?php if(isset($_SESSION['id_usuario'])){include_once('resources/topbar.php');}else{include_once('views/ajuda/topbar_ajuda.php');} ?>
     <div id="layoutSidenav">
         <?php include_once('sidebar_ajuda.php') ?>
         <div id="layoutSidenav_content">
             <main>
-                <div class="container-fluid">
-                    <br>
-                    <div id="main">
-                        <?php include_once('ajuda.html'); ?>
-                    </div>
+                    <div class="container-fluid">
+                        <br>
+                        <div id="main">
+                            <?php include_once('ajuda.html'); ?>
+                        </div>
+                    </div>  
                 </div>  
-            </div>  
                 <div id="conteudo-ajuda"></div>
             </main>
         </div>
@@ -41,6 +41,9 @@
             $('#ajuda').on('click', function () {
                 $('#main').html('<div>Carregando...</div>');
                 $('#main').load('views/ajuda/ajuda.html');
+
+                $('.active').removeClass('active');
+                $('#ajuda').addClass('active');
             });
 
             $('#chat').on('click', function () {
@@ -51,9 +54,20 @@
                 $('#chat').addClass('active');
             });
 
-            $('#como-abrir-link').on('click', function () {
+            $('#como-abrir-chamado').on('click', function () {
                 $('#main').html('<div>Carregando...</div>');
-                $('#main').load('views/ajuda/chamados/como_abrir.html');
+                $('#main').load('views/ajuda/chamados/abrir_chamado.html');
+
+                $('.active').removeClass('active');
+                $('#como-abrir-chamado').addClass('active');
+            });
+
+            $('#como-ver-chamado').on('click', function () {
+                $('#main').html('<div>Carregando...</div>');
+                $('#main').load('views/ajuda/chamados/ver_chamado.html');
+
+                $('.active').removeClass('active');
+                $('#como-ver-chamado').addClass('active');
             });
         });
     </script>
