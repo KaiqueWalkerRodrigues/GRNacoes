@@ -301,7 +301,7 @@ class Financeiro_Contrato {
     }
 
     public function contarParcelas($id_financeiro_contrato){
-        $sql = $this->pdo->prepare('SELECT count(id_financeiro_contrato_parcela) as qntd FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato');
+        $sql = $this->pdo->prepare('SELECT count(id_financeiro_contrato_parcela) as qntd FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato AND deleted_at IS NULL');
         $sql->execute([
             ':id_contrato' => $id_financeiro_contrato,
         ]);
@@ -312,7 +312,7 @@ class Financeiro_Contrato {
     }    
 
     public function contarParcelasPagas($id_financeiro_contrato){
-        $sql = $this->pdo->prepare('SELECT count(id_financeiro_contrato_parcela) as qntd FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato AND valor_pago > 0');
+        $sql = $this->pdo->prepare('SELECT count(id_financeiro_contrato_parcela) as qntd FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato AND valor_pago > 0 AND deleted_at IS NULL');
         $sql->execute([
             ':id_contrato' => $id_financeiro_contrato,
         ]);
@@ -323,7 +323,7 @@ class Financeiro_Contrato {
     }    
 
     public function listarParcelas($id_financeiro_contrato){
-        $sql = $this->pdo->prepare('SELECT * FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato');
+        $sql = $this->pdo->prepare('SELECT * FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato AND deleted_at IS NULL');
         $sql->execute([
             ':id_contrato' => $id_financeiro_contrato,
         ]);
@@ -371,4 +371,14 @@ class Financeiro_Contrato {
         }
     }
     
+    public function somarValorParcelas($id_contrato){
+        $sql = $this->pdo->prepare('SELECT sum(valor) as total FROM financeiro_contratos_parcelas WHERE id_contrato = :id_contrato AND deleted_at IS NULL');
+        $sql->execute([
+            ':id_contrato' => $id_contrato,
+        ]);
+
+        $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
 }

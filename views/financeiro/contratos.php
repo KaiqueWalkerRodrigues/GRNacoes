@@ -96,7 +96,7 @@
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                R$ <?php echo number_format($contrato->valor, 2, ',', '.'); ?>
+                                                R$ <?php echo number_format($Financeiro_Contrato->somarValorParcelas($contrato->id_financeiro_contrato), 2, ',', '.'); ?>
                                             </td>
                                             <td class="text-center">
                                                 <a class="btn btn-datatable btn-icon btn-transparent-dark" href="documentos/gerar_contrato_pdf?id=<?php echo $contrato->id_financeiro_contrato ?>"><i class="fa-solid fa-file-pdf"></i></a>
