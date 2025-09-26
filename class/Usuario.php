@@ -227,20 +227,20 @@ class Usuario {
                                     :data_admissao,:created_at,:updated_at)
                                 ');
 
-        $nome  = ucwords(strtolower(trim($dados['nome'])));
-        $ativo  = 2;
-        $usuario  = trim($dados['usuario']);
-        $senha  = password_hash($dados['senha'], PASSWORD_DEFAULT);
-        $contrato  = $dados['contrato'];
-        $celular  = preg_replace('/[^0-9]/', '', $dados['celular']); 
-        $cpf  = preg_replace('/[^0-9]/', '', $dados['cpf']);
+        $nome             = ucwords(strtolower(trim($dados['nome'])));
+        $ativo            = 2;
+        $usuario          = trim($dados['usuario']);
+        $senha            = password_hash($dados['senha'], PASSWORD_DEFAULT);
+        $contrato         = $dados['contrato'];
+        $celular          = preg_replace('/[^0-9]/', '', $dados['celular']); 
+        $cpf              = preg_replace('/[^0-9]/', '', $dados['cpf']);
         $data_nascimento  = $dados['data_nascimento'];
-        $email  = $dados['email'];
-        $empresa  = ucwords(strtolower(trim($dados['empresa'])));
-        $id_setor  = $dados['id_setor'];
-        $id_cargo  = $dados['id_cargo'];
-        $n_folha  = $dados['n_folha'];
-        $data_admissao  = $dados['data_admissao'];
+        $email            = $dados['email'];
+        $empresa          = ucwords(strtolower(trim($dados['empresa'])));
+        $id_setor         = $dados['id_setor'];
+        $id_cargo         = $dados['id_cargo'];
+        $n_folha          = $dados['n_folha'];
+        $data_admissao    = $dados['data_admissao'];
 
         $agora = date("Y-m-d H:i:s");
 
@@ -248,31 +248,57 @@ class Usuario {
         $updated_at = $agora;
 
         $sql->bindParam(':nome',$nome);
-        $sql->bindParam(':ativo',$ativo);              
-        $sql->bindParam(':usuario',$usuario);              
-        $sql->bindParam(':senha',$senha);              
-        $sql->bindParam(':contrato',$contrato);              
-        $sql->bindParam(':celular',$celular);              
-        $sql->bindParam(':cpf',$cpf);              
-        $sql->bindParam(':data_nascimento',$data_nascimento);              
-        $sql->bindParam(':email',$email);              
-        $sql->bindParam(':empresa',$empresa);                            
-        $sql->bindParam(':id_cargo',$id_cargo);              
-        $sql->bindParam(':n_folha',$n_folha);              
-        $sql->bindParam(':data_admissao',$data_admissao);              
-        $sql->bindParam(':created_at',$created_at);          
+        $sql->bindParam(':ativo',$ativo);               
+        $sql->bindParam(':usuario',$usuario);               
+        $sql->bindParam(':senha',$senha);               
+        $sql->bindParam(':contrato',$contrato);               
+        $sql->bindParam(':celular',$celular);               
+        $sql->bindParam(':cpf',$cpf);               
+        $sql->bindParam(':data_nascimento',$data_nascimento);               
+        $sql->bindParam(':email',$email);               
+        $sql->bindParam(':empresa',$empresa);                             
+        $sql->bindParam(':id_cargo',$id_cargo);               
+        $sql->bindParam(':n_folha',$n_folha);               
+        $sql->bindParam(':data_admissao',$data_admissao);               
+        $sql->bindParam(':created_at',$created_at);       
         $sql->bindParam(':updated_at',$updated_at);       
 
-        if ($sql->execute()) {
-            $id_usuario = $this->pdo->lastInsertId();
+        try {
+            // Tenta executar a query
+            $sql->execute();
 
-            $this->adicionarSetor($id_usuario,$id_setor,1);
+            // Se a execução for bem-sucedida, continua o fluxo normal
+            $id_usuario = $this->pdo->lastInsertId();
+            $this->adicionarSetor($id_usuario, $id_setor, 1);
 
             echo "
             <script>
+                alert('Cadastro realizado com sucesso!');
                 window.location.href = '" . URL . "/';
             </script>";
             exit;
+
+        } catch (PDOException $e) {
+            // Captura a exceção do PDO
+            // Verifica se o código do erro é '23000' (violação de integridade / entrada duplicada)
+            if ($e->getCode() == '23000') {
+                // Se for, executa o script de alerta e redirecionamento
+                echo "
+                <script>
+                    alert('Usuário já cadastrado.');
+                    window.location.href = '" . URL . "/';
+                </script>";
+                exit;
+            } else {
+                // Se for outro erro de banco de dados, você pode tratá-lo aqui
+                // Por exemplo, mostrando uma mensagem de erro genérica
+                echo "
+                <script>
+                    alert('Ocorreu um erro inesperado: " . addslashes($e->getMessage()) . "');
+                    window.location.href = '" . URL . "/';
+                </script>";
+                exit;
+            }
         }
     }
 

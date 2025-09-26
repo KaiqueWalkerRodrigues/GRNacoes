@@ -51,7 +51,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="password-basic.html">Esqueceu a senha?</a>
+                                                <a class="small" href="#">Esqueceu a senha?</a>
+                                                <a class="small text-success" href="<?php echo URL ?>/solicitacao">Cadastrar-se</a>
                                                 <button type="submit" class="btn btn-primary" name="btnAcessar">Acessar</button>
                                             </div>
                                         </form>
