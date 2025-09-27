@@ -109,7 +109,7 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-3">
-                            <label for="id_setor" class="form-label required">Setor</label>
+                            <label for="id_setor" class="form-label required">Setor (Se seu setor não aparecer, selecione Qualquer)</label>
                             <select class="form-control" name="id_setor" id="id_setor" required>
                                 <option value="">Selecione...</option>
                                 <?php foreach($Setor->listar() as $setor){ ?>
@@ -118,7 +118,7 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-3">
-                            <label for="id_cargo" class="form-label required">Cargo</label>
+                            <label for="id_cargo" class="form-label required">Cargo (Se seu cargo não aparecer, selecione Qualquer)</label>
                             <select class="form-control" name="id_cargo" id="id_cargo" required>
                                 <option value="">Selecione...</option>
                                 <?php foreach($Cargo->listar() as $cargo){ ?>
