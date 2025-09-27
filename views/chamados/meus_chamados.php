@@ -63,7 +63,8 @@
                                             <th>Título</th>
                                             <th>Usuário</th>
                                             <th>Status</th>
-                                            <th>Setor</th>
+                                            <th>Aberto Em</th>
+                                            <th>Setor Destinado</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
@@ -81,6 +82,7 @@
                                             <td><?php echo $chamado->titulo ?></td>
                                             <td><?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?></td>
                                             <td><?php echo Helper::statusChamado($chamado->status) ?></td>
+                                            <td><?php echo Helper::formatarData($chamado->created_at) ?></td>
                                             <td><?php echo $Setor->mostrar($chamado->id_setor)->setor ?></td>
                                             <td>
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarChamado"

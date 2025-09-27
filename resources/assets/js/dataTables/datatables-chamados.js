@@ -20,8 +20,9 @@ $(document).ready(function() {
             { "width": "35%", "targets": 3 }, 
             { "width": "20%", "targets": 4 },  
             { "width": "5%", "targets": 5 },
-            { "width": "14%", "targets": 6 },
+            { "width": "8%", "targets": 6 },
             { "width": "14%", "targets": 7 },
+            { "width": "10%", "targets": 8 },
         ]
     });
 });
