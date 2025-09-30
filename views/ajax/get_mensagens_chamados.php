@@ -185,11 +185,11 @@
                 </div>
             </div>
             <div class="col-auto">
-                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/assets/img/avatars/' . $avatar_remetente . '.png" alt="">
+                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/img/avatars/' . $avatar_remetente . '.png" alt="">
             </div>
         ' : '
             <div class="col-auto">
-                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/assets/img/avatars/' . $avatar_remetente . '.png" alt="">
+                <img class="btn-icon btn-md mb-2" src="' . URL_RESOURCES . '/img/avatars/' . $avatar_remetente . '.png" alt="">
             </div>
             <div class="col-auto">
                 <div class="card p-2 mb-2 position-relative" style="overflow:hidden; max-width: 300px;">
