@@ -403,12 +403,12 @@ switch ($route) {
     //     break;
 
     //Teste
-    case 'test':
-        $file = 'chats/test.php';
-        $pageTitle .= "Teste";
-        $requiredSectors = [1];
-        $requiredLogin = true;
-        break;
+    // case 'test':
+    //     $file = 'test.php';
+    //     $pageTitle .= "Teste";
+    //     $requiredSectors = [1];
+    //     $requiredLogin = true;
+    //     break;
 
     default:
         $file = '404.php';

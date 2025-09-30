@@ -82,11 +82,11 @@
         <!-- Usuário -->
         <li class="nav-item dropdown no-caret mr-3 dropdown-user">
             <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="img-fluid" style="width: 90%;" src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" />
+                <img class="img-fluid" style="width: 90%;" src="<?php echo URL_RESOURCES ?>/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" />
             </a>
             <div class="dropdown-menu dropdown-menu-right border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                 <h6 class="dropdown-header d-flex align-items-center">
-                    <img class="dropdown-user-img" src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" />
+                    <img class="dropdown-user-img" src="<?php echo URL_RESOURCES ?>/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" />
                     <div class="dropdown-user-details">
                         <div class="dropdown-user-details-name"><?php echo $_SESSION['nome'] ?></div>
                         <div class="dropdown-user-details-email"><?php echo $Setor->mostrar($_SESSION['id_setor'])->setor ?></div>

@@ -69,7 +69,7 @@ $chats = $Chats->listar($id_usuario);
        data-destinatario-avatar="<?php echo $destinatario->id_avatar ?>">
         <div style="display: flex; align-items: center;">
             <div class="contact-avatar-wrap">
-                <img class="contact-avatar" src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $destinatario->id_avatar ?>.png" alt="">
+                <img class="contact-avatar" src="<?php echo URL_RESOURCES ?>/img/avatars/<?php echo $destinatario->id_avatar ?>.png" alt="">
                 <span class="online-dot" id="online-<?php echo (int)$destinatario->id_usuario ?>"></span>
             </div>
             <div class="contact-info">

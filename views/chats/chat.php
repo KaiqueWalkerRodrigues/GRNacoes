@@ -161,7 +161,7 @@
                     <section class="chat-area">
                         <?php if ($chat_selecionado && $destinatario): ?>
                             <header class="chat-header">
-                                <img class="chat-header-avatar" src="<?= URL_RESOURCES ?>/assets/img/avatars/<?= htmlspecialchars($destinatario->id_avatar) ?>.png" alt="Avatar">
+                                <img class="chat-header-avatar" src="<?= URL_RESOURCES ?>/img/avatars/<?= $destinatario->id_avatar ?>.png" alt="Avatar">
                                 <div class="chat-header-info">
                                     <h6 class="mb-0"><?= htmlspecialchars($destinatario->nome) ?></h6>
                                     <p class="chat-header-status" id="onlineStatus">online</p>
@@ -378,7 +378,7 @@
 
             function updateChatHeader(nome, avatar) {
                  $('.chat-header').html(`
-                    <img class="chat-header-avatar" src="${URL_RESOURCES}/assets/img/avatars/${avatar}.png" alt="Avatar">
+                    <img class="chat-header-avatar" src="${URL_RESOURCES}/img/avatars/${avatar}.png" alt="Avatar">
                     <div class="chat-header-info">
                         <h6 class="mb-0">${nome}</h6>
                         <p class="chat-header-status" id="onlineStatus"></p>
@@ -388,7 +388,7 @@
             function rebuildChatArea(nome, avatar) {
                 $('.chat-area').html(`
                     <header class="chat-header">
-                        <img class="chat-header-avatar" src="${URL_RESOURCES}/assets/img/avatars/${avatar}.png" alt="Avatar">
+                        <img class="chat-header-avatar" src="${URL_RESOURCES}/img/avatars/${avatar}.png" alt="Avatar">
                         <div class="chat-header-info">
                             <h6 class="mb-0">${nome}</h6>
                             <p class="chat-header-status" id="onlineStatus"></p>
@@ -443,7 +443,7 @@
                         <a href="javascript:void(0)" class="contact-item ${isActive}" onclick="${clickAction}" data-chat-id="${user.id_conversa || ''}" data-destinatario-id="${user.id_usuario}">
                             <div class="d-flex align-items-center">
                                 <div class="contact-avatar-wrap">
-                                    <img class="contact-avatar" src="${URL_RESOURCES}/assets/img/avatars/${user.id_avatar}.png" alt="">
+                                    <img class="contact-avatar" src="${URL_RESOURCES}/img/avatars/${user.id_avatar}.png" alt="">
                                     <span class="online-dot" id="online-dot-${user.id_usuario}"></span>
                                 </div>
                                 <div class="contact-info">
