@@ -70,6 +70,7 @@
                                     <label for="filtroStatus" class="form-label text-light">Filtrar por Status:</label>
                                     <select id="filtroStatus" class="form-control">
                                         <option value="">Todos</option>
+                                        <option value="Pendentes">Pendentes</option>
                                         <option value="Em Análise">Em Análise</option>
                                         <option value="Em Andamento">Em Andamento</option>
                                         <option value="Concluído">Concluído</option>
@@ -122,6 +123,7 @@
                                                     data-titulo="<?php echo $chamado->titulo ?>"
                                                     data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
                                                     data-usuario="<?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?> (<?php echo $Setor->mostrar($_SESSION['id_setor'])->setor ?>)"
+                                                    data-sla="<?php echo $chamado->sla ?>"
                                                     data-setor="<?php echo $setor->setor ?>"
                                                     data-urgencia="<?php echo Helper::TextoUrgencia($chamado->urgencia) ?>"
                                                     data-descricao="<?php echo $chamado->descricao ?>"
@@ -254,7 +256,7 @@
                             <label for="encaminhar" class="form-label">Encaminhar para:</label>
                             <select name="id_setor_novo" id="encaminhar" class="form-control" required>
                                 <option value="">Selecione...</option>
-                                <?php foreach($Setor->listar($setor->id_setor) as $setor){ ?>
+                                <?php foreach($Setor->listar() as $setor){ ?>
                                     <option value="<?php echo $setor->id_setor ?>"><?php echo $setor->setor ?></option>
                                 <?php } ?>
                             </select>
@@ -298,9 +300,13 @@
                             <label for="visualizar_urgencia" class="form-label">Urgência *</label>
                             <input type="text" name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
                         </div>
-                        <div class="col-6 offset-3 mb-2">
+                        <div class="col-6 offset-1 mb-2">
                             <label for="visualizar_usuario" class="form-label">Usuário *</label>
                             <input type="text" name="usuario" id="visualizar_usuario" class="form-control" disabled>
+                        </div>
+                        <div class="col-3">
+                            <label for="visualizar_sla" class="form-label">SLA</label>
+                            <input type="text" name="sla" id="visualizar_sla" class="form-control" disabled>
                         </div>
                         <div class="col-12 mt-1">
                             <label for="visualizar_descricao" class="form-label">Descrição *</label>
@@ -469,21 +475,31 @@
             $('#preloader').fadeOut('slow', function() { $(this).remove(); });
 
             $('#filtroStatus').change(function() {
-                var filtroStatus = $('#filtroStatus').val();
-                
-                // Mostrar todas as linhas inicialmente
-                $('#dataTable tbody tr').show();
+                var filtroStatus = $(this).val();
 
-                // Iterar sobre as linhas da tabela para aplicar o filtro
                 $('#dataTable tbody tr').each(function() {
-                    var status = $(this).find('td:eq(4)').text(); // Índice da coluna de status (ajuste se necessário)
+                    // Pega o texto do status da 6ª coluna (índice 5) e remove espaços extras
+                    var statusLinha = $(this).find('td:eq(5)').text().trim();
+                    var mostrarLinha = false;
 
-                    // Verificar se a linha atende ao critério de status
-                    if (filtroStatus && status !== filtroStatus) {
-                        $(this).hide(); // Ocultar a linha se o status não for o selecionado
+                    if (filtroStatus === 'Pendentes') {
+                        // Se o filtro for "Pendentes", mostra a linha se o status NÃO for "Concluído"
+                        mostrarLinha = (statusLinha !== 'Concluído' && statusLinha !== 'Cancelado' && statusLinha !== 'Recusado');
+                    } else if (filtroStatus === '') {
+                        // Se o filtro for "Todos" (valor vazio), mostra todas as linhas
+                        mostrarLinha = true;
+                    } else {
+                        // Para qualquer outro filtro, mostra a linha apenas se o status corresponder
+                        mostrarLinha = (statusLinha === filtroStatus);
                     }
+                    
+                    // Mostra ou oculta a linha com base na variável 'mostrarLinha'
+                    $(this).toggle(mostrarLinha);
                 });
             });
+
+            let status = 'Pendentes';
+            $('#filtroStatus').val(status).change()
 
             $('#modalEncaminhar').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget)
@@ -535,6 +551,7 @@
                 let button = $(event.relatedTarget); // Botão que acionou o modal
                 let id_chamado = button.data('id_chamado');
                 let titulo = button.data('titulo');
+                let sla = button.data('sla');
                 let status = button.data('status');
                 let usuario = button.data('usuario');
                 let setor = button.data('setor');
@@ -549,6 +566,11 @@
                 $('#visualizar_id_chamado').val(id_chamado);
                 $('#visualizar_titulo').val(titulo);
                 $('#titulo_modal').text(titulo);
+                if(sla > 0){
+                    $('#visualizar_sla').val(sla+" hora(s)");
+                }else{
+                    $('#visualizar_sla').val("");
+                }
                 $('#visualizar_status').val(status);
                 $('#visualizar_usuario').val(usuario);
                 $('#visualizar_id_setor').val(setor);

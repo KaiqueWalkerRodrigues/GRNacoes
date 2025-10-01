@@ -93,9 +93,9 @@ class Chamado {
     {
         $titulo  = ucwords(strtolower(trim($dados['titulo'])));
         $status = 1;
+        $urgencia = 0;
         $id_usuario = $dados['id_usuario'];
         $id_setor = $dados['id_setor'];
-        $urgencia = $dados['urgencia'];
         $descricao = trim($dados['descricao']);
         $agora = date("Y-m-d H:i:s");
 
@@ -457,6 +457,46 @@ class Chamado {
         }
     }
 
+    public function definirUrgenciaSla(array $dados)
+    {
+        $sql = $this->pdo->prepare("UPDATE chamados SET
+            urgencia = :urgencia,
+            sla = :sla,
+            updated_at = :updated_at 
+        WHERE id_chamado = :id_chamado
+        ");
+
+        $agora = date("Y-m-d H:i:s");
+
+        $id_chamado = $dados['id_chamado'];
+        $urgencia = $dados['urgencia'];
+        $sla = $dados['sla'];
+        $updated_at = $agora; 
+        $id_usuario = $dados['id_usuario'];
+
+        $sql->bindParam(':id_chamado',$id_chamado);
+        $sql->bindParam(':urgencia',$urgencia);
+        $sql->bindParam(':sla',$sla);
+        $sql->bindParam(':updated_at', $updated_at);       
+
+        if ($sql->execute()) {
+            $descricao = "Definiu a urgencia e/ou SLA do chamado($id_chamado)";
+            $this->addLog('Editar',$descricao,$id_usuario);
+
+            echo "
+            <script>
+                alert('Chamado Editado com Sucesso!');
+                window.location.href = '" . URL . "/chamados';
+            </script>";
+        } else {
+            echo "
+            <script>
+                alert('Não foi possivel Editar o Chamado!');
+                window.location.href = '" . URL . "/chamados';
+            </script>";
+            exit;
+        }
+    }
+
 }
 
-?>

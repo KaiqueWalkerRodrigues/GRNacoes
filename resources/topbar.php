@@ -70,10 +70,10 @@
                 </div>
 
                 <!-- Rodapé fixo -->
-                <a class="text-dark dropdown-item dropdown-notifications-footer flex-shrink-0"
+                <!-- <a class="text-dark dropdown-item dropdown-notifications-footer flex-shrink-0"
                     href="#">
                     Ler Todas Notificações
-                </a>
+                </a> -->
             </div>
 
 

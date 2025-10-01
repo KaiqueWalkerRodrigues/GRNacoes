@@ -88,6 +88,7 @@
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarChamado"
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>"
                                                     data-titulo="<?php echo $chamado->titulo ?>"
+                                                    data-sla="<?php echo $chamado->sla ?>"
                                                     data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
                                                     data-usuario="<?php echo $usuario->nome ?> (<?php echo $Setor->mostrar($_SESSION['id_setor'])->setor ?>)"
                                                     data-setor="<?php echo $setor->setor ?>"
@@ -150,19 +151,9 @@
                                 <label for="cadastrar_id_setor" class="form-label">Destinatário *</label>
                                 <select name="id_setor" id="cadastrar_id_setor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Setor->listar() as $setor){ 
+                                    <?php foreach($Setor->listar($_SESSION['id_usuario']) as $setor){ 
                                         echo "<option value='$setor->id_setor'>$setor->setor</option>";
                                     } ?>
-                                </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="cadastrar_urgencia" class="form-label">Urgência *</label>
-                                <select name="urgencia" id="cadastrar_urgencia" class="form-control" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="1">Baixa</option>
-                                    <option value="2">Média</option>
-                                    <option value="3">Alta</option>
-                                    <option value="4">Urgente</option>
                                 </select>
                             </div>
                             <!-- <div class="col-4">
@@ -172,6 +163,9 @@
                             <div class="col-12 mt-1">
                                 <label for="cadastrar-descricao" class="form-label">Descreva o Problema *</label>
                                 <textarea name="descricao" id="cadastrar-descricao" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+                            <div class="col-12 mt-1 text-center">
+                                <span>(Para adicionar prints ou anexos use o chat do chamado)</span>
                             </div>
                         </div>
                     </div>
@@ -213,9 +207,13 @@
                             <label for="visualizar_urgencia" class="form-label">Urgência *</label>
                             <input type="text" name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
                         </div>
-                        <div class="col-6 offset-3 mb-2">
+                        <div class="col-6 offset-1 mb-2">
                             <label for="visualizar_usuario" class="form-label">Usuário *</label>
                             <input type="text" name="usuario" id="visualizar_usuario" class="form-control" disabled>
+                        </div>
+                        <div class="col-3">
+                            <label for="visualizar_sla" class="form-label">SLA</label>
+                            <input type="text" name="sla" id="visualizar_sla" class="form-control" disabled>
                         </div>
                         <div class="col-12 mt-1">
                             <label for="visualizar_descricao" class="form-label">Descrição *</label>
@@ -292,11 +290,11 @@
                 $('.excluir_titulo').text(titulo)
             })
 
-            // Função para abrir o modal de visualizar chamado com dados preenchidos
             $('#modalVisualizarChamado').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget); // Botão que acionou o modal
                 let id_chamado = button.data('id_chamado');
                 let titulo = button.data('titulo');
+                let sla = button.data('sla');
                 let status = button.data('status');
                 let usuario = button.data('usuario');
                 let setor = button.data('setor');
@@ -311,6 +309,11 @@
                 $('#visualizar_id_chamado').val(id_chamado);
                 $('#visualizar_titulo').val(titulo);
                 $('#titulo_modal').text(titulo);
+                if(sla > 0){
+                    $('#visualizar_sla').val(sla+" hora(s)");
+                }else{
+                    $('#visualizar_sla').val("");
+                }
                 $('#visualizar_status').val(status);
                 $('#visualizar_usuario').val(usuario);
                 $('#visualizar_id_setor').val(setor);

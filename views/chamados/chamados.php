@@ -22,6 +22,9 @@
     if(isset($_POST['btnIniciar'])){
         $Chamado->iniciar($_POST['id_chamado'],$_POST['id_usuario']);
     }
+    if(isset($_POST['btnEditarUrgenciaSla'])){
+        $Chamado->definirUrgenciaSla($_POST);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +42,6 @@
 </head>
 
 <body class="nav-fixed">
-        <!-- Tela de Carregamento -->
     <div id="preloader">
         <div class="spinner"></div>
     </div>
@@ -61,6 +63,7 @@
                                     <label for="filtroStatus" class="form-label text-light">Filtrar por Status:</label>
                                     <select id="filtroStatus" class="form-control">
                                         <option value="">Todos</option>
+                                        <option value="Pendentes">Pendentes</option>
                                         <option value="Em Análise">Em Análise</option>
                                         <option value="Em Andamento">Em Andamento</option>
                                         <option value="Concluído">Concluído</option>
@@ -112,6 +115,7 @@
                                                 <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarChamado"
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>"
                                                     data-titulo="<?php echo $chamado->titulo ?>"
+                                                    data-sla="<?php echo $chamado->sla ?>"
                                                     data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
                                                     data-usuario="<?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?> (<?php echo $Setor->mostrar($_SESSION['id_setor'])->setor ?>)"
                                                     data-setor="<?php echo $setor->setor ?>"
@@ -123,15 +127,22 @@
                                                     data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
                                                     <i class="fa-solid fa-newspaper"></i>
                                                 </button>
+                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalUrgenciaSla"
+                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
+                                                    data-titulo="<?php echo $chamado->titulo ?>"
+                                                    data-urgencia="<?php echo $chamado->urgencia ?>"
+                                                    data-sla="<?php echo $chamado->sla ?>">
+                                                    <i class="fa-solid fa-wrench"></i>
+                                                </button>
                                                <a href="<?php echo URL ?>/chamados/chat_chamado?id=<?php echo $chamado->id_chamado ?>"
                                                     class="btn btn-datatable btn-icon btn-transparent-dark position-relative chat-link"
                                                     data-id_chamado="<?php echo $chamado->id_chamado ?>">
-                                                        <i class="fa-solid fa-comment"></i>
-                                                        <span class="chat-badge badge badge-pill"
-                                                            style="position:absolute; top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
-                                                            0
-                                                        </span>
-                                                    </a>
+                                                    <i class="fa-solid fa-comment"></i>
+                                                    <span class="chat-badge badge badge-pill"
+                                                        style="position:absolute; top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
+                                                        0
+                                                    </span>
+                                                </a>
                                                 <?php if($chamado->status == 1){ ?>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalIniciar"
                                                         data-id_chamado="<?php echo $chamado->id_chamado ?>"
@@ -174,7 +185,6 @@
         </div>
     </div>
 
-    <!-- Modal Abrir Chamado -->
     <form action="?" method="post">
         <div class="modal fade" id="modalAbrirChamado" tabindex="-1" role="dialog" aria-labelledby="abrirchamadoLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
@@ -211,10 +221,6 @@
                                     <option value="4">Urgente</option>
                                 </select>
                             </div>
-                            <!-- <div class="col-4">
-                                <label for="cadastrar_print" class="form-label">Prints</label>
-                                <input type="file" name="cadastrar-print" multiple accept="image/" id="cadastrar-print" class="form-control">
-                            </div> -->
                             <div class="col-12 mt-1">
                                 <label for="cadastrar-descricao" class="form-label">Descreva o Problema *</label>
                                 <textarea name="descricao" id="cadastrar-descricao" cols="30" rows="10" class="form-control"></textarea>
@@ -230,7 +236,6 @@
         </div>
     </form>
 
-    <!-- Modal encaminhar -->
     <div class="modal fade" id="modalEncaminhar" tabindex="1" role="dialog" aria-labelledby="modalencaminharLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-md" role="document">
@@ -248,7 +253,7 @@
                             <label for="encaminhar" class="form-label">Encaminhar para:</label>
                             <select name="id_setor_novo" id="encaminhar" class="form-control" required>
                                 <option value="">Selecione...</option>
-                                <?php foreach($Setor->listar($setor->id_setor) as $setor){ ?>
+                                <?php foreach($Setor->listar() as $setor){ ?>
                                     <option value="<?php echo $setor->id_setor ?>"><?php echo $setor->setor ?></option>
                                 <?php } ?>
                             </select>
@@ -263,7 +268,47 @@
         </form>
     </div>
 
-    <!-- Modal Visualizar Chamado -->
+    <div class="modal fade" id="modalUrgenciaSla" tabindex="1" role="dialog" aria-labelledby="modalUrgenciaSlaLabel" aria-hidden="true">
+        <form action="?" method="post">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Urgência e/ou SLA do chamado: <span id="urgenciasla_titulo"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?>">
+                            <input type="hidden" id="urgenciasla_id_chamado" name="id_chamado">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="urgenciasla_urgencia" class="form-label">Urgência</label>
+                                    <select name="urgencia" id="urgenciasla_urgencia" class="form-control" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="1">Baixa</option>
+                                        <option value="2">Média</option>
+                                        <option value="3">Alta</option>
+                                        <option value="4">Urgente</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label for="urgenciasla_sla" class="form-label">SLA em (Horas)</label>
+                                    <input type="number" name="sla" id="urgenciasla_sla" class="form-control" required value="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="btnEditarUrgenciaSla">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div class="modal fade" id="modalVisualizarChamado" tabindex="-1" role="dialog" aria-labelledby="visualizarchamadoLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -292,9 +337,13 @@
                             <label for="visualizar_urgencia" class="form-label">Urgência *</label>
                             <input type="text" name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
                         </div>
-                        <div class="col-6 offset-3 mb-2">
+                        <div class="col-6 offset-1 mb-2">
                             <label for="visualizar_usuario" class="form-label">Usuário *</label>
                             <input type="text" name="usuario" id="visualizar_usuario" class="form-control" disabled>
+                        </div>
+                        <div class="col-3">
+                            <label for="visualizar_sla" class="form-label">SLA</label>
+                            <input type="text" name="sla" id="visualizar_sla" class="form-control" disabled>
                         </div>
                         <div class="col-12 mt-1">
                             <label for="visualizar_descricao" class="form-label">Descrição *</label>
@@ -325,7 +374,6 @@
         </div>
     </div>
 
-    <!-- Modal Recusar -->
     <div class="modal fade" id="modalRecusar" tabindex="1" role="dialog" aria-labelledby="modalRecusarLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-md" role="document">
@@ -350,7 +398,6 @@
         </form>
     </div>
 
-    <!-- Modal Reabrir -->
     <div class="modal fade" id="modalReabrir" tabindex="1" role="dialog" aria-labelledby="modalReabrirLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-md" role="document">
@@ -375,7 +422,6 @@
         </form>
     </div>
 
-    <!-- Modal Iniciar -->
     <div class="modal fade" id="modalIniciar" tabindex="1" role="dialog" aria-labelledby="modalIniciarLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-md" role="document">
@@ -400,7 +446,6 @@
         </form>
     </div>
 
-    <!-- Modal Concluir -->
     <div class="modal fade" id="modalConcluir" tabindex="1" role="dialog" aria-labelledby="modalConcluirLabel" aria-hidden="true">
         <form action="?" method="post">
             <div class="modal-dialog modal-md" role="document">
@@ -438,26 +483,49 @@
             $('#preloader').fadeOut('slow', function() { $(this).remove(); });
 
             $('#filtroStatus').change(function() {
-                var filtroStatus = $('#filtroStatus').val();
-                
-                // Mostrar todas as linhas inicialmente
-                $('#dataTable tbody tr').show();
+                var filtroStatus = $(this).val();
 
-                // Iterar sobre as linhas da tabela para aplicar o filtro
                 $('#dataTable tbody tr').each(function() {
-                    var status = $(this).find('td:eq(5)').text(); // Índice da coluna de status (ajuste se necessário)
+                    // Pega o texto do status da 6ª coluna (índice 5) e remove espaços extras
+                    var statusLinha = $(this).find('td:eq(5)').text().trim();
+                    var mostrarLinha = false;
 
-                    // Verificar se a linha atende ao critério de status
-                    if (filtroStatus && status !== filtroStatus) {
-                        $(this).hide(); // Ocultar a linha se o status não for o selecionado
+                    if (filtroStatus === 'Pendentes') {
+                        // Se o filtro for "Pendentes", mostra a linha se o status NÃO for "Concluído"
+                        mostrarLinha = (statusLinha !== 'Concluído' && statusLinha !== 'Cancelado' && statusLinha !== 'Recusado');
+                    } else if (filtroStatus === '') {
+                        // Se o filtro for "Todos" (valor vazio), mostra todas as linhas
+                        mostrarLinha = true;
+                    } else {
+                        // Para qualquer outro filtro, mostra a linha apenas se o status corresponder
+                        mostrarLinha = (statusLinha === filtroStatus);
                     }
+                    
+                    // Mostra ou oculta a linha com base na variável 'mostrarLinha'
+                    $(this).toggle(mostrarLinha);
                 });
             });
+
+            let status = 'Pendentes';
+            $('#filtroStatus').val(status).change()
 
             $('#modalEncaminhar').on('show.bs.modal', function (event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 $('#encaminhar_id_chamado').val(id_chamado)
+            })
+
+            $('#modalUrgenciaSla').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget)
+                let id_chamado = button.data('id_chamado')
+                let urgencia = button.data('urgencia')
+                let titulo = button.data('titulo')
+                let sla = button.data('sla')
+
+                $('#urgenciasla_id_chamado').val(id_chamado)
+                $('#urgenciasla_urgencia').val(urgencia)
+                $('#urgenciasla_titulo').text(titulo)
+                $('#urgenciasla_sla').val(sla)
             })
 
             $('#modalConcluir').on('show.bs.modal', function (event) {
@@ -496,6 +564,7 @@
                 let button = $(event.relatedTarget); // Botão que acionou o modal
                 let id_chamado = button.data('id_chamado');
                 let titulo = button.data('titulo');
+                let sla = button.data('sla');
                 let status = button.data('status');
                 let usuario = button.data('usuario');
                 let setor = button.data('setor');
@@ -510,6 +579,11 @@
                 $('#visualizar_id_chamado').val(id_chamado);
                 $('#visualizar_titulo').val(titulo);
                 $('#titulo_modal').text(titulo);
+                if(sla > 0){
+                    $('#visualizar_sla').val(sla+" hora(s)");
+                }else{
+                    $('#visualizar_sla').val("");
+                }
                 $('#visualizar_status').val(status);
                 $('#visualizar_usuario').val(usuario);
                 $('#visualizar_id_setor').val(setor);

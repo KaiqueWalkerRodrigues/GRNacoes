@@ -167,6 +167,9 @@ class Helper{
   //Urgência de um Chamado
   public static function Urgencia($urgencia){
     switch($urgencia){
+      case 0:
+        return "";
+      break;
       case 1:
         return "<b style='color:#008000;'>Baixa</b>";
       break;
