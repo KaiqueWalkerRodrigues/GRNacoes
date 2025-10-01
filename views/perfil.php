@@ -86,7 +86,7 @@
                             <div class="col-4">
                                 <label for="" class="form-label">Usuário</label>
                                 <input type="text" disabled class="form-control" value="<?php echo $usuario->usuario ?>">
-                                <img style="width: 150px;" src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" alt="">
+                                <img style="width: 150px;" src="<?php echo URL_RESOURCES ?>/img/avatars/<?php echo $_SESSION['id_avatar'] ?>.png" alt="">
                             </div>
                             <div class="col-4 mt-2">
                                 <br>
@@ -117,7 +117,7 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="id_avatar" id="inlineRadio<?php echo $x ?>" value="<?php echo $x ?>">
                                     <label class="form-check-label" for="inlineRadio<?php echo $x ?>">
-                                        <img src="<?php echo URL_RESOURCES ?>/assets/img/avatars/<?php echo $x ?>.png" style="width: 100px" alt="">
+                                        <img src="<?php echo URL_RESOURCES ?>/img/avatars/<?php echo $x ?>.png" style="width: 100px" alt="">
                                     </label>
                                 </div>
                         <?php } ?>
