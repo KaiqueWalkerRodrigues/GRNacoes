@@ -90,7 +90,7 @@
                                                     data-titulo="<?php echo $chamado->titulo ?>"
                                                     data-sla="<?php echo $chamado->sla ?>"
                                                     data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
-                                                    data-usuario="<?php echo $usuario->nome ?> (<?php echo $Setor->mostrar($_SESSION['id_setor'])->setor ?>)"
+                                                    data-usuario="<?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?> (<?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($chamado->id_usuario)->id_setor)->setor ?> | <?php echo Helper::mostrar_empresa($Usuario->mostrar($chamado->id_usuario)->empresa) ?>)"
                                                     data-setor="<?php echo $setor->setor ?>"
                                                     data-urgencia="<?php echo Helper::TextoUrgencia($chamado->urgencia) ?>"
                                                     data-descricao="<?php echo $chamado->descricao ?>"
@@ -207,7 +207,7 @@
                             <label for="visualizar_urgencia" class="form-label">Urgência *</label>
                             <input type="text" name="urgencia" id="visualizar_urgencia" class="form-control" disabled>
                         </div>
-                        <div class="col-6 offset-1 mb-2">
+                        <div class="col-7 offset-1 mb-2">
                             <label for="visualizar_usuario" class="form-label">Usuário *</label>
                             <input type="text" name="usuario" id="visualizar_usuario" class="form-control" disabled>
                         </div>
