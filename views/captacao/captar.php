@@ -71,10 +71,10 @@
                                     <select class="form-control" id="captado" name="captado">
                                         <option value="1">Sim</option>
                                         <option value="0">Não</option>
-                                        <option value="2">Lente de Contato - Sim</option>
-                                        <option value="3">Lente de Contato - Não</option>
-                                        <option value="4">Garantia</option>
-                                        <option value="5">Catarata</option>
+                                        <option value="3">Lente de Contato - Sim</option>
+                                        <option value="4">Lente de Contato - Não</option>
+                                        <option value="5">Garantia</option>
+                                        <option value="2">Catarata</option>
                                     </select>
                                 </div>
                                 <div class="col-3" id="motivoContainer" style="display:none;">

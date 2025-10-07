@@ -178,6 +178,8 @@ $row++;
 
     $sistema = False;
 
+    $row_primeiro = $row;
+
     foreach($Captacao->listarCaptadoresPorEmpresa(1) as $captador){
         if($Captacao->contarCaptacoesNoIntervalo($captador->id_usuario,$inicio,$fim) > 0){
             $col = 'B';
@@ -281,7 +283,11 @@ $row++;
 
     $col++;
 
-    $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    if($TotalCaptaveis > 0){
+        $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    }else{
+        $captacao->setCellValue($col.$row,0);
+    }
     $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
     
@@ -474,7 +480,11 @@ $row++;
 
     $col++;
 
-    $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    if($TotalCaptaveis > 0){
+        $captacao->setCellValue($col.$row,$TotalCaptados/$TotalCaptaveis);
+    }else{
+        $captacao->setCellValue($col.$row,0);
+    }
     $captacao->getStyle($col.$row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
     

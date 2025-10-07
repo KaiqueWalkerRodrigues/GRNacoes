@@ -348,7 +348,7 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
                     AND captados.id_captador = :id_captador
-                    AND (captado = 1 OR captado = 2) 
+                    AND (captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -468,7 +468,7 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
                     AND captados.id_captador = :id_captador 
-                    AND (captado = 0 OR captado = 1 OR captado = 2) 
+                    AND (captado = 0 OR captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -513,7 +513,7 @@ class Captacao {
         public function contarTotalCaptacoes($data, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
-                    AND (captado = 1 OR captado = 2) 
+                    AND (captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -623,7 +623,7 @@ class Captacao {
         public function contarTotalCaptaveis($data, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) = :data 
-                    AND (captado = 0 OR captado = 1 OR captado = 2) 
+                    AND (captado = 0 OR captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -796,7 +796,7 @@ class Captacao {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
                     AND captados.id_captador = :id_captador 
-                    AND (captado = 0 OR captado = 1 OR captado = 2) 
+                    AND (captado = 0 OR captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if ($id_empresa) {
@@ -843,7 +843,7 @@ class Captacao {
         public function contarTotalCaptacoesDoPeriodo($inicio, $fim, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
-                    AND (captado = 1 OR captado = 2) 
+                    AND (captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
@@ -958,7 +958,7 @@ class Captacao {
         public function contarTotalCaptaveisDoPeriodo($inicio, $fim, $id_empresa = null) {
             $query = "SELECT COUNT(*) as total FROM captados 
                     WHERE DATE(captados.created_at) BETWEEN :inicio AND :fim 
-                    AND (captado = 0 OR captado = 1 OR captado = 2) 
+                    AND (captado = 0 OR captado = 1 OR captado = 3) 
                     AND deleted_at IS NULL";
             
             if (!is_null($id_empresa)) {
