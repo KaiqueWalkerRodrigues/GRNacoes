@@ -96,8 +96,12 @@ $pageTitle .= $competencia->nome;
                                         $total_pago = 0;
                                         $total_a_receber = 0;
                                         foreach ($Faturamento_Nota_Servico->listar($competencia->id_faturamento_competencia) as $nota) {
-                                            $valor_a_receber = $nota->valor_faturado - $nota->valor_imposto;
-                                            $valor_a_receber = number_format($valor_a_receber, 2, '.', '');
+                                            $valor_a_receber = round($nota->valor_faturado - $nota->valor_imposto, 2);
+                                            $diff = $valor_a_receber - (float)$nota->valor_pago;
+                                            if (abs($diff) < 0.005) { // tolerância de 0,5 centavo
+                                                $diff = 0.00;
+                                            }
+                                            $valor_glosa = round($diff, 2);
                                             $total += $nota->valor_faturado;
                                             $total_imposto += $nota->valor_imposto;
                                             $total_pago += $nota->valor_pago;
@@ -107,10 +111,10 @@ $pageTitle .= $competencia->nome;
                                             } elseif (($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))) {
                                                 if ($nota->feedback != '0000-00-00') {
                                                     $status = 3;
-                                                    $valor_glosa = $valor_a_receber - $nota->valor_pago;
+                                                    $valor_glosa = round($valor_a_receber - $nota->valor_pago, 2);
                                                 } else {
                                                     $status = 2;
-                                                    $valor_glosa = $valor_a_receber - $nota->valor_pago;
+                                                    $valor_glosa = round($valor_a_receber - $nota->valor_pago, 2);
                                                 }
                                             } else {
                                                 $status = 0;
@@ -147,10 +151,10 @@ $pageTitle .= $competencia->nome;
                                                             echo "<b class='badge badge-success badge-pill'>OK</b>";
                                                             break;
                                                         case 2:
-                                                            echo "<b class='badge badge-danger badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                            echo "<b class='badge badge-danger badge-pill'>R$ " . number_format($valor_glosa, 2, ',', '.') . "</b>";
                                                             break;
                                                         case 3:
-                                                            echo "<b class='badge badge-warning badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                            echo "<b class='badge badge-warning badge-pill'>R$ " . number_format($valor_glosa, 2, ',', '.') . "</b>";
                                                             break;
                                                     }
                                                     ?>
