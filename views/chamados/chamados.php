@@ -642,7 +642,10 @@ if (isset($_POST['btnEditarUrgenciaSla'])) {
                 });
             }
 
-            function contarChamados(status) {
+            let totalChamadosAtual = 0;
+            let statusAtual = 'Pendentes';
+
+            function contarChamados(status, callback) {
                 $.ajax({
                     url: "<?php echo URL . "/views/ajax/get_count_chamados.php" ?>",
                     method: "GET",
@@ -655,36 +658,67 @@ if (isset($_POST['btnEditarUrgenciaSla'])) {
                     success: function(response) {
                         if (response.ok) {
                             $("#total-chamados").text("Total: " + response.total);
+                            if (typeof callback === "function") callback(response.total);
                         } else {
                             $("#total-chamados").text("Total: 0");
+                            if (typeof callback === "function") callback(0);
                         }
                     },
                     error: function() {
                         $("#total-chamados").text("Total: 0");
+                        if (typeof callback === "function") callback(0);
                     }
                 });
             }
 
-            $('#filtroStatus').change(function() {
-                var filtroStatus = $(this).val();
-                contarChamados(filtroStatus);
-                carregarChamados(filtroStatus);
-            });
+            function atualizarChamadosEContador() {
+                let status = $('#filtroStatus').val();
+                contarChamados(status, function(total) {
+                    if (total !== totalChamadosAtual) {
+                        totalChamadosAtual = total;
+                        carregarChamados(status);
+                    }
+                });
+            }
 
-            let status = 'Pendentes';
-            $('#filtroStatus').val(status).change()
-            contarChamados($('#filtroStatus').val());
+            function iniciarAtualizacaoAutomatica() {
+                setInterval(function() {
+                    let status = $('#filtroStatus').val();
+                    contarChamados(status, function(total) {
+                        if (total !== totalChamadosAtual) {
+                            totalChamadosAtual = total;
+                            carregarChamados(status);
+                        }
+                    });
+                }, 1000);
+            }
 
             $(document).ready(function() {
-                let status = 'Pendentes';
-                $('#filtroStatus').val(status).change();
+                $('#filtroStatus').change(function() {
+                    statusAtual = $(this).val();
+                    contarChamados(statusAtual, function(total) {
+                        totalChamadosAtual = total;
+                        carregarChamados(statusAtual);
+                    });
+                });
+
+                // Inicialização
+                statusAtual = 'Pendentes';
+                $('#filtroStatus').val(statusAtual).change();
+
+                // Inicia atualização automática
+                iniciarAtualizacaoAutomatica();
             });
 
             // Após concluir/criar chamado, chame:
             function atualizarChamadosEContador() {
                 let status = $('#filtroStatus').val();
-                contarChamados(status);
-                carregarChamados(status);
+                contarChamados(status, function(total) {
+                    if (total !== totalChamadosAtual) {
+                        totalChamadosAtual = total;
+                        carregarChamados(status);
+                    }
+                });
             }
         });
     </script>
