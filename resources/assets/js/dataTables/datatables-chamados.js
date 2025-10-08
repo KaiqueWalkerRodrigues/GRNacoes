@@ -14,15 +14,15 @@ $(document).ready(function() {
             "emptyTable": "Nenhum dado disponível na tabela"
         },
         "columnDefs": [
-            { "width": "0%", "targets": 0 }, 
-            { "width": "5%", "targets": 1 }, 
-            { "width": "7%", "targets": 2 }, 
-            { "width": "35%", "targets": 3 }, 
-            { "width": "20%", "targets": 4 },  
+            { "width": "0%", "targets": 0, "visible": false },
+            { "width": "5%", "targets": 1, "className": "text-center" },
+            { "width": "7%", "targets": 2, "className": "text-center" },
+            { "width": "35%", "targets": 3, "className": "text-center" },
+            { "width": "20%", "targets": 4 },
             { "width": "5%", "targets": 5 },
             { "width": "8%", "targets": 6 },
             { "width": "14%", "targets": 7 },
-            { "width": "10%", "targets": 8 },
+            { "width": "10%", "targets": 8 }
         ]
     });
 });

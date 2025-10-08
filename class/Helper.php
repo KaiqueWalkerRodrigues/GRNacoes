@@ -308,7 +308,7 @@ class Helper{
         return 'Não mudou Grau';
       break;
       case 4:
-        return 'Não passou no Balção';
+        return 'Não passou no Balcão';
       break;
     }
   }

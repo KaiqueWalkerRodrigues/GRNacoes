@@ -1,33 +1,34 @@
 <?php
-    $Chamado = new Chamado();
-    $Usuario = new Usuario();
-    $Cargo = new Cargo();
-    $Setor = new Setor();
+$Chamado = new Chamado();
+$Usuario = new Usuario();
+$Cargo = new Cargo();
+$Setor = new Setor();
 
-    $usuario = $Usuario->mostrar($_SESSION['id_usuario']);
-    $setor = $Setor->mostrar($_SESSION['id_setor']);
+$usuario = $Usuario->mostrar($_SESSION['id_usuario']);
+$setor = $Setor->mostrar($_SESSION['id_setor']);
 
-    if(isset($_POST['btnEncaminhar'])){
-        $Chamado->encaminhar($_POST['id_chamado'],$_POST['id_setor_novo'],$_POST['id_usuario']);
-    }
-    if(isset($_POST['btnConcluir'])){
-        $Chamado->concluir($_POST['id_chamado'],$_POST['id_usuario']);
-    }
-    if(isset($_POST['btnRecusar'])){
-        $Chamado->recusar($_POST['id_chamado'],$_POST['id_usuario']);
-    }
-    if(isset($_POST['btnReabrir'])){
-        $Chamado->reabrir($_POST['id_chamado'],$_POST['id_usuario']);
-    }
-    if(isset($_POST['btnIniciar'])){
-        $Chamado->iniciar($_POST['id_chamado'],$_POST['id_usuario']);
-    }
-    if(isset($_POST['btnEditarUrgenciaSla'])){
-        $Chamado->definirUrgenciaSla($_POST);
-    }
+if (isset($_POST['btnEncaminhar'])) {
+    $Chamado->encaminhar($_POST['id_chamado'], $_POST['id_setor_novo'], $_POST['id_usuario']);
+}
+if (isset($_POST['btnConcluir'])) {
+    $Chamado->concluir($_POST['id_chamado'], $_POST['id_usuario']);
+}
+if (isset($_POST['btnRecusar'])) {
+    $Chamado->recusar($_POST['id_chamado'], $_POST['id_usuario']);
+}
+if (isset($_POST['btnReabrir'])) {
+    $Chamado->reabrir($_POST['id_chamado'], $_POST['id_usuario']);
+}
+if (isset($_POST['btnIniciar'])) {
+    $Chamado->iniciar($_POST['id_chamado'], $_POST['id_usuario']);
+}
+if (isset($_POST['btnEditarUrgenciaSla'])) {
+    $Chamado->definirUrgenciaSla($_POST);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -42,9 +43,9 @@
 </head>
 
 <body class="nav-fixed">
-    <!-- <div id="preloader">
+    <div id="preloader">
         <div class="spinner"></div>
-    </div> -->
+    </div>
     <?php include_once('resources/topbar.php') ?>
     <div id="layoutSidenav">
         <?php include_once('resources/sidebar.php') ?>
@@ -78,6 +79,7 @@
                 <div class="container-fluid mt-n15">
                     <div class="card mb-4">
                         <div class="card-header">Chamados
+                            <span id="total-chamados" class="badge badge-primary ml-2" style="font-size:1rem;">Total: 0</span>
                         </div>
                         <div class="card-body">
                             <div class="datatable table-responsive">
@@ -95,85 +97,8 @@
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <?php 
-                                            foreach($Chamado->listarPorSetor($setor->id_setor) as $chamado){
-                                                $created_at = new DateTime($chamado->created_at);
-                                                $now = new DateTime();
-                                                $criado = $created_at->diff($now);
-                                        ?>
-                                        <tr class="text-center">
-                                            <td class="d-none"><?php echo $chamado->created_at ?></td>
-                                            <td><?php echo $chamado->id_chamado ?></td>
-                                            <td><?php echo Helper::Urgencia($chamado->urgencia) ?></td>
-                                            <td><?php echo $chamado->titulo ?></td>
-                                            <td><?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?></td>
-                                            <td><?php echo Helper::statusChamado($chamado->status) ?></td>
-                                            <td><?php echo Helper::formatarData($chamado->created_at) ?></td>
-                                            <td><?php echo $Setor->mostrar($chamado->id_setor)->setor ?></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarChamado"
-                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                    data-titulo="<?php echo $chamado->titulo ?>"
-                                                    data-sla="<?php echo $chamado->sla ?>"
-                                                    data-status="<?php echo Helper::TextoStatusChamado($chamado->status) ?>"
-                                                    data-usuario="<?php echo $Usuario->mostrar($chamado->id_usuario)->nome ?> (<?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($chamado->id_usuario)->id_setor)->setor ?> | <?php echo Helper::mostrar_empresa($Usuario->mostrar($chamado->id_usuario)->empresa) ?>)"
-                                                    data-setor="<?php echo $setor->setor ?>"
-                                                    data-urgencia="<?php echo Helper::TextoUrgencia($chamado->urgencia) ?>"
-                                                    data-descricao="<?php echo $chamado->descricao ?>"
-                                                    data-created_at="<?php echo Helper::formatarData($chamado->created_at) ?>"
-                                                    data-deleted_at="<?php echo Helper::formatarData($chamado->deleted_at) ?>"
-                                                    data-started_at="<?php echo Helper::formatarData($chamado->started_at) ?>"
-                                                    data-finished_at="<?php echo Helper::formatarData($chamado->finished_at) ?>">
-                                                    <i class="fa-solid fa-newspaper"></i>
-                                                </button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalUrgenciaSla"
-                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                    data-titulo="<?php echo $chamado->titulo ?>"
-                                                    data-urgencia="<?php echo $chamado->urgencia ?>"
-                                                    data-sla="<?php echo $chamado->sla ?>">
-                                                    <i class="fa-solid fa-wrench"></i>
-                                                </button>
-                                               <a href="<?php echo URL ?>/chamados/chat_chamado?id=<?php echo $chamado->id_chamado ?>"
-                                                    class="btn btn-datatable btn-icon btn-transparent-dark position-relative chat-link"
-                                                    data-id_chamado="<?php echo $chamado->id_chamado ?>">
-                                                    <i class="fa-solid fa-comment"></i>
-                                                    <span class="chat-badge badge badge-pill"
-                                                        style="position:absolute; top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
-                                                        0
-                                                    </span>
-                                                </a>
-                                                <?php if($chamado->status == 1){ ?>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalIniciar"
-                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                        data-titulo="<?php echo $chamado->titulo ?>"
-                                                    >
-                                                        <i class="fa-solid fa-clock"></i>
-                                                    </button>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEncaminhar"
-                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                    ><i class="fa-solid fa-share"></i></button>
-                                                <?php } ?>
-                                                <?php if($chamado->status <= 2){ ?>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalConcluir"
-                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                        data-titulo="<?php echo $chamado->titulo ?>"
-                                                    ><i class="fa-solid fa-check"></i></button>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalRecusar"
-                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                        data-titulo="<?php echo $chamado->titulo ?>"
-                                                    ><i class="fa-solid fa-times"></i></button>
-                                                <?php }else{ ?>
-                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalReabrir"
-                                                        data-id_chamado="<?php echo $chamado->id_chamado ?>"
-                                                        data-titulo="<?php echo $chamado->titulo ?>"
-                                                    >
-                                                        <i class="fa-solid fa-rotate"></i>
-                                                    </button>
-                                                <?php } ?>
-                                            </td>
-                                        </tr>
-                                        <?php } ?>
+                                    <tbody id="tbodyChamados">
+                                        <!-- Chamados serão carregados via AJAX -->
                                     </tbody>
                                 </table>
                             </div>
@@ -206,7 +131,7 @@
                                 <label for="cadastrar_id_setor" class="form-label">Destinatário *</label>
                                 <select name="id_setor" id="cadastrar_id_setor" class="form-control" required>
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Setor->listar() as $setor){ 
+                                    <?php foreach ($Setor->listar() as $setor) {
                                         echo "<option value='$setor->id_setor'>$setor->setor</option>";
                                     } ?>
                                 </select>
@@ -243,7 +168,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Encaminhar Chamado para o Setor...</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -253,7 +178,7 @@
                             <label for="encaminhar" class="form-label">Encaminhar para:</label>
                             <select name="id_setor_novo" id="encaminhar" class="form-control" required>
                                 <option value="">Selecione...</option>
-                                <?php foreach($Setor->listar() as $setor){ ?>
+                                <?php foreach ($Setor->listar() as $setor) { ?>
                                     <option value="<?php echo $setor->id_setor ?>"><?php echo $setor->setor ?></option>
                                 <?php } ?>
                             </select>
@@ -381,7 +306,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Recusar o chamado: <span class="recusar_titulo"></span> ?</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -405,7 +330,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Reabrir o chamado: <span class="reabrir_titulo"></span> ?</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -429,7 +354,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Iniciar o chamado: <span class="iniciar_titulo"></span> ?</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -453,7 +378,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Concluir o chamado: <span class="concluir_titulo"></span> ?</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -472,50 +397,27 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script>
-        $(window).on('load', function () {
-            $('#preloader').fadeOut('slow', function() { $(this).remove(); });
+        $(window).on('load', function() {
+            $('#preloader').fadeOut('slow', function() {
+                $(this).remove();
+            });
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#cham').addClass('active')
             $('#chamados_chamados').addClass('active')
 
-            $('#preloader').fadeOut('slow', function() { $(this).remove(); });
-
-            $('#filtroStatus').change(function() {
-                var filtroStatus = $(this).val();
-
-                $('#dataTable tbody tr').each(function() {
-                    // Pega o texto do status da 6ª coluna (índice 5) e remove espaços extras
-                    var statusLinha = $(this).find('td:eq(5)').text().trim();
-                    var mostrarLinha = false;
-
-                    if (filtroStatus === 'Pendentes') {
-                        // Se o filtro for "Pendentes", mostra a linha se o status NÃO for "Concluído"
-                        mostrarLinha = (statusLinha !== 'Concluído' && statusLinha !== 'Cancelado' && statusLinha !== 'Recusado');
-                    } else if (filtroStatus === '') {
-                        // Se o filtro for "Todos" (valor vazio), mostra todas as linhas
-                        mostrarLinha = true;
-                    } else {
-                        // Para qualquer outro filtro, mostra a linha apenas se o status corresponder
-                        mostrarLinha = (statusLinha === filtroStatus);
-                    }
-                    
-                    // Mostra ou oculta a linha com base na variável 'mostrarLinha'
-                    $(this).toggle(mostrarLinha);
-                });
+            $('#preloader').fadeOut('slow', function() {
+                $(this).remove();
             });
 
-            let status = 'Pendentes';
-            $('#filtroStatus').val(status).change()
-
-            $('#modalEncaminhar').on('show.bs.modal', function (event) {
+            $('#modalEncaminhar').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 $('#encaminhar_id_chamado').val(id_chamado)
             })
 
-            $('#modalUrgenciaSla').on('show.bs.modal', function (event) {
+            $('#modalUrgenciaSla').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let urgencia = button.data('urgencia')
@@ -528,7 +430,7 @@
                 $('#urgenciasla_sla').val(sla)
             })
 
-            $('#modalConcluir').on('show.bs.modal', function (event) {
+            $('#modalConcluir').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let titulo = button.data('titulo')
@@ -536,7 +438,7 @@
                 $('.concluir_titulo').text(titulo)
             })
 
-            $('#modalRecusar').on('show.bs.modal', function (event) {
+            $('#modalRecusar').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let titulo = button.data('titulo')
@@ -544,7 +446,7 @@
                 $('.recusar_titulo').text(titulo)
             })
 
-            $('#modalReabrir').on('show.bs.modal', function (event) {
+            $('#modalReabrir').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let titulo = button.data('titulo')
@@ -552,7 +454,7 @@
                 $('.reabrir_titulo').text(titulo)
             })
 
-            $('#modalIniciar').on('show.bs.modal', function (event) {
+            $('#modalIniciar').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget)
                 let id_chamado = button.data('id_chamado')
                 let titulo = button.data('titulo')
@@ -560,7 +462,7 @@
                 $('.iniciar_titulo').text(titulo)
             })
 
-            $('#modalVisualizarChamado').on('show.bs.modal', function (event) {
+            $('#modalVisualizarChamado').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget); // Botão que acionou o modal
                 let id_chamado = button.data('id_chamado');
                 let titulo = button.data('titulo');
@@ -579,9 +481,9 @@
                 $('#visualizar_id_chamado').val(id_chamado);
                 $('#visualizar_titulo').val(titulo);
                 $('#titulo_modal').text(titulo);
-                if(sla > 0){
-                    $('#visualizar_sla').val(sla+" hora(s)");
-                }else{
+                if (sla > 0) {
+                    $('#visualizar_sla').val(sla + " hora(s)");
+                } else {
                     $('#visualizar_sla').val("");
                 }
                 $('#visualizar_status').val(status);
@@ -598,44 +500,192 @@
             // endpoint AJAX (ajuste caso use outro caminho base)
             const ENDPOINT_COUNT_NAO_LIDAS = "<?php echo URL ?>/views/ajax/get_count_chamados_mensagens_nao_lidas.php";
 
-            function atualizarBadgesChatVisiveis(){
+            function atualizarBadgesChatVisiveis() {
                 // Pega apenas as linhas visíveis (compatível com DataTables)
-                $('#dataTable tbody tr:visible').each(function(){
-                const $link = $(this).find('a.chat-link');
-                if($link.length === 0) return;
+                $('#dataTable tbody tr:visible').each(function() {
+                    const $link = $(this).find('a.chat-link');
+                    if ($link.length === 0) return;
 
-                const idChamado = $link.data('id_chamado');
-                if(!idChamado) return;
+                    const idChamado = $link.data('id_chamado');
+                    if (!idChamado) return;
 
-                $.getJSON(ENDPOINT_COUNT_NAO_LIDAS, { id_chamado: idChamado })
-                    .done(function(res){
-                    const $badge = $link.find('.chat-badge');
-                    if(res && res.ok && Number(res.nao_lidas) > 0){
-                        const qtd = Number(res.nao_lidas);
-                        $badge.text(qtd > 99 ? '99+' : qtd).show();
-                    }else{
-                        $badge.text('0').hide();
-                    }
-                    })
-                    .fail(function(){
-                    // opcional: em falha, não altera nada para evitar flicker
-                    });
+                    $.getJSON(ENDPOINT_COUNT_NAO_LIDAS, {
+                            id_chamado: idChamado
+                        })
+                        .done(function(res) {
+                            const $badge = $link.find('.chat-badge');
+                            if (res && res.ok && Number(res.nao_lidas) > 0) {
+                                const qtd = Number(res.nao_lidas);
+                                $badge.text(qtd > 99 ? '99+' : qtd).show();
+                            } else {
+                                $badge.text('0').hide();
+                            }
+                        })
+                        .fail(function() {
+                            // opcional: em falha, não altera nada para evitar flicker
+                        });
                 });
             }
 
-            // roda uma vez ao carregar
-            $(document).ready(function(){
-                atualizarBadgesChatVisiveis();
+            function renderChamados(chamados) {
+                let table = $('#dataTable').DataTable();
+                table.clear();
 
-                // atualiza a cada 1s
-                setInterval(atualizarBadgesChatVisiveis, 1000);
+                chamados.forEach(function(chamado) {
+                    // Botões de ação (ajuste os campos conforme necessário)
+                    let btns = `
+            <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarChamado"
+                data-id_chamado="${chamado.id_chamado}"
+                data-titulo="${chamado.titulo}"
+                data-sla="${chamado.sla || ''}"
+                data-status="${chamado.status_texto_input}"
+                data-usuario="${chamado.usuario_nome}"
+                data-setor="${chamado.setor_nome}"
+                data-urgencia="${chamado.urgencia_texto_input}"
+                data-descricao="${(chamado.descricao || '').replace(/"/g, '&quot;')}"
+                data-created_at="${chamado.created_at_formatado || ''}"
+                data-deleted_at="${chamado.deleted_at_formatado || ''}"
+                data-started_at="${chamado.started_at_formatado || ''}"
+                data-finished_at="${chamado.finished_at_formatado || ''}">
+                <i class="fa-solid fa-newspaper"></i>
+            </button>
+            <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalUrgenciaSla"
+                data-id_chamado="${chamado.id_chamado}"
+                data-titulo="${chamado.titulo}"
+                data-urgencia="${chamado.urgencia}"
+                data-sla="${chamado.sla || ''}">
+                <i class="fa-solid fa-wrench"></i>
+            </button>
+            <a href="<?php echo URL ?>/chamados/chat_chamado?id=${chamado.id_chamado}"
+                class="btn btn-datatable btn-icon btn-transparent-dark position-relative chat-link"
+                data-id_chamado="${chamado.id_chamado}">
+                <i class="fa-solid fa-comment"></i>
+                <span class="chat-badge badge badge-pill"
+                    style="position:absolute; top:0; right:0; display:none; background:#25D366; color:#fff; border:2px solid #fff;">
+                    0
+                </span>
+            </a>
+        `;
 
-                // quando mudar de página/filtrar no DataTable, atualiza rápido
-                // (DataTables dispara eventos; se não tiver, pode usar este fallback simples:)
-                $('#dataTable').on('draw.dt search.dt page.dt', function(){
-                setTimeout(atualizarBadgesChatVisiveis, 150);
+                    // Status: 1 = Em Análise, 2 = Em Andamento, 3 = Concluído, 4 = Cancelado, 5 = Recusado
+                    if (chamado.status == 1) {
+                        btns += `
+                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalIniciar"
+                    data-id_chamado="${chamado.id_chamado}"
+                    data-titulo="${chamado.titulo}">
+                    <i class="fa-solid fa-clock"></i>
+                </button>
+                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEncaminhar"
+                    data-id_chamado="${chamado.id_chamado}">
+                    <i class="fa-solid fa-share"></i>
+                </button>
+            `;
+                    }
+                    if (chamado.status <= 2) {
+                        btns += `
+                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalConcluir"
+                    data-id_chamado="${chamado.id_chamado}"
+                    data-titulo="${chamado.titulo}">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalRecusar"
+                    data-id_chamado="${chamado.id_chamado}"
+                    data-titulo="${chamado.titulo}">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
+                    } else {
+                        btns += `
+                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalReabrir"
+                    data-id_chamado="${chamado.id_chamado}"
+                    data-titulo="${chamado.titulo}">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            `;
+                    }
+
+                    table.row.add([
+                        chamado.created_at,
+                        chamado.id_chamado,
+                        chamado.urgencia_texto,
+                        chamado.titulo,
+                        chamado.usuario_nome,
+                        chamado.status_texto,
+                        chamado.created_at_formatado,
+                        chamado.setor_nome,
+                        btns
+                    ]);
                 });
+
+                table.draw();
+            }
+
+            function carregarChamados(status) {
+                $.ajax({
+                    url: "<?php echo URL ?>/views/ajax/get_chamados.php",
+                    method: "GET",
+                    dataType: "json",
+                    data: {
+                        id_setor: <?php echo $_SESSION["id_setor"]; ?>,
+                        status: status
+                    },
+                    success: function(response) {
+                        if (response.ok) {
+                            renderChamados(response.chamados);
+                        } else {
+                            $('#tbodyChamados').html('<tr><td colspan="9">Nenhum chamado encontrado.</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $('#tbodyChamados').html('<tr><td colspan="9">Erro ao carregar chamados.</td></tr>');
+                    }
+                });
+            }
+
+            function contarChamados(status) {
+                $.ajax({
+                    url: "<?php echo URL . "/views/ajax/get_count_chamados.php" ?>",
+                    method: "GET",
+                    dataType: "json",
+                    data: {
+                        tipo: 1,
+                        id_setor: <?php echo $_SESSION["id_setor"]; ?>,
+                        status: status
+                    },
+                    success: function(response) {
+                        if (response.ok) {
+                            $("#total-chamados").text("Total: " + response.total);
+                        } else {
+                            $("#total-chamados").text("Total: 0");
+                        }
+                    },
+                    error: function() {
+                        $("#total-chamados").text("Total: 0");
+                    }
+                });
+            }
+
+            $('#filtroStatus').change(function() {
+                var filtroStatus = $(this).val();
+                contarChamados(filtroStatus);
+                carregarChamados(filtroStatus);
             });
+
+            let status = 'Pendentes';
+            $('#filtroStatus').val(status).change()
+            contarChamados($('#filtroStatus').val());
+
+            $(document).ready(function() {
+                let status = 'Pendentes';
+                $('#filtroStatus').val(status).change();
+            });
+
+            // Após concluir/criar chamado, chame:
+            function atualizarChamadosEContador() {
+                let status = $('#filtroStatus').val();
+                contarChamados(status);
+                carregarChamados(status);
+            }
         });
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
