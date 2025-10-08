@@ -163,11 +163,9 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
     // Ajuste para não mostrar glosa de R$ 0,00
     if ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber && $valor_glosa != 0.00) {
         $pagina1->setCellValue('J' . $row, $valor_glosa);
-        $pagina1->setCellValue('L' . $row, ($nota->feedback != '0000-00-00') ? $feedback_formatado : '');
-        $pagina1->setCellValue('K' . $row, 'RECURSAR');
+        $pagina1->setCellValue('K' . $row, ($nota->feedback != '0000-00-00') ? $feedback_formatado : '');
     } else {
         $pagina1->setCellValue('J' . $row, 'SEM GLOSA');
-        $pagina1->setCellValue('L' . $row, 'SEM GLOSA');
         $pagina1->setCellValue('K' . $row, 'SEM GLOSA');
     }
 
@@ -175,7 +173,7 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
     $pagina1->getStyle('I' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     $pagina1->getStyle('D' . $row . ':H' . $row)->getNumberFormat()->setFormatCode($real);
 
-    $pagina1->getStyle('A' . $row . ':L' . $row)->applyFromArray($negrito);
+    $pagina1->getStyle('A' . $row . ':K' . $row)->applyFromArray($negrito);
     $pagina1->getStyle('G' . $row)->getFont()->setColor(
         new \PhpOffice\PhpSpreadsheet\Style\Color(
             \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED
@@ -205,14 +203,14 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
                 \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE
             )
         );
-        $pagina1->getStyle('L' . $row)->getFont()->setColor(
+        $pagina1->getStyle('K' . $row)->getFont()->setColor(
             new \PhpOffice\PhpSpreadsheet\Style\Color(
                 \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE
             )
         );
     }
 
-    $pagina1->getStyle('J' . $row . ':L' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $pagina1->getStyle('J' . $row . ':K' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     $row++;
 }
