@@ -31,7 +31,7 @@ class Faturamento_Nota_Servico
      */
     public function listar($id_competencia)
     {
-        $sql = $this->pdo->prepare('SELECT * FROM faturamento_notas_servicos WHERE id_competencia = :id_competencia AND deleted_at IS NULL');
+        $sql = $this->pdo->prepare('SELECT * FROM faturamento_notas_servicos INNER JOIN convenios ON faturamento_notas_servicos.id_convenio = convenios.id_convenio WHERE faturamento_notas_servicos.deleted_at IS NULL AND faturamento_notas_servicos.id_competencia = :id_competencia ORDER BY convenios.razao_social ASC');
         $sql->bindParam(':id_competencia', $id_competencia);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);

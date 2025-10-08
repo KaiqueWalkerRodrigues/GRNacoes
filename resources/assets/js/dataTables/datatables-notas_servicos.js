@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#dataTable-competencia').DataTable({
-        "order": [[ 0, 'desc' ]],
+        "order": [[ 0, 'asc' ]],
         "language": {
             "info": "Exibindo _START_ a _END_ de _TOTAL_ notas de serviço",
             "lengthMenu": "Mostrar _MENU_ notas de servico",
