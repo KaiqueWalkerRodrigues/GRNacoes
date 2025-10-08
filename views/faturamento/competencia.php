@@ -1,31 +1,32 @@
 <?php
-    $Faturamento_Competencia = new Faturamento_Competencia();
-    $Faturamento_Nota_Servico = new Faturamento_Nota_Servico();
-    $Convenio = new Convenio();
-    $Usuario = new Usuario();
+$Faturamento_Competencia = new Faturamento_Competencia();
+$Faturamento_Nota_Servico = new Faturamento_Nota_Servico();
+$Convenio = new Convenio();
+$Usuario = new Usuario();
 
-    if (isset($_POST['btnCadastrarNota'])) {
-        $Faturamento_Nota_Servico->cadastrar($_POST);
+if (isset($_POST['btnCadastrarNota'])) {
+    $Faturamento_Nota_Servico->cadastrar($_POST);
+}
+if (isset($_POST['btnEditarNota'])) {
+    $Faturamento_Nota_Servico->editar($_POST);
+}
+if (isset($_POST['btnEditarPagamento'])) {
+    if (isset($_POST['valor_pago'])) {
+        $_POST['valor_pago'] = str_replace(',', '.', $_POST['valor_pago']);
     }
-    if (isset($_POST['btnEditarNota'])) {
-        $Faturamento_Nota_Servico->editar($_POST);
-    }
-    if (isset($_POST['btnEditarPagamento'])) {
-        if (isset($_POST['valor_pago'])) {
-            $_POST['valor_pago'] = str_replace(',', '.', $_POST['valor_pago']);
-        }
-        $Faturamento_Nota_Servico->editarPagamento($_POST);
-    }
-    if (isset($_POST['btnDeletarNota'])) {
-        $Faturamento_Nota_Servico->deletar($_POST['id_faturamento_nota_servico'], $_POST['usuario_logado'], $_POST['id_competencia']);
-    }
+    $Faturamento_Nota_Servico->editarPagamento($_POST);
+}
+if (isset($_POST['btnDeletarNota'])) {
+    $Faturamento_Nota_Servico->deletar($_POST['id_faturamento_nota_servico'], $_POST['usuario_logado'], $_POST['id_competencia']);
+}
 
-    $id = $_GET['id'];
-    $competencia = $Faturamento_Competencia->mostrar($id);
-    $pageTitle .= $competencia->nome;
+$id = $_GET['id'];
+$competencia = $Faturamento_Competencia->mostrar($id);
+$pageTitle .= $competencia->nome;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -36,6 +37,7 @@
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.24.1/feather.min.js" crossorigin="anonymous"></script>
 </head>
+
 <body class="nav-fixed">
     <?php include_once('resources/topbar.php') ?>
     <div id="layoutSidenav">
@@ -88,120 +90,145 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
-                                        $total = 0; 
+                                        <?php
+                                        $total = 0;
                                         $total_imposto = 0;
                                         $total_pago = 0;
                                         $total_a_receber = 0;
-                                        foreach($Faturamento_Nota_Servico->listar($competencia->id_faturamento_competencia) as $nota){
-                                            $valor_a_receber = $nota->valor_faturado-$nota->valor_imposto;
+                                        foreach ($Faturamento_Nota_Servico->listar($competencia->id_faturamento_competencia) as $nota) {
+                                            $valor_a_receber = $nota->valor_faturado - $nota->valor_imposto;
+                                            $valor_a_receber = number_format($valor_a_receber, 2, '.', '');
                                             $total += $nota->valor_faturado;
                                             $total_imposto += $nota->valor_imposto;
                                             $total_pago += $nota->valor_pago;
                                             $total_a_receber += $valor_a_receber;
-                                            if($nota->valor_pago == $valor_a_receber){
+                                            if ($nota->valor_pago == $valor_a_receber) {
                                                 $status = 1;
-                                            }elseif(($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))){
-                                                if($nota->feedback != '0000-00-00'){
+                                            } elseif (($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))) {
+                                                if ($nota->feedback != '0000-00-00') {
                                                     $status = 3;
                                                     $valor_glosa = $valor_a_receber - $nota->valor_pago;
-                                                }else{
+                                                } else {
                                                     $status = 2;
                                                     $valor_glosa = $valor_a_receber - $nota->valor_pago;
                                                 }
-                                            }else{
+                                            } else {
                                                 $status = 0;
-                                            } 
+                                            }
                                         ?>
-                                        <tr class="text-center">
-                                            <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio; switch($nota->tipo){ case 0: echo ""; break; case 1: echo " (Consultas)"; break; case 2: echo " (Exames)"; break; }?></td>
-                                            <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
-                                            <td><?php echo $nota->bf_nf ?></td>
-                                            <td>R$ <?php echo number_format($nota->valor_faturado, 2, ',', '.'); ?></td>
-                                            <td>R$ <?php echo number_format($nota->valor_imposto, 2, ',', '.'); ?></td>
-                                            <td>R$ <?php echo number_format($valor_a_receber, 2, ',', '.'); ?></td>
-                                            <td><?php if($nota->valor_pago > 0){ ?>R$ <?php echo number_format($nota->valor_pago, 2, ',', '.'); ?><?php }else{ echo "R$ 0,00"; } ?></td>
-                                            <td>
-                                                <?php 
-                                                    switch($status){
+                                            <tr class="text-center">
+                                                <td><?php echo $Convenio->mostrar($nota->id_convenio)->convenio;
+                                                    switch ($nota->tipo) {
+                                                        case 0:
+                                                            echo "";
+                                                            break;
+                                                        case 1:
+                                                            echo " (Consultas)";
+                                                            break;
+                                                        case 2:
+                                                            echo " (Exames)";
+                                                            break;
+                                                    } ?></td>
+                                                <td><?php echo Helper::formatarData($nota->data_pagamento_previsto) ?></td>
+                                                <td><?php echo $nota->bf_nf ?></td>
+                                                <td>R$ <?php echo number_format($nota->valor_faturado, 2, ',', '.'); ?></td>
+                                                <td>R$ <?php echo number_format($nota->valor_imposto, 2, ',', '.'); ?></td>
+                                                <td>R$ <?php echo number_format($valor_a_receber, 2, ',', '.'); ?></td>
+                                                <td><?php if ($nota->valor_pago > 0) { ?>R$ <?php echo number_format($nota->valor_pago, 2, ',', '.'); ?><?php } else {
+                                                                                                                                                        echo "R$ 0,00";
+                                                                                                                                                    } ?></td>
+                                                <td>
+                                                    <?php
+                                                    switch ($status) {
                                                         case 0:
                                                             echo "<b class='badge badge-dark badge-pill'>Pendente</b>";
-                                                        break;
+                                                            break;
                                                         case 1:
                                                             echo "<b class='badge badge-success badge-pill'>OK</b>";
-                                                        break;
+                                                            break;
                                                         case 2:
-                                                            echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
-                                                        break;
+                                                            echo "<b class='badge badge-danger badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                            break;
                                                         case 3:
-                                                            echo "<b class='badge badge-warning badge-pill'>R$ ".$valor_glosa."</b>";
-                                                        break;
+                                                            echo "<b class='badge badge-warning badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                            break;
                                                     }
-                                                ?>
-                                             </td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarNotaServico"
-                                                    data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
-                                                    data-id_convenio="<?php echo $Convenio->mostrar($nota->id_convenio)->convenio ?>"
-                                                    data-tipo="<?php switch($nota->tipo){ case 0: echo "Tudo"; break; case 1: echo "Consultas"; break; case 3: echo "Exames"; break; } ?>"
-                                                    data-bf_nf="<?php echo $nota->bf_nf ?>"
-                                                    data-valor_faturado="<?php echo $nota->valor_faturado ?>"
-                                                    data-valor_imposto="<?php echo $nota->valor_imposto ?>"
-                                                    data-valor_pago="<?php if($nota->valor_pago > 0){ echo $nota->valor_pago; }else{ echo '0'; } ?>"
-                                                    data-data_pagamento_previsto="<?php echo Helper::formatarData($nota->data_pagamento_previsto) ?>"
-                                                    data-data_pago="<?php echo $nota->data_pago ?>"
-                                                    data-feedback="<?php echo $nota->feedback ?>"
-                                                    data-status="<?php 
-                                                        switch($status){
-                                                            case 0:
-                                                                echo "<b class='badge badge-dark badge-pill'>Pendente</b>";
-                                                            break;
-                                                            case 1:
-                                                                echo "<b class='badge badge-success badge-pill'>OK</b>";
-                                                            break;
-                                                            case 2:
-                                                                echo "<b class='badge badge-danger badge-pill'>R$ ".$valor_glosa."</b>";
-                                                            break;
-                                                            case 3:
-                                                                echo "<b class='badge badge-warning badge-pill'>R$ ".$valor_glosa."</b>";
-                                                            break;
-                                                        }
-                                                    ?>"
-                                                >
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </button>
-                                                <?php if(verificarSetor([1,12,14])){ ?>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarPagamento"
-                                                    data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
-                                                    data-id_competencia="<?php echo $competencia->id_faturamento_competencia ?>"
-                                                    data-valor_pago="<?php echo $nota->valor_pago ?>"
-                                                    data-data_pago="<?php echo $nota->data_pago ?>"
-                                                >
-                                                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                                                </button>
-                                                <?php } ?>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarNotaServico"
-                                                    data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
-                                                    data-id_convenio="<?php echo $nota->id_convenio ?>"
-                                                    data-tipo="<?php echo $nota->tipo ?>"
-                                                    data-bf_nf="<?php echo $nota->bf_nf ?>"
-                                                    data-valor_faturado="<?php echo $nota->valor_faturado ?>"
-                                                    data-valor_imposto="<?php echo $nota->valor_imposto ?>"
-                                                    data-valor_pago="<?php echo $nota->valor_pago ?>"
-                                                    data-data_pagamento_previsto="<?php echo $nota->data_pagamento_previsto ?>"
-                                                    data-data_pago="<?php echo $nota->data_pago ?>"
-                                                    data-feedback="<?php echo $nota->feedback ?>"
-                                                >
-                                                    <i class="fa-solid fa-gear"></i>
-                                                </button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalDeletarNotaServico"
-                                                    data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
-                                                    data-bf_nf="<?php echo $nota->bf_nf ?>"
-                                                    data-id_competencia="<?php echo $nota->id_competencia ?>">
-                                                    <i class="fa-solid fa-power-off"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalVisualizarNotaServico"
+                                                        data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
+                                                        data-id_convenio="<?php echo $Convenio->mostrar($nota->id_convenio)->convenio ?>"
+                                                        data-tipo="<?php switch ($nota->tipo) {
+                                                                        case 0:
+                                                                            echo "Tudo";
+                                                                            break;
+                                                                        case 1:
+                                                                            echo "Consultas";
+                                                                            break;
+                                                                        case 3:
+                                                                            echo "Exames";
+                                                                            break;
+                                                                    } ?>"
+                                                        data-bf_nf="<?php echo $nota->bf_nf ?>"
+                                                        data-valor_faturado="<?php echo $nota->valor_faturado ?>"
+                                                        data-valor_imposto="<?php echo $nota->valor_imposto ?>"
+                                                        data-valor_pago="<?php if ($nota->valor_pago > 0) {
+                                                                                echo $nota->valor_pago;
+                                                                            } else {
+                                                                                echo '0';
+                                                                            } ?>"
+                                                        data-data_pagamento_previsto="<?php echo Helper::formatarData($nota->data_pagamento_previsto) ?>"
+                                                        data-data_pago="<?php echo $nota->data_pago ?>"
+                                                        data-feedback="<?php echo $nota->feedback ?>"
+                                                        data-status="<?php
+                                                                        switch ($status) {
+                                                                            case 0:
+                                                                                echo "<b class='badge badge-dark badge-pill'>Pendente</b>";
+                                                                                break;
+                                                                            case 1:
+                                                                                echo "<b class='badge badge-success badge-pill'>OK</b>";
+                                                                                break;
+                                                                            case 2:
+                                                                                echo "<b class='badge badge-danger badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                                                break;
+                                                                            case 3:
+                                                                                echo "<b class='badge badge-warning badge-pill'>R$ " . $valor_glosa . "</b>";
+                                                                                break;
+                                                                        }
+                                                                        ?>">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </button>
+                                                    <?php if (verificarSetor([1, 12, 14])) { ?>
+                                                        <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarPagamento"
+                                                            data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
+                                                            data-id_competencia="<?php echo $competencia->id_faturamento_competencia ?>"
+                                                            data-valor_pago="<?php echo $nota->valor_pago ?>"
+                                                            data-data_pago="<?php echo $nota->data_pago ?>">
+                                                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                                                        </button>
+                                                    <?php } ?>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEditarNotaServico"
+                                                        data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
+                                                        data-id_convenio="<?php echo $nota->id_convenio ?>"
+                                                        data-tipo="<?php echo $nota->tipo ?>"
+                                                        data-bf_nf="<?php echo $nota->bf_nf ?>"
+                                                        data-valor_faturado="<?php echo $nota->valor_faturado ?>"
+                                                        data-valor_imposto="<?php echo $nota->valor_imposto ?>"
+                                                        data-valor_pago="<?php echo $nota->valor_pago ?>"
+                                                        data-data_pagamento_previsto="<?php echo $nota->data_pagamento_previsto ?>"
+                                                        data-data_pago="<?php echo $nota->data_pago ?>"
+                                                        data-feedback="<?php echo $nota->feedback ?>">
+                                                        <i class="fa-solid fa-gear"></i>
+                                                    </button>
+                                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalDeletarNotaServico"
+                                                        data-id_faturamento_nota_servico="<?php echo $nota->id_faturamento_nota_servico ?>"
+                                                        data-bf_nf="<?php echo $nota->bf_nf ?>"
+                                                        data-id_competencia="<?php echo $nota->id_competencia ?>">
+                                                        <i class="fa-solid fa-power-off"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         <?php } ?>
                                     </tbody>
                                     <tfoot>
@@ -235,7 +262,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Cadastrar Nota de Serviço</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -246,7 +273,7 @@
                                 <label for="id_convenio" class="form-label">Convênio *</label>
                                 <select name="id_convenio" id="cadastrar_id_convenio" class="form-control">
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Convenio->listarMenosParticular() as $convenio){ ?>
+                                    <?php foreach ($Convenio->listarMenosParticular() as $convenio) { ?>
                                         <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
                                     <?php } ?>
                                 </select>
@@ -312,7 +339,7 @@
                                 <label for="id_convenio" class="form-label">Convênio *</label>
                                 <select name="id_convenio" id="editar_id_convenio" class="form-control">
                                     <option value="">Selecione...</option>
-                                    <?php foreach($Convenio->listarMenosParticular() as $convenio){ ?>
+                                    <?php foreach ($Convenio->listarMenosParticular() as $convenio) { ?>
                                         <option value="<?php echo $convenio->id_convenio ?>"><?php echo $convenio->convenio ?></option>
                                     <?php } ?>
                                 </select>
@@ -364,7 +391,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar Pagamento da  Nota de Serviço</h5>
+                        <h5 class="modal-title">Editar Pagamento da Nota de Serviço</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -400,7 +427,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Visualizar Nota de Serviço</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -443,7 +470,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalDeletarNotaServicoLabel">Deletar Nota de Serviço</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -463,18 +490,24 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#fatu').addClass('active');
             $('#faturamento_competencias').addClass('active');
 
-            $('#modalVisualizarNotaServico').on('show.bs.modal', function (event) {
+            $('#modalVisualizarNotaServico').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 $('#visualizar_id_convenio').text(button.data('id_convenio'));
                 $('#visualizar_tipo').text(button.data('tipo'));
                 $('#visualizar_bf_nf').text(button.data('bf_nf'));
-                $('#visualizar_valor_faturado').text("R$ " + parseFloat(button.data('valor_faturado')).toLocaleString('pt-BR', {minimumFractionDigits:2}));
-                $('#visualizar_valor_imposto').text("R$ " + parseFloat(button.data('valor_imposto')).toLocaleString('pt-BR', {minimumFractionDigits:2}));
-                $('#visualizar_valor_pago').text("R$ " + parseFloat(button.data('valor_pago')).toLocaleString('pt-BR', {minimumFractionDigits:2}));
+                $('#visualizar_valor_faturado').text("R$ " + parseFloat(button.data('valor_faturado')).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                }));
+                $('#visualizar_valor_imposto').text("R$ " + parseFloat(button.data('valor_imposto')).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                }));
+                $('#visualizar_valor_pago').text("R$ " + parseFloat(button.data('valor_pago')).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2
+                }));
                 $('#visualizar_data_pagamento_previsto').text(button.data('data_pagamento_previsto'));
                 $('#visualizar_data_pago').text(button.data('data_pago'));
                 $('#visualizar_status').html(button.data('status'));
@@ -487,7 +520,7 @@
                 }
             });
 
-            $('#modalEditarNotaServico').on('show.bs.modal', function (event) {
+            $('#modalEditarNotaServico').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 $('#editar_id_faturamento_nota_servico').val(button.data('id_faturamento_nota_servico'));
                 $('#editar_id_convenio').val(button.data('id_convenio'));
@@ -502,7 +535,7 @@
                 $('#editar_feedback').val(button.data('feedback'));
             });
 
-            $('#modalEditarPagamento').on('show.bs.modal', function (event) {
+            $('#modalEditarPagamento').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 $('#editar_pagamento_id_faturamento_nota_servico').val(button.data('id_faturamento_nota_servico'));
                 $('#editar_pagamento_id_competencia').val(button.data('id_competencia'));
@@ -510,7 +543,7 @@
                 $('#editar_pagamento_data_pago').val(button.data('data_pago'));
             });
 
-            $('#modalDeletarNotaServico').on('show.bs.modal', function (event) {
+            $('#modalDeletarNotaServico').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 $('#deletar_id_faturamento_nota_servico').val(button.data('id_faturamento_nota_servico'));
                 $('#deletar_bf_nf').text(button.data('bf_nf'));
@@ -537,4 +570,5 @@
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-notas_servicos.js"></script>
 </body>
+
 </html>

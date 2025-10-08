@@ -1,6 +1,7 @@
 <?php
 
-class Faturamento_Nota_Servico {
+class Faturamento_Nota_Servico
+{
 
     public $pdo;
 
@@ -10,7 +11,8 @@ class Faturamento_Nota_Servico {
     }
 
     // Método para registrar logs
-    private function addLog($acao, $descricao, $id_usuario){
+    private function addLog($acao, $descricao, $id_usuario)
+    {
         $agora = date("Y-m-d H:i:s");
         $sql = $this->pdo->prepare('INSERT INTO logs 
                                     (acao, descricao, data, id_usuario) 
@@ -27,9 +29,10 @@ class Faturamento_Nota_Servico {
      * Listar todas as notas de serviço
      * @return array
      */
-    public function listar($id_competencia){
+    public function listar($id_competencia)
+    {
         $sql = $this->pdo->prepare('SELECT * FROM faturamento_notas_servicos WHERE id_competencia = :id_competencia AND deleted_at IS NULL');
-        $sql->bindParam(':id_competencia',$id_competencia);
+        $sql->bindParam(':id_competencia', $id_competencia);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_OBJ);
     }
@@ -39,7 +42,7 @@ class Faturamento_Nota_Servico {
      * @param array $dados
      * @return void
      */
-    public function cadastrar(Array $dados)
+    public function cadastrar(array $dados)
     {
         $agora = date("Y-m-d H:i:s");
         $sql = $this->pdo->prepare('INSERT INTO faturamento_notas_servicos 
@@ -199,7 +202,7 @@ class Faturamento_Nota_Servico {
      * @param int $usuario_logado
      * @return void
      */
-    public function deletar(int $id_faturamento_nota_servico, $usuario_logado,$id_competencia)
+    public function deletar(int $id_faturamento_nota_servico, $usuario_logado, $id_competencia)
     {
         $consulta = $this->pdo->prepare('SELECT bf_nf FROM faturamento_notas_servicos WHERE id_faturamento_nota_servico = :id_faturamento_nota_servico');
         $consulta->bindParam(':id_faturamento_nota_servico', $id_faturamento_nota_servico);
@@ -232,7 +235,4 @@ class Faturamento_Nota_Servico {
             exit;
         }
     }
-
 }
-
-?>

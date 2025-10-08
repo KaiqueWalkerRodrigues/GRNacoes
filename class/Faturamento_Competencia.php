@@ -1,17 +1,19 @@
 <?php
 
-class Faturamento_Competencia {
+class Faturamento_Competencia
+{
 
     # ATRIBUTOS	
-	public $pdo;
-    
+    public $pdo;
+
     public function __construct()
     {
-        $this->pdo = Conexao::conexao();               
+        $this->pdo = Conexao::conexao();
     }
 
     //Método para registrar logs
-    private function addLog($acao, $descricao, $id_usuario){
+    private function addLog($acao, $descricao, $id_usuario)
+    {
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO logs 
@@ -31,14 +33,15 @@ class Faturamento_Competencia {
      * @return array
      * @example $variavel = $Obj->listar()
      */
-    public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE deleted_at IS NULL');        
+    public function listar()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE deleted_at IS NULL ORDER BY id_faturamento_competencia DESC');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         return $dados;
-    }         
+    }
 
     /**
      * Cadastrar nova competencia
@@ -46,7 +49,7 @@ class Faturamento_Competencia {
      * @return int
      * @example $Obj->cadastrar($_POST);
      */
-    public function cadastrar(Array $dados)
+    public function cadastrar(array $dados)
     {
         $nome = $dados['nome'];
         $periodo_inicio = $dados['periodo_inicio'];
@@ -54,7 +57,7 @@ class Faturamento_Competencia {
         $mes_pagamento = $dados['mes_pagamento'];
         $usuario_logado = $dados['usuario_logado'];
 
-        $data_pagamento = $mes_pagamento.'-01';
+        $data_pagamento = $mes_pagamento . '-01';
 
         $agora = date("Y-m-d H:i:s");
 
@@ -64,17 +67,17 @@ class Faturamento_Competencia {
                                     (:nome, :periodo_inicio, :periodo_fim, :mes_pagamento, :created_at, :updated_at)
                                 ');
 
-        $sql->bindParam(':nome', $nome); 
-        $sql->bindParam(':periodo_inicio', $periodo_inicio); 
-        $sql->bindParam(':periodo_fim', $periodo_fim); 
-        $sql->bindParam(':mes_pagamento', $data_pagamento); 
-        $sql->bindParam(':created_at', $agora);          
-        $sql->bindParam(':updated_at', $agora);          
+        $sql->bindParam(':nome', $nome);
+        $sql->bindParam(':periodo_inicio', $periodo_inicio);
+        $sql->bindParam(':periodo_fim', $periodo_fim);
+        $sql->bindParam(':mes_pagamento', $data_pagamento);
+        $sql->bindParam(':created_at', $agora);
+        $sql->bindParam(':updated_at', $agora);
 
         if ($sql->execute()) {
             $id_competencia = $this->pdo->lastInsertId();
             $descricao = "Cadastrou nova competencia: $nome ($id_competencia)";
-            $this->addLog("Cadastrar",$descricao,$usuario_logado);
+            $this->addLog("Cadastrar", $descricao, $usuario_logado);
 
             echo "
             <script>
@@ -82,7 +85,6 @@ class Faturamento_Competencia {
                 window.location.href = '" . URL . "/faturamento/competencia?id=$id_competencia';
             </script>";
             exit;
-
         } else {
             echo "
             <script>
@@ -101,11 +103,11 @@ class Faturamento_Competencia {
      */
     public function mostrar(int $id_faturamento_competencia)
     {
-    	$sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE id_faturamento_competencia = :id_faturamento_competencia LIMIT 1');
+        $sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE id_faturamento_competencia = :id_faturamento_competencia LIMIT 1');
         $sql->bindParam(':id_faturamento_competencia', $id_faturamento_competencia);
-    	$sql->execute();
-    	$dados = $sql->fetch(PDO::FETCH_OBJ);
-    	return $dados;
+        $sql->execute();
+        $dados = $sql->fetch(PDO::FETCH_OBJ);
+        return $dados;
     }
 
     /**
@@ -134,7 +136,7 @@ class Faturamento_Competencia {
         $mes_pagamento = $dados['mes_pagamento'];
         $usuario_logado = $dados['usuario_logado'];
 
-        $data_pagamento = $mes_pagamento.'-01';
+        $data_pagamento = $mes_pagamento . '-01';
 
         $sql->bindParam(':id_faturamento_competencia', $id_faturamento_competencia);
         $sql->bindParam(':nome', $nome);
@@ -202,7 +204,4 @@ class Faturamento_Competencia {
             exit;
         }
     }
-
 }
-
-?>
