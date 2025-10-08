@@ -94,7 +94,7 @@ $mes_pagamento_formatado = strtoupper($formatter->format($data_pagamento));
 $tituloPagina1 = "COMPETÊNCIA DE $periodo_inicio_formatado a $periodo_fim_formatado - PGTO EM $mes_pagamento_formatado";
 
 $pagina1->setCellValue('A' . $row, $tituloPagina1);
-$pagina1->mergeCells('A' . $row . ':L' . $row);
+$pagina1->mergeCells('A' . $row . ':K' . $row);
 $pagina1->getStyle('A' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $pagina1->getStyle('A' . $row)->applyFromArray($titulo);
 
@@ -141,8 +141,12 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
             break;
     }
     $data_pagamento_previsto_formatado = Helper::formatarData($nota->data_pagamento_previsto);
-    $valor_a_receber = $nota->valor_faturado - $nota->valor_imposto;
-    $valor_glosa = $valor_a_receber - $nota->valor_pago;
+    $valor_a_receber = round($nota->valor_faturado - $nota->valor_imposto, 2);
+    $diff = $valor_a_receber - (float)$nota->valor_pago;
+    if (abs($diff) < 0.005) { // tolerância de 0,5 centavo
+        $diff = 0.00;
+    }
+    $valor_glosa = round($diff, 2);
     $data_pago_formatado = Helper::formatarData($nota->data_pago);
     $feedback_formatado = Helper::formatarData($nota->feedback);
 
@@ -155,22 +159,37 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
     $pagina1->setCellValue('G' . $row, ($nota->data_pagamento_previsto < $hoje or $nota->valor_pago > 0 and $nota->valor_pago < $nota->valor_faturado) ? $valor_glosa : 0);
     $pagina1->setCellValue('H' . $row, ($nota->valor_pago) ? $nota->valor_pago : 0);
     $pagina1->setCellValue('I' . $row, $data_pago_formatado);
-    $pagina1->setCellValue('J' . $row, ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber) ? $valor_glosa : 'SEM GLOSA');
-    $pagina1->setCellValue('K' . $row, ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber) ? (($nota->feedback != '0000-00-00') ? $feedback_formatado : '') : 'SEM GLOSA');
+
+    // Ajuste para não mostrar glosa de R$ 0,00
+    if ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber && $valor_glosa != 0.00) {
+        $pagina1->setCellValue('J' . $row, $valor_glosa);
+        $pagina1->setCellValue('L' . $row, ($nota->feedback != '0000-00-00') ? $feedback_formatado : '');
+        $pagina1->setCellValue('K' . $row, 'RECURSAR');
+    } else {
+        $pagina1->setCellValue('J' . $row, 'SEM GLOSA');
+        $pagina1->setCellValue('L' . $row, 'SEM GLOSA');
+        $pagina1->setCellValue('K' . $row, 'SEM GLOSA');
+    }
+
     $pagina1->getStyle('B' . $row . ':C' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     $pagina1->getStyle('I' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     $pagina1->getStyle('D' . $row . ':H' . $row)->getNumberFormat()->setFormatCode($real);
 
-    $pagina1->getStyle('A' . $row . ':K' . $row)->applyFromArray($negrito);
+    $pagina1->getStyle('A' . $row . ':L' . $row)->applyFromArray($negrito);
     $pagina1->getStyle('G' . $row)->getFont()->setColor(
         new \PhpOffice\PhpSpreadsheet\Style\Color(
             \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED
         )
     );
 
-    if ($nota->data_pagamento_previsto < $hoje or $nota->valor_pago > 0 and $nota->valor_pago < $nota->valor_faturado) {
+    if ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber && $valor_glosa != 0.00) {
         $pagina1->getStyle('J' . $row)->getNumberFormat()->setFormatCode($real);
         $pagina1->getStyle('J' . $row)->getFont()->setColor(
+            new \PhpOffice\PhpSpreadsheet\Style\Color(
+                \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED
+            )
+        );
+        $pagina1->getStyle('K' . $row)->getFont()->setColor(
             new \PhpOffice\PhpSpreadsheet\Style\Color(
                 \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED
             )
@@ -181,18 +200,19 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
                 \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE
             )
         );
-    }
-
-    if ($nota->data_pagamento_previsto < $hoje or $nota->valor_pago > 0 and $nota->valor_pago < $nota->valor_faturado) {
-    } else {
         $pagina1->getStyle('K' . $row)->getFont()->setColor(
+            new \PhpOffice\PhpSpreadsheet\Style\Color(
+                \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE
+            )
+        );
+        $pagina1->getStyle('L' . $row)->getFont()->setColor(
             new \PhpOffice\PhpSpreadsheet\Style\Color(
                 \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE
             )
         );
     }
 
-    $pagina1->getStyle('J' . $row . ':K' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $pagina1->getStyle('J' . $row . ':L' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     $row++;
 }
