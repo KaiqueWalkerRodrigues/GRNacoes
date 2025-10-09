@@ -302,11 +302,11 @@ $pageTitle .= $competencia->nome;
                             </div>
                             <div class="col-2">
                                 <label for="valor_faturado" class="form-label">Valor Faturado *</label>
-                                <input type="number" step="0.01" id="cadastrar_valor_faturado" name="valor_faturado" class="form-control" required>
+                                <input type="number" step="0.01" id="cadastrar_valor_faturado" name="valor_faturado" class="form-control" value="0" required>
                             </div>
                             <div class="col-2">
                                 <label for="valor_imposto" class="form-label">Valor Imposto</label>
-                                <input type="number" step="0.01" id="cadastrar_valor_imposto" name="valor_imposto" class="form-control">
+                                <input type="number" step="0.01" id="cadastrar_valor_imposto" name="valor_imposto" class="form-control" value="0">
                             </div>
                             <div class="col-3">
                                 <label for="feedback" class="form-label">Data Feedback</label>
@@ -564,6 +564,19 @@ $pageTitle .= $competencia->nome;
                     $('#cadastrar_valor_imposto').val(valorImposto);
                 } else {
                     $('#cadastrar_valor_imposto').val('');
+                }
+            });
+
+            $('#editar_valor_faturado').on('keyup change', function() {
+                const valorFaturado = parseFloat($(this).val());
+
+                if (!isNaN(valorFaturado) && valorFaturado > 0) {
+                    const imposto = valorFaturado * 0.0615;
+
+                    const valorImposto = imposto.toFixed(2);
+                    $('#editar_valor_imposto').val(valorImposto);
+                } else {
+                    $('#editar_valor_imposto').val('');
                 }
             });
         });
