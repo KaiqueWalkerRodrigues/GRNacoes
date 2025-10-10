@@ -191,6 +191,13 @@
         @media (max-width: 1366px){
             .chat-textarea{ max-height: 120px; }
         }
+
+        .icon-circle.audio{ background:#20c997; } /* teal */
+        .file-preview-icon.audio{ background:#20c997; }
+        .message-media-grid audio {
+            width: 100%;
+            border-radius: 6px;
+        }
     </style>
 </head>
 
@@ -258,6 +265,10 @@
                                         <div class="icon-circle video"><i class="fas fa-video"></i></div>
                                         <span>Vídeo</span>
                                     </div>
+                                    <div class="dropdown-item" onclick="triggerFileInput('audio')">
+                                        <div class="icon-circle audio"><i class="fas fa-microphone"></i></div>
+                                        <span>Áudio</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -297,7 +308,13 @@
 
         const MAX_FILES = 5;
         const MAX_TOTAL_SIZE = 200 * 1024 * 1024; // 200MB
-        const allowedExtensions = ['pdf','doc','docx','txt','rtf','odt','xls','xlsx','csv','png','jpg','jpeg','gif','webp','mp4','mov','avi','mkv'];
+        const allowedExtensions = [
+            'pdf','doc','docx','txt','rtf','odt','xls','xlsx','csv',
+            'png','jpg','jpeg','gif','webp',
+            'mp4','mov','avi','mkv',
+            'mp3','wav','ogg','m4a','aac','flac','wma'
+        ];
+
 
         window.isFileAllowed = function (file) {
             const ext = (file.name.split('.').pop() || '').toLowerCase();
@@ -322,7 +339,10 @@
             const totalSize = window.selectedFiles.reduce((s, f) => s + f.size, 0);
             container.append(`<div class="small text-muted mb-2">Arquivos: ${window.selectedFiles.length}/${MAX_FILES} | Total: ${formatFileSize(totalSize)}</div>`);
             window.selectedFiles.forEach((file, index) => {
-                const fileType = file.type.startsWith('image/') ? 'image' : file.type.startsWith('video/') ? 'video' : 'document';
+                let fileType = 'document';
+                if (file.type.startsWith('image/')) fileType = 'image';
+                else if (file.type.startsWith('video/')) fileType = 'video';
+                else if (file.type.startsWith('audio/')) fileType = 'audio';
                 container.append(`
                     <div class="file-preview-item">
                         <div class="file-preview-icon ${fileType}"><i class="fas fa-file-alt"></i></div>
@@ -361,6 +381,7 @@
             let accept = '';
             if (type === 'image') accept = 'image/*';
             else if (type === 'video') accept = 'video/*';
+            else if (type === 'audio') accept = 'audio/*';
             else accept = '.pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx,application/*';
             $fileInput.attr('accept', accept);
             $fileInput.trigger('click');

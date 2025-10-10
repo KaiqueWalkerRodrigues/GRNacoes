@@ -60,28 +60,49 @@
        return in_array($ext, ['jpg', 'png', 'gif', 'webp', 'svg'], true);
    }
 
+   function isAudio(string $ext): bool {
+        return in_array($ext, ['mp3','wav','ogg','m4a','aac','flac','wma'], true);
+    }
+
+    function audioMime(string $ext): string {
+    // Mapeia a extensão para um MIME-type razoável
+    switch ($ext) {
+        case 'mp3': return 'audio/mpeg';
+        case 'wav': return 'audio/wav';
+        case 'ogg': return 'audio/ogg';
+        case 'm4a': return 'audio/mp4';
+        case 'aac': return 'audio/aac';
+        case 'flac': return 'audio/flac';
+        case 'wma': return 'audio/x-ms-wma';
+        default:    return 'audio/mpeg';
+    }
+}
+
    function getFileIconClass(string $ext): string {
-       switch ($ext) {
-           case 'pdf':
-               return 'fa-solid fa-file-pdf text-danger';
-           case 'doc':
-           case 'docx':
-               return 'fa-solid fa-file-word text-primary';
-           case 'xls':
-           case 'xlsx':
-           case 'csv':
-               return 'fa-solid fa-file-excel text-success';
-           case 'ppt':
-           case 'pptx':
-               return 'fa-solid fa-file-powerpoint text-warning';
-           case 'zip':
-           case 'rar':
-           case '7z':
-               return 'fa-solid fa-file-archive text-secondary';
-           default:
-               return 'fa-solid fa-paperclip';
-       }
-   }
+        switch ($ext) {
+            case 'mp3': case 'wav': case 'ogg': case 'm4a': case 'aac': case 'flac': case 'wma':
+                return 'fa-solid fa-file-audio text-success';
+            case 'pdf':
+                return 'fa-solid fa-file-pdf text-danger';
+            case 'doc':
+            case 'docx':
+                return 'fa-solid fa-file-word text-primary';
+            case 'xls':
+            case 'xlsx':
+            case 'csv':
+                return 'fa-solid fa-file-excel text-success';
+            case 'ppt':
+            case 'pptx':
+                return 'fa-solid fa-file-powerpoint text-warning';
+            case 'zip':
+            case 'rar':
+            case '7z':
+                return 'fa-solid fa-file-archive text-secondary';
+            default:
+                return 'fa-solid fa-paperclip';
+        }
+    }
+
 
    if ($sql->rowCount() > 0) {
        $resultados = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -157,10 +178,30 @@
             if (isImage($ext)) {
                 // Imagem dentro do balão
                 $conteudoBalao .= '<a href="'.htmlspecialchars($urlArquivo).'" data-fancybox="gallery" data-caption="'.htmlspecialchars($nome_original).'" style="display:inline-block;">
-                     <img src="'.htmlspecialchars($urlArquivo).'" alt="'.htmlspecialchars($nome_original).'" style="max-width: 320px; margin-bottom: 5px; max-height: 240px; border-radius: 10px; display:block;">
+                    <img src="'.htmlspecialchars($urlArquivo).'" alt="'.htmlspecialchars($nome_original).'" style="max-width: 320px; margin-bottom: 5px; max-height: 240px; border-radius: 10px; display:block;">
                 </a>';
+            } elseif (isAudio($ext)) {
+                // Áudio dentro do balão (player + download)
+                $mime = audioMime($ext);
+                $conteudoBalao .= '
+                    <div class="card p-2" style="width:100%; max-width:320px; margin-bottom:8px;">
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <audio controls preload="metadata" style="width:100%; outline:none;">
+                                <source src="'.htmlspecialchars($urlArquivo).'" type="'.htmlspecialchars($mime).'">
+                                Seu navegador não suporta o elemento de áudio.
+                            </audio>
+                            <div style="display:flex; align-items:center; gap:8px; justify-content:space-between;">
+                                <div style="font-size:12px; word-break:break-word; flex:1;">'.htmlspecialchars($nome_original).'</div>
+                                <a href="'.htmlspecialchars($urlArquivo).'"
+                                download="'.htmlspecialchars($nome_original).'"
+                                class="btn btn-sm btn-primary">
+                                    Baixar
+                                </a>
+                            </div>
+                        </div>
+                    </div>';
             } else {
-                // Arquivo não-imagem dentro do balão
+                // Demais arquivos (PDF, Office, etc.)
                 $iconClass = getFileIconClass($ext);
                 $conteudoBalao .= '<div class="card p-2" style="width:180px; text-align:center; margin-bottom: 5px;">
                     <i class="'.$iconClass.'" style="font-size:24px;"></i>

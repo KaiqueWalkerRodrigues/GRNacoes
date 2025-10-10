@@ -178,11 +178,14 @@ class Mensagem {
         }
 
         $count      = is_array($files['name']) ? count($files['name']) : 0;
-        $maxBytes   = 200 * 1024 * 1024; // 20MB
+        $maxBytes   = 200 * 1024 * 1024; // 200MB
         $permitidos = [
             'pdf','doc','docx','txt','rtf','odt','xls','xlsx','csv',
-            'png','jpg','jpeg','gif','webp','mp4','mov','avi','mkv'
+            'png','jpg','jpeg','gif','webp',
+            'mp4','mov','avi','mkv',
+            'mp3','wav','ogg','m4a','aac','flac','wma'
         ];
+
 
         for ($i = 0; $i < $count; $i++) {
             $nomeOriginal = $files['name'][$i] ?? null;
