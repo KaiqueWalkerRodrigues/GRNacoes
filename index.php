@@ -97,7 +97,7 @@ switch ($route) {
     case 'configuracoes/convenios':
         $file = 'configuracoes/convenios.php';
         $pageTitle .= "Gerenciar Convênios";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1,2,12,14,18];
         $requiredLogin = true;
         break;
     case 'configuracoes/setores':

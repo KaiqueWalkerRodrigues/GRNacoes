@@ -478,7 +478,7 @@ if (isset($_POST['btnExcluir'])) {
                         data-titulo="${chamado.titulo}">
                         <i class="fa-solid fa-clock"></i>
                     </button>
-                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEncaminhar"
+                    <button class="btn btn-datatable btn-icon btn-transparent-dark" data-toggle="modal" data-target="#modalEncaminhar" data-id_chamado="${chamado.id_chamado}"
                         data-id_chamado="${chamado.id_chamado}">
                         <i class="fa-solid fa-share"></i>
                     </button>
@@ -562,6 +562,73 @@ if (isset($_POST['btnExcluir'])) {
             // Atualiza badges após busca/paginação
             $('#dataTable').on('draw.dt search.dt page.dt', function() {
                 setTimeout(atualizarBadgesChatVisiveis, 150);
+            });
+
+            // ====== Preenche MODAL VISUALIZAR ======
+            $('#modalVisualizarChamado').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const m = $(this);
+
+                $('#titulo_modal').text(btn.data('titulo') || '');
+
+                $('#visualizar_id_chamado').val(btn.data('id_chamado') || '');
+                $('#visualizar_titulo').val(btn.data('titulo') || '');
+                $('#visualizar_status').val(btn.data('status') || '');
+                $('#visualizar_id_setor').val(btn.data('setor') || '');
+                $('#visualizar_urgencia').val(btn.data('urgencia') || '');
+                $('#visualizar_usuario').val(btn.data('usuario') || '');
+                $('#visualizar_sla').val(btn.data('sla') || '');
+                $('#visualizar_descricao').val(btn.data('descricao') || '');
+                $('#visualizar_created_at').val(btn.data('created_at') || '');
+                $('#visualizar_deleted_at').val(btn.data('deleted_at') || '');
+                $('#visualizar_started_at').val(btn.data('started_at') || '');
+                $('#visualizar_finished_at').val(btn.data('finished_at') || '');
+            });
+
+            // ====== Preenche MODAL ENCAMINHAR ======
+            $('#modalEncaminhar').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                $('#encaminhar_id_chamado').val(btn.data('id_chamado') || '');
+            });
+
+            // ====== Preenche MODAL RECUSAR ======
+            $('#modalRecusar').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const titulo = btn.data('titulo') || '';
+                $('#recusar_id_chamado').val(btn.data('id_chamado') || '');
+                $(this).find('.recusar_titulo').text(titulo);
+            });
+
+            // ====== Preenche MODAL REABRIR ======
+            $('#modalReabrir').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const titulo = btn.data('titulo') || '';
+                $('#reabrir_id_chamado').val(btn.data('id_chamado') || '');
+                $(this).find('.reabrir_titulo').text(titulo);
+            });
+
+            // ====== Preenche MODAL INICIAR ======
+            $('#modalIniciar').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const titulo = btn.data('titulo') || '';
+                $('#iniciar_id_chamado').val(btn.data('id_chamado') || '');
+                $(this).find('.iniciar_titulo').text(titulo);
+            });
+
+            // ====== Preenche MODAL CONCLUIR ======
+            $('#modalConcluir').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const titulo = btn.data('titulo') || '';
+                $('#concluir_id_chamado').val(btn.data('id_chamado') || '');
+                $(this).find('.concluir_titulo').text(titulo);
+            });
+
+            // ====== Preenche MODAL EXCLUIR ======
+            $('#modalExcluir').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+                const titulo = btn.data('titulo') || '';
+                $('#excluir_id_chamado').val(btn.data('id_chamado') || '');
+                $(this).find('.excluir_titulo').text(titulo);
             });
         });
     </script>
