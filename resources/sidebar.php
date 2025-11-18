@@ -286,9 +286,7 @@
                             
                             <?php if (bloquearSetor([3])) { ?>
                                 <a class="nav-link" id="configuracoes_cargos" href="<?php echo URL ?>/configuracoes/cargos">Gerenciar Cargos</a>
-                                <?php if(verificarSetor([18])){ ?>
                                 <a class="nav-link" id="configuracoes_convenios" href="<?php echo URL ?>/configuracoes/convenios">Gerenciar Convênios</a>
-                                <?php } ?>
                                 <a class="nav-link" id="configuracoes_medicos" href="<?php echo URL ?>/configuracoes/medicos">Gerenciar Médicos</a>
                                 <a class="nav-link" id="configuracoes_setores" href="<?php echo URL ?>/configuracoes/setores">Gerenciar Setores</a>
                                 <a class="nav-link" id="configuracoes_usuarios" href="<?php echo URL ?>/configuracoes/usuarios">Gerenciar Usuários</a>

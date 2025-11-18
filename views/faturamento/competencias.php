@@ -1,5 +1,6 @@
 <?php 
     $Faturamento_Competencia = new Faturamento_Competencia();
+    $Faturamento_Nota_Servico = new Faturamento_Nota_Servico();
 
     if(isset($_POST['btnCadastrar'])){
         $Faturamento_Competencia->cadastrar($_POST);
@@ -40,6 +41,7 @@
                     </div>
                 </div>
                 <div class="container-fluid mt-n10">
+                    <div class="col-6 offset-3 mb-3"><input id="buscar_nota" type="number" placeholder="Digite o numero da nota" class="form-control"></div>
                     <div class="row">
                         <?php foreach($Faturamento_Competencia->listar() as $competencia){ ?>
                         <div class="col-3 mb-4">
@@ -52,6 +54,7 @@
                                     <br>
                                     <b>Mês Pagamento: <?php echo Helper::formatarDataParaMesAno($competencia->mes_pagamento) ?></b>
                                     <hr>
+                                    <input class="notas-ids" type="hidden" value="<?php foreach($Faturamento_Nota_Servico->listar($competencia->id_faturamento_competencia) as $nota){ echo $nota->bf_nf.";";  } ?>">
                                     <div class="col-12 text-center">
                                         <a class="btn btn-icon btn-primary" href="<?php echo URL ?>/faturamento/competencia?id=<?php echo $competencia->id_faturamento_competencia ?>"><i class="fa-solid fa-file-invoice"></i></a>
                                         <a href="<?php URL ?>relatorios/gerar_relatorio_competencia?id_competencia=<?php echo $competencia->id_faturamento_competencia ?>" class="btn btn-icon btn-success"><i class="fa-solid fa-file-excel"></i></a>
@@ -177,6 +180,33 @@
                 $('#editar_periodo_fim').val(periodo_fim);
                 $('#editar_mes_pagamento').val(mes_pagamento.substring(0, 7));
             });
+
+            $('#buscar_nota').on('input change keyup search', function () {
+                const q = ($(this).val() ?? '').toString().trim();
+                
+                const $cards = $('.container-fluid.mt-n10 .row > [class*="col-"]').has('.card');
+
+                if (q === '') {
+                    $cards.show();
+                    return;
+                }
+
+                $cards.each(function () {
+                    // pega o input que guarda a lista de IDs (hidden OU text)
+                    const $inputNotas = $(this).find('.card-body .notas-ids');
+                    const notasStr = ($inputNotas.val() || '').toString();
+                    
+                    // normaliza e separa por ';'
+                    const notas = notasStr
+                        .split(';')
+                        .map(s => s.trim())
+                        .filter(Boolean);
+
+                    const contem = notas.some(nota => nota.includes(q));
+                    $(this).toggle(contem);
+                });
+            });
+
         });
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

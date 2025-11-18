@@ -35,7 +35,7 @@ class Faturamento_Competencia
      */
     public function listar()
     {
-        $sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE deleted_at IS NULL ORDER BY id_faturamento_competencia DESC');
+        $sql = $this->pdo->prepare('SELECT * FROM faturamento_competencias WHERE deleted_at IS NULL ORDER BY periodo_fim DESC');
         $sql->execute();
 
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
@@ -202,6 +202,33 @@ class Faturamento_Competencia
                 window.location.href = '" . URL . "/faturamento/competencias';
             </script>";
             exit;
+        }
+    }
+
+      /**
+     * Conta o número total de notas de uma competência
+     * @param int $id_faturamento_competencia
+     * @return int
+     * @example $total = $Faturamento_Competencia->contarNotas($id);
+     */
+    public function contarNotas(int $id_faturamento_competencia)
+    {
+        try {
+            $sql = $this->pdo->prepare('
+                SELECT COUNT(*) AS total 
+                FROM faturamento_notas 
+                WHERE id_faturamento_competencia = :id_faturamento_competencia
+                AND deleted_at IS NULL
+            ');
+            $sql->bindParam(':id_faturamento_competencia', $id_faturamento_competencia, PDO::PARAM_INT);
+            $sql->execute();
+
+            $resultado = $sql->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? (int)$resultado['total'] : 0;
+
+        } catch (Exception $e) {
+            error_log("Erro ao contar notas: " . $e->getMessage());
+            return 0;
         }
     }
 }

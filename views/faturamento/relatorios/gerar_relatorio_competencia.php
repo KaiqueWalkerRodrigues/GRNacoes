@@ -160,11 +160,33 @@ foreach ($Faturamento_Nota_Servico->listar($id_competencia) as $nota) {
     $pagina1->setCellValue('H' . $row, ($nota->valor_pago) ? $nota->valor_pago : 0);
     $pagina1->setCellValue('I' . $row, $data_pago_formatado);
 
-    // Ajuste para não mostrar glosa de R$ 0,00
-    if ($nota->data_pagamento_previsto < $hoje and $nota->valor_pago >= 0 and $nota->valor_pago < $valor_a_receber && $valor_glosa != 0.00) {
+    // Se não houver pagamento, não mostrar nada
+    if (($nota->valor_pago == 0 || $nota->valor_pago === null) 
+    && $nota->data_pagamento_previsto > $hoje) {
+        $pagina1->setCellValue('J' . $row, '');
+        $pagina1->setCellValue('K' . $row, '');
+
+    } elseif (($nota->valor_pago == 0 || $nota->valor_pago === null) 
+    && $nota->data_pagamento_previsto < $hoje) {
         $pagina1->setCellValue('J' . $row, $valor_glosa);
-        $pagina1->setCellValue('K' . $row, ($nota->feedback != '0000-00-00') ? $feedback_formatado : '');
+        $pagina1->setCellValue(
+            'K' . $row,
+            ($nota->feedback != '0000-00-00') ? $feedback_formatado : ''
+        );
+    }elseif (
+        $nota->data_pagamento_previsto < $hoje &&
+        $nota->valor_pago > 0 &&
+        $nota->valor_pago < $valor_a_receber &&
+        $valor_glosa != 0.00
+    ) {
+        // Mostrar glosa apenas quando > 0
+        $pagina1->setCellValue('J' . $row, $valor_glosa);
+        $pagina1->setCellValue(
+            'K' . $row,
+            ($nota->feedback != '0000-00-00') ? $feedback_formatado : ''
+        );
     } else {
+        // Se tem pagamento mas não tem glosa válida
         $pagina1->setCellValue('J' . $row, 'SEM GLOSA');
         $pagina1->setCellValue('K' . $row, 'SEM GLOSA');
     }

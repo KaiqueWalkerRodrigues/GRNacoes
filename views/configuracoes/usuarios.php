@@ -99,6 +99,8 @@
                                                 <td><?php echo $Setor->mostrar($Usuario->mostrarSetorPrincipal($usuario->id_usuario)->id_setor)->setor ?></td>
                                                 <td><?php echo Helper::mostrar_empresa($usuario->empresa) ?></td>
                                                 <td class="text-center">
+                                                    <a class="btn btn-datatable btn-icon btn-transparent-dark" target="_blank" href="<?php echo URL ?>/configuracoes/docs/recibo_uniforme?nome_empresa=<?php echo Helper::mostrar_empresa2($usuario->empresa) ?>&nomem=<?php echo $usuario->nome ?>&cnpj=<?php echo Helper::mostrar_cnpj_empresa($usuario->empresa) ?>&cpf=<?php echo Helper::formatarCPF($usuario->cpf) ?>&id_empresa=<?php echo $usuario->empresa ?>"><i class="fa-solid fa-shirt"></i></a>
+                                                    <a class="btn btn-datatable btn-icon btn-transparent-dark" target="_blank" href="<?php echo URL ?>/configuracoes/docs/aviso_ferias?nome_empresa=<?php echo Helper::mostrar_empresa2($usuario->empresa) ?>&nomem=<?php echo $usuario->nome ?>&cnpj=<?php echo Helper::mostrar_cnpj_empresa($usuario->empresa) ?>&cpf=<?php echo Helper::formatarCPF($usuario->cpf) ?>&id_empresa=<?php echo $usuario->empresa ?>"><i class="fa-solid fa-sun"></i></a>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalSetoresUsuario"
                                                         data-id_usuario="<?php echo $usuario->id_usuario ?>"
                                                         data-nome="<?php echo $usuario->nome ?>">

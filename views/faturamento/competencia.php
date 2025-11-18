@@ -106,9 +106,11 @@ $pageTitle .= $competencia->nome;
                                             $total_imposto += $nota->valor_imposto;
                                             $total_pago += $nota->valor_pago;
                                             $total_a_receber += $valor_a_receber;
-                                            if ($nota->valor_pago == $valor_a_receber) {
+                                            if($nota->valor_pago == 0 AND $valor_a_receber == 0){
+                                                $status = 4;
+                                            }elseif($nota->valor_pago == $valor_a_receber) {
                                                 $status = 1;
-                                            } elseif (($nota->valor_pago != $nota->valor_faturado) && (new \DateTime($nota->data_pagamento_previsto) < new \DateTime('today'))) {
+                                            } elseif (($nota->valor_pago != $nota->valor_faturado) && $nota->valor_pago > 0) {
                                                 if ($nota->feedback != '0000-00-00') {
                                                     $status = 3;
                                                     $valor_glosa = round($valor_a_receber - $nota->valor_pago, 2);
@@ -155,6 +157,9 @@ $pageTitle .= $competencia->nome;
                                                             break;
                                                         case 3:
                                                             echo "<b class='badge badge-warning badge-pill'>R$ " . number_format($valor_glosa, 2, ',', '.') . "</b>";
+                                                            break;
+                                                        case 5:
+                                                            echo "<b class='badge badge-danger badge-pill'>ERRO</b>";
                                                             break;
                                                     }
                                                     ?>

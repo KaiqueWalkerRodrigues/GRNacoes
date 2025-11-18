@@ -112,6 +112,18 @@ switch ($route) {
         $requiredSectors = [1,2,12,14];
         $requiredLogin = true;
         break;
+    case 'configuracoes/docs/aviso_ferias':
+        $file = 'configuracoes/docs/gerar_aviso_ferias.php';
+        $pageTitle .= "Aviso Ferias";
+        $requiredSectors = [];
+        $requiredLogin = true;
+        break;  
+    case 'configuracoes/docs/recibo_uniforme':
+        $file = 'configuracoes/docs/gerar_recibo_uniforme.php';
+        $pageTitle .= "Aviso Ferias";
+        $requiredSectors = [];
+        $requiredLogin = true;
+        break;  
     case 'configuracoes/medicos':
         $file = 'configuracoes/medicos.php';
         $pageTitle .= "Gerenciar Médicos";

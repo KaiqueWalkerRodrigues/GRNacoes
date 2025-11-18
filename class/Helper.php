@@ -102,6 +102,62 @@ class Helper{
     return $empresa;
   }
 
+  //Função que mostra o nome da empresa
+  public static function mostrar_empresa2(int $id_empresa){
+    switch ($id_empresa) {
+      case 1:
+          $empresa = 'Clínica de Olhos Nações';
+        break;
+      case 3:
+          $empresa = 'Clínica de Olhos Nações';
+        break;
+      case 5:
+          $empresa = 'Clínica de Olhos Nações';
+        break;
+      case 2:
+          $empresa = 'Ótica +Visão';
+        break;
+      case 4:
+          $empresa = 'Ótica +Visão Prestigio';
+        break;
+      case 6:
+          $empresa = 'Ótica +Visão Daily';
+        break;
+      default:
+          $empresa = 'Erro';
+        break;
+    }
+    return $empresa;
+  }
+
+  //Função que mostra o nome da empresa
+  public static function mostrar_cnpj_empresa(int $id_empresa){
+    switch ($id_empresa) {
+      case 1:
+          $empresa = '00.665.800/0001-21';
+        break;
+      case 3:
+          $empresa = '00.665.800/0002-02';
+        break;
+      case 5:
+          $empresa = '00.665.800/0003-93';
+        break;
+      case 2:
+          $empresa = '64.804.578/0001-83';
+        break;
+      case 4:
+          $empresa = '39.540.411/0001-05';
+        break;
+      case 6:
+          $empresa = '39.666.725/0001-59';
+        break;
+      default:
+          $empresa = 'Erro';
+        break;
+    }
+    return $empresa;
+  }
+
   //Traduz o Mês do Inglês
   public static function traduzirMes($ingles) {
     $months = array(
@@ -312,6 +368,24 @@ class Helper{
       break;
     }
   }
+
+  //Formata um CPF para o padrão 000.000.000-00
+public static function formatarCPF($cpf) {
+    // Remove tudo que não for número
+    $cpf = preg_replace('/\D/', '', $cpf);
+
+    // Verifica se tem 11 dígitos
+    if (strlen($cpf) === 11) {
+        return substr($cpf, 0, 3) . '.' .
+               substr($cpf, 3, 3) . '.' .
+               substr($cpf, 6, 3) . '-' .
+               substr($cpf, 9, 2);
+    }
+
+    // Retorna o original se não for válido
+    return $cpf;
+}
+
   
 }
 

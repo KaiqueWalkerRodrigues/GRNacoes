@@ -76,6 +76,14 @@ if (isset($_POST['btnExcluir'])) {
                             </div>
                         </div>
                     </div>
+                    <div>
+                    <div>
+                        <div><b class="text-dark">Em Análise -</b> Chamado está sendo análisado (Se é possivel concluir o chamado)</div>
+                        <div><b class="text-secondary">Em Andamento -</b> Chamado foi iniciado (Foi iniciado as medidas necessarias para concluir)</div>
+                        <div><b class="text-success">Concluído -</b> Chamado foi concluído </div>
+                        <div><b class="text-danger">Cancelado -</b> Chamado foi cancelado pelo Remetente </div>
+                        <div><b class="text-dark">Recusado -</b> Chamado foi recusado pelo Destinatário (Não é possivel/Não é necessário/Não deve concluir)</div>
+                    </div>
                 </div>
             </main>
             <?php include_once('resources/footer.php') ?>
@@ -103,7 +111,7 @@ if (isset($_POST['btnExcluir'])) {
                             <div class="col-3 mb-2">
                                 <label for="cadastrar_id_setor" class="form-label">Destinatário *</label>
                                 <select name="id_setor" id="cadastrar_id_setor" class="form-control" required>
-                                    <option value="">Selecione...</option>
+                                    <option value="1">Tecnologia da Informação</option>
                                     <?php foreach ($Setor->listar($_SESSION['id_usuario']) as $setor) {
                                         echo "<option value='$setor->id_setor'>$setor->setor</option>";
                                     } ?>
