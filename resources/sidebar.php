@@ -248,7 +248,7 @@ function gerarOpcoesAnos()
 
                 <?php } ?>
 
-                <?php if (verificarSetor([1, 7, 13, 14, 18])) { ?>
+                <?php if (verificarSetor([1, 7, 8, 13, 14, 18])) { ?>
 
                     <a class="nav-link collapsed" id="rece" href="javascript:void(0);" data-toggle="collapse" data-target="#recepcao" aria-expanded="false" aria-controls="recepcao">
                         <div class="nav-link-icon"><i class="fa-solid fa-person"></i></div>

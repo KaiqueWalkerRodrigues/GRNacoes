@@ -378,7 +378,7 @@ switch ($route) {
     case 'recepcao/orcamento_exames':
         $file = 'recepcao/orcamento_exames.php';
         $pageTitle .= "Orcamento de Exames";
-        $requiredSectors = [1, 7, 13, 14, 18];
+        $requiredSectors = [1, 7, 8, 13, 14, 18];
         $requiredLogin = true;
         break;
     case 'recepcao/gerar_orcamento_exames':
