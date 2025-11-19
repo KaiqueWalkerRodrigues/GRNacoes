@@ -1,7 +1,30 @@
 <?php
 $Exame = new Exame();
 $listaExames = $Exame->listar();
+$PacoteExame = new Pacote_Exame();
+
+// unidade logada
+$idEmpresaSessao = $_SESSION['id_empresa'] ?? null;
+
+switch ($idEmpresaSessao) {
+    case 2:
+        $idEmpresaSessao = 1;
+        break;
+    case 4:
+        $idEmpresaSessao = 3;
+        break;
+    case 6:
+        $idEmpresaSessao = 5;
+        break;
+}
+
+// se tiver id_empresa na sessão, filtra; senão, deixa vazio
+$listaPacotes = [];
+if (!empty($idEmpresaSessao)) {
+    $listaPacotes = $PacoteExame->listar($idEmpresaSessao);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -50,6 +73,49 @@ $listaExames = $Exame->listar();
                             </div>
                         </div>
 
+                        <!-- Lista de PACOTES com checkbox -->
+                        <?php if (!empty($listaPacotes)): ?>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    Pacotes de Exames
+                                </div>
+
+                                <div class="card-body">
+                                    <form id="form_pacotes">
+                                        <?php foreach ($listaPacotes as $pacote): ?>
+
+                                            <?php
+                                            // pega os exames desse pacote para poder desabilitar no JS
+                                            $idsExamesPacote = $PacoteExame->listarExamesDoPacote($pacote->id_exames_pacote);
+                                            $idsExamesPacoteStr = implode(',', $idsExamesPacote);
+                                            ?>
+
+                                            <div class="row align-items-center mb-2 pacote-item"
+                                                data-particular="<?php echo $pacote->valor_fidelidade; ?>"
+                                                data-fidelidade="<?php echo $pacote->valor_fidelidade; ?>"
+                                                data-exames="<?php echo $idsExamesPacoteStr; ?>">
+
+                                                <div class="col-1 text-right">
+                                                    <input type="checkbox" name="pacotes[]" value="<?php echo $pacote->id_exames_pacote; ?>">
+                                                </div>
+
+                                                <div class="col-7">
+                                                    <?php echo $pacote->pacote; ?>
+                                                </div>
+
+                                                <div class="col-4 valor-pacote text-right font-weight-bold">
+                                                    <!-- valor será preenchido pelo JS (atualizarValores) -->
+                                                </div>
+                                            </div>
+
+                                            <hr>
+                                        <?php endforeach; ?>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+
 
                         <!-- Barra de Pesquisa -->
                         <div class="card mb-3">
@@ -71,6 +137,7 @@ $listaExames = $Exame->listar();
 
                                     <?php foreach ($listaExames as $exame): ?>
                                         <div class="row align-items-center mb-2 exame-item"
+                                            data-id="<?php echo $exame->id_exame; ?>"
                                             data-particular="<?php echo $exame->valor_particular; ?>"
                                             data-fidelidade="<?php echo $exame->valor_fidelidade; ?>">
 
@@ -115,10 +182,10 @@ $listaExames = $Exame->listar();
 
             $('#rece').addClass('active')
 
-            // Troca os valores ao mudar o tipo (já existia)
             function atualizarValores() {
                 let tipo = $('input[name="tipo_valor"]:checked').val();
 
+                // exames avulsos
                 $('.exame-item').each(function() {
                     let valor = (tipo === 'particular') ?
                         $(this).data('particular') :
@@ -128,7 +195,19 @@ $listaExames = $Exame->listar();
 
                     $(this).find('.valor-exame').text("R$ " + valor);
                 });
+
+                // pacotes
+                $('.pacote-item').each(function() {
+                    let valor = (tipo === 'particular') ?
+                        $(this).data('particular') :
+                        $(this).data('fidelidade');
+
+                    valor = parseFloat(valor).toFixed(2).replace('.', ',');
+
+                    $(this).find('.valor-pacote').text("R$ " + valor);
+                });
             }
+
 
             $('input[name="tipo_valor"]').on('change', atualizarValores);
             atualizarValores();
@@ -142,6 +221,14 @@ $listaExames = $Exame->listar();
                 let checkbox = $(this).find('input[type="checkbox"]');
 
                 checkbox.prop('checked', !checkbox.prop('checked'));
+            });
+
+            $('.pacote-item').on('click', function(e) {
+
+                if ($(e.target).is('input[type="checkbox"]')) return;
+
+                let checkbox = $(this).find('input[type="checkbox"]');
+                checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
             });
 
             // Pesquisa dinâmica nos exames
@@ -162,10 +249,13 @@ $listaExames = $Exame->listar();
                 });
             });
 
-            $("#btn_imprimir").on("click", function() {
+            $("#btn_imprimir").on("click", function(e) {
+
+                e.preventDefault(); // evita abrir o link "cru"
 
                 let tipo = $("input[name='tipo_valor']:checked").val();
                 let exames = [];
+                let pacotes = [];
                 let nome = $("#nome_paciente").val().trim();
 
                 if (nome === "") {
@@ -177,17 +267,67 @@ $listaExames = $Exame->listar();
                     exames.push($(this).val());
                 });
 
-                if (exames.length === 0) {
-                    alert("Selecione ao menos um exame!");
+                $("input[name='pacotes[]']:checked").each(function() {
+                    pacotes.push($(this).val());
+                });
+
+                if (exames.length === 0 && pacotes.length === 0) {
+                    alert("Selecione ao menos um exame ou um pacote!");
                     return;
                 }
 
                 let params = "?tipo=" + encodeURIComponent(tipo) +
-                    "&nome=" + encodeURIComponent(nome) +
-                    "&exames[]=" + exames.join("&exames[]=");
+                    "&nome=" + encodeURIComponent(nome);
+
+                if (exames.length > 0) {
+                    params += "&exames[]=" + exames.join("&exames[]=");
+                }
+
+                if (pacotes.length > 0) {
+                    params += "&pacotes[]=" + pacotes.join("&pacotes[]=");
+                }
 
                 window.open("gerar_orcamento_exames" + params, "_blank");
             });
+
+
+            // Desabilita exames que fazem parte dos pacotes selecionados
+            function atualizarExamesPorPacote() {
+                let examesBloqueados = new Set();
+
+                // pega todos os exames dos pacotes marcados
+                $(".pacote-item input[type='checkbox']:checked").each(function() {
+                    let dataExames = $(this).closest('.pacote-item').data('exames');
+
+                    if (!dataExames) return;
+
+                    dataExames.toString().split(',').forEach(function(id) {
+                        id = id.trim();
+                        if (id !== '') {
+                            examesBloqueados.add(id);
+                        }
+                    });
+                });
+
+                // percorre os exames e desabilita os que estiverem em algum pacote
+                $(".exame-item").each(function() {
+                    let idExame = $(this).data('id').toString();
+                    let checkbox = $(this).find("input[type='checkbox']");
+
+                    if (examesBloqueados.has(idExame)) {
+                        checkbox.prop('checked', false);
+                        checkbox.prop('disabled', true);
+                        $(this).addClass('text-muted');
+                    } else {
+                        checkbox.prop('disabled', false);
+                        $(this).removeClass('text-muted');
+                    }
+                });
+            }
+
+            // dispara ao marcar/desmarcar pacote
+            $(".pacote-item input[type='checkbox']").on('change', atualizarExamesPorPacote);
+
 
         });
     </script>

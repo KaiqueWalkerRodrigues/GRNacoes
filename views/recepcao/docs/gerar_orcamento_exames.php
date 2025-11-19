@@ -20,10 +20,65 @@ $dataHoje = date('d/m/Y');
 $examesFiltrados = [];
 $total = 0;
 
-// Filtrar os exames escolhidos
+// Pacotes selecionados
+$pacotesSelecionados = $_GET['pacotes'] ?? [];
+
+$PacoteExame = new Pacote_Exame();
+
+$pacotesFiltrados = [];
+$examesEmPacotes = [];
+
+// Monta dados dos pacotes
+foreach ($pacotesSelecionados as $idPacote) {
+
+    $idPacote = (int)$idPacote;
+
+    // busca o pacote
+    $sqlPacote = $PacoteExame->pdo->prepare('SELECT * FROM exames_pacotes WHERE id_exames_pacote = :id AND deleted_at IS NULL');
+    $sqlPacote->bindParam(':id', $idPacote, PDO::PARAM_INT);
+    $sqlPacote->execute();
+    $pacote = $sqlPacote->fetch(PDO::FETCH_OBJ);
+
+    if (!$pacote) {
+        continue;
+    }
+
+    // exames que fazem parte do pacote
+    $idsExamesPacote = $PacoteExame->listarExamesDoPacote($idPacote);
+    $examesEmPacotes = array_merge($examesEmPacotes, $idsExamesPacote);
+
+    // nomes dos exames para listar embaixo do pacote
+    $nomesExamesPacote = [];
+    foreach ($listaExames as $ex) {
+        if (in_array($ex->id_exame, $idsExamesPacote)) {
+            $nomesExamesPacote[] = $ex->exame;
+        }
+    }
+
+    // valor do pacote (aqui estou usando valor_fidelidade como base)
+    $valorPacote = ($tipo == 'fidelidade')
+        ? floatval(str_replace(',', '.', $pacote->valor_fidelidade))
+        : (isset($pacote->valor_particular)
+            ? floatval(str_replace(',', '.', $pacote->valor_particular))
+            : floatval(str_replace(',', '.', $pacote->valor_fidelidade)));
+
+    $pacotesFiltrados[] = [
+        'nome'   => $pacote->pacote,
+        'valor'  => number_format($valorPacote, 2, ',', '.'),
+        'exames' => $nomesExamesPacote,
+    ];
+
+    $total += $valorPacote;
+}
+
+// ids de exames que estão dentro de algum pacote
+$examesEmPacotes = array_unique($examesEmPacotes);
+
+
+// Filtrar os exames escolhidos (apenas os que NÃO estão dentro de pacotes)
 foreach ($listaExames as $ex) {
 
-    if (in_array($ex->id_exame, $selecionados)) {
+    if (in_array($ex->id_exame, $selecionados) && !in_array($ex->id_exame, $examesEmPacotes)) {
 
         $valor = ($tipo == 'fidelidade')
             ? floatval(str_replace(',', '.', $ex->valor_fidelidade))
@@ -37,6 +92,7 @@ foreach ($listaExames as $ex) {
         $total += $valor;
     }
 }
+
 
 // =========================
 // ENDEREÇO POR EMPRESA
@@ -197,16 +253,42 @@ td {
 
     <table>
         <tr>
-            <th>Exame</th>
+            <th>Descrição</th>
             <th style="text-align:right;">Valor (R$)</th>
         </tr>';
 
-foreach ($examesFiltrados as $e) {
+// PACOTES
+foreach ($pacotesFiltrados as $p) {
     $html .= '
+        <tr>
+            <td><strong>Pacote: ' . htmlspecialchars($p["nome"]) . '</strong></td>
+            <td style="text-align:right;"><strong>' . $p["valor"] . '</strong></td>
+        </tr>';
+
+    // exames dentro do pacote (sem valor)
+    foreach ($p['exames'] as $nomeExamePacote) {
+        $html .= '
+        <tr>
+            <td style="padding-left:25px;">- ' . htmlspecialchars($nomeExamePacote) . '</td>
+            <td></td>
+        </tr>';
+    }
+}
+
+// EXAMES AVULSOS (fora de pacotes)
+if (!empty($examesFiltrados)) {
+    $html .= '
+        <tr>
+            <td colspan="2" style="padding-top:10px;"><strong>Exames Avulsos</strong></td>
+        </tr>';
+
+    foreach ($examesFiltrados as $e) {
+        $html .= '
         <tr>
             <td>' . htmlspecialchars($e["nome"]) . '</td>
             <td style="text-align:right;">' . $e["valor"] . '</td>
         </tr>';
+    }
 }
 
 $html .= '
