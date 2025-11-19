@@ -42,6 +42,15 @@ $listaExames = $Exame->listar();
                             </div>
                         </div>
 
+                        <!-- Nome do paciente -->
+                        <div class="card mb-3">
+                            <div class="card-header">Nome do paciente</div>
+                            <div class="card-body">
+                                <input type="text" id="nome_paciente" class="form-control" placeholder="Digite o nome do paciente">
+                            </div>
+                        </div>
+
+
                         <!-- Barra de Pesquisa -->
                         <div class="card mb-3">
                             <div class="card-header">Pesquisar Exames</div>
@@ -157,6 +166,12 @@ $listaExames = $Exame->listar();
 
                 let tipo = $("input[name='tipo_valor']:checked").val();
                 let exames = [];
+                let nome = $("#nome_paciente").val().trim();
+
+                if (nome === "") {
+                    alert("Informe o nome do paciente!");
+                    return;
+                }
 
                 $("input[name='exames[]']:checked").each(function() {
                     exames.push($(this).val());
@@ -167,7 +182,9 @@ $listaExames = $Exame->listar();
                     return;
                 }
 
-                let params = "?tipo=" + tipo + "&exames[]=" + exames.join("&exames[]=");
+                let params = "?tipo=" + encodeURIComponent(tipo) +
+                    "&nome=" + encodeURIComponent(nome) +
+                    "&exames[]=" + exames.join("&exames[]=");
 
                 window.open("gerar_orcamento_exames" + params, "_blank");
             });

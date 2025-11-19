@@ -14,6 +14,9 @@ $listaExames = $Exame->listar();
 $selecionados = $_GET['exames'] ?? [];
 $tipo = $_GET['tipo'] ?? 'particular';
 
+$nomePaciente = ucwords(strtolower($_GET['nome'])) ?? '';
+$dataHoje = date('d/m/Y');
+
 $examesFiltrados = [];
 $total = 0;
 
@@ -96,11 +99,30 @@ body {
     margin-bottom: 15px;
 }
 
+.header-info {
+    width: 100%;
+    margin-top: 5px;
+    font-size: 12pt;
+}
+
+.header-info .nome {
+    float: left;
+}
+
+.nome{
+    margin-bottom: 20px;
+}
+
+.header-info .data {
+    float: right;
+}
+
 .title {
     font-size: 18pt;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 20px;
     text-transform: uppercase;
+    clear: both;
 }
 
 .aviso {
@@ -136,6 +158,13 @@ td {
     margin-top: 20px;
 }
 
+.parcelado {
+    margin-top: 10px;
+    margin-left: 15%;
+    font-size: 10pt;
+    font-style: italic;
+}
+
 .footer {
     text-align: center;
     margin-top: 35px;
@@ -150,9 +179,16 @@ td {
 <div class="container">
 
     <div class="header">
-        ' . $logo . '
+    ' . $logo . '
+
+        <div class="header-info">
+            <span class="nome">Nome: ' . htmlspecialchars($nomePaciente) . '</span>
+            <span class="data">Data: ' . $dataHoje . '</span>
+        </div>
+
         <div class="title">Orçamento de Exames</div>
     </div>
+
 
     <div class="aviso">
         ESTE DOCUMENTO NÃO É UM PEDIDO MÉDICO — APENAS UM ORÇAMENTO.<br>
@@ -180,9 +216,13 @@ $html .= '
         Total: R$ ' . number_format($total, 2, ',', '.') . '
     </div>
 
+    <div class="parcelado">
+        *Aceitamos pagamento parcelado no cartão de crédito, consulte disponibilidade.
+    </div>
+
     <div class="footer">
         ' . $endereco . '<br>
-        Telefone para agendamentos: (11) 4478-2828
+        Telefone e WhatsApp para agendamentos: (11) 4478-2828
     </div>
 
 </div>
