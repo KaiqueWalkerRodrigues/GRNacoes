@@ -98,7 +98,7 @@ foreach ($listaExames as $ex) {
 // ENDEREÇO POR EMPRESA
 // =========================
 
-$empresa = $_SESSION['empresa'] ?? 1;
+$empresa = $_SESSION['id_empresa'] ?? 1;
 
 switch ($empresa) {
     case 1:
