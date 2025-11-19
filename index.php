@@ -5,23 +5,25 @@
 
 include_once('const.php');
 
-function verificarSetor(array $setores_necessario){
-    foreach($_SESSION['id_setores'] as $setor){
-        foreach($setores_necessario as $setor_necessario){
-            if($setor == $setor_necessario){
+function verificarSetor(array $setores_necessario)
+{
+    foreach ($_SESSION['id_setores'] as $setor) {
+        foreach ($setores_necessario as $setor_necessario) {
+            if ($setor == $setor_necessario) {
                 return true;
                 break;
             }
         }
     }
 }
-function bloquearSetor(array $setores_bloqueado){
-    foreach($_SESSION['id_setores'] as $setor){
-        foreach($setores_bloqueado as $setor_bloqueado){
-            if($setor != $setor_bloqueado){
+function bloquearSetor(array $setores_bloqueado)
+{
+    foreach ($_SESSION['id_setores'] as $setor) {
+        foreach ($setores_bloqueado as $setor_bloqueado) {
+            if ($setor != $setor_bloqueado) {
                 return true;
                 break;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -91,25 +93,31 @@ switch ($route) {
     case 'configuracoes/cargos':
         $file = 'configuracoes/cargos.php';
         $pageTitle .= "Gerenciar Cargos";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1, 2, 12, 14];
         $requiredLogin = true;
         break;
     case 'configuracoes/convenios':
         $file = 'configuracoes/convenios.php';
         $pageTitle .= "Gerenciar Convênios";
-        $requiredSectors = [1,2,12,14,18];
+        $requiredSectors = [1, 2, 12, 14, 18];
+        $requiredLogin = true;
+        break;
+    case 'configuracoes/exames':
+        $file = 'configuracoes/exames.php';
+        $pageTitle .= "Gerenciar Exames";
+        $requiredSectors = [1, 2, 12, 14, 18];
         $requiredLogin = true;
         break;
     case 'configuracoes/setores':
         $file = 'configuracoes/setores.php';
         $pageTitle .= "Gerenciar Setores";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1, 2, 12, 14];
         $requiredLogin = true;
         break;
     case 'configuracoes/usuarios':
         $file = 'configuracoes/usuarios.php';
         $pageTitle .= "Gerenciar Usuarios";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1, 2, 12, 14];
         $requiredLogin = true;
         break;
     case 'configuracoes/docs/aviso_ferias':
@@ -117,42 +125,42 @@ switch ($route) {
         $pageTitle .= "Aviso Ferias";
         $requiredSectors = [];
         $requiredLogin = true;
-        break;  
+        break;
     case 'configuracoes/docs/recibo_uniforme':
         $file = 'configuracoes/docs/gerar_recibo_uniforme.php';
         $pageTitle .= "Aviso Ferias";
         $requiredSectors = [];
         $requiredLogin = true;
-        break;  
+        break;
     case 'configuracoes/medicos':
         $file = 'configuracoes/medicos.php';
         $pageTitle .= "Gerenciar Médicos";
-        $requiredSectors = [1,2,12,14];
+        $requiredSectors = [1, 2, 12, 14];
         $requiredLogin = true;
         break;
 
     case 'dashboards/captacao':
         $file = 'dashboards/captacao.php';
         $pageTitle .= "Dashboard Captação";
-        $requiredSectors = [1,2,5,12,13,14];
+        $requiredSectors = [1, 2, 5, 12, 13, 14];
         $requiredLogin = true;
         break;
     case 'dashboards/catarata':
         $file = 'dashboards/catarata.php';
         $pageTitle .= "Dashboard Catarata";
-        $requiredSectors = [1,5,12];
+        $requiredSectors = [1, 5, 12];
         $requiredLogin = true;
         break;
     case 'dashboards/cobranca':
         $file = 'dashboards/cobranca.php';
         $pageTitle .= "Dashboard Cobrança";
-        $requiredSectors = [1,5,12];
+        $requiredSectors = [1, 5, 12];
         $requiredLogin = true;
         break;
     case 'dashboards/lente_contato':
         $file = 'dashboards/lente_contato.php';
         $pageTitle .= "Dashboard Lente de Contato";
-        $requiredSectors = [1,3,5,12];
+        $requiredSectors = [1, 3, 5, 12];
         $requiredLogin = true;
         break;
 
@@ -190,182 +198,196 @@ switch ($route) {
     case 'arquivos/arquivos_mortos':
         $file = 'arquivos/arquivos_mortos.php';
         $pageTitle .= "Arquivos Mortos";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
 
     case 'compras/pedidos':
         $file = 'compras/pedidos.php';
         $pageTitle .= "Pedidos de Compra";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/notas':
         $file = 'compras/notas.php';
         $pageTitle .= "Notas Fiscais";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/configuracoes/categorias':
         $file = 'compras/configuracoes/categorias.php';
         $pageTitle .= "Gerenciar Categorias";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/configuracoes/fornecedores':
         $file = 'compras/configuracoes/fornecedores.php';
         $pageTitle .= "Gerenciar Fornecedores";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/relatorios/estoque_venda':
         $file = 'compras/relatorios/estoque_venda.php';
         $pageTitle .= "Estoque e Venda";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/relatorios/categorias':
         $file = 'compras/relatorios/gerar_categorias.php';
         $pageTitle .= "Relatorio Por Categoria";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
     case 'compras/relatorios/fornecedores':
         $file = 'compras/relatorios/gerar_fornecedores.php';
         $pageTitle .= "Relatorio Por Categoria";
-        $requiredSectors = [1,3,12];
+        $requiredSectors = [1, 3, 12];
         $requiredLogin = true;
         break;
 
     case 'faturamento/competencias':
         $file = 'faturamento/competencias.php';
         $pageTitle .= "Competências";
-        $requiredSectors = [1,5,12,14,18];
+        $requiredSectors = [1, 5, 12, 14, 18];
         $requiredLogin = true;
         break;
     case 'faturamento/competencia':
         $file = 'faturamento/competencia.php';
         $pageTitle .= "Competência";
-        $requiredSectors = [1,5,12,14,18];
+        $requiredSectors = [1, 5, 12, 14, 18];
         $requiredLogin = true;
         break;
     case 'faturamento/relatorios/gerar_relatorio_competencia':
         $file = 'faturamento/relatorios/gerar_relatorio_competencia.php';
         $pageTitle .= "Relatório Competencia";
-        $requiredSectors = [1,5,12,14,18];
+        $requiredSectors = [1, 5, 12, 14, 18];
         $requiredLogin = true;
         break;
 
     case 'financeiro/campanhas':
         $file = 'financeiro/campanhas.php';
         $pageTitle .= "Campanhas";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/campanha':
         $file = 'financeiro/campanha.php';
         $pageTitle .= "";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/faturas_atrasadas':
         $file = 'financeiro/faturas_atrasadas.php';
         $pageTitle .= "Faturas Atrasadas";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/contratos':
         $file = 'financeiro/contratos.php';
         $pageTitle .= "Contratos";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/contrato':
         $file = 'financeiro/documentos/contrato.html';
         $pageTitle .= "Contratos";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/documentos/gerar_contrato_pdf':
         $file = 'financeiro/documentos/gerar_contrato_pdf.php';
         $pageTitle .= "Gerar PDF do Contrato";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/relatorios/campanha':
         $file = 'financeiro/relatorios/gerar_relatorio_campanha.php';
         $pageTitle .= "Captar";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
     case 'financeiro/relatorios/vendedor':
         $file = 'financeiro/relatorios/gerar_relatorio_vendedor.php';
         $pageTitle .= "Captar";
-        $requiredSectors = [1,5,12,14];
+        $requiredSectors = [1, 5, 12, 14];
         $requiredLogin = true;
         break;
 
     case 'captacao/captar':
         $file = 'captacao/captar.php';
         $pageTitle .= "Captar";
-        $requiredSectors = [1,8,12,13];
+        $requiredSectors = [1, 8, 12, 13];
         $requiredLogin = true;
         break;
     case 'captacao/alterar':
         $file = 'captacao/alterar.php';
         $pageTitle .= "Alterar Captação";
-        $requiredSectors = [1,8,12,13];
+        $requiredSectors = [1, 8, 12, 13];
         $requiredLogin = true;
         break;
     case 'captacao/relatorios/geral':
         $file = 'captacao/relatorios/gerar_geral.php';
         $pageTitle .= "Relatório Geral Captação";
-        $requiredSectors = [1,8,12,13];
+        $requiredSectors = [1, 8, 12, 13];
         $requiredLogin = true;
         break;
 
     case 'cirurgias/catarata/agenda':
         $file = 'cirurgias/catarata/agenda.php';
         $pageTitle .= "Agenda Catarata";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/agendas':
         $file = 'cirurgias/catarata/agendas.php';
         $pageTitle .= "Agendas Catarata";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/agendamento':
         $file = 'cirurgias/catarata/agendamento.php';
         $pageTitle .= "Agendamento Catarata";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/documentos/gerar_contrato_pdf':
         $file = 'cirurgias/catarata/documentos/gerar_contrato_pdf.php';
         $pageTitle .= "Gerar Contrato PDF";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/documentos/gerar_vale_indicacao':
         $file = 'cirurgias/catarata/documentos/gerar_vale_indicacao.php';
         $pageTitle .= "Gerar Vale indicação PDF";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/agendamento_externo':
         $file = 'cirurgias/catarata/agendamento_externo.php';
         $pageTitle .= "Agendamento Externo Catarata";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
     case 'cirurgias/catarata/configuracoes/lentes':
         $file = 'cirurgias/catarata/configuracoes/lentes.php';
         $pageTitle .= "Lentes Catarata";
-        $requiredSectors = [1,12,13,15];
+        $requiredSectors = [1, 12, 13, 15];
         $requiredLogin = true;
         break;
+
+    case 'recepcao/orcamento_exames':
+        $file = 'recepcao/orcamento_exames.php';
+        $pageTitle .= "Orcamento de Exames";
+        $requiredSectors = [1, 7, 13, 14, 18];
+        $requiredLogin = true;
+        break;
+    case 'recepcao/gerar_orcamento_exames':
+        $file = 'recepcao/docs/gerar_orcamento_exames.php';
+        $pageTitle .= "Orcamento de Exames";
+        $requiredSectors = [];
+        $requiredLogin = true;
+        break;
+
 
     case 'tecnologia/configuracoes/sockets':
         $file = 'tecnologia/configuracoes/sockets.php';
@@ -377,25 +399,25 @@ switch ($route) {
     case 'lente_contato/testes':
         $file = 'lente_contato/testes.php';
         $pageTitle .= "Orçamentos Lente de Contato";
-        $requiredSectors = [1,5,17];
+        $requiredSectors = [1, 5, 17];
         $requiredLogin = true;
         break;
     case 'lente_contato/orcamentos':
         $file = 'lente_contato/orcamentos.php';
         $pageTitle .= "Orçamentos Lente de Contato";
-        $requiredSectors = [1,5,17];
+        $requiredSectors = [1, 5, 17];
         $requiredLogin = true;
         break;
     case 'lente_contato/configuracoes/fornecedores':
         $file = 'lente_contato/configuracoes/fornecedores.php';
         $pageTitle .= "Orçamentos Lente de Contato";
-        $requiredSectors = [1,17];
+        $requiredSectors = [1, 17];
         $requiredLogin = true;
         break;
     case 'lente_contato/configuracoes/modelos':
         $file = 'lente_contato/configuracoes/modelos.php';
         $pageTitle .= "Modelos Lente de Contato";
-        $requiredSectors = [1,17];
+        $requiredSectors = [1, 17];
         $requiredLogin = true;
         break;
 
@@ -433,7 +455,7 @@ switch ($route) {
 // Verificar se o usuário precisa estar logado para acessar a página
 if ($requiredLogin && !$_SESSION['logado']) {
     // Redireciona para a página de login se a página exige login e o usuário não está logado
-    header("Location: ".URL."/login?falha");
+    header("Location: " . URL . "/login?falha");
     exit;
 }
 
@@ -443,8 +465,8 @@ if ($requiredLogin && !$_SESSION['logado']) {
 //     $file = '401.php';
 //     $pageTitle = "Acesso não autorizado";
 // }
-if($requiredSectors != null){
-    if(!verificarSetor($requiredSectors)){
+if ($requiredSectors != null) {
+    if (!verificarSetor($requiredSectors)) {
         $file = '401.php';
         $pageTitle = "Acesso não autorizado";
     }

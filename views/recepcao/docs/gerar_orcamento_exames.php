@@ -1,0 +1,208 @@
+<?php
+require_once 'vendor/autoload.php';
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+// =========================
+// PEGAR EXAMES SELECIONADOS
+// =========================
+
+$Exame = new Exame();
+$listaExames = $Exame->listar();
+
+$selecionados = $_GET['exames'] ?? [];
+$tipo = $_GET['tipo'] ?? 'particular';
+
+$examesFiltrados = [];
+$total = 0;
+
+// Filtrar os exames escolhidos
+foreach ($listaExames as $ex) {
+
+    if (in_array($ex->id_exame, $selecionados)) {
+
+        $valor = ($tipo == 'fidelidade')
+            ? floatval(str_replace(',', '.', $ex->valor_fidelidade))
+            : floatval(str_replace(',', '.', $ex->valor_particular));
+
+        $examesFiltrados[] = [
+            'nome'  => $ex->exame,
+            'valor' => number_format($valor, 2, ',', '.')
+        ];
+
+        $total += $valor;
+    }
+}
+
+// =========================
+// ENDEREÇO POR EMPRESA
+// =========================
+
+$empresa = $_SESSION['empresa'] ?? 1;
+
+switch ($empresa) {
+    case 1:
+    case 2:
+        $endereco = "Rua Oratório 2036, Parque das Nações — Santo André — SP";
+        break;
+
+    case 3:
+    case 4:
+        $endereco = "R. Princesa Isabel, 256 — Vila Bocaina — Mauá — SP";
+        break;
+
+    case 5:
+    case 6:
+        $endereco = "R. Mal. Hermes, 302 — Jardim — Santo André — SP — 09090-230";
+        break;
+
+    default:
+        $endereco = "Endereço não cadastrado";
+        break;
+}
+
+// =========================
+// LOGO
+// =========================
+
+$logo = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCNtSDda9Etg_U4vKgnN09xeZoTn5QIa7j_Q&s"
+         style="width:170px; margin-bottom:10px;">';
+
+// =========================
+// HTML DO PDF (modelo modernizado)
+// =========================
+
+$html = '
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.aviso {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0 20px 0;
+    font-size: 12pt;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+}
+
+th {
+    background: #f0f0f0;
+    padding: 8px;
+    text-align: left;
+    border-bottom: 2px solid #ccc;
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.total {
+    text-align: right;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 35px;
+    font-size: 11pt;
+    color: #444;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        ' . $logo . '
+        <div class="title">Orçamento de Exames</div>
+    </div>
+
+    <div class="aviso">
+        ESTE DOCUMENTO NÃO É UM PEDIDO MÉDICO — APENAS UM ORÇAMENTO.<br>
+        VALIDADE DE 30 DIAS.
+    </div>
+
+    <table>
+        <tr>
+            <th>Exame</th>
+            <th style="text-align:right;">Valor (R$)</th>
+        </tr>';
+
+foreach ($examesFiltrados as $e) {
+    $html .= '
+        <tr>
+            <td>' . htmlspecialchars($e["nome"]) . '</td>
+            <td style="text-align:right;">' . $e["valor"] . '</td>
+        </tr>';
+}
+
+$html .= '
+    </table>
+
+    <div class="total">
+        Total: R$ ' . number_format($total, 2, ',', '.') . '
+    </div>
+
+    <div class="footer">
+        ' . $endereco . '<br>
+        Telefone para agendamentos: (11) 4478-2828
+    </div>
+
+</div>
+</body>
+</html>
+';
+
+// =========================
+// GERAR PDF
+// =========================
+
+$options = new Options();
+$options->set('isRemoteEnabled', true);
+
+$dompdf = new Dompdf($options);
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
+
+// Exibir no navegador
+header("Content-Type: application/pdf");
+echo $dompdf->output();
+exit;
