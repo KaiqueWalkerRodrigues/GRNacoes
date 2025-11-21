@@ -75,7 +75,20 @@ class Pacote_Exame
         return $sql->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    public function listarNomeExamesDoPacote(int $id_pacote)
+    {
+        $sql = $this->pdo->prepare('
+        SELECT exame FROM exames as e
+            INNER JOIN exames_pacotes_exames as epe ON epe.id_exame = e.id_exame
+            INNER JOIN exames_pacotes as ep ON ep.id_exames_pacote = epe.id_exame_pacote
+            WHERE ep.id_exames_pacote = :id_exame_pacote;
+    ');
 
+        $sql->bindParam(':id_exame_pacote', $id_pacote, PDO::PARAM_INT);
+        $sql->execute();
+
+        return $sql->fetchAll(PDO::FETCH_COLUMN);
+    }
 
     public function cadastrar(array $dados)
     {

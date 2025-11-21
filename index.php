@@ -375,6 +375,13 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'cc/central':
+        $file = 'callcenter/central.php';
+        $pageTitle .= "Central de Atendimento";
+        $requiredSectors = [1, 10];
+        $requiredLogin = true;
+        break;
+
     case 'recepcao/orcamento_exames':
         $file = 'recepcao/orcamento_exames.php';
         $pageTitle .= "Orcamento de Exames";

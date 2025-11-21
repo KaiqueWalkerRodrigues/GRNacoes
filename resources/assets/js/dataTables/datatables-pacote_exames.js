@@ -15,9 +15,9 @@ $(document).ready(function () {
             "emptyTable": "Nenhum pacote cadastrado"
         },
         "columnDefs": [
-            { "width": "80%", "targets": 0 }, // Pacote
-            { "width": "20%", "targets": 1 }, // Valor Fidelidade
-            { "width": "30%", "targets": 2 }  // Ações
+            { "width": "80%", "targets": 0 },
+            { "width": "20%", "targets": 1 },
+            { "width": "30%", "targets": 2 }
         ]
     });
 
@@ -25,5 +25,4 @@ $(document).ready(function () {
     $('#modalPacotes').on('shown.bs.modal', function () {
         tabelaPacote.columns.adjust().draw();
     });
-
 });

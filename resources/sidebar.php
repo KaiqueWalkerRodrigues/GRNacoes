@@ -81,6 +81,21 @@ function gerarOpcoesAnos()
 
                 <?php } ?>
 
+                <?php if (verificarSetor([1, 10])) { ?>
+
+                    <a class="nav-link collapsed" id="rece" href="javascript:void(0);" data-toggle="collapse" data-target="#callcenter" aria-expanded="false" aria-controls="callcenter">
+                        <div class="nav-link-icon"><i class="fa-solid fa-headset"></i></div>
+                        Call Center
+                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="callcenter" data-parent="#accordionSidenav">
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link" id="cc_central" href="<?php echo URL ?>/cc/central">Central</a>
+                        </nav>
+                    </div>
+
+                <?php } ?>
+
                 <?php if (verificarSetor([1, 8, 12, 13, 14])) { ?>
 
                     <a class="nav-link collapsed" id="capt" href="javascript:void(0);" data-toggle="collapse" data-target="#captacao" aria-expanded="false" aria-controls="captacao">
@@ -313,7 +328,7 @@ function gerarOpcoesAnos()
                     <?php if (verificarSetor([1])) { ?>
 
                         <a class="nav-link" id="logs" href="<?php echo URL ?>/logs">
-                            <div class="nav-link-icon"><i class="fa-solid fa-rectangle-history"></i></div>
+                            <div class="nav-link-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                             Logs
                         </a>
 
