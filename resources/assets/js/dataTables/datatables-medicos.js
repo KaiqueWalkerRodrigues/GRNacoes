@@ -24,9 +24,7 @@ $(document).ready(function() {
     $('#dataTableCentralMedicos').DataTable({
         "order": [[ 0, 'asc' ]],
         "autoWidth": false,
-        "scrollX": true,
         "responsive": true,
-        "initComplete": function() { $('#dataTableCentralExames').css('width','100%'); },
         "language": {
             "info": "Exibindo _START_ a _END_ de _TOTAL_ medicos",
             "lengthMenu": "Mostrar _MENU_ medicos",
@@ -40,9 +38,10 @@ $(document).ready(function() {
             "emptyTable": "Nenhum dado disponível na tabela"
         },
         "columnDefs": [
-            { "width": "40%", "targets": 0 },
-            { "width": "45%", "targets": 1 },
-            { "width": "15%", "targets": 2 }
+            { "width": "30%", "targets": 0 },
+            { "width": "20%", "targets": 1 },
+            { "width": "40%", "targets": 2 },
+            { "width": "10%", "targets": 3 }
         ]
     });
 });

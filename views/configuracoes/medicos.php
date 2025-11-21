@@ -88,6 +88,7 @@ if (isset($_POST['btnDeletar'])) {
                                                         data-crm="<?php echo $medico->crm ?>"
                                                         data-ativo="<?php echo $medico->ativo ?>"
                                                         data-observacao="<?php echo $medico->observacao ?>"
+                                                        data-unidades="<?php echo $medico->unidades ?>"
                                                         data-idmedico="<?php echo $medico->id_medico ?>"><i class="fa-solid fa-gear"></i></button>
                                                     <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" data-toggle="modal" data-target="#modalDeletarMedico"
                                                         data-nome="<?php echo $medico->nome ?>"
@@ -171,11 +172,11 @@ if (isset($_POST['btnDeletar'])) {
                     <div class="modal-body">
                         <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                         <div class="row">
-                            <div class="col-5 offset-1">
+                            <div class="col-6 offset-1">
                                 <label for="nome" class="form-label">Nome *</label>
                                 <input type="text" class="form-control" name="nome">
                             </div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="titulo" class="form-label">Prefixo *</label>
                                 <select name="titulo" id="cadastrar_titulo" class="form-control" required>
                                     <option value="">Selecione...</option>
@@ -183,9 +184,30 @@ if (isset($_POST['btnDeletar'])) {
                                     <option value="Dra">Dra</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-2 offset-1 mt-1">
                                 <label for="crm" class="form-label">CRM *</label>
                                 <input type="text" class="form-control" name="crm" required>
+                            </div>
+                            <div class="col-7 mt-2">
+                                <label class="form-label">Unidades</label>
+                                <div class="col-12">
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="unidades[]" value="1" id="uni_parque">
+                                        <label class="form-check-label" for="uni_parque">Clínica Parque</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="unidades[]" value="3" id="uni_maua">
+                                        <label class="form-check-label" for="uni_maua">Clínica Mauá</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="unidades[]" value="5" id="uni_jardim">
+                                        <label class="form-check-label" for="uni_jardim">Clínica Jardim</label>
+                                    </div>
+
+                                </div>
                             </div>
                             <div class="col-10 offset-1 mt-2">
                                 <label for="observacao" class="form-label">Observação</label>
@@ -237,6 +259,25 @@ if (isset($_POST['btnDeletar'])) {
                                     <option value="1">Ativo</option>
                                     <option value="0">Desativo</option>
                                 </select>
+                            </div>
+                            <div class="col-10 offset-1 mt-2">
+                                <label class="form-label">Unidades</label>
+                                <div class="col-12">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input editar_unidades" type="checkbox" name="unidades[]" value="1" id="edit_uni_parque">
+                                        <label class="form-check-label" for="edit_uni_parque">Clínica Parque</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input editar_unidades" type="checkbox" name="unidades[]" value="3" id="edit_uni_maua">
+                                        <label class="form-check-label" for="edit_uni_maua">Clínica Mauá</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input editar_unidades" type="checkbox" name="unidades[]" value="5" id="edit_uni_jardim">
+                                        <label class="form-check-label" for="edit_uni_jardim">Clínica Jardim</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-10 offset-1 mt-2">
                                 <label for="editar_observacao" class="form-label">Observação</label>
@@ -294,12 +335,14 @@ if (isset($_POST['btnDeletar'])) {
 
             $('#modalEditarMedico').on('show.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
+
                 let id_medico = button.data('idmedico');
                 let nome = button.data('nome');
                 let titulo = button.data('titulo');
                 let crm = button.data('crm');
                 let ativo = button.data('ativo');
                 let observacao = button.data('observacao');
+                let unidades = button.data('unidades');
 
                 $('#editar_medico_nome').text(nome);
                 $('#editar_id_medico').val(id_medico);
@@ -308,6 +351,18 @@ if (isset($_POST['btnDeletar'])) {
                 $('#editar_crm').val(crm);
                 $('#editar_ativo').val(ativo);
                 $('#editar_observacao').val(observacao);
+
+                // limpar unidades antes
+                $('.editar_unidades').prop('checked', false);
+
+                // ativar as unidades
+                if (unidades) {
+                    unidades.split(';').forEach(function(v) {
+                        if (v !== "") {
+                            $('.editar_unidades[value="' + v + '"]').prop('checked', true);
+                        }
+                    });
+                }
             });
 
             $('#modalDeletarMedico').on('show.bs.modal', function(event) {

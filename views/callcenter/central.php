@@ -66,14 +66,32 @@ $Medicos = new Medico();
                             <thead>
                                 <tr>
                                     <th>Médico</th>
+                                    <th>Unidades</th>
                                     <th>Observações</th>
                                     <th>CRM</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($Medicos->listar() as $medico) { ?>
+                                    <?php
+                                    $lista = '';
+
+                                    if (!empty($medico->unidades)) {
+                                        $codigos = explode(';', $medico->unidades);
+
+                                        $nomes = [];
+                                        foreach ($codigos as $c) {
+                                            if ($c == 1) $nomes[] = "Parque";
+                                            if ($c == 3) $nomes[] = "Mauá";
+                                            if ($c == 5) $nomes[] = "Jardim";
+                                        }
+
+                                        $lista = implode(", ", $nomes);
+                                    }
+                                    ?>
                                     <tr>
                                         <td><?php echo $medico->nome; ?></td>
+                                        <td class="text-center"><?php echo $lista; ?></td>
                                         <td><?php echo $medico->observacao ?></td>
                                         <td class="text-center"><?php echo $medico->crm; ?></td>
                                     </tr>

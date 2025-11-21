@@ -95,11 +95,16 @@ class Medico
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
+        $unidades = "";
+        if (!empty($dados['unidades']) && is_array($dados['unidades'])) {
+            $unidades = implode(";", $dados['unidades']) . ";";
+        }
+
         $sql = $this->pdo->prepare('INSERT INTO medicos 
-                                    (nome, titulo, crm, observacao, ativo, created_at, updated_at)
-                                    VALUES
-                                    (:nome, :titulo, :crm, :observacao, :ativo, :created_at, :updated_at)
-                                ');
+                                (nome, titulo, crm, observacao, unidades, ativo, created_at, updated_at)
+                                VALUES
+                                (:nome, :titulo, :crm, :observacao, :unidades, :ativo, :created_at, :updated_at)
+                            ');
 
         $created_at  = $agora;
         $updated_at  = $agora;
@@ -109,6 +114,7 @@ class Medico
         $sql->bindParam(':titulo', $titulo);
         $sql->bindParam(':crm', $crm);
         $sql->bindParam(':observacao', $observacao);
+        $sql->bindParam(':unidades', $unidades);
         $sql->bindParam(':ativo', $ativo);
         $sql->bindParam(':created_at', $created_at);
         $sql->bindParam(':updated_at', $updated_at);
@@ -119,20 +125,21 @@ class Medico
             $this->addLog("Cadastrar", $descricao, $usuario_logado);
 
             echo "
-            <script>
-                alert('Médico Cadastrado com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/medicos';
-            </script>";
+        <script>
+            alert('Médico Cadastrado com Sucesso!');
+            window.location.href = '" . URL . "/configuracoes/medicos';
+        </script>";
             exit;
         } else {
             echo "
-            <script>
-                alert('Não foi possível Cadastrar o Médico!');
-                window.location.href = '" . URL . "/configuracoes/medicos';
-            </script>";
+        <script>
+            alert('Não foi possível Cadastrar o Médico!');
+            window.location.href = '" . URL . "/configuracoes/medicos';
+        </script>";
             exit;
         }
     }
+
 
     /**
      * Retorna os dados de um médico
@@ -149,64 +156,63 @@ class Medico
         return $dados;
     }
 
-    /**
-     * Atualiza os dados de um médico
-     *
-     * @param array $dados   
-     * @return int id - do médico
-     * @example $Obj->editar($_POST);
-     */
     public function editar(array $dados)
     {
-        $sql = $this->pdo->prepare("UPDATE medicos SET
-            nome = :nome,
-            titulo = :titulo,
-            crm = :crm,
-            observacao = :observacao,
-            ativo = :ativo,
-            updated_at = :updated_at 
-        WHERE id_medico = :id_medico
-        ");
-
-        $agora = date("Y-m-d H:i:s");
-
         $id_medico = $dados['id_medico'];
-        $nome = ucwords(strtolower(trim($dados['nome'])));
-        $titulo = trim($dados['titulo']);
+        $nome  = ucwords(strtolower(trim($dados['nome'])));
+        $titulo  = trim($dados['titulo']);
+        $observacao  = $dados['observacao'];
         $titulo .= " " . $dados['nome'];
         $crm = strtoupper(trim($dados['crm']));
         $ativo = $dados['ativo'];
-        $observacao = $dados['observacao'];
-        $updated_at = $agora;
         $usuario_logado = $dados['usuario_logado'];
+        $agora = date("Y-m-d H:i:s");
 
-        $sql->bindParam(':id_medico', $id_medico);
+        // unidades no formato 1;3;5;
+        $unidades = "";
+        if (!empty($dados['unidades'])) {
+            $unidades = implode(";", $dados['unidades']) . ";";
+        }
+
+        $sql = $this->pdo->prepare('UPDATE medicos SET
+                                nome = :nome,
+                                titulo = :titulo,
+                                crm = :crm,
+                                observacao = :observacao,
+                                unidades = :unidades,
+                                ativo = :ativo,
+                                updated_at = :updated_at
+                                WHERE id_medico = :id_medico');
+
         $sql->bindParam(':nome', $nome);
         $sql->bindParam(':titulo', $titulo);
         $sql->bindParam(':crm', $crm);
         $sql->bindParam(':observacao', $observacao);
+        $sql->bindParam(':unidades', $unidades);
         $sql->bindParam(':ativo', $ativo);
-        $sql->bindParam(':updated_at', $updated_at);
+        $sql->bindParam(':updated_at', $agora);
+        $sql->bindParam(':id_medico', $id_medico);
 
         if ($sql->execute()) {
             $descricao = "Editou o médico: $nome ($id_medico)";
             $this->addLog("Editar", $descricao, $usuario_logado);
 
             echo "
-            <script>
-                alert('Médico Editado com Sucesso!');
-                window.location.href = '" . URL . "/configuracoes/medicos';
-            </script>";
+        <script>
+            alert('Médico Editado com Sucesso!');
+            window.location.href = '" . URL . "/configuracoes/medicos';
+        </script>";
             exit;
         } else {
             echo "
-            <script>
-                alert('Não foi possível Editar o Médico!');
-                window.location.href = '" . URL . "/configuracoes/medicos';
-            </script>";
+        <script>
+            alert('Não foi possível Editar o Médico!');
+            window.location.href = '" . URL . "/configuracoes/medicos';
+        </script>";
             exit;
         }
     }
+
 
     /**
      * Deletar um médico

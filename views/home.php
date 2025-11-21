@@ -220,7 +220,7 @@
                                         </tr>
                                         <tr>
                                             <td class="text-center">ADM</td>
-                                            <td>Financeiro (Contas a Pagar)</td>
+                                            <td>Financeiro (Contas a Receber)</td>
                                             <th class="text-center" scope="row">2325</th>
                                         </tr>
                                         <tr>
@@ -230,7 +230,7 @@
                                         </tr>
                                         <tr>
                                             <td class="text-center">ADM</td>
-                                            <td>Financeiro (Contas a Receber)</td>
+                                            <td>Financeiro (Contas a Pagar)</td>
                                             <th class="text-center" scope="row">2327</th>
                                         </tr>
                                         <tr>
