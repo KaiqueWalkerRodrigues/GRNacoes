@@ -81,7 +81,7 @@ function gerarOpcoesAnos()
 
                 <?php } ?>
 
-                <?php if (verificarSetor([1, 10])) { ?>
+                <?php if (verificarSetor([1, 10, 21])) { ?>
 
                     <a class="nav-link collapsed" id="rece" href="javascript:void(0);" data-toggle="collapse" data-target="#callcenter" aria-expanded="false" aria-controls="callcenter">
                         <div class="nav-link-icon"><i class="fa-solid fa-headset"></i></div>
@@ -304,7 +304,7 @@ function gerarOpcoesAnos()
                     </div>
 
                 <?php } ?>
-                <?php if (verificarSetor([1, 2, 12, 14, 18])) { ?>
+                <?php if (verificarSetor([1, 2, 12, 14, 18, 21])) { ?>
 
                     <div class="sidenav-menu-heading">Gerenciamento</div>
 

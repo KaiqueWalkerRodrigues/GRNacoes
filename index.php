@@ -135,7 +135,7 @@ switch ($route) {
     case 'configuracoes/medicos':
         $file = 'configuracoes/medicos.php';
         $pageTitle .= "Gerenciar Médicos";
-        $requiredSectors = [1, 2, 12, 14];
+        $requiredSectors = [1, 2, 12, 14, 21];
         $requiredLogin = true;
         break;
 
@@ -378,7 +378,7 @@ switch ($route) {
     case 'cc/central':
         $file = 'callcenter/central.php';
         $pageTitle .= "Central de Atendimento";
-        $requiredSectors = [1, 10];
+        $requiredSectors = [1, 10, 21];
         $requiredLogin = true;
         break;
 

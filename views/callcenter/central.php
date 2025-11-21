@@ -72,7 +72,7 @@ $Medicos = new Medico();
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($Medicos->listar() as $medico) { ?>
+                                <?php foreach ($Medicos->listarAtivos() as $medico) { ?>
                                     <?php
                                     $lista = '';
 
