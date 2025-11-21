@@ -272,6 +272,7 @@ function gerarOpcoesAnos()
                     </a>
                     <div class="collapse" id="recepcao" data-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
+                            <a class="nav-link" id="recepcao_central" href="<?php echo URL ?>/recepcao/central">Central</a>
                             <a class="nav-link" id="orcamento_exames" href="<?php echo URL ?>/recepcao/orcamento_exames">Orçamento de Exames</a>
                         </nav>
                     </div>

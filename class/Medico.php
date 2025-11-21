@@ -1,18 +1,20 @@
 <?php
 
-class Medico {
+class Medico
+{
 
     # ATRIBUTOS	
-	public $pdo;
-    
+    public $pdo;
+
     //Construir Conexão com o Banco de Dados.
     public function __construct()
     {
-        $this->pdo = Conexao::conexao();               
+        $this->pdo = Conexao::conexao();
     }
 
     //Registrar Logs(Ações) do Sistema.
-    private function addLog($acao, $descricao, $id_usuario){
+    private function addLog($acao, $descricao, $id_usuario)
+    {
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO logs 
@@ -21,10 +23,10 @@ class Medico {
                                     (:acao, :descricao, :data, :id_usuario)
                                 ');
 
-        $sql->bindParam(':acao', $acao); 
-        $sql->bindParam(':id_usuario', $id_usuario); 
-        $sql->bindParam(':descricao', $descricao); 
-        $sql->bindParam(':data', $agora); 
+        $sql->bindParam(':acao', $acao);
+        $sql->bindParam(':id_usuario', $id_usuario);
+        $sql->bindParam(':descricao', $descricao);
+        $sql->bindParam(':data', $agora);
         $sql->execute();
     }
 
@@ -33,45 +35,48 @@ class Medico {
      * @return array
      * @example $variavel = $Obj->metodo()
      */
-    public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL ORDER BY nome');        
+    public function listar()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL ORDER BY nome');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         // Retorna os dados como JSON
         return $dados;
-    }      
+    }
 
     /**
      * listar todos os médicos
      * @return array
      * @example $variavel = $Obj->metodo()
      */
-    public function listarAtivos(){
-        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL AND ativo = 1 ORDER BY nome');        
+    public function listarAtivos()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL AND ativo = 1 ORDER BY nome');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         // Retorna os dados como JSON
         return $dados;
-    }      
+    }
 
     /**
      * listar todos os médicos
      * @return array
      * @example $variavel = $Obj->metodo()
      */
-    public function listarDesativados(){
-        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL AND ativo = 0 ORDER BY nome');        
+    public function listarDesativados()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE deleted_at IS NULL AND ativo = 0 ORDER BY nome');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         // Retorna os dados como JSON
         return $dados;
-    }      
+    }
 
     /**
      * cadastra um novo médico
@@ -80,19 +85,20 @@ class Medico {
      * @example $Obj->cadastrar($_POST);
      * 
      */
-    public function cadastrar(Array $dados)
+    public function cadastrar(array $dados)
     {
         $nome  = ucwords(strtolower(trim($dados['nome'])));
         $titulo  = trim($dados['titulo']);
-        $titulo .= " ".$dados['nome'];
+        $observacao  = $dados['observacao'];
+        $titulo .= " " . $dados['nome'];
         $crm = strtoupper(trim($dados['crm']));
         $usuario_logado = $dados['usuario_logado'];
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO medicos 
-                                    (nome, titulo, crm, ativo, created_at, updated_at)
+                                    (nome, titulo, crm, observacao, ativo, created_at, updated_at)
                                     VALUES
-                                    (:nome, :titulo, :crm, :ativo, :created_at, :updated_at)
+                                    (:nome, :titulo, :crm, :observacao, :ativo, :created_at, :updated_at)
                                 ');
 
         $created_at  = $agora;
@@ -102,15 +108,16 @@ class Medico {
         $sql->bindParam(':nome', $nome);
         $sql->bindParam(':titulo', $titulo);
         $sql->bindParam(':crm', $crm);
+        $sql->bindParam(':observacao', $observacao);
         $sql->bindParam(':ativo', $ativo);
-        $sql->bindParam(':created_at', $created_at);          
-        $sql->bindParam(':updated_at', $updated_at);          
+        $sql->bindParam(':created_at', $created_at);
+        $sql->bindParam(':updated_at', $updated_at);
 
         if ($sql->execute()) {
             $medico_id = $this->pdo->lastInsertId();
             $descricao = "Cadastrou o médico: $nome ($medico_id)";
-            $this->addLog("Cadastrar",$descricao,$usuario_logado);
-            
+            $this->addLog("Cadastrar", $descricao, $usuario_logado);
+
             echo "
             <script>
                 alert('Médico Cadastrado com Sucesso!');
@@ -135,11 +142,11 @@ class Medico {
      */
     public function mostrar(int $id_medico)
     {
-    	$sql = $this->pdo->prepare('SELECT * FROM medicos WHERE id_medico = :id_medico LIMIT 1');
+        $sql = $this->pdo->prepare('SELECT * FROM medicos WHERE id_medico = :id_medico LIMIT 1');
         $sql->bindParam(':id_medico', $id_medico);
-    	$sql->execute();
-    	$dados = $sql->fetch(PDO::FETCH_OBJ);
-    	return $dados;
+        $sql->execute();
+        $dados = $sql->fetch(PDO::FETCH_OBJ);
+        return $dados;
     }
 
     /**
@@ -155,6 +162,7 @@ class Medico {
             nome = :nome,
             titulo = :titulo,
             crm = :crm,
+            observacao = :observacao,
             ativo = :ativo,
             updated_at = :updated_at 
         WHERE id_medico = :id_medico
@@ -165,23 +173,25 @@ class Medico {
         $id_medico = $dados['id_medico'];
         $nome = ucwords(strtolower(trim($dados['nome'])));
         $titulo = trim($dados['titulo']);
-        $titulo .= " ".$dados['nome'];
+        $titulo .= " " . $dados['nome'];
         $crm = strtoupper(trim($dados['crm']));
         $ativo = $dados['ativo'];
-        $updated_at = $agora; 
+        $observacao = $dados['observacao'];
+        $updated_at = $agora;
         $usuario_logado = $dados['usuario_logado'];
 
-        $sql->bindParam(':id_medico',$id_medico);
-        $sql->bindParam(':nome',$nome);
-        $sql->bindParam(':titulo',$titulo);
-        $sql->bindParam(':crm',$crm);
-        $sql->bindParam(':ativo',$ativo);
-        $sql->bindParam(':updated_at', $updated_at);       
+        $sql->bindParam(':id_medico', $id_medico);
+        $sql->bindParam(':nome', $nome);
+        $sql->bindParam(':titulo', $titulo);
+        $sql->bindParam(':crm', $crm);
+        $sql->bindParam(':observacao', $observacao);
+        $sql->bindParam(':ativo', $ativo);
+        $sql->bindParam(':updated_at', $updated_at);
 
         if ($sql->execute()) {
             $descricao = "Editou o médico: $nome ($id_medico)";
-            $this->addLog("Editar",$descricao,$usuario_logado);
-            
+            $this->addLog("Editar", $descricao, $usuario_logado);
+
             echo "
             <script>
                 alert('Médico Editado com Sucesso!');
@@ -225,7 +235,7 @@ class Medico {
 
         if ($sql->execute()) {
             $descricao = "Deletou o médico $nome_medico($id_medico)";
-            $this->addLog("Deletar",$descricao,$usuario_logado);
+            $this->addLog("Deletar", $descricao, $usuario_logado);
 
             echo "
             <script>
@@ -244,7 +254,8 @@ class Medico {
     }
 
     //Reativar um Médico Desativo.
-    public function reativar(array $dados){
+    public function reativar(array $dados)
+    {
         // Reativar o medico
         $sql = $this->pdo->prepare("UPDATE medicos SET
                                         ativo = 1                          
@@ -264,14 +275,14 @@ class Medico {
         if ($medico_reativado) {
             // Adicionando log com o nome do medico que reativou e o medico reativado
             $descricao = "Reativou o médico: {$medico_reativado->nome} (ID: {$medico_reativado->id_medico})";
-            $this->addLog('Reativar', $descricao, $dados['usuario_logado'] );
+            $this->addLog('Reativar', $descricao, $dados['usuario_logado']);
             echo "
             <script>
                 alert('Médico Reativado com Sucesso!');
                 window.location.href = '" . URL . "/configuracoes/medicos';
             </script>";
             exit;
-        }else{
+        } else {
             echo "
             <script>
                 alert('Não foi possível Reativar o Médico!');
@@ -281,5 +292,3 @@ class Medico {
         }
     }
 }
-
-?>

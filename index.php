@@ -382,6 +382,12 @@ switch ($route) {
         $requiredLogin = true;
         break;
 
+    case 'recepcao/central':
+        $file = 'callcenter/central.php';
+        $pageTitle .= "Central de Atendimento";
+        $requiredSectors = [1, 5, 7, 10, 12, 13, 14];
+        $requiredLogin = true;
+        break;
     case 'recepcao/orcamento_exames':
         $file = 'recepcao/orcamento_exames.php';
         $pageTitle .= "Orcamento de Exames";

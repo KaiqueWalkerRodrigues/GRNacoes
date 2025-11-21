@@ -1,6 +1,7 @@
 <?php
 $Exames = new Exame();
 $Pacotes = new Pacote_Exame();
+$Medicos = new Medico();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -37,7 +38,7 @@ $Pacotes = new Pacote_Exame();
                 <div class="container-fluid mt-4">
                     <div class="row">
                         <div class="col-8 offset-2 text-center">
-                            <button type="button" data-toggle="modal" data-target="#modal" class="btn btn-primary">Médicos</button>
+                            <button type="button" data-toggle="modal" data-target="#modalMedicos" class="btn btn-primary">Médicos</button>
                             <button type="button" data-toggle="modal" data-target="#modalExames" class="btn btn-success">Exames</button>
                             <button type="button" data-toggle="modal" data-target="#modalPacotesExames" class="btn btn-success">Pacotes</button>
                             <button type="button" data-toggle="modal" data-target="#modal" class="btn btn-secondary">Procedimentos</button>
@@ -46,6 +47,45 @@ $Pacotes = new Pacote_Exame();
                 </div>
             </main>
             <?php include_once('resources/footer.php'); ?>
+        </div>
+    </div>
+
+    <!-- Modal Medicos -->
+    <div class="modal fade" id="modalMedicos" tabindex="1" role="dialog" aria-labelledby="modalMedicos" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Médicos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="datatable">
+                        <table class="table table-bordered table-hover" id="dataTableCentralMedicos" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Médico</th>
+                                    <th>Observações</th>
+                                    <th>CRM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($Medicos->listar() as $medico) { ?>
+                                    <tr>
+                                        <td><?php echo $medico->nome; ?></td>
+                                        <td><?php echo $medico->observacao ?></td>
+                                        <td class="text-center"><?php echo $medico->crm; ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -142,6 +182,7 @@ $Pacotes = new Pacote_Exame();
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-exames.js"></script>
+    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-medicos.js"></script>
 </body>
 
 </html>
