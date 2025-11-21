@@ -24,6 +24,7 @@ $(document).ready(function() {
     $('#dataTableCentralMedicos').DataTable({
         "order": [[ 0, 'asc' ]],
         "autoWidth": false,
+        "scrollX": true,
         "responsive": true,
         "initComplete": function() { $('#dataTableCentralExames').css('width','100%'); },
         "language": {
@@ -39,9 +40,9 @@ $(document).ready(function() {
             "emptyTable": "Nenhum dado disponível na tabela"
         },
         "columnDefs": [
-            { "width": "35%", "targets": 0 },
-            { "width": "35%", "targets": 1 },
-            { "width": "30%", "targets": 2 }
+            { "width": "40%", "targets": 0 },
+            { "width": "45%", "targets": 1 },
+            { "width": "15%", "targets": 2 }
         ]
     });
 });
