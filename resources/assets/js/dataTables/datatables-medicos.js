@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#dataTable').DataTable({
-        "order": [[ 0, 'asc' ]],
+        "order": [[ 1, 'asc' ]],
         "language": {
             "info": "Exibindo _START_ a _END_ de _TOTAL_ setores",
             "lengthMenu": "Mostrar _MENU_ setores",

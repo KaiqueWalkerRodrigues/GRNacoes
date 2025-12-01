@@ -378,7 +378,7 @@ switch ($route) {
     case 'cc/central':
         $file = 'callcenter/central.php';
         $pageTitle .= "Central de Atendimento";
-        $requiredSectors = [1, 10, 21];
+        $requiredSectors = [1, 10, 12, 21];
         $requiredLogin = true;
         break;
 

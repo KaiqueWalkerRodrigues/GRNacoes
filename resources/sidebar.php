@@ -83,7 +83,7 @@ function gerarOpcoesAnos()
 
                 <?php if (verificarSetor([1, 10, 21])) { ?>
 
-                    <a class="nav-link collapsed" id="rece" href="javascript:void(0);" data-toggle="collapse" data-target="#callcenter" aria-expanded="false" aria-controls="callcenter">
+                    <a class="nav-link collapsed" id="call" href="javascript:void(0);" data-toggle="collapse" data-target="#callcenter" aria-expanded="false" aria-controls="callcenter">
                         <div class="nav-link-icon"><i class="fa-solid fa-headset"></i></div>
                         Call Center
                         <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -279,31 +279,6 @@ function gerarOpcoesAnos()
 
                 <?php } ?>
 
-                <?php if (verificarSetor([1, 3])) { ?>
-
-                    <a class="nav-link collapsed" id="tec" href="javascript:void(0);" data-toggle="collapse" data-target="#tecnologia" aria-expanded="false" aria-controls="financeiro">
-                        <div class="nav-link-icon"><i class="fa-solid fa-microchip"></i></div>
-                        Tecnologia
-                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="tecnologia" data-parent="#accordionSidenav">
-                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
-                            <a class="nav-link" id="tecnologia_computadores" href="<?php echo URL ?>/tecnologia/computadores">Computadores</a>
-                            <?php if (verificarSetor([1])) { ?>
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" id="tecnologia_configuracoes" data-target="#tecnologia_configuracoes" aria-expanded="false" aria-controls="compras_configuracoes">Configurações
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="tecnologia_configuracoes" data-parent="#accordionSidenavLayout">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" id="tecnologia_configuracoes_processadores" href="<?php echo URL ?>/tecnologia/configuracoes/processadores">Gerenciar Processadores</a>
-                                        <a class="nav-link" id="tecnologia_configuracoes_sockets" href="<?php echo URL ?>/tecnologia/configuracoes/sockets">Gerenciar Sockets</a>
-                                    </nav>
-                                </div>
-                            <?php } ?>
-                        </nav>
-                    </div>
-
-                <?php } ?>
                 <?php if (verificarSetor([1, 2, 12, 14, 18, 21])) { ?>
 
                     <div class="sidenav-menu-heading">Gerenciamento</div>
