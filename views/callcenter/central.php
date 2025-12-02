@@ -256,7 +256,7 @@ if (isset($_POST['btnSalvarDetalhesExame'])) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
-                        <?php if (verificarSetor([1, 21])) { ?>
+                        <?php if (verificarSetor([1, 12, 21])) { ?>
                             <button type="submit" name="btnSalvarDetalhesConvenio" class="btn btn-success">Salvar</button>
                         <?php } ?>
                     </div>

@@ -19,16 +19,13 @@ function verificarSetor(array $setores_necessario)
 function bloquearSetor(array $setores_bloqueado)
 {
     foreach ($_SESSION['id_setores'] as $setor) {
-        foreach ($setores_bloqueado as $setor_bloqueado) {
-            if ($setor != $setor_bloqueado) {
-                return true;
-                break;
-            } else {
-                return false;
-            }
+        if (in_array($setor, $setores_bloqueado)) {
+            return false;
         }
     }
+    return true;
 }
+
 
 session_start();
 
