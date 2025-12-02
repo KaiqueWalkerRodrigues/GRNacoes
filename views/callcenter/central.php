@@ -234,7 +234,7 @@ if (isset($_POST['btnSalvarDetalhesExame'])) {
     </div>
 
     <!-- Modal Convenios Detalhes -->
-    <div class="modal fade" id="modalConveniosDetalhes" tabindex="1" role="dialog" aria-labelledby="modalConveniosDetalhes" aria-hidden="true">
+    <div class="modal fade" id="modalConveniosDetalhes" tabindex="2" role="dialog" aria-labelledby="modalConveniosDetalhes" aria-hidden="true">
         <form method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -322,7 +322,7 @@ if (isset($_POST['btnSalvarDetalhesExame'])) {
     </div>
 
     <!-- Modal Exame Detalhes -->
-    <div class="modal fade" id="modalExameDetalhes" tabindex="1" role="dialog" aria-labelledby="modalExameDetalhes" aria-hidden="true">
+    <div class="modal fade" id="modalExameDetalhes" tabindex="2" role="dialog" aria-labelledby="modalExameDetalhes" aria-hidden="true">
         <form method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -687,6 +687,19 @@ if (isset($_POST['btnSalvarDetalhesExame'])) {
                 $('#editar_exame_anestesico').prop('checked', anestesico == 1);
 
                 $('#editar_exame_observacao').val(observacoes)
+            });
+
+            $('#modalConveniosDetalhes').on('hidden.bs.modal', function() {
+                if ($('#modalConvenios').hasClass('show')) {
+                    $('body').addClass('modal-open');
+                    $('#modalConvenios').focus();
+                }
+            });
+            $('#modalExameDetalhes').on('hidden.bs.modal', function() {
+                if ($('#modalExames').hasClass('show')) {
+                    $('body').addClass('modal-open');
+                    $('#modalExames').focus();
+                }
             });
         });
     </script>
