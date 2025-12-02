@@ -216,4 +216,68 @@ class Exame
             exit;
         }
     }
+
+    /**
+     * Atualiza os detalhe de um determinado exame
+     *
+     * @param array $dados   
+     * @return int id - do ITEM
+     * @example $Obj->editar($_POST);
+     */
+    public function editarDetalhes(array $dados)
+    {
+        $sql = $this->pdo->prepare("UPDATE exames SET
+            tempo = :tempo,
+            sinonimos = :sinonimos,
+            tempo_jejum = :tempo_jejum,
+            dilatar = :dilatar,
+            acompanhante = :acompanhante,
+            anestesico = :anestesico,
+            observacoes = :observacoes,
+            updated_at = :updated_at 
+        WHERE id_exame = :id_exame
+        ");
+
+        $agora = date("Y-m-d H:i:s");
+
+        $id_exame = $dados['id_exame'];
+        $tempo = $dados['tempo'];
+        $sinonimos = $dados['sinonimos'];
+        $tempo_jejum = $dados['tempo_jejum'];
+        (isset($dados['dilatar'])) ? $dilatar = 1 : $dilatar = 0;
+        (isset($dados['acompanhante'])) ? $acompanhante = 1 : $acompanhante = 0;
+        (isset($dados['anestesico'])) ? $anestesico = 1 : $anestesico = 0;
+        $observacoes = $dados['observacoes'];
+        $updated_at = $agora;
+        $usuario_logado = $dados['usuario_logado'];
+
+        $sql->bindParam(':id_exame', $id_exame);
+        $sql->bindParam(':tempo', $tempo);
+        $sql->bindParam(':sinonimos', $sinonimos);
+        $sql->bindParam(':tempo_jejum', $tempo_jejum);
+        $sql->bindParam(':dilatar', $dilatar);
+        $sql->bindParam(':acompanhante', $acompanhante);
+        $sql->bindParam(':anestesico', $anestesico);
+        $sql->bindParam(':observacoes', $observacoes);
+        $sql->bindParam(':updated_at', $updated_at);
+
+        if ($sql->execute()) {
+            $descricao = "Editou o exame com id: ($id_exame)";
+            $this->addLog("Editar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('exame Editado com Sucesso!');
+                window.location.href = '" . URL . "/cc/central';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Editar o exame!');
+                window.location.href = '" . URL . "/cc/central';
+            </script>";
+            exit;
+        }
+    }
 }

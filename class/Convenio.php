@@ -1,18 +1,20 @@
 <?php
 
-class Convenio {
+class Convenio
+{
 
     # ATRIBUTOS	
-	public $pdo;
-    
+    public $pdo;
+
     //Construir Conexão com o Banco de Dados.
     public function __construct()
     {
-        $this->pdo = Conexao::conexao();               
+        $this->pdo = Conexao::conexao();
     }
 
     //Registrar Logs(Ações) do Sistema.
-    private function addLog($acao, $descricao, $id_usuario){
+    private function addLog($acao, $descricao, $id_usuario)
+    {
         $agora = date("Y-m-d H:i:s");
 
         $sql = $this->pdo->prepare('INSERT INTO logs 
@@ -21,10 +23,10 @@ class Convenio {
                                     (:acao, :descricao, :data, :id_usuario)
                                 ');
 
-        $sql->bindParam(':acao', $acao); 
-        $sql->bindParam(':id_usuario', $id_usuario); 
-        $sql->bindParam(':descricao', $descricao); 
-        $sql->bindParam(':data', $agora); 
+        $sql->bindParam(':acao', $acao);
+        $sql->bindParam(':id_usuario', $id_usuario);
+        $sql->bindParam(':descricao', $descricao);
+        $sql->bindParam(':data', $agora);
         $sql->execute();
     }
 
@@ -33,29 +35,31 @@ class Convenio {
      * @return array
      * @example $variavel = $Obj->metodo()
      */
-    public function listar(){
-        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE deleted_at IS NULL ORDER BY convenio');        
+    public function listar()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE deleted_at IS NULL ORDER BY convenio');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         // Retorna os dados como JSON
         return $dados;
-    }      
+    }
 
     /**
      * Listar todos convenios menos particular
      * @return array
      * @example $variavel = $Obj->listar()
      */
-    public function listarMenosParticular(){
-        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE id_convenio != 1 AND deleted_at IS NULL ORDER BY convenio');        
+    public function listarMenosParticular()
+    {
+        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE id_convenio != 1 AND deleted_at IS NULL ORDER BY convenio');
         $sql->execute();
-    
+
         $dados = $sql->fetchAll(PDO::FETCH_OBJ);
-    
+
         return $dados;
-    }  
+    }
 
 
     /**
@@ -65,7 +69,8 @@ class Convenio {
      * @example $Obj->cadastrar($_POST);
      * 
      */
-    public function cadastrar(Array $dados){
+    public function cadastrar(array $dados)
+    {
         $convenio  = ucwords(strtolower(trim($dados['convenio'])));
         $razao_social  = ucwords(strtolower(trim($dados['razao_social'])));
         $usuario_logado = $dados['usuario_logado'];
@@ -80,16 +85,16 @@ class Convenio {
         $created_at  = $agora;
         $updated_at  = $agora;
 
-        $sql->bindParam(':convenio', $convenio);          
-        $sql->bindParam(':razao_social', $razao_social);          
-        $sql->bindParam(':created_at', $created_at);          
-        $sql->bindParam(':updated_at', $updated_at);          
+        $sql->bindParam(':convenio', $convenio);
+        $sql->bindParam(':razao_social', $razao_social);
+        $sql->bindParam(':created_at', $created_at);
+        $sql->bindParam(':updated_at', $updated_at);
 
         if ($sql->execute()) {
             $id_convenio = $this->pdo->lastInsertId();
-            
+
             $descricao = "Cadastrou o Convênio: $convenio ($id_convenio)";
-            $this->addLog("Cadastrar",$descricao,$usuario_logado);
+            $this->addLog("Cadastrar", $descricao, $usuario_logado);
 
             echo "
             <script>
@@ -113,16 +118,17 @@ class Convenio {
      * @return object
      * @example $variavel = $Obj->mostrar($id_do_item);
      */
-    public function mostrar(int $id_convenio){
-    	// Montar o SELECT ou o SQL
-    	$sql = $this->pdo->prepare('SELECT * FROM convenios WHERE id_convenio = :id_convenio LIMIT 1');
+    public function mostrar(int $id_convenio)
+    {
+        // Montar o SELECT ou o SQL
+        $sql = $this->pdo->prepare('SELECT * FROM convenios WHERE id_convenio = :id_convenio LIMIT 1');
         $sql->bindParam(':id_convenio', $id_convenio);
-    	// Executar a consulta
-    	$sql->execute();
-    	// Pega os dados retornados
+        // Executar a consulta
+        $sql->execute();
+        // Pega os dados retornados
         // Como será retornado apenas UM tabela usamos fetch. para
-    	$dados = $sql->fetch(PDO::FETCH_OBJ);
-    	return $dados;
+        $dados = $sql->fetch(PDO::FETCH_OBJ);
+        return $dados;
     }
 
     /**
@@ -132,7 +138,8 @@ class Convenio {
      * @return int id - do ITEM
      * @example $Obj->editar($_POST);
      */
-    public function editar(array $dados){
+    public function editar(array $dados)
+    {
         $sql = $this->pdo->prepare("UPDATE convenios SET
             convenio = :convenio,
             razao_social = :razao_social,
@@ -145,17 +152,17 @@ class Convenio {
         $id_convenio = $dados['id_convenio'];
         $convenio = ucwords(strtolower(trim($dados['convenio'])));
         $razao_social = ucwords(strtolower(trim($dados['razao_social'])));
-        $updated_at = $agora; 
+        $updated_at = $agora;
         $usuario_logado = $dados['usuario_logado'];
 
-        $sql->bindParam(':id_convenio',$id_convenio);
-        $sql->bindParam(':convenio',$convenio);
-        $sql->bindParam(':razao_social',$razao_social);
-        $sql->bindParam(':updated_at', $updated_at);       
+        $sql->bindParam(':id_convenio', $id_convenio);
+        $sql->bindParam(':convenio', $convenio);
+        $sql->bindParam(':razao_social', $razao_social);
+        $sql->bindParam(':updated_at', $updated_at);
 
         if ($sql->execute()) {
             $descricao = "Editou o Convênio: $convenio ($id_convenio)";
-            $this->addLog("Editar",$descricao,$usuario_logado);
+            $this->addLog("Editar", $descricao, $usuario_logado);
 
             echo "
             <script>
@@ -179,7 +186,8 @@ class Convenio {
      * @param integer $id_usuario
      * @return void (esse metodo não retorna nada)
      */
-    public function deletar(int $id_convenio, $usuario_logado){
+    public function deletar(int $id_convenio, $usuario_logado)
+    {
         // Consulta para obter o nome do convenio
         $consulta_convenio = $this->pdo->prepare('SELECT convenio FROM convenios WHERE id_convenio = :id_convenio');
         $consulta_convenio->bindParam(':id_convenio', $id_convenio);
@@ -202,7 +210,7 @@ class Convenio {
 
         if ($sql->execute()) {
             $descricao = "Deletou o Convênio $nome_convenio ($id_convenio)";
-            $this->addLog("Deletar",$descricao,$usuario_logado);
+            $this->addLog("Deletar", $descricao, $usuario_logado);
 
             echo "
             <script>
@@ -220,6 +228,48 @@ class Convenio {
         }
     }
 
- }
+    /**
+     * Atualiza um determinado convênio
+     *
+     * @param array $dados   
+     * @return int id - do ITEM
+     * @example $Obj->editar($_POST);
+     */
+    public function editarDetalhes(array $dados)
+    {
+        $sql = $this->pdo->prepare("UPDATE convenios SET
+            observacoes = :observacoes,
+            updated_at = :updated_at 
+        WHERE id_convenio = :id_convenio
+        ");
 
-?>
+        $agora = date("Y-m-d H:i:s");
+
+        $id_convenio = $dados['id_convenio'];
+        $observacoes = $dados['observacoes'];
+        $updated_at = $agora;
+        $usuario_logado = $dados['usuario_logado'];
+
+        $sql->bindParam(':id_convenio', $id_convenio);
+        $sql->bindParam(':observacoes', $observacoes);
+        $sql->bindParam(':updated_at', $updated_at);
+        if ($sql->execute()) {
+            $descricao = "Editou o Convênio com id: ($id_convenio)";
+            $this->addLog("Editar", $descricao, $usuario_logado);
+
+            echo "
+            <script>
+                alert('Convênio Editado com Sucesso!');
+                window.location.href = '" . URL . "/cc/central';
+            </script>";
+            exit;
+        } else {
+            echo "
+            <script>
+                alert('Não foi possível Editar o Convênio!');
+                window.location.href = '" . URL . "/cc/central';
+            </script>";
+            exit;
+        }
+    }
+}

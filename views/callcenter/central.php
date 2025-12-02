@@ -4,6 +4,7 @@ $Pacotes = new Pacote_Exame();
 $Medicos = new Medico();
 $Bloco_Nota = new Callcenter_Bloco_Notas();
 $Setores = new Setor();
+$Convenios = new Convenio();
 
 if (isset($_POST['btnCadastrarBlocoNota'])) {
     $Bloco_Nota->cadastrar($_POST);
@@ -13,6 +14,12 @@ if (isset($_POST['btnEditarBlocoNota'])) {
 }
 if (isset($_POST['btnDeletarBlocoNota'])) {
     $Bloco_Nota->deletar($_POST['id_callcenter_bloco_nota'], $_SESSION['id_usuario']);
+}
+if (isset($_POST['btnSalvarDetalhesConvenio'])) {
+    $Convenios->editarDetalhes($_POST);
+}
+if (isset($_POST['btnSalvarDetalhesExame'])) {
+    $Exames->editarDetalhes($_POST);
 }
 ?>
 <!DOCTYPE html>
@@ -48,11 +55,12 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                 <div class="container-fluid mt-n10">
                     <div class="row">
                         <div class="col-8 offset-2 text-center">
-                            <button type="button" data-toggle="modal" data-target="#modalMedicos" class="btn btn-primary">Médicos</button>
-                            <button type="button" data-toggle="modal" data-target="#modalExames" class="btn btn-warning">Exames/Procedimentos</button>
-                            <button type="button" data-toggle="modal" data-target="#modalPacotesExames" class="btn btn-success">Pacotes de Exames/Procedimentos</button>
+                            <button type="button" data-toggle="modal" data-target="#modalMedicos" class="btn btn-white m-1">Médicos</button>
+                            <button type="button" data-toggle="modal" data-target="#modalConvenios" class="btn btn-secondary m-1">Convenios</button>
+                            <button type="button" data-toggle="modal" data-target="#modalExames" class="btn btn-dark m-1">Exames/Procedimentos</button>
+                            <button type="button" data-toggle="modal" data-target="#modalPacotesExames" class="btn btn-success m-1">Pacotes de Exames/Procedimentos</button>
                             <?php if (verificarSetor([1, 21, 12])) { ?>
-                                <button type="button" data-toggle="modal" data-target="#modalBlocosNota" class="btn btn-info">Blocos de Notas</button>
+                                <button type="button" data-toggle="modal" data-target="#modalBlocosNota" class="btn btn-info m-1">Blocos de Notas</button>
                             <?php } ?>
                         </div>
                     </div>
@@ -185,6 +193,78 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
         </div>
     </div>
 
+    <!-- Modal Convenios -->
+    <div class="modal fade" id="modalConvenios" tabindex="1" role="dialog" aria-labelledby="modalConvenios" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Convenios</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="datatable table-responsive">
+                        <table class="table table-bordered table-hover" id="dataTableCentralConvenios" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Convenios</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($Convenios->listar() as $convenio) {
+                                ?>
+                                    <tr>
+                                        <td><?php echo $convenio->convenio; ?></td>
+                                        <td class="text-center">
+                                            <button data-toggle="modal" data-target="#modalConveniosDetalhes" class="btn btn-transparent btn-sm btn-icon" data-id_convenio="<?php echo $convenio->id_convenio ?>" data-observacoes="<?php echo $convenio->observacoes ?>" data-nome_convenio="<?php echo $convenio->convenio ?>"><i class="fa-solid fa-eye"></i></button>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Convenios Detalhes -->
+    <div class="modal fade" id="modalConveniosDetalhes" tabindex="1" role="dialog" aria-labelledby="modalConveniosDetalhes" aria-hidden="true">
+        <form method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detalhes do Convenio: <span id="editar_convenio_nome"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_convenio" id="editar_convenio_id_convenio">
+                        <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
+                        <div class="row">
+                            <div class="col-10 offset-1">
+                                <label for="editar_convenio_observacoes" class="form-label">Observações</label>
+                                <textarea name="observacoes" rows="8" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_convenio_observacoes" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                        <?php if (verificarSetor([1, 21])) { ?>
+                            <button type="submit" name="btnSalvarDetalhesConvenio" class="btn btn-success">Salvar</button>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- Modal Exames -->
     <div class="modal fade" id="modalExames" tabindex="1" role="dialog" aria-labelledby="modalExames" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -212,7 +292,22 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                                         <td><?php echo $exame->exame; ?></td>
                                         <td>R$ <?php echo number_format($exame->valor_particular, 2, ',', '.') ?></td>
                                         <td>R$ <?php echo number_format($exame->valor_fidelidade, 2, ',', '.') ?></td>
-                                        <td class="text-center"><button type="button" data-toggle="modal" data-target="#modalExameObservacao" class="btn btn-icon btn-sm btn-transparent"><i class="fa-solid fa-eye"></i></button></td>
+                                        <td class="text-center"><button type="button"
+                                                data-toggle="modal"
+                                                data-target="#modalExameDetalhes"
+                                                class="btn btn-icon btn-sm btn-transparent"
+                                                data-id_exame="<?php echo $exame->id_exame ?>"
+                                                data-nome_exame="<?php echo $exame->exame ?>"
+                                                data-tempo="<?php echo $exame->tempo ?>"
+                                                data-tempo_jejum="<?php echo $exame->tempo_jejum ?>"
+                                                data-observacoes="<?php echo $exame->observacoes ?>"
+                                                data-dilatar="<?php echo $exame->dilatar ?>"
+                                                data-acompanhante="<?php echo $exame->acompanhante ?>"
+                                                data-anestesico="<?php echo $exame->anestesico ?>"
+                                                data-sinonimos="<?php echo $exame->sinonimos ?>">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -226,8 +321,8 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
         </div>
     </div>
 
-    <!-- Modal Observação Exame -->
-    <div class="modal fade" id="modalExameObservacao" tabindex="1" role="dialog" aria-labelledby="modalExameObservacao" aria-hidden="true">
+    <!-- Modal Exame Detalhes -->
+    <div class="modal fade" id="modalExameDetalhes" tabindex="1" role="dialog" aria-labelledby="modalExameDetalhes" aria-hidden="true">
         <form method="post">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -238,36 +333,38 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <h2 class="text-center text-danger">Exames devem ser agendados 15 dias no minímo após a consulta!</h2>
+                        <h3 class="text-center text-danger">Exames devem ser agendados 15 dias no minímo após a consulta!</h3>
                         <hr>
                         <div class="row">
+                            <input type="hidden" name="id_exame" id="editar_exame_id_exame">
+                            <input type="hidden" name="usuario_logado" value="<?php echo $_SESSION['id_usuario'] ?>">
                             <div class="col-2 offset-1">
                                 <label for="editar_exame_tempo" class="form-label">Tempo (Min)</label>
                                 <input type="number" name="tempo" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
                             </div>
                             <div class="col-3">
-                                <label for="editar_exame_apelidos" class="form-label">Apelidos</label>
-                                <input type="text" name="apelidos" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
+                                <label for="editar_exame_sinonimos" class="form-label">Sinonimos</label>
+                                <input type="text" name="sinonimos" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
                             </div>
                             <div class="col-3">
-                                <label for="editar_obs_exame_tempo_jejum" class="form-label">Tempo de Jejum (Horas)</label>
-                                <input type="number" id="editar_obs_exame_tempo_jejum" name="tempo_jejum" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
+                                <label for="editar_exame_tempo_jejum" class="form-label">Tempo de Jejum (Horas)</label>
+                                <input type="number" id="editar_exame_tempo_jejum" name="tempo_jejum" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
                             </div>
                             <div class="col-3">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_dilata">
-                                    <label class="form-check-label" for="editar_exame_dilata">
+                                    <input class="form-check-input" name="dilatar" type="checkbox" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_dilatar">
+                                    <label class="form-check-label" for="editar_exame_dilatar">
                                         Precisa Dilatar
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_acompanhante">
+                                    <input class="form-check-input" name="acompanhante" type="checkbox" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_acompanhante">
                                     <label class="form-check-label" for="editar_exame_acompanhante">
                                         Precisa de Acompanhante
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_anestesico">
+                                    <input class="form-check-input" name="anestesico" type="checkbox" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_anestesico">
                                     <label class="form-check-label" for="editar_exame_anestesico">
                                         Anestésico
                                     </label>
@@ -275,17 +372,17 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-8 offset-2">
-                                <label for="editar_exame_observacao" class="form-label">Observações</label>
-                                <textarea name="observacao" rows="8" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_observacao" class="form-control"></textarea>
+                            <div class="col-10 offset-1">
+                                <label for="editar_exame_observacoes" class="form-label">Observações</label>
+                                <textarea name="observacoes" rows="8" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_observacao" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <?php if (verificarSetor([1, 21])) { ?>
-                            <button type="submit" class="btn btn-success">Salvar</button>
-                        <?php } ?>
                         <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                        <?php if (verificarSetor([1, 21])) { ?>
+                            <button type="submit" name="btnSalvarDetalhesExame" class="btn btn-success">Salvar</button>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -552,6 +649,45 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                 $('#deletar_id_bloco_nota').val(button.data('id'));
                 $('#deletar_titulo_bloco').text(button.data('titulo'));
             });
+
+            $('#modalConveniosDetalhes').on('show.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+                let id_convenio = button.data('id_convenio')
+                let observacoes = button.data('observacoes')
+                let nome_convenio = button.data('nome_convenio')
+
+                $('#editar_convenio_nome').text(nome_convenio)
+                $('#editar_convenio_id_convenio').val(id_convenio)
+                $('#editar_convenio_observacoes').val(observacoes)
+            });
+
+            $('#modalExameDetalhes').on('show.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+
+                // Pegando os dados do botão
+                let id_exame = button.data('id_exame')
+                let tempo = button.data('tempo')
+                let sinonimos = button.data('sinonimos')
+                let tempo_jejum = button.data('tempo_jejum')
+                let dilatar = button.data('dilatar')
+                let acompanhante = button.data('acompanhante')
+                let anestesico = button.data('anestesico')
+                let observacoes = button.data('observacoes')
+                let nome_exame = button.data('nome_exame')
+
+                $('#editar_exame_id_exame').val(id_exame)
+
+                $('input[name="tempo"]').val(tempo)
+                $('input[name="sinonimos"]').val(sinonimos)
+
+                $('#editar_exame_tempo_jejum').val(tempo_jejum)
+
+                $('#editar_exame_dilatar').prop('checked', dilatar == 1);
+                $('#editar_exame_acompanhante').prop('checked', acompanhante == 1);
+                $('#editar_exame_anestesico').prop('checked', anestesico == 1);
+
+                $('#editar_exame_observacao').val(observacoes)
+            });
         });
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -561,6 +697,7 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-exames.js"></script>
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-medicos.js"></script>
     <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-bloco_notas.js"></script>
+    <script src="<?php echo URL_RESOURCES ?>/assets/js/dataTables/datatables-convenios.js"></script>
 </body>
 
 </html>
