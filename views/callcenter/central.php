@@ -203,6 +203,7 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                                     <th>Exame</th>
                                     <th>Valor Particular</th>
                                     <th>Valor Fidelidade</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -211,6 +212,7 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                                         <td><?php echo $exame->exame; ?></td>
                                         <td>R$ <?php echo number_format($exame->valor_particular, 2, ',', '.') ?></td>
                                         <td>R$ <?php echo number_format($exame->valor_fidelidade, 2, ',', '.') ?></td>
+                                        <td class="text-center"><button type="button" data-toggle="modal" data-target="#modalExameObservacao" class="btn btn-icon btn-sm btn-transparent"><i class="fa-solid fa-eye"></i></button></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -222,6 +224,72 @@ if (isset($_POST['btnDeletarBlocoNota'])) {
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Modal Observação Exame -->
+    <div class="modal fade" id="modalExameObservacao" tabindex="1" role="dialog" aria-labelledby="modalExameObservacao" aria-hidden="true">
+        <form method="post">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detalhes de Exames</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h2 class="text-center text-danger">Exames devem ser agendados 15 dias no minímo após a consulta!</h2>
+                        <hr>
+                        <div class="row">
+                            <div class="col-2 offset-1">
+                                <label for="editar_exame_tempo" class="form-label">Tempo (Min)</label>
+                                <input type="number" name="tempo" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="editar_exame_apelidos" class="form-label">Apelidos</label>
+                                <input type="text" name="apelidos" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="editar_obs_exame_tempo_jejum" class="form-label">Tempo de Jejum (Horas)</label>
+                                <input type="number" id="editar_obs_exame_tempo_jejum" name="tempo_jejum" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_dilata">
+                                    <label class="form-check-label" for="editar_exame_dilata">
+                                        Precisa Dilatar
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_acompanhante">
+                                    <label class="form-check-label" for="editar_exame_acompanhante">
+                                        Precisa de Acompanhante
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_anestesico">
+                                    <label class="form-check-label" for="editar_exame_anestesico">
+                                        Anestésico
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8 offset-2">
+                                <label for="editar_exame_observacao" class="form-label">Observações</label>
+                                <textarea name="observacao" rows="8" <?php if (bloquearSetor([1, 12, 21])) { ?> disabled <?php } ?> id="editar_exame_observacao" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <?php if (verificarSetor([1, 21])) { ?>
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                        <?php } ?>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Modal Pacotes de Exames -->
