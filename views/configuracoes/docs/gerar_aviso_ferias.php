@@ -14,10 +14,43 @@ $nome_empregado = $_GET['nomem'] ?? 'Funcionário Não Informado';
 $cpf = $_GET['cpf'] ?? '000.000.000-00';
 $id_empresa = $_GET['id_empresa'] ?? ''; // Espera uma URL completa (http://...)
 
-if($id_empresa == 1 AND $id_empresa == 3 AND $id_empresa == 5){
+// Datas passadas pelo usuário (opcional)
+$inicio_raw = $_GET['inicio'] ?? '';
+$fim_raw = $_GET['fim'] ?? '';
+
+// Função simples para formatar data em português (ex: 22 de dezembro de 2025)
+$meses = [
+    'janeiro',
+    'fevereiro',
+    'março',
+    'abril',
+    'maio',
+    'junho',
+    'julho',
+    'agosto',
+    'setembro',
+    'outubro',
+    'novembro',
+    'dezembro'
+];
+
+$formatDatePt = function ($raw) use ($meses) {
+    if (empty($raw)) return '';
+    $ts = strtotime($raw);
+    if ($ts === false) return '';
+    $d = date('j', $ts);
+    $m = $meses[(int)date('n', $ts) - 1];
+    $y = date('Y', $ts);
+    return $d . ' de ' . $m . ' de ' . $y;
+};
+
+$inicio_fmt = $formatDatePt($inicio_raw);
+$fim_fmt = $formatDatePt($fim_raw);
+
+if ($id_empresa == 1 and $id_empresa == 3 and $id_empresa == 5) {
     $logoUrl = "logo_clinica.png";
 }
-if($id_empresa == 2 AND $id_empresa == 4 AND $id_empresa == 6){
+if ($id_empresa == 2 and $id_empresa == 4 and $id_empresa == 6) {
     $logoUrl = "logo_otica.png";
 }
 
@@ -31,11 +64,11 @@ $dompdf = new Dompdf($options);
 // Simplesmente usa a URL passada via GET no 'src' da imagem
 // Exatamente como seu script funcional faz.
 $logoHtml = '';
-if ($id_empresa == 1 OR $id_empresa == 3 OR $id_empresa == 5) {
-$logoHtml = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCNtSDda9Etg_U4vKgnN09xeZoTn5QIa7j_Q&s" style="width: 180px; height: auto;">';
+if ($id_empresa == 1 or $id_empresa == 3 or $id_empresa == 5) {
+    $logoHtml = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCNtSDda9Etg_U4vKgnN09xeZoTn5QIa7j_Q&s" style="width: 180px; height: auto;">';
 }
-if ($id_empresa == 2 OR $id_empresa == 4 OR $id_empresa == 6) {
-$logoHtml = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGQvCFdx73lo4L_PqQZEIKnaMpXpTUvPwiiA&s" style="width: 180px; height: auto;">';
+if ($id_empresa == 2 or $id_empresa == 4 or $id_empresa == 6) {
+    $logoHtml = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGQvCFdx73lo4L_PqQZEIKnaMpXpTUvPwiiA&s" style="width: 180px; height: auto;">';
 }
 
 // --- 4. Definir o Conteúdo HTML ---
@@ -116,7 +149,9 @@ $html = '
             <p>Pelo presente, comunicamos que suas férias regulamentares serão concedidas
                conforme abaixo:</p>
             
-            <p><strong>Período de Gozo:</strong> 22 de dezembro 2025 a 04 de janeiro de 2026.</p>
+                <p><strong>Período de Gozo:</strong> ' . (
+    $inicio_fmt && $fim_fmt ? htmlspecialchars($inicio_fmt . ' a ' . $fim_fmt) : '22 de dezembro 2025 a 04 de janeiro de 2026.'
+) . '</p>
         </div>
 
         <div class="signatures">
@@ -150,5 +185,3 @@ header('Content-Type: application/pdf');
 header('Content-Disposition: inline; filename="aviso_ferias.pdf"');
 echo $dompdf->output();
 exit;
-
-?>
